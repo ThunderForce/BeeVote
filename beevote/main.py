@@ -14,9 +14,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 import os
 import webapp2
 from google.appengine.ext.webapp import template
+
+# Start of handlers
 
 class MainHandler(webapp2.RequestHandler):
 	def get(self):
@@ -25,6 +28,14 @@ class MainHandler(webapp2.RequestHandler):
 		path = os.path.join(directory, os.path.join('templates', 'index.html'))
 		self.response.out.write(template.render(path, values))
 
+class NotFoundPageHandler(webapp.RequestHandler):
+	def get(self):
+		self.error(404)
+		self.response.out.write('<html><head><title>404 Error</title></head><body>404 Error</body></html>')
+
+# End of handlers
+
 app = webapp2.WSGIApplication([
-	('/', MainHandler)
+	('/', MainHandler),
+	('/.*', NotFoundPageHandler)
 ], debug=True)
