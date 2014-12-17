@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html>
+
+    <head>
+
+        <title>List of topics - VoteIt!</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- CSS links -->
+        <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+        <link href="css/ripples.min.css" rel="stylesheet">
+        <link href="css/material-wfont.min.css" rel="stylesheet">
+
+        <!-- JS links -->
+        <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+        <script src="js/ripples.min.js"></script>
+        <script src="js/material.min.js"></script>
+
+        <script>
+            $(document).ready(function() {
+                $.material.init();
+
+                $.ajax({
+                    url: "votes.json",
+                    
+                    dataType: "json",
+                    success: function(response) {
+                        $("#number_of_votes").html(response.number_of_votes);
+                        $.each(response.votes, function(index, vote) {
+                            var str = '<li><a href="javascript:void(0)" class="btn btn-flat btn-info">'+vote.name+' '+vote.surname+'</a></li>';
+                            $('#list_of_votes').append(str);
+                        })
+                    }
+                });
+            });
+        </script>
+
+    </head>
+
+    <body>
+
+    <div class="navbar navbar-default">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+            <div class="list-group">
+            <div class="list-group-item">
+            <div class="row-picture">
+                <img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
+            </div></div></div>
+        </div>
+
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="javascript:void(0)">NOME COGNOME</a></li>
+                <li><a href="javascript:void(0)">Groups</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Upcoming events <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)">Action</a></li>
+                        <li><a href="javascript:void(0)">Another action</a></li>
+                        <li><a href="javascript:void(0)">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Dropdown header</li>
+                        <li><a href="javascript:void(0)">Separated link</a></li>
+                        <li><a href="javascript:void(0)">One more separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <input type="text" class="form-control col-lg-8" placeholder="Search">
+            </form>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">Settings <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="javascript:void(0)">Action</a></li>
+                        <li><a href="javascript:void(0)">Another action</a></li>
+                        <li><a href="javascript:void(0)">Something else here</a></li>
+                        <li class="divider"></li>
+                        <li><a href="javascript:void(0)">Separated link</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="jumbotron">
+    	<div class="row">
+            <div class="col-lg-5">
+                <h1>Proposta X</h1>
+                <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPoposto da <a href="javascript:void(0)" class="btn btn-flat btn-info">NOME COGNOME</a></p>
+    	   </div>
+    	   <div class="col-lg-4"></div>
+    	   <div class="col-lg-2">
+                    <div class="btn-group">
+                        <a href="javascript:void(0)" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Voti&nbsp&nbsp&nbsp
+                            <span class="badge" id="number_of_votes">...</span>&nbsp&nbsp<span class="caret"></span></a>
+                        <ul class="dropdown-menu" id="list_of_votes">
+                            <!-- Here there's a dynamic list of votes -->
+                        </ul>
+                    </div>
+            </div>        
+            <div class="col-lg-1">
+                <span class="label label-primary">Vota</span><span class="row-action-primary checkbox"><label><input type="checkbox"></label></span>
+            </div>
+                
+        </div>
+    	</div>
+    </div>
+
+    <div class ="row">
+    	<div class ="col-lg-6">	
+    		<div class="well">
+    	    	Date: dd/mm/yyyy
+    		</div>
+    	</div>
+    	<div class="col-lg-6">
+    		<div class="well">
+    	    	Hours: hh:mm
+    		</div>
+    	</div>
+    </div>
+
+    <div class="jumbotron">
+        <h2>Place</h2>
+        <p>Place description.</p>
+        <p>Address: ADDRESS</p>
+        <p><a class="btn btn-primary btn-lg">View on Google Maps</a></p>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Description</div>
+        <div class="panel-body">Description content.</div>
+    </div>
+
+    </body>
+</html>

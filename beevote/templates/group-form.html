@@ -1,0 +1,76 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  
+
+    
+    <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/ripples.min.css" rel="stylesheet">
+    <link href="css/material-wfont.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <form class="form-horizontal">
+        <fieldset>
+            <h2 align="center">Create a new Group</h2> 
+
+            <div class="form-group">
+                <label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
+                <div class="col-lg-10">
+                    <input class="form-control" id="inputGrouplName" placeholder="Group's name" type="text">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="inputFile" class="col-lg-2 control-label">Photo: </label>
+                <div class="col-lg-10">
+                    <input readonly="" class="form-control floating-label" placeholder="Browse..." type="text" >
+                    <input id="inputFile" multiple="" type="file" accept="image/*">
+                </div>
+            </div>
+
+            
+            <div class="form-group">
+                <label for="textArea" class="col-lg-2 control-label">Details: </label>
+                <div class="col-lg-10">
+                    <textarea class="form-control" rows="3" id="textArea"></textarea>
+                    <span class="help-block">Add here details that you want the others will know </span>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="inputMembers" class="col-lg-2 control-label">Add Members: </label>
+                <div class="col-lg-10">
+                <a href="javascript:void(0)" class="btn btn-primary btn-fab btn-raised mdi-social-group-add"></a>
+                    
+                    
+
+                </div>
+            </div>
+
+
+            
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button class="btn btn-default">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+
+
+        </fieldset>
+    </form>
+
+
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="js/ripples.min.js"></script>
+    <script src="js/material.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        $.material.init();
+    });
+    </script>
+</body>
+</html>

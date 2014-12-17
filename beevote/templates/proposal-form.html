@@ -1,0 +1,86 @@
+
+<!DOCTYPE HTML>
+<html>
+<head>
+  
+
+    
+<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+<link href="css/ripples.min.css" rel="stylesheet">
+<link href="css/material-wfont.min.css" rel="stylesheet">
+</head>
+<body>
+
+<form class="form-horizontal">
+    <fieldset>
+        <h2 align="center">Create a new Proposal</h2> 
+
+        <div class="form-group">
+            <label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
+            <div class="col-lg-10">
+                <input class="form-control" id="inputProposalName" placeholder="Title of the Proposal" type="text">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputWhat" class="col-lg-2 control-label">What: </label>
+            <div class="col-lg-10">
+                <input class="form-control" id="inputWhat" placeholder="What to do" type="text">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputWhere" class="col-lg-2 control-label">Where: </label>
+            <div class="col-lg-10">
+                <input class="form-control" id="inputWhere" placeholder="Location for the activities" type="text">
+                
+            </div>
+        </div>
+        
+
+        <div class="form-group">
+            <label for="inputDate" class="col-lg-2 control-label">Date: </label>
+            <div class="col-lg-10">
+                <input class="form-control" id="inputDate" placeholder="Date for the activity" type="date">
+                
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputTime" class="col-lg-2 control-label">Time: </label>
+            <div class="col-lg-10">
+                <input class="form-control" id="inputTime" placeholder="Time for the activity" type="time">
+            </div>
+        </div>
+
+        
+        <div class="form-group">
+            <label for="textArea" class="col-lg-2 control-label">Details</label>
+            <div class="col-lg-10">
+                <textarea class="form-control" rows="3" id="textArea"></textarea>
+                <span class="help-block">Add here details that you want the others will know </span>
+            </div>
+        </div>
+       
+        
+        <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+                <button class="btn btn-default">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+<script src="js/ripples.min.js"></script>
+<script src="js/material.min.js"></script>
+<script>
+$(document).ready(function() {
+$.material.init();
+});
+</script>
+</body>
+</html>
