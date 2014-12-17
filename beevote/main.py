@@ -27,6 +27,13 @@ class MainHandler(webapp2.RequestHandler):
 		directory = os.path.dirname(__file__)
 		path = os.path.join(directory, os.path.join('templates', 'index.html'))
 		self.response.out.write(template.render(path, values))
+		
+class TopicSampleHandler(webapp2.RequestHandler):
+	def get(self):
+		values = {}
+		directory = os.path.dirname(__file__)
+		path = os.path.join(directory, os.path.join('templates', 'topic-layout.html'))
+		self.response.out.write(template.render(path, values))
 
 class NotFoundPageHandler(webapp.RequestHandler):
 	def get(self):
@@ -37,5 +44,6 @@ class NotFoundPageHandler(webapp.RequestHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
+	('/topic-sample', TopicSampleHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
