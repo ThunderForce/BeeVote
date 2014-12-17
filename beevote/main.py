@@ -27,7 +27,7 @@ class MainHandler(webapp2.RequestHandler):
 		directory = os.path.dirname(__file__)
 		path = os.path.join(directory, os.path.join('templates', 'index.html'))
 		self.response.out.write(template.render(path, values))
-		
+
 class TopicSampleHandler(webapp2.RequestHandler):
 	def get(self):
 		values = {}
@@ -35,7 +35,7 @@ class TopicSampleHandler(webapp2.RequestHandler):
 		path = os.path.join(directory, os.path.join('templates', 'topic-layout.html'))
 		self.response.out.write(template.render(path, values))
 
-class NotFoundPageHandler(webapp.RequestHandler):
+class NotFoundPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(404)
 		self.response.out.write('<html><head><title>404 Error</title></head><body>404 Error</body></html>')
