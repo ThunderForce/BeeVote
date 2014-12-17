@@ -17,7 +17,33 @@
 
 import os
 import webapp2
+from google.appengine.ext import db
 from google.appengine.ext.webapp import template
+
+# Start of Data Model
+
+class Topic(db.Model):
+	title = db.StringProperty(required=True)
+	description = db.TextProperty()
+	activity = db.StringProperty()
+	place = db.StringProperty()
+	date = db.DateProperty()
+	time = db.TimeProperty()
+	creator = db.StringProperty()
+
+class Suggestion(db.Model):
+	title = db.StringProperty(required=True)
+	topic = db.ReferenceProperty(Topic, required=True)
+	activity = db.StringProperty()
+	place = db.StringProperty()
+	date = db.DateProperty()
+	time = db.TimeProperty()
+	creator = db.StringProperty()
+	
+class Vote(db.Model):
+	suggestion = db.ReferenceProperty(Suggestion, required=True)
+	
+# End of Data Model
 
 # Start of handlers
 
@@ -35,7 +61,7 @@ class TopicSampleHandler(webapp2.RequestHandler):
 		path = os.path.join(directory, os.path.join('templates', 'topic-layout.html'))
 		self.response.out.write(template.render(path, values))
 
-class NotFoundPageHandler(webapp.RequestHandler):
+class NotFoundPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(404)
 		self.response.out.write('<html><head><title>404 Error</title></head><body>404 Error</body></html>')
