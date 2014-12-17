@@ -1,0 +1,42 @@
+
+.navbar-static-top,
+.navbar-fixed-top,
+.navbar-fixed-bottom {
+	border-radius: 0;
+
+.well, .panel {
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.jumbotron {
+	max-width: auto;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 80px;
+	border-radius: 0;
+}
+
+
+[color="blue"].well{
+  background-color: #2196F3;
+}
+
+[color="red"].well{
+  background-color: #D32F2F;
+}
+
+
+/*
+body .jumbotron,
+.container .jumbotron,
+.container-fluid .jumbotron {
+  background-color: #fff;
+  padding: 19px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+  border-radius: 2px;
+  border: 110;
+}
+*/
