@@ -92,6 +92,7 @@ class NotFoundPageHandler(webapp2.RequestHandler):
 		import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		values = {
 			'basic_head': template.render(import_path, {}),
+			'url': self.request.path,
 		}
 		path = os.path.join(directory, os.path.join('templates', 'not_found.html'))
 		self.response.out.write(template.render(path, values))
