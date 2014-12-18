@@ -88,8 +88,11 @@ class ProposalHandler(webapp2.RequestHandler):
 class NotFoundPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(404)
-		values = {}
 		directory = os.path.dirname(__file__)
+		import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
+		values = {
+			'basic_head': template.render(import_path, {}),
+		}
 		path = os.path.join(directory, os.path.join('templates', 'not_found.html'))
 		self.response.out.write(template.render(path, values))
 
