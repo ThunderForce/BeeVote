@@ -49,6 +49,7 @@ class Vote(db.Model):
 # Start of filling dummy data
 
 topic_stasera = Topic(
+	key_name = "1",
 	title = "Che facciamo stasera?",
 	description = "Dobbiamo decidere che fare stasera perche' mi annoio",
 	date = datetime.date(2014,12,18),
@@ -58,6 +59,7 @@ topic_stasera = Topic(
 topic_stasera.put()
 
 topic_cena = Topic(
+	key_name = "2",
 	title = "Cena dei 100 giorni!",
 	description = "Festeggiamo i 100 giorni! (possibilmente dove si spende poco)",
 	activity = "Cena",
@@ -66,6 +68,7 @@ topic_cena = Topic(
 topic_cena.put()
 
 topic_film = Topic(
+	key_name = "3",
 	title = "Dove vediamo Interstellar!",
 	description = "Dobbiamo decidere un giorno per andare a vedere questo fantastico film!",
 	activity = "Visione film Interstellar",
@@ -75,6 +78,7 @@ topic_film = Topic(
 topic_film.put()
 
 suggestion_stasera_film = Suggestion(
+	key_name = "4",
 	title = "Andiamo a vedere Interstellar!",
 	topic = topic_stasera,
 	activity = "Visione film Interstellar",
@@ -84,6 +88,7 @@ suggestion_stasera_film = Suggestion(
 suggestion_stasera_film.put()
 
 suggestion_stasera_cena = Suggestion(
+	key_name = "5",
 	title = "Facciamo una cena tutti insieme!",
 	topic = topic_stasera,
 	activity = "Cena di gruppo",
@@ -127,7 +132,9 @@ class GroupListHandler(BasicPageHandler):
 
 class GroupHandler(BasicPageHandler):
 	def get(self):
-		self.write_template('topics-layout.html')
+		topics = db.GqlQuery('SELECT * FROM Topic').fetch(10)
+		values = {'topics': topics}
+		self.write_template('topics-layout.html', values)
 
 class ProposalHandler(BasicPageHandler):
 	def get(self):
