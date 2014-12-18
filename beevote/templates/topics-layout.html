@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html>
-	
+
 	<head>
 
 		<title>List of topics - VoteIt!</title>
-		
+
 		{{ basic_head }}
-		
+
 		<script>
 			$(document).ready(function() {
-				
+
 				$.ajax({
 					url: "topics.json",
 					method: "GET",
 					dataType: "json",
 					success: function(events) {
-					
+
 						var event_strings = [];
-					
+
 						$.each(events, function(index, event) {
-							
+
 							var str = "";
 							str +=	'<a href="view_event.php?id='+event.id+'">';
 							//str +=		'<div class="panel panel-default" style="cursor: pointer;">';
@@ -40,22 +40,22 @@
 							str +=			'</div>';
 							str +=		'</div>';
 							str +=	'</a>';
-							
+
 							event_strings.push(str);
-							
+
 						});
-						
+
 						//var event_list_string = event_strings.join('<div class="list-group-separator"></div>');
 						var event_list_string = event_strings.join('');
-						
+
 						$("#event_list").append(event_list_string)
 					}
 				});
 			});
 		</script>
-		
+
 	</head>
-	
+
 	<body>
 
 		<div class="navbar navbar-default">
@@ -65,7 +65,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        
+
 	        <div class="list-group">
 	        <div class="list-group-item">
 	        <div class="row-picture">
@@ -136,31 +136,35 @@
 			<div align="center"><a href="javascript:void(0)" class="btn btn-primary btn-raised btn-lg">Create a new topic
 				<span class="mdi-content-add-circle-outline"></span></a></div>
 			<div class="col-lg-12">
+
+
+
 				<div class="list-group" id="event_list">
+						<div class="list-group-item">
 				{% for topic in topics %}
-				
-					<a href="view_event.php?id={{topic.key_name}}">
-						<div class="panel panel-default" style="cursor: pointer;">
-							<div class="well well-sm" color="blue" style="cursor: pointer;">
-								<div class="list-group-item event">
-									<div class="row-action-primary">
-										<div class="row-picture">
-											<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
-										</div>
-									</div>
-									<div class="row-content">
-										<div class="action-secondary">
-											<i class="mdi-material-info"></i>
-										</div>
-										<h4 class="list-group-item-heading">{{topic.title}}</h4>
-										<p class="list-group-item-text">{{topic.description}}</p>
-									</div>
-								</div>
-							</div>
+
+					<!-- Card Proposal Big -->
+
+					<div class="list-group" id="event_list">
+						<div class="list-group-item">
+					<div class="well well-lg" color="blue">
+						<!-- interno proposta -->
+						<div class="row-picture">
+							<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
 						</div>
-					</a>
-				{% endfor %}
+						<div class="row-content">
+							<h2 class="list-group-item-heading">{{topic.title}}</h2>
+							<p class="list-group-item-text">{{topic.description}}</p>
+						</div>
+						<label ><input type="checkbox" aling="right"></label>
+					</div>
 				</div>
+			</div>
+
+
+
+
+				{% endfor %}
 			</div>
 		</div>
 	</div>
