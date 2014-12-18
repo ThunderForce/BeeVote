@@ -47,55 +47,45 @@ class Vote(db.Model):
 
 # Start of handlers
 
-class MainHandler(webapp2.RequestHandler):
-	def get(self):
+class BasicPageHandler(webapp2.RequestHandler):
+	def write_template(self, template_name, template_values={}):
+	
 		directory = os.path.dirname(__file__)
 		import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
+	
 		values = {
 			'basic_head': template.render(import_path, {}),
 		}
-		path = os.path.join(directory, os.path.join('templates', 'index.html'))
+		
+		values.update(template_values)
+
+		path = os.path.join(directory, os.path.join('templates', template_name))
 		self.response.out.write(template.render(path, values))
 
-class TopicSampleHandler(webapp2.RequestHandler):
+class MainHandler(BasicPageHandler):
 	def get(self):
-		values = {}
-		directory = os.path.dirname(__file__)
-		path = os.path.join(directory, os.path.join('templates', 'topic-layout.html'))
-		self.response.out.write(template.render(path, values))
+		self.write_template('index.html')
 
-class GroupListHandler(webapp2.RequestHandler):
+class TopicSampleHandler(BasicPageHandler):
 	def get(self):
-		values = {}
-		directory = os.path.dirname(__file__)
-		path = os.path.join(directory, os.path.join('templates', 'groups-list-layout.html'))
-		self.response.out.write(template.render(path, values))
+		self.write_template('topic-layout.html')
 
-class GroupHandler(webapp2.RequestHandler):
+class GroupListHandler(BasicPageHandler):
 	def get(self):
-		values = {}
-		directory = os.path.dirname(__file__)
-		path = os.path.join(directory, os.path.join('templates', 'topics-layout.html'))
-		self.response.out.write(template.render(path, values))
+		self.write_template('groups-list-layout.html')
 
-class ProposalHandler(webapp2.RequestHandler):
+class GroupHandler(BasicPageHandler):
 	def get(self):
-		values = {}
-		directory = os.path.dirname(__file__)
-		path = os.path.join(directory, os.path.join('templates', 'proposal-layout.html'))
-		self.response.out.write(template.render(path, values))
+		self.write_template('topics-layout.html')
 
-class NotFoundPageHandler(webapp2.RequestHandler):
+class ProposalHandler(BasicPageHandler):
+	def get(self):
+		self.write_template('proposal-layout.html')
+
+class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
 		self.error(404)
-		directory = os.path.dirname(__file__)
-		import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-		values = {
-			'basic_head': template.render(import_path, {}),
-			'url': self.request.path,
-		}
-		path = os.path.join(directory, os.path.join('templates', 'not_found.html'))
-		self.response.out.write(template.render(path, values))
+		self.write_template('not_found.html', {'url': self.request.path})
 
 # End of handlers
 
