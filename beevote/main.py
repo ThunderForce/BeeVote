@@ -17,6 +17,7 @@
 
 import os
 import webapp2
+import datetime
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
@@ -44,6 +45,56 @@ class Vote(db.Model):
 	suggestion = db.ReferenceProperty(Suggestion, required=True)
 	
 # End of Data Model
+
+# Start of filling dummy data
+
+topic_stasera = Topic(
+	title = "Che facciamo stasera?",
+	description = "Dobbiamo decidere che fare stasera perche' mi annoio",
+	date = datetime.date(2014,12,18),
+	time = datetime.time(21, 0),
+	creator = "Riccardo",
+)
+topic_stasera.put()
+
+topic_cena = Topic(
+	title = "Cena dei 100 giorni!",
+	description = "Festeggiamo i 100 giorni! (possibilmente dove si spende poco)",
+	activity = "Cena",
+	creator = "Alessandro",
+)
+topic_cena.put()
+
+topic_film = Topic(
+	title = "Dove vediamo Interstellar!",
+	description = "Dobbiamo decidere un giorno per andare a vedere questo fantastico film!",
+	activity = "Visione film Interstellar",
+	place = "Cinema",
+	creator = "Luigi",
+)
+topic_film.put()
+
+suggestion_stasera_film = Suggestion(
+	title = "Andiamo a vedere Interstellar!",
+	topic = topic_stasera,
+	activity = "Visione film Interstellar",
+	place = "UCI Cinema Parco Leonardo",
+	creator = "Luigi",
+)
+suggestion_stasera_film.put()
+
+suggestion_stasera_cena = Suggestion(
+	title = "Facciamo una cena tutti insieme!",
+	topic = topic_stasera,
+	activity = "Cena di gruppo",
+	place = "Casa di Alessandro",
+	creator = "Alessandro",
+)
+suggestion_stasera_cena.put()
+
+
+
+# End of filling dummy data
 
 # Start of handlers
 
