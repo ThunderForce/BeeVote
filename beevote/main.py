@@ -64,7 +64,10 @@ class TopicSampleHandler(webapp2.RequestHandler):
 class NotFoundPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(404)
-		self.response.out.write('<html><head><title>404 Error</title></head><body>404 Error</body></html>')
+		values = {}
+		directory = os.path.dirname(__file__)
+		path = os.path.join(directory, os.path.join('templates', 'not_found.html'))
+		self.response.out.write(template.render(path, values))
 
 # End of handlers
 
