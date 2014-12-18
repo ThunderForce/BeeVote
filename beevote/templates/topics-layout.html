@@ -147,22 +147,21 @@
 
 					<div class="list-group" id="event_list">
 						<div class="list-group-item">
-					<div class="well well-lg" color="blue">
-						<!-- interno proposta -->
-						<div class="row-picture">
-							<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
+							<a href="view-topic?id={{topic.key.name}}">
+								<div class="well well-lg" color="blue">
+									<!-- interno proposta -->
+									<div class="row-picture">
+										<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
+									</div>
+									<div class="row-content">
+										<h2 class="list-group-item-heading">{{topic.title}}</h2>
+										<p class="list-group-item-text">{{topic.description}}</p>
+									</div>
+									<label ><input type="checkbox" align="right"></label>
+								</div>
+							</a>
 						</div>
-						<div class="row-content">
-							<h2 class="list-group-item-heading">{{topic.title}}</h2>
-							<p class="list-group-item-text">{{topic.description}}</p>
-						</div>
-						<label ><input type="checkbox" aling="right"></label>
 					</div>
-				</div>
-			</div>
-
-
-
 
 				{% endfor %}
 			</div>
