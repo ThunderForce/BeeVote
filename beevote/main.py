@@ -61,6 +61,27 @@ class TopicSampleHandler(webapp2.RequestHandler):
 		path = os.path.join(directory, os.path.join('templates', 'topic-layout.html'))
 		self.response.out.write(template.render(path, values))
 
+class GroupListHandler(webapp2.RequestHandler):
+	def get(self):
+		values = {}
+		directory = os.path.dirname(__file__)
+		path = os.path.join(directory, os.path.join('templates', 'groups-list-layout.html'))
+		self.response.out.write(template.render(path, values))
+
+class GroupHandler(webapp2.RequestHandler):
+	def get(self):
+		values = {}
+		directory = os.path.dirname(__file__)
+		path = os.path.join(directory, os.path.join('templates', 'topics-layout.html'))
+		self.response.out.write(template.render(path, values))
+
+class ProposalHandler(webapp2.RequestHandler):
+	def get(self):
+		values = {}
+		directory = os.path.dirname(__file__)
+		path = os.path.join(directory, os.path.join('templates', 'proposal-layout.html'))
+		self.response.out.write(template.render(path, values))
+
 class NotFoundPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(404)
@@ -74,5 +95,8 @@ class NotFoundPageHandler(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
 	('/topic-sample', TopicSampleHandler),
+	('/groups', GroupListHandler),
+	('/group', GroupHandler),
+	('/proposal', ProposalHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
