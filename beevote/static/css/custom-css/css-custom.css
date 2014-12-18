@@ -40,8 +40,12 @@ img.image-circle {
 }
 
 
-[color="blue"].well{
+[color="blue"].well {
   background-color: #2196F3;
+}
+
+[color="blue"].navbar {
+	background-color: #2196F3;
 }
 
 [color="red"].well{
