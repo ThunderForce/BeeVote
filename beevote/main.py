@@ -32,7 +32,7 @@ class Topic(db.Model):
 	time = db.TimeProperty()
 	creator = db.StringProperty()
 
-class Suggestion(db.Model):
+class Proposal(db.Model):
 	title = db.StringProperty(required=True)
 	topic = db.ReferenceProperty(Topic, required=True)
 	activity = db.StringProperty()
@@ -42,7 +42,7 @@ class Suggestion(db.Model):
 	creator = db.StringProperty()
 	
 class Vote(db.Model):
-	suggestion = db.ReferenceProperty(Suggestion, required=True)
+	proposal = db.ReferenceProperty(Proposal, required=True)
 	
 # End of Data Model
 
@@ -77,7 +77,7 @@ topic_film = Topic(
 )
 topic_film.put()
 
-suggestion_stasera_film = Suggestion(
+suggestion_stasera_film = Proposal(
 	key_name = "4",
 	title = "Andiamo a vedere Interstellar!",
 	topic = topic_stasera,
@@ -87,7 +87,7 @@ suggestion_stasera_film = Suggestion(
 )
 suggestion_stasera_film.put()
 
-suggestion_stasera_cena = Suggestion(
+suggestion_stasera_cena = Proposal(
 	key_name = "5",
 	title = "Facciamo una cena tutti insieme!",
 	topic = topic_stasera,
@@ -140,6 +140,51 @@ class ProposalHandler(BasicPageHandler):
 	def get(self):
 		self.write_template('proposal-layout.html')
 
+class NewTopicHandler(BasicPageHandler):
+	def get(self):
+		self.write_template('topic-form.html')
+		
+class NewProposalHandler(BasicPageHandler):
+	def get(self):
+		self.write_template('proposal-form.html')
+
+class CreateTopicHandler(BasicPageHandler):
+	def post(self):
+		title = self.request.get('inputTopicName')
+		what = self.request.get('inputWhat')
+		where= self.request.get('inputWhere')
+		date = self.request.get('inputDate')
+		time = self.request.get('inputTime')
+		topic = Topic(title=title)
+		topic.activity = what
+		topic.place = where
+		topic.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+		topic.time = datetime.datetime.strptime(time, '%H:%M').time()
+		topic.put()
+		self.redirect('/group')
+
+class CreateProposalHandler(BasicPageHandler):
+	def post(self):
+		title = self.request.get('inputProposalName')
+		what = self.request.get('inputWhat')
+		where= self.request.get('inputWhere')
+		date = self.request.get('inputDate')
+		time = self.request.get('inputTime')
+		topic_key = db.Key.from_path('Topic', '1')
+		topic = db.get(topic_key)
+		proposal = Proposal(
+			title=title,
+			topic=topic,
+		)
+		proposal.activity = what
+		proposal.place = where
+		if date != "":
+			proposal.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+		if time != "":
+			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
+		proposal.put()
+		self.redirect('/')
+
 class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
 		self.error(404)
@@ -153,5 +198,9 @@ app = webapp2.WSGIApplication([
 	('/groups', GroupListHandler),
 	('/group', GroupHandler),
 	('/proposal', ProposalHandler),
+	('/new-topic', NewTopicHandler),
+	('/new-proposal', NewProposalHandler),
+	('/create-topic', CreateTopicHandler),
+	('/create-proposal', CreateProposalHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)

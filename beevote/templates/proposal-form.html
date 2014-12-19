@@ -8,28 +8,28 @@
 </head>
 <body>
 
-<form class="form-horizontal">
+<form action="create-proposal" method="post" class="form-horizontal">
     <fieldset>
         <h2 align="center">Create a new Proposal</h2> 
 
         <div class="form-group">
             <label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
             <div class="col-lg-10">
-                <input class="form-control" id="inputProposalName" placeholder="Title of the Proposal" type="text">
+                <input class="form-control" id="inputProposalName" name="inputProposalName" placeholder="Title of the Proposal" type="text">
             </div>
         </div>
 
         <div class="form-group">
             <label for="inputWhat" class="col-lg-2 control-label">What: </label>
             <div class="col-lg-10">
-                <input class="form-control" id="inputWhat" placeholder="What to do" type="text">
+                <input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do" type="text">
             </div>
         </div>
 
         <div class="form-group">
             <label for="inputWhere" class="col-lg-2 control-label">Where: </label>
             <div class="col-lg-10">
-                <input class="form-control" id="inputWhere" placeholder="Location for the activities" type="text">
+                <input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities" type="text">
                 
             </div>
         </div>
@@ -38,7 +38,7 @@
         <div class="form-group">
             <label for="inputDate" class="col-lg-2 control-label">Date: </label>
             <div class="col-lg-10">
-                <input class="form-control" id="inputDate" placeholder="Date for the activity" type="date">
+                <input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" type="date">
                 
             </div>
         </div>
@@ -46,7 +46,7 @@
         <div class="form-group">
             <label for="inputTime" class="col-lg-2 control-label">Time: </label>
             <div class="col-lg-10">
-                <input class="form-control" id="inputTime" placeholder="Time for the activity" type="time">
+                <input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" type="time">
             </div>
         </div>
 
