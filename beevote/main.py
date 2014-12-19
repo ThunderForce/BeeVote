@@ -35,6 +35,7 @@ class Topic(db.Model):
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)
 	topic = db.ReferenceProperty(Topic, required=True)
+	description = db.TextProperty()
 	activity = db.StringProperty()
 	place = db.StringProperty()
 	date = db.DateProperty()
@@ -45,61 +46,6 @@ class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)
 	
 # End of Data Model
-
-# Start of filling dummy data
-
-topic_stasera = Topic(
-	key_name = "1",
-	title = "Che facciamo stasera?",
-	description = "Dobbiamo decidere che fare stasera perche' mi annoio",
-	date = datetime.date(2014,12,18),
-	time = datetime.time(21, 0),
-	creator = "Riccardo",
-)
-topic_stasera.put()
-
-topic_cena = Topic(
-	key_name = "2",
-	title = "Cena dei 100 giorni!",
-	description = "Festeggiamo i 100 giorni! (possibilmente dove si spende poco)",
-	activity = "Cena",
-	creator = "Alessandro",
-)
-topic_cena.put()
-
-topic_film = Topic(
-	key_name = "3",
-	title = "Dove vediamo Interstellar!",
-	description = "Dobbiamo decidere un giorno per andare a vedere questo fantastico film!",
-	activity = "Visione film Interstellar",
-	place = "Cinema",
-	creator = "Luigi",
-)
-topic_film.put()
-
-suggestion_stasera_film = Proposal(
-	key_name = "4",
-	title = "Andiamo a vedere Interstellar!",
-	topic = topic_stasera,
-	activity = "Visione film Interstellar",
-	place = "UCI Cinema Parco Leonardo",
-	creator = "Luigi",
-)
-suggestion_stasera_film.put()
-
-suggestion_stasera_cena = Proposal(
-	key_name = "5",
-	title = "Facciamo una cena tutti insieme!",
-	topic = topic_stasera,
-	activity = "Cena di gruppo",
-	place = "Casa di Alessandro",
-	creator = "Alessandro",
-)
-suggestion_stasera_cena.put()
-
-
-
-# End of filling dummy data
 
 # Start of handlers
 
@@ -124,7 +70,15 @@ class MainHandler(BasicPageHandler):
 
 class TopicSampleHandler(BasicPageHandler):
 	def get(self):
-		self.write_template('topic-layout.html')
+		topic_key = db.Key.from_path('Topic', long(self.request.get('id')))
+		topic = db.get(topic_key)
+		
+		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(10)
+		values = {
+			'topic': topic,
+			'proposals': proposals,
+		}
+		self.write_template('topic-layout.html', values)
 
 class GroupListHandler(BasicPageHandler):
 	def get(self):
@@ -138,7 +92,9 @@ class GroupHandler(BasicPageHandler):
 
 class ProposalHandler(BasicPageHandler):
 	def get(self):
-		self.write_template('proposal-layout.html')
+		proposal_key = db.Key.from_path('Proposal', long(self.request.get('id')))
+		proposal = db.get(proposal_key)
+		self.write_template('proposal-layout.html', {'proposal': proposal})
 
 class NewTopicHandler(BasicPageHandler):
 	def get(self):
@@ -146,7 +102,8 @@ class NewTopicHandler(BasicPageHandler):
 		
 class NewProposalHandler(BasicPageHandler):
 	def get(self):
-		self.write_template('proposal-form.html')
+		topic_id = self.request.get('topic')
+		self.write_template('proposal-form.html', {'topic_id': topic_id})
 
 class CreateTopicHandler(BasicPageHandler):
 	def post(self):
@@ -155,11 +112,15 @@ class CreateTopicHandler(BasicPageHandler):
 		where= self.request.get('inputWhere')
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
+		description = self.request.get('inputDescription')
 		topic = Topic(title=title)
 		topic.activity = what
 		topic.place = where
-		topic.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
-		topic.time = datetime.datetime.strptime(time, '%H:%M').time()
+		if date != "":
+			topic.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+		if time != "":
+			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
+		topic.description = description
 		topic.put()
 		self.redirect('/group')
 
@@ -170,7 +131,9 @@ class CreateProposalHandler(BasicPageHandler):
 		where= self.request.get('inputWhere')
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
-		topic_key = db.Key.from_path('Topic', '1')
+		description = self.request.get('inputDescription')
+		topic_id = self.request.get('topicId')
+		topic_key = db.Key.from_path('Topic', long(topic_id))
 		topic = db.get(topic_key)
 		proposal = Proposal(
 			title=title,
@@ -182,8 +145,9 @@ class CreateProposalHandler(BasicPageHandler):
 			proposal.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
 		if time != "":
 			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
+		proposal.description = description
 		proposal.put()
-		self.redirect('/')
+		self.redirect('/view-topic?id='+topic_id)
 
 class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
@@ -194,10 +158,10 @@ class NotFoundPageHandler(BasicPageHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/topic-sample', TopicSampleHandler),
+	('/view-topic', TopicSampleHandler),
 	('/groups', GroupListHandler),
 	('/group', GroupHandler),
-	('/proposal', ProposalHandler),
+	('/view-proposal', ProposalHandler),
 	('/new-topic', NewTopicHandler),
 	('/new-proposal', NewProposalHandler),
 	('/create-topic', CreateTopicHandler),

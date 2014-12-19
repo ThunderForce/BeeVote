@@ -39,60 +39,73 @@
 
 <!-- Topic -->
 	<div class="jumbotron">
-			<div class="row">
-				<div class="col-lg-6">
-				    <h1>Topic</h1>
-				    <p>Topic details.</p>
-				    <p><a class="btn btn-info btn-lg">Partecipa</a><a class="btn btn-info btn-lg">Non Partecipare</a></p>
-				</div>
-				<div class="col-lg-3">
-					<div class="btn-group">
-		    			<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspparteciperanno
-		    				&nbsp&nbsp<span class="caret"></span></a>
-		    			<ul class="dropdown-menu">
-					        <li><a href="javascript:void(0)">Action</a></li>
-					        <li><a href="javascript:void(0)">Another action</a></li>
-					        <li><a href="javascript:void(0)">Something else here</a></li>
-					        <li class="divider"></li>
-					        <li><a href="javascript:void(0)">Separated link</a></li>
-					    </ul>
-					</div>
-				</div>
-				<div class="col-lg-3">
-					<div class="btn-group">
-		    			<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspnon parteciperanno&nbsp&nbsp<span class="caret"></span></a>
-		    			<ul class="dropdown-menu">
-					        <li><a href="javascript:void(0)">Action</a></li>
-					        <li><a href="javascript:void(0)">Another action</a></li>
-					        <li><a href="javascript:void(0)">Something else here</a></li>
-					        <li class="divider"></li>
-					        <li><a href="javascript:void(0)">Separated link</a></li>
-					    </ul>
-					</div>
+		<div class="row">
+			<div class="col-lg-6">
+				<h1>{{ topic.title }}</h1>
+				<p>{{ topic.description }}</p>
+				<p><a class="btn btn-info btn-lg">Partecipa</a><a class="btn btn-info btn-lg">Non Partecipare</a></p>
+			</div>
+			<div class="col-lg-3">
+				<div class="btn-group">
+					<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspparteciperanno
+						&nbsp&nbsp<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:void(0)">Action</a></li>
+						<li><a href="javascript:void(0)">Another action</a></li>
+						<li><a href="javascript:void(0)">Something else here</a></li>
+						<li class="divider"></li>
+						<li><a href="javascript:void(0)">Separated link</a></li>
+					</ul>
 				</div>
 			</div>
-		</div>	
-
+			<div class="col-lg-3">
+				<div class="btn-group">
+					<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspnon parteciperanno&nbsp&nbsp<span class="caret"></span></a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:void(0)">Action</a></li>
+						<li><a href="javascript:void(0)">Another action</a></li>
+						<li><a href="javascript:void(0)">Something else here</a></li>
+						<li class="divider"></li>
+						<li><a href="javascript:void(0)">Separated link</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>	
+	<div align="center">
+		<a href="new-proposal?topic={{ topic.key.id }}">
+			<button class="btn btn-info">Create a new proposal</button>
+		</a>
+	</div>
+	
 <!-- Group Proposte -->
 
 	<div class="list-group">
+	
+		{% for proposal in proposals %}
+	
 		<div class="list-group-item">
 
-		<!-- Card Proposal Big -->
+			<!-- Card Proposal Big -->
 
+			<a href="view-proposal?id={{ proposal.key.id }}">
 			<div class="well well-lg" color="blue">
 			<!-- interno proposta -->
 				<div class="row-picture">
 					<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
 				</div>
 				<div class="row-content">
-					<h4 class="list-group-item-heading">Card Proposal Big
+					<h4 class="list-group-item-heading">{{ proposal.title }}
 					</h4>
-					<p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus</p>
+					<p class="list-group-item-text">{{ proposal.description }}</p>
 				</div>
-				<label ><input type="checkbox" aling="right"></label>
+				<label ><input type="checkbox" align="right"></label>
 			</div>
+			</a>
 		</div>
+		
+		{% endfor %}
+		
 	</div>
 
 </body>
