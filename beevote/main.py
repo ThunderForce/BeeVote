@@ -95,7 +95,13 @@ class ProposalHandler(BasicPageHandler):
 	def get(self):
 		proposal_key = db.Key.from_path('Proposal', long(self.request.get('id')))
 		proposal = db.get(proposal_key)
-		self.write_template('proposal-layout.html', {'proposal': proposal})
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
+		vote_number = votes.count()
+		values = {
+			'proposal': proposal,
+			'vote_number': vote_number,
+		}
+		self.write_template('proposal-layout.html', values)
 
 class NewTopicHandler(BasicPageHandler):
 	def get(self):
@@ -160,7 +166,23 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {
-			'success': true,
+			'success': True,
+			'vote_number': vote_number,
+		}
+		self.response.out.write(json.dumps(values))
+
+class RemoveVoteHandler(webapp2.RequestHandler):
+	def post(self):
+		proposal_id = self.request.get('proposal_id')
+		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
+		proposal = db.get(proposal_key)
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
+		vote = votes.get()
+		vote.delete()
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
+		vote_number = votes.count()
+		values = {
+			'success': True,
 			'vote_number': vote_number,
 		}
 		self.response.out.write(json.dumps(values))
@@ -182,5 +204,7 @@ app = webapp2.WSGIApplication([
 	('/new-proposal', NewProposalHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
+	('/api/create-vote', CreateVoteHandler),
+	('/api/remove-vote', RemoveVoteHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)

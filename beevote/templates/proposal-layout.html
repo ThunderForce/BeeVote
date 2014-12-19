@@ -8,22 +8,40 @@
         {{ basic_head }}
 
         <script>
-            $(document).ready(function() {
-                $.material.init();
-
-                $.ajax({
-                    url: "votes.json",
-                    
-                    dataType: "json",
-                    success: function(response) {
-                        $("#number_of_votes").html(response.number_of_votes);
-                        $.each(response.votes, function(index, vote) {
-                            var str = '<li><a href="javascript:void(0)" class="btn btn-flat btn-info">'+vote.name+' '+vote.surname+'</a></li>';
-                            $('#list_of_votes').append(str);
-                        })
-                    }
-                });
-            });
+			function toggle_vote() {
+				if ($("#vote").is(":checked"))
+					add_vote();
+				else
+					remove_vote();
+			}
+			function add_vote() {
+				$("#number_of_votes").html("...");
+				$.ajax({
+					url: "api/create-vote",
+					method: "POST",
+					data: {
+						proposal_id: {{ proposal.key.id }}
+					},
+					dataType: "json",
+					success: function(response) {
+						$("#number_of_votes").html(response.vote_number);
+					}
+				});
+			}
+			function remove_vote() {
+				$("#number_of_votes").html("...");
+				$.ajax({
+					url: "api/remove-vote",
+					method: "POST",
+					data: {
+						proposal_id: {{ proposal.key.id }}
+					},
+					dataType: "json",
+					success: function(response) {
+						$("#number_of_votes").html(response.vote_number);
+					}
+				});
+			}
         </script>
 
     </head>
@@ -59,20 +77,20 @@
     	<div class="row">
             <div class="col-lg-5">
                 <h1>{{ proposal.title }}</h1>
-                <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPoposto da <a href="javascript:void(0)" class="btn btn-flat btn-info">NOME COGNOME</a></p>
+                <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspProposto da <a href="javascript:void(0)" class="btn btn-flat btn-info">NOME COGNOME</a></p>
     	   </div>
     	   <div class="col-lg-4"></div>
     	   <div class="col-lg-2">
                     <div class="btn-group">
                         <a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Voti&nbsp&nbsp&nbsp
-                            <span class="badge" id="number_of_votes">...</span>&nbsp&nbsp<span class="caret"></span></a>
+                            <span class="badge" id="number_of_votes">{{ vote_number }}</span>&nbsp&nbsp<span class="caret"></span></a>
                         <ul class="dropdown-menu" id="list_of_votes">
                             <!-- Here there's a dynamic list of votes -->
                         </ul>
                     </div>
             </div>        
             <div class="col-lg-1">
-                <span class="label label-info">Vota</span><span class="row-action-primary checkbox"><label><input type="checkbox"></label></span>
+                <span class="label label-info">Vota</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote();'></label></span>
             </div>
                 
         </div>
