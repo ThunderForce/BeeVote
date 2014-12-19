@@ -18,6 +18,7 @@
 import os
 import webapp2
 import datetime
+import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
@@ -149,6 +150,21 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.put()
 		self.redirect('/view-topic?id='+topic_id)
 
+class CreateVoteHandler(webapp2.RequestHandler):
+	def post(self):
+		proposal_id = self.request.get('proposal_id')
+		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
+		proposal = db.get(proposal_key)
+		vote = Vote(proposal=proposal)
+		vote.put()
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
+		vote_number = votes.count()
+		values = {
+			'success': true,
+			'vote_number': vote_number,
+		}
+		self.response.out.write(json.dumps(values))
+		
 class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
 		self.error(404)
