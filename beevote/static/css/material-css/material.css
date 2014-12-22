@@ -2661,7 +2661,7 @@ body .jumbotron-material-lightgrey,
   background-color: #0f9d58;
 }
 .btn-info:not(.btn-link):not(.btn-flat) {
-  background-color: #03a9f4;
+  background-color: #2196F3;
 }
 .btn-warning:not(.btn-link):not(.btn-flat) {
   background-color: #ff5722;
@@ -2734,7 +2734,7 @@ body .jumbotron-material-lightgrey,
   color: #0f9d58;
 }
 .btn-info.btn-flat:not(.btn-link) {
-  color: #03a9f4;
+  color: #2196F3;
 }
 .btn-warning.btn-flat:not(.btn-link) {
   color: #ff5722;
@@ -2964,7 +2964,7 @@ body .jumbotron-material-lightgrey,
   background-color: #0f9d58;
 }
 .open > .dropdown-toggle.btn-info {
-  background-color: #03a9f4;
+  background-color: #2196F3;
 }
 .open > .dropdown-toggle.btn-warning {
   background-color: #ff5722;
