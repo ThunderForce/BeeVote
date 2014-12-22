@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+	<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+	<link href="static/css/material-css/ripples.min.css" rel="stylesheet">
+	<link href="static/css/material-css/material-wfont.min.css" rel="stylesheet">
+
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+	<script src="static/js/material-js/ripples.min.js"></script>
+	<script src="static/js/material-js/material.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$.material.init();
+		});
+	</script>
+
+
+	<!-- Popup JS -->
+	<script>
+		function centerModal() {
+			$(this).css('display', 'block');
+			var $dialog = $(this).find(".modal-dialog");
+			var offset = ($(window).height() - $dialog.height()) / 2;
+		// Center modal vertically in window
+		$dialog.css("margin-top", offset);
+	}
+
+	$('.modal').on('show.bs.modal', centerModal);
+	$(window).on("resize", function () {
+		$('.modal:visible').each(centerModal);
+	});
+	</script>
+	<!-- Popup JS -->
+
+</head>
+
+<body>
+
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Popup image</button>
+
+	<!-- Popup -->
+	<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-body">
+
+
+				<!-- FORM -->
+					<form action="create-proposal" method="post" class="form-horizontal">
+						<fieldset>
+							<h2 align="center">Create a new Proposal</h2> 
+
+							<input type="hidden" name="topicId" value="{{ topic_id }}">
+
+							<div class="form-group">
+								<label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
+								<div class="col-lg-10">
+									<input class="form-control" id="inputProposalName" name="inputProposalName" placeholder="Title of the Proposal" type="text">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputWhat" class="col-lg-2 control-label">What: </label>
+								<div class="col-lg-10">
+									<input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do" type="text">
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputWhere" class="col-lg-2 control-label">Where: </label>
+								<div class="col-lg-10">
+									<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities" type="text">
+
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<label for="inputDate" class="col-lg-2 control-label">Date: </label>
+								<div class="col-lg-10">
+									<input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" type="date">
+
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="inputTime" class="col-lg-2 control-label">Time: </label>
+								<div class="col-lg-10">
+									<input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" type="time">
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<label for="textArea" class="col-lg-2 control-label">Details</label>
+								<div class="col-lg-10">
+									<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+									<span class="help-block">Add here details that you want the others will know </span>
+								</div>
+							</div>
+
+
+							<div class="form-group">
+								<div class="col-lg-10 col-lg-offset-2">
+									<button type="button" onClick="javascript:window.history.back()" class="btn btn-default">Cancel</button>
+									<button type="submit" class="btn btn-primary">Create</button>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+					<!-- /FORM -->
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- /Popup -->
+
+</body>
+</html>
