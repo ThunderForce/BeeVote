@@ -100,21 +100,23 @@
     <div class ="row">
     	<div class ="col-lg-6">	
     		<div class="well">
-    	    	Date: dd/mm/yyyy
+    	    	Date: {{ proposal.date }}
     		</div>
     	</div>
     	<div class="col-lg-6">
     		<div class="well">
-    	    	Hours: hh:mm
+    	    	Time: {{ proposal.time }}
     		</div>
     	</div>
     </div>
 
-    <div class="jumbotron">
-        <h2>Place</h2>
-        <p>Place description.</p>
-        <p>Address: ADDRESS</p>
-        <p><a class="btn btn-info btn-lg">View on Google Maps</a></p>
+    <div class="panel panel-default">
+        <div class="panel-heading"><h2>{{ proposal.place }}</h2></div>
+        <div class="panel-body">
+            <p>Place description.</p>
+            <p>Address: ADDRESS</p>
+            <p><a class="btn btn-info btn-lg">View on Google Maps</a></p>
+        </div>
     </div>
 
     <div class="panel panel-default">
