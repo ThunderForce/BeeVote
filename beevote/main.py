@@ -22,31 +22,7 @@ import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 
-# Start of Data Model
-
-class Topic(db.Model):
-	title = db.StringProperty(required=True)
-	description = db.TextProperty()
-	activity = db.StringProperty()
-	place = db.StringProperty()
-	date = db.DateProperty()
-	time = db.TimeProperty()
-	creator = db.StringProperty()
-
-class Proposal(db.Model):
-	title = db.StringProperty(required=True)
-	topic = db.ReferenceProperty(Topic, required=True)
-	description = db.TextProperty()
-	activity = db.StringProperty()
-	place = db.StringProperty()
-	date = db.DateProperty()
-	time = db.TimeProperty()
-	creator = db.StringProperty()
-	
-class Vote(db.Model):
-	proposal = db.ReferenceProperty(Proposal, required=True)
-	
-# End of Data Model
+import models
 
 # Start of handlers
 
@@ -120,7 +96,7 @@ class CreateTopicHandler(BasicPageHandler):
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
-		topic = Topic(title=title)
+		topic = models.Topic(title=title)
 		topic.activity = what
 		topic.place = where
 		if date != "":
@@ -142,7 +118,7 @@ class CreateProposalHandler(BasicPageHandler):
 		topic_id = self.request.get('topicId')
 		topic_key = db.Key.from_path('Topic', long(topic_id))
 		topic = db.get(topic_key)
-		proposal = Proposal(
+		proposal = models.Proposal(
 			title=title,
 			topic=topic,
 		)
@@ -161,7 +137,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
-		vote = Vote(proposal=proposal)
+		vote = models.Vote(proposal=proposal)
 		vote.put()
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
