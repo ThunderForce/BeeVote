@@ -74,9 +74,19 @@ class ProposalHandler(BasicPageHandler):
 		proposal = db.get(proposal_key)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
+		
+		user = users.get_current_user()
+		user_id = user.user_id()
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
+		own_vote = votes.get()
+		if own_vote:
+			already_voted = True
+		else:
+			already_voted = False
 		values = {
 			'proposal': proposal,
 			'vote_number': vote_number,
+			'already_voted': already_voted,
 		}
 		self.write_template('proposal-layout.html', values)
 
@@ -135,10 +145,13 @@ class CreateProposalHandler(BasicPageHandler):
 
 class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 		vote = models.Vote(proposal=proposal)
+		vote.creator = user_id
 		vote.put()
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
@@ -150,10 +163,12 @@ class CreateVoteHandler(webapp2.RequestHandler):
 
 class RemoveVoteHandler(webapp2.RequestHandler):
 	def post(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
 		vote = votes.get()
 		vote.delete()
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)

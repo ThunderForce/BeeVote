@@ -23,5 +23,6 @@ class Proposal(db.Model):
 	
 class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)
+	creator = db.StringProperty()
 	
 # End of Data Model
