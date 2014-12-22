@@ -21,6 +21,7 @@ import datetime
 import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
+from google.appengine.api import users
 
 import models
 
@@ -162,7 +163,11 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 			'vote_number': vote_number,
 		}
 		self.response.out.write(json.dumps(values))
-		
+
+class LogoutHandler(webapp2.RequestHandler):
+	def get(self):
+		self.redirect(users.create_logout_url('/'))
+
 class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
 		self.error(404)
@@ -182,5 +187,6 @@ app = webapp2.WSGIApplication([
 	('/create-proposal', CreateProposalHandler),
 	('/api/create-vote', CreateVoteHandler),
 	('/api/remove-vote', RemoveVoteHandler),
+	('/logout', LogoutHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
