@@ -79,14 +79,14 @@ class ProposalHandler(BasicPageHandler):
 		}
 		self.write_template('proposal-layout.html', values)
 
-class NewTopicHandler(BasicPageHandler):
-	def get(self):
-		self.write_template('topic-form.html')
-		
-class NewProposalHandler(BasicPageHandler):
-	def get(self):
-		topic_id = self.request.get('topic')
-		self.write_template('proposal-form.html', {'topic_id': topic_id})
+#class NewTopicHandler(BasicPageHandler):
+#	def get(self):
+#		self.write_template('topic-form.html')
+#		
+#class NewProposalHandler(BasicPageHandler):
+#	def get(self):
+#		topic_id = self.request.get('topic')
+#		self.write_template('proposal-form.html', {'topic_id': topic_id})
 
 class CreateTopicHandler(BasicPageHandler):
 	def post(self):
@@ -172,12 +172,12 @@ class NotFoundPageHandler(BasicPageHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/view-topic', TopicSampleHandler),
+	('/view-topic', TopicSampleHandler), #topic-layout
 	('/groups', GroupListHandler),
 	('/group', GroupHandler),
 	('/view-proposal', ProposalHandler),
-	('/new-topic', NewTopicHandler),
-	('/new-proposal', NewProposalHandler),
+	#('/new-topic', NewTopicHandler),
+	#('/new-proposal', NewProposalHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
 	('/api/create-vote', CreateVoteHandler),
