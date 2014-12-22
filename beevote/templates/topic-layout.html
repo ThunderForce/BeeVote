@@ -164,20 +164,28 @@
 
 				<!-- Card Proposal Big -->
 
-				<a href="view-proposal?id={{ proposal.key.id }}">
+				
 					<div class="well well-lg" color="blue">
-						<!-- interno proposta -->
-						<div class="row-picture">
-							<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
+						<div class="row">
+							<a href="view-proposal?id={{ proposal.key.id }}">
+							<div class="col-lg-11">
+								<!-- interno proposta -->
+								<div class="row-picture">
+									<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
+								</div>
+								<div class="row-content">
+									<h4 class="list-group-item-heading">{{ proposal.title }}
+									</h4>
+									<p class="list-group-item-text">{{ proposal.description }}</p>
+								</div>
+							</div>
+							</a>
+							<div class="col-lg-1">
+								<span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:void(0)'></label></span>
+							</div>
 						</div>
-						<div class="row-content">
-							<h4 class="list-group-item-heading">{{ proposal.title }}
-							</h4>
-							<p class="list-group-item-text">{{ proposal.description }}</p>
-						</div>
-						<label ><input type="checkbox" align="right"></label>
 					</div>
-				</a>
+				
 			</div>
 
 			{% endfor %}
