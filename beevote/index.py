@@ -18,14 +18,19 @@
 import os
 import webapp2
 from google.appengine.ext.webapp import template
+from google.appengine.api import users
 
 class IndexHandler(webapp2.RequestHandler):
 	def get(self):
+	
+		user = users.get_current_user()
+	
 		directory = os.path.dirname(__file__)
 		import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 	
 		values = {
 			'basic_head': template.render(import_path, {}),
+			'user': user,
 		}
 
 		path = os.path.join(directory, os.path.join('templates', 'index.html'))

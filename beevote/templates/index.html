@@ -35,7 +35,17 @@
 			<div class="row" align="center">
 				Using this application requires a Google account.
 				<br>
+				{% if user %}
+					You are currently logged in as {{ user.email }}.
+				{% else %}
+					You are not currently logged in.
+				{% endif %}
+				<br>
 				<a href="group"><button class="btn btn-info">Enter</button></a>
+				{% if user %}
+					<br>
+					<a href="logout"><button class="btn btn-info">Logout</button></a>
+				{% endif %}
 			</div>
 		</div>
 	</body>
