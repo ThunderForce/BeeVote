@@ -1,30 +1,23 @@
-<!DOCTYPE HTML>
+
 <html>
-
 <head>
-
 	<title>Topic - BeeVote</title>
-
 	{{ basic_head }}
-
 </head>
-
 <body>
-
 	{{ navbar }}
-
 	<!-- Topic -->
 	<div class="jumbotron">
 		<div class="row">
 			<div class="col-lg-6">
 				<h1>{{ topic.title }}</h1>
 				<p>{{ topic.description }}</p>
-				<p><a class="btn btn-info btn-lg">Partecipa</a><a class="btn btn-info btn-lg">Non Partecipare</a></p>
+				<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>
 			</div>
 			<div class="col-lg-3">
 				<div class="btn-group">
-					<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspparteciperanno
-						&nbsp&nbsp<span class="caret"></span></a>
+					<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbsp
+						&nbsp&nbspParticipants<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="javascript:void(0)">Action</a></li>
 							<li><a href="javascript:void(0)">Another action</a></li>
@@ -36,7 +29,7 @@
 				</div>
 				<div class="col-lg-3">
 					<div class="btn-group">
-						<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspnon parteciperanno&nbsp&nbsp<span class="caret"></span></a>
+						<a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="badge">10</span>&nbsp&nbspwill not  partecipe&nbsp&nbsp<span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="javascript:void(0)">Action</a></li>
 							<li><a href="javascript:void(0)">Another action</a></li>
@@ -47,126 +40,98 @@
 					</div>
 				</div>
 			</div>
-		</div>	
+		</div>
 		<div align="center">
-
-				<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
-
-				<!-- Popup -->
-				<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-body">
-
-
-								<form action="create-proposal" method="post" class="form-horizontal">
-									<fieldset>
-										<h2 align="center"><b>Create a new Proposal</b></h2> 
-
-										<input type="hidden" name="topicId" value="{{ topic.key.id }}">
-
-										<div class="form-group">
-											<label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
-											<div class="col-lg-10">
-												<input class="form-control" id="inputProposalName" name="inputProposalName" placeholder="Title of the Proposal" type="text">
-											</div>
+			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
+			<!-- Popup -->
+			<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-body">
+							<form action="create-proposal" method="post" class="form-horizontal">
+								<fieldset>
+									<h2 align="center"><b>Create a new Proposal</b></h2>
+									<input type="hidden" name="topicId" value="{{ topic.key.id }}">
+									<div class="form-group">
+										<label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
+										<div class="col-lg-10">
+											<input class="form-control" id="inputProposalName" name="inputProposalName" placeholder="Title of the Proposal" type="text">
 										</div>
-
-										<div class="form-group">
-											<label for="inputWhat" class="col-lg-2 control-label">What: </label>
-											<div class="col-lg-10">
-												<input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do" type="text">
-											</div>
+									</div>
+									<div class="form-group">
+										<label for="inputWhat" class="col-lg-2 control-label">What: </label>
+										<div class="col-lg-10">
+											<input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do" type="text">
 										</div>
-
-										<div class="form-group">
-											<label for="inputWhere" class="col-lg-2 control-label">Where: </label>
-											<div class="col-lg-10">
-												<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities" type="text">
-
-											</div>
+									</div>
+									<div class="form-group">
+										<label for="inputWhere" class="col-lg-2 control-label">Where: </label>
+										<div class="col-lg-10">
+											<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities" type="text">
 										</div>
-
-
-										<div class="form-group">
-											<label for="inputDate" class="col-lg-2 control-label">Date: </label>
-											<div class="col-lg-10">
-												<input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" type="date">
-
-											</div>
+									</div>
+									<div class="form-group">
+										<label for="inputDate" class="col-lg-2 control-label">Date: </label>
+										<div class="col-lg-10">
+											<input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" type="date">
 										</div>
-
-										<div class="form-group">
-											<label for="inputTime" class="col-lg-2 control-label">Time: </label>
-											<div class="col-lg-10">
-												<input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" type="time">
-											</div>
+									</div>
+									<div class="form-group">
+										<label for="inputTime" class="col-lg-2 control-label">Time: </label>
+										<div class="col-lg-10">
+											<input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" type="time">
 										</div>
-
-
-										<div class="form-group">
-											<label for="textArea" class="col-lg-2 control-label">Details</label>
-											<div class="col-lg-10">
-												<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
-												<span class="help-block">Add here details that you want the others will know </span>
-											</div>
+									</div>
+									<div class="form-group">
+										<label for="textArea" class="col-lg-2 control-label">Details</label>
+										<div class="col-lg-10">
+											<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+											<span class="help-block">Add here details that you want the others will know </span>
 										</div>
-
-
-										<div class="form-group">
-											<div class="col-lg-10 col-lg-offset-2">
-												<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
-												<button type="submit" class="btn btn-info">Create</button>
-											</div>
+									</div>
+									<div class="form-group">
+										<div class="col-lg-10 col-lg-offset-2">
+											<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
+											<button type="submit" class="btn btn-info">Create</button>
 										</div>
-									</fieldset>
-								</form>
-
-
-
-							</div>
+									</div>
+								</fieldset>
+							</form>
 						</div>
 					</div>
 				</div>
+			</div>
 		</div>
-
 		<!-- Group Proposte -->
-
 		<div class="list-group">
-
 			{% for proposal in proposals %}
-
 			<div class="list-group-item">
-
 				<!-- Card Proposal Big -->
-
-				
-					<div class="well well-lg" color="blue">
-						<div class="row">
-							<a href="view-proposal?id={{ proposal.key.id }}">
+				<div class="well well-lg" color="blue">
+					<div class="row">
+						<a href="view-proposal?id={{ proposal.key.id }}">
 							<div class="col-lg-11">
 								<!-- interno proposta -->
 								<div class="row-picture">
 									<img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
 								</div>
 								<div class="row-content">
-									<h4 class="list-group-item-heading">{{ proposal.title }}
-									</h4>
-									<p class="list-group-item-text">{{ proposal.description }}</p>
+									<h3 class="list-group-item-heading">{{ proposal.title }}
+									</h3>
+									<h5 class="list-group-item-text" color="black">{{ proposal.description }}</h5>
 								</div>
 							</div>
-							</a>
-							<div class="col-lg-1">
-								<span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:void(0)'></label></span>
-							</div>
+						</a>
+						<div class="col-lg-1">
+							<span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:void(0)'></label></span>
 						</div>
 					</div>
-				
+				</div>
 			</div>
-
 			{% endfor %}
-
 		</div>
-
 	</body>
 	</html>
+
+
+

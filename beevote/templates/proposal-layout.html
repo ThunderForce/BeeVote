@@ -54,12 +54,12 @@
     	<div class="row">
             <div class="col-lg-5">
                 <h1>{{ proposal.title }}</h1>
-                <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspProposto da <a href="javascript:void(0)" class="btn btn-flat btn-info">NOME COGNOME</a></p>
+                <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPropose by <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
     	   </div>
     	   <div class="col-lg-4"></div>
     	   <div class="col-lg-2">
                     <div class="btn-group">
-                        <a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Voti&nbsp&nbsp&nbsp
+                        <a href="javascript:void(0)" class="btn btn-info dropdown-toggle" data-toggle="dropdown">Votes&nbsp&nbsp&nbsp
                             <span class="badge" id="number_of_votes">{{ vote_number }}</span>&nbsp&nbsp<span class="caret"></span></a>
                         <ul class="dropdown-menu" id="list_of_votes">
                             <!-- Here there's a dynamic list of votes -->
@@ -67,7 +67,7 @@
                     </div>
             </div>        
             <div class="col-lg-1">
-                <span class="label label-info">Vota</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote();' {% if already_voted %}checked {% endif %}></label></span>
+                <span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote();' {% if already_voted %}checked {% endif %}></label></span>
             </div>
                 
         </div>

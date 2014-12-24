@@ -52,6 +52,12 @@ img.image-circle {
   background-color: #D32F2F;
 }
 
+/*occhio non so se questo è giusto!!! XD */
+
+[color="black"].list-group-item-text{
+	color: #000000;
+
+}
 
 /*
 body .jumbotron,
