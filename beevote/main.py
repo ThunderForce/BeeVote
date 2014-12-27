@@ -199,7 +199,7 @@ app = webapp2.WSGIApplication([
 	('/', MainHandler),
 	('/view-topic', TopicSampleHandler), #topic-layout
 	('/groups', GroupListHandler),
-	('/group', GroupHandler),
+	('/group', GroupHandler),			#topics-layout.html
 	('/view-proposal', ProposalHandler),
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),
