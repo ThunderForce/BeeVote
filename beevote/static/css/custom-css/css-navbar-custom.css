@@ -1,0 +1,24 @@
+/*Css Navbar*/
+.logo {
+	margin: auto auto; 
+	height: 35px;
+}
+
+.breadcrumb {
+padding: 20px;
+margin-bottom: 0px;
+margin-left: -40px;
+list-style: none;
+background-color: #2196F3;
+color: #DCEEFD;
+}
+
+.breadcrumb > li + li:before {
+padding: 0 5px;
+color: #DCEEFC;
+content: "/\00a0";
+}
+
+.breadcrumb > .active {
+color: #0B0B0B;
+}
