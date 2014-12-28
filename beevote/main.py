@@ -31,15 +31,19 @@ class BasicPageHandler(webapp2.RequestHandler):
 	def write_template(self, template_name, template_values={}):
 	
 		directory = os.path.dirname(__file__)
-		
+		#import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-
-		import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
+
+		user = users.get_current_user()
+
+		val_user = {
+			'user': user,
+		}
 
 		values = {
 			'basic_head': template.render(basic_head_path, {}),
-			'navbar': template.render(navbar_path, {}),
+			'navbar': template.render(navbar_path, val_user),
 		}
 		
 		values.update(template_values)
