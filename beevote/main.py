@@ -110,6 +110,8 @@ class ProposalHandler(BasicPageHandler):
 
 class CreateTopicHandler(BasicPageHandler):
 	def post(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
 		title = self.request.get('inputTopicName')
 		what = self.request.get('inputWhat')
 		where= self.request.get('inputWhere')
@@ -124,11 +126,14 @@ class CreateTopicHandler(BasicPageHandler):
 		if time != "":
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
 		topic.description = description
+		topic.creator = user_id
 		topic.put()
 		self.redirect('/group')
 
 class CreateProposalHandler(BasicPageHandler):
 	def post(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
 		title = self.request.get('inputProposalName')
 		what = self.request.get('inputWhat')
 		where= self.request.get('inputWhere')
@@ -149,6 +154,7 @@ class CreateProposalHandler(BasicPageHandler):
 		if time != "":
 			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 		proposal.description = description
+		proposal.creator = user_id
 		proposal.put()
 		self.redirect('/view-topic?id='+topic_id)
 
