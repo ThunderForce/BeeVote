@@ -10,22 +10,23 @@
         <script>
 			$(document).ready(function() {
 				$("#vote_list_button").on("click", function() {
-					
-					$("#list_of_votes").html("<li>Loading...</li>");
-					$.ajax({
-						url: "api/load-votes",
-						method: "POST",
-						data: {
-							proposal_id: {{ proposal.key.id }}
-						},
-						dataType: "json",
-						success: function(response) {
-							$("#list_of_votes").html("");
-							$.each(response.votes, function(index, vote) {
-								$("#list_of_votes").append("<li>"+vote.creator+"</li>");
-							});
-						}
-					});
+					if ($(this).attr("aria-expanded") != "true") {
+						$("#list_of_votes").html("<li>Loading...</li>");
+						$.ajax({
+							url: "api/load-votes",
+							method: "POST",
+							data: {
+								proposal_id: {{ proposal.key.id }}
+							},
+							dataType: "json",
+							success: function(response) {
+								$("#list_of_votes").html("");
+								$.each(response.votes, function(index, vote) {
+									$("#list_of_votes").append("<li>"+vote.creator+"</li>");
+								});
+							}
+						});
+					}
 					
 				});
 			});
