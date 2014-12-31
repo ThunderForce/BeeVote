@@ -194,6 +194,25 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
+class LoadVotesHandler(webapp2.RequestHandler):
+	def post(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		proposal_id = self.request.get('proposal_id')
+		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
+		proposal = db.get(proposal_key)
+		votes_db = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal).fetch(10)
+		votes = []
+		for vote in votes_db:
+			votes.append({
+				'creator': vote.creator,
+			})
+		values = {
+			'success': True,
+			'votes': votes,
+		}
+		self.response.out.write(json.dumps(values))
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
@@ -217,6 +236,7 @@ app = webapp2.WSGIApplication([
 	('/create-proposal', CreateProposalHandler),
 	('/api/create-vote', CreateVoteHandler),
 	('/api/remove-vote', RemoveVoteHandler),
+	('/api/load-votes', LoadVotesHandler),
 	('/logout', LogoutHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
