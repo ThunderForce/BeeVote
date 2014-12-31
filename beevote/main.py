@@ -18,12 +18,13 @@
 import os
 import webapp2
 import datetime
-import json
+#import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 
 import models
+import api
 
 # Start of handlers
 
@@ -158,6 +159,7 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.put()
 		self.redirect('/view-topic?id='+topic_id)
 
+'''
 class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
@@ -212,6 +214,7 @@ class LoadVotesHandler(webapp2.RequestHandler):
 			'votes': votes,
 		}
 		self.response.out.write(json.dumps(values))
+'''
 
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
@@ -234,9 +237,9 @@ app = webapp2.WSGIApplication([
 	#('/new-proposal', NewProposalHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
-	('/api/create-vote', CreateVoteHandler),
-	('/api/remove-vote', RemoveVoteHandler),
-	('/api/load-votes', LoadVotesHandler),
+	('/api/create-vote', api.CreateVoteHandler),
+	('/api/remove-vote', api.RemoveVoteHandler),
+	('/api/load-votes', api.LoadVotesHandler),
 	('/logout', LogoutHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
