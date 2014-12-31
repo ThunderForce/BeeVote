@@ -2,6 +2,10 @@ from google.appengine.ext import db
 
 # Start of Data Model
 
+class Group(db.Model):
+	title = db.StringProperty(required=True)
+	description = db.TextProperty()
+
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
 	description = db.TextProperty()
