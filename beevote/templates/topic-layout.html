@@ -30,7 +30,7 @@
 		<div align="center">
 			
 			<!-- New Button -->
-			<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-navigation-arrow-forward" ></i></button>
+			<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" ></i></button>
 			
 			<!-- Old button
 			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
@@ -40,10 +40,12 @@
 			<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
+						<div class="modal-header">
+    						<h2 align="center"><b>Create a new Proposal</b></h2>
+    					</div>
 						<div class="modal-body">
 							<form action="create-proposal" method="post" class="form-horizontal">
 								<fieldset>
-									<h2 align="center"><b>Create a new Proposal</b></h2>
 									<input type="hidden" name="topicId" value="{{ topic.key.id }}">
 									<div class="form-group">
 										<label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
@@ -82,9 +84,20 @@
 											<span class="help-block">Add here details that you want the others will know </span>
 										</div>
 									</div>
+
+									<!-- OLD BUTTON 
 									<div class="form-group">
 										<div class="col-lg-10 col-lg-offset-2">
 											<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
+											<button type="submit" class="btn btn-info">Create</button>
+										</div>
+									</div>
+									-->
+
+									<!-- NEW BUTTON -->
+									<div class="form-group">
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
 											<button type="submit" class="btn btn-info">Create</button>
 										</div>
 									</div>

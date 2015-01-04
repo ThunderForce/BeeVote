@@ -14,6 +14,7 @@ class Topic(db.Model):
 	date = db.DateProperty()
 	time = db.TimeProperty()
 	creator = db.StringProperty()
+	img = db.BlobProperty()
 
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)

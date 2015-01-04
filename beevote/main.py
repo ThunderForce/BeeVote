@@ -119,6 +119,7 @@ class CreateTopicHandler(BasicPageHandler):
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
+		img = self.request.get('inputImg')
 		topic = models.Topic(title=title)
 		topic.activity = what
 		topic.place = where
@@ -128,6 +129,7 @@ class CreateTopicHandler(BasicPageHandler):
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
 		topic.description = description
 		topic.creator = user_id
+		topic.img = db.Blob(img)
 		topic.put()
 		self.redirect('/group')
 
