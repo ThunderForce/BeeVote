@@ -109,6 +109,12 @@ class ProposalHandler(BasicPageHandler):
 #		topic_id = self.request.get('topic')
 #		self.write_template('proposal-form.html', {'topic_id': topic_id})
 
+class ProfileHandler(BasicPageHandler):
+	def get(self, user_id):
+		# Use user_id to get user and put it in values
+		values = {}
+		self.write_template('profile-layout.html', values)
+
 class CreateTopicHandler(BasicPageHandler):
 	def post(self):
 		user = users.get_current_user()
@@ -237,6 +243,7 @@ app = webapp2.WSGIApplication([
 	('/view-proposal', ProposalHandler),
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),
+	('/profile/(.*)', ProfileHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
 	('/api/create-vote', api.CreateVoteHandler),
