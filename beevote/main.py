@@ -56,6 +56,10 @@ class MainHandler(BasicPageHandler):
 	def get(self):
 		self.write_template('index.html')
 
+class UserProfileHandler(BasicPageHandler):
+	def get(self):
+		self.write_template('user-profile.html')
+
 class TopicSampleHandler(BasicPageHandler):
 	def get(self):
 		topic_key = db.Key.from_path('Topic', long(self.request.get('id')))
@@ -249,6 +253,7 @@ app = webapp2.WSGIApplication([
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/load-votes', api.LoadVotesHandler),
+	('/view-user-profile', UserProfileHandler),
 	('/logout', LogoutHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
