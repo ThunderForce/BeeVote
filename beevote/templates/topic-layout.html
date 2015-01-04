@@ -7,7 +7,7 @@
 <body>
 	{{ navbar }}
 	<!-- Topic -->
-	<div class="jumbotron">
+	<div class="jumbotron" style="max-width: 900px;">
 		<div class="row">
 			<div class="col-lg-6">
 				<h1>{{ topic.title }}</h1>
@@ -30,7 +30,7 @@
 		<div align="center">
 			
 			<!-- New Button -->
-			<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" ></i></button>
+			<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
 			
 			<!-- Old button
 			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
@@ -110,10 +110,14 @@
 		</div>
 		<!-- Group Proposte -->
 		<div class="list-group">
+			<div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
+			<div><h2>List of Proposals</h2></div>
+			<br>
 			{% for proposal in proposals %}
 			<div class="list-group-item">
+
 				<!-- Card Proposal Big -->
-				<div class="well well-lg" color="blue">
+				<div class="well well-lg" color="blue" style="max-width: 900px;">
 					<div class="row">
 						<a href="view-proposal?id={{ proposal.key.id }}">
 							<div class="col-lg-11">
@@ -134,7 +138,9 @@
 					</div>
 				</div>
 			</div>
+			
 			{% endfor %}
+			</div>
 		</div>
 	</body>
 	</html>
