@@ -30,8 +30,10 @@ class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		group_id = self.request.get('group_id')
+		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 		vote = models.Vote(proposal=proposal, parent=proposal)
 		vote.creator = user_id
@@ -48,8 +50,10 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		group_id = self.request.get('group_id')
+		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
 		vote = votes.get()
@@ -66,10 +70,12 @@ class LoadVotesHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		group_id = self.request.get('group_id')
+		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
-		votes_db = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal).fetch(10)
+		votes_db = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal).fetch(20)
 		votes = []
 		for vote in votes_db:
 			votes.append({

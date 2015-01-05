@@ -16,6 +16,8 @@
 							url: "api/load-votes",
 							method: "POST",
 							data: {
+								group_id: {{ proposal.parent.parent.key.id }}
+								topic_id: {{ proposal.parent.key.id }}
 								proposal_id: {{ proposal.key.id }}
 							},
 							dataType: "json",
@@ -45,6 +47,8 @@
 					url: "api/create-vote",
 					method: "POST",
 					data: {
+						group_id: {{ proposal.parent.parent.key.id }}
+						topic_id: {{ proposal.parent.key.id }}
 						proposal_id: {{ proposal.key.id }}
 					},
 					dataType: "json",
@@ -59,6 +63,8 @@
 					url: "api/remove-vote",
 					method: "POST",
 					data: {
+						group_id: {{ proposal.parent.parent.key.id }}
+						topic_id: {{ proposal.parent.key.id }}
 						proposal_id: {{ proposal.key.id }}
 					},
 					dataType: "json",
