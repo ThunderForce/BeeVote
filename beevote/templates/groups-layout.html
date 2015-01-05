@@ -14,7 +14,7 @@
      
 	{{ navbar }}
 
-    <div class="jumbotron">
+    <div class="jumbotron" style="max-width: 900px;">
     <div class="row"><div class="col-lg-5"><h1>My Groups</h1></div>
     <div class="col-lg-4"></div>
     <div class="col-lg-3">
@@ -95,15 +95,12 @@
                   <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
                 </div>
                 <div class="row-content">
-                  <h3 class="list-group-item-heading">{{ group.name }}
+                  <h3 class="list-group-item-heading" color="black">{{ group.name }}
                   </h3>
                   <h5 class="list-group-item-text" color="black">{{ group.description }}</h5>
                 </div>
               </div>
             </a>
-            <div class="col-lg-2">
-              <a href="javascript:void(0)">Members <span class="badge">100</span></a>
-            </div>
           </div>
         </div>
       </div>
