@@ -115,6 +115,21 @@ class ProfileHandler(BasicPageHandler):
 		values = {}
 		self.write_template('user-profile.html', values)
 
+class TopicImageHandler(webapp2.RequestHandler):
+	def get(self, topic_id):
+		topic_key = db.Key.from_path('Topic', long(topic_id))
+		topic = db.get(topic_key)
+		# Need to set header ContentType as image
+		if topic == None:
+			self.error(404)
+			self.response.out.write("Topic "+topic_id+" does not exist")
+		else:
+			if topic.img != None:
+				self.response.out.write(topic.img)
+			else:
+				self.error(404)
+				self.response.out.write("Topic "+topic_id+" does not have an image")
+
 class CreateTopicHandler(BasicPageHandler):
 	def post(self):
 		user = users.get_current_user()
@@ -135,7 +150,8 @@ class CreateTopicHandler(BasicPageHandler):
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
 		topic.description = description
 		topic.creator = user_id
-		topic.img = db.Blob(img)
+		if img != "":
+			topic.img = db.Blob(img)
 		topic.put()
 		self.redirect('/group')
 
@@ -187,6 +203,7 @@ app = webapp2.WSGIApplication([
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),
 	('/profile/(.*)', ProfileHandler),
+	('/topic/(.*)/image', TopicImageHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
 	('/api/create-vote', api.CreateVoteHandler),
