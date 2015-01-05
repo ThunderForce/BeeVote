@@ -30,7 +30,11 @@ import api
 
 class BasicPageHandler(webapp2.RequestHandler):
 	def write_template(self, template_name, template_values={}):
-	
+		
+		self.response.headers["Pragma"]="no-cache"
+		self.response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
+		self.response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
+		
 		directory = os.path.dirname(__file__)
 		#import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
