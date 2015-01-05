@@ -77,8 +77,10 @@ class GroupListHandler(BasicPageHandler):
 		self.write_template('groups-list-layout.html',values)
 
 class GroupHandler(BasicPageHandler):
-	def get(self):
-		topics = db.GqlQuery('SELECT * FROM Topic').fetch(10)
+	def get(self, group_id):
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
 		values = {'topics': topics}
 		self.write_template('topics-layout.html', values)
 
@@ -214,7 +216,7 @@ app = webapp2.WSGIApplication([
 	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
 	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/groups', GroupListHandler),
-	('/group', GroupHandler),			#topics-layout.html
+	('/group/(.*)', GroupHandler),			#topics-layout.html
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),
 	('/profile/(.*)', ProfileHandler),
