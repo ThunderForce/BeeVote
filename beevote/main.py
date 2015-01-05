@@ -56,10 +56,6 @@ class MainHandler(BasicPageHandler):
 	def get(self):
 		self.write_template('index.html')
 
-class UserProfileHandler(BasicPageHandler):
-	def get(self):
-		self.write_template('user-profile.html')
-
 class TopicSampleHandler(BasicPageHandler):
 	def get(self):
 		topic_key = db.Key.from_path('Topic', long(self.request.get('id')))
@@ -117,7 +113,7 @@ class ProfileHandler(BasicPageHandler):
 	def get(self, user_id):
 		# Use user_id to get user and put it in values
 		values = {}
-		self.write_template('profile-layout.html', values)
+		self.write_template('user-profile.html', values)
 
 class CreateTopicHandler(BasicPageHandler):
 	def post(self):
@@ -171,63 +167,6 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.put()
 		self.redirect('/view-topic?id='+topic_id)
 
-'''
-class CreateVoteHandler(webapp2.RequestHandler):
-	def post(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		proposal_id = self.request.get('proposal_id')
-		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		vote = models.Vote(proposal=proposal)
-		vote.creator = user_id
-		vote.put()
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
-		vote_number = votes.count()
-		values = {
-			'success': True,
-			'vote_number': vote_number,
-		}
-		self.response.out.write(json.dumps(values))
-
-class RemoveVoteHandler(webapp2.RequestHandler):
-	def post(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		proposal_id = self.request.get('proposal_id')
-		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
-		vote = votes.get()
-		vote.delete()
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
-		vote_number = votes.count()
-		values = {
-			'success': True,
-			'vote_number': vote_number,
-		}
-		self.response.out.write(json.dumps(values))
-
-class LoadVotesHandler(webapp2.RequestHandler):
-	def post(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		proposal_id = self.request.get('proposal_id')
-		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		votes_db = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal).fetch(10)
-		votes = []
-		for vote in votes_db:
-			votes.append({
-				'creator': vote.creator,
-			})
-		values = {
-			'success': True,
-			'votes': votes,
-		}
-		self.response.out.write(json.dumps(values))
-'''
-
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
@@ -253,7 +192,6 @@ app = webapp2.WSGIApplication([
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/load-votes', api.LoadVotesHandler),
-	('/view-user-profile', UserProfileHandler),
 	('/logout', LogoutHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
