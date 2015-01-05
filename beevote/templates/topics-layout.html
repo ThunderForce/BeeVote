@@ -39,7 +39,7 @@
 	<div class="jumbotron" style="max-width: 900px; margin-top: 30px;">
 		<div class="row">
 			<div class="col-lg-5">
-				<h1>GROUP'S NAME</h1>
+				<h1>{{group.name}}</h1>
 			</div>
 			<div class="col-lg-4"></div>
 			<div class="col-lg-3">
@@ -48,6 +48,9 @@
 						Partecipants&nbsp&nbsp&nbsp<span class="badge">10</span>&nbsp&nbsp<span class="caret"></span></a>
 					</div>
 				</div>
+			</div>
+			<div class = "row">
+				{{group.description}}
 			</div>
 		</div>
 
@@ -77,7 +80,7 @@
     					<div class="modal-body">
     						<form action="create-topic" method="post" class="form-horizontal" enctype="multipart/form-data">
     							<fieldset>
-
+    							<input type="hidden" name="groupId" value="{{ group.key.id }}">
     								<div class="form-group">
     									<label for="inputTopicName" class="col-lg-2 control-label">Title: </label>
     									<div class="col-lg-10">
@@ -177,7 +180,7 @@
 
 	<div class="list-group" id="event_list">
 		<div class="list-group-item">
-			<a href="/topic/{{ topic.key.id }}">
+			<a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}">
 				<div class="well well-lg" color="blue">
 					<!-- interno proposta -->
 					<div class="row-picture">

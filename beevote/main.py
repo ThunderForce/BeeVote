@@ -70,12 +70,21 @@ class TopicSampleHandler(BasicPageHandler):
 
 class GroupListHandler(BasicPageHandler):
 	def get(self):
-		self.write_template('groups-list-layout.html')
+		groups = db.GqlQuery("SELECT * FROM Group")
+		values = {
+		'groups' : groups
+		}
+		self.write_template('groups-list-layout.html',values)
 
 class GroupHandler(BasicPageHandler):
-	def get(self):
-		topics = db.GqlQuery('SELECT * FROM Topic').fetch(10)
-		values = {'topics': topics}
+	def get(self, group_id):
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
+		values = {
+			'group': group,
+			'topics': topics,
+		}
 		self.write_template('topics-layout.html', values)
 
 class ProposalHandler(BasicPageHandler):
@@ -100,14 +109,6 @@ class ProposalHandler(BasicPageHandler):
 		}
 		self.write_template('proposal-layout.html', values)
 
-#class NewTopicHandler(BasicPageHandler):
-#	def get(self):
-#		self.write_template('topic-form.html')
-#		
-#class NewProposalHandler(BasicPageHandler):
-#	def get(self):
-#		topic_id = self.request.get('topic')
-#		self.write_template('proposal-form.html', {'topic_id': topic_id})
 
 class ProfileHandler(BasicPageHandler):
 	def get(self, user_id):
@@ -116,8 +117,8 @@ class ProfileHandler(BasicPageHandler):
 		self.write_template('user-profile.html', values)
 
 class TopicImageHandler(webapp2.RequestHandler):
-	def get(self, topic_id):
-		topic_key = db.Key.from_path('Topic', long(topic_id))
+	def get(self, group_id, topic_id):
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		# Need to set header ContentType as image
 		if topic == None:
@@ -134,6 +135,11 @@ class CreateTopicHandler(BasicPageHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		group_id = self.request.get('groupId')
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+
+
 		title = self.request.get('inputTopicName')
 		what = self.request.get('inputWhat')
 		where= self.request.get('inputWhere')
@@ -141,7 +147,7 @@ class CreateTopicHandler(BasicPageHandler):
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
 		img = self.request.get('inputImg')
-		topic = models.Topic(title=title)
+		topic = models.Topic(title=title, parent=group)
 		topic.activity = what
 		topic.place = where
 		if date != "":
@@ -153,7 +159,7 @@ class CreateTopicHandler(BasicPageHandler):
 		if img != "":
 			topic.img = db.Blob(img)
 		topic.put()
-		self.redirect('/group')
+		self.redirect('/group/'+group_id)
 
 class CreateProposalHandler(BasicPageHandler):
 	def post(self):
@@ -166,7 +172,8 @@ class CreateProposalHandler(BasicPageHandler):
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
 		topic_id = self.request.get('topicId')
-		topic_key = db.Key.from_path('Topic', long(topic_id))
+		group_id = self.request.get('groupId')
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		proposal = models.Proposal(
 			title=title,
@@ -182,7 +189,18 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.description = description
 		proposal.creator = user_id
 		proposal.put()
-		self.redirect('/topic/'+topic_id)
+		self.redirect('/group/'+group_id+'/topic/'+topic_id)
+
+class CreateGroupHandler(BasicPageHandler):
+	def post(self):
+		name = self.request.get('inputGroupName')
+		description = self.request.get('inputDescription')
+		group = models.Group(
+				name = name,
+			)
+		group.description = description
+		group.put()
+		self.redirect('/groups')
 
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
@@ -197,16 +215,17 @@ class NotFoundPageHandler(BasicPageHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/topic/(.*)/image', TopicImageHandler),
-	('/topic/(.*)/proposal/(.*)', ProposalHandler),
-	('/topic/(.*)', TopicSampleHandler), #topic-layout
+	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
+	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
+	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/groups', GroupListHandler),
-	('/group', GroupHandler),			#topics-layout.html
+	('/group/(.*)', GroupHandler),			#topics-layout.html
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),
 	('/profile/(.*)', ProfileHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
+	('/create-group',CreateGroupHandler),
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/load-votes', api.LoadVotesHandler),
