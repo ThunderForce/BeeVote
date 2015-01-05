@@ -112,8 +112,8 @@ class ProfileHandler(BasicPageHandler):
 		self.write_template('user-profile.html', values)
 
 class TopicImageHandler(webapp2.RequestHandler):
-	def get(self, topic_id):
-		topic_key = db.Key.from_path('Topic', long(topic_id))
+	def get(self, group_id, topic_id):
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		# Need to set header ContentType as image
 		if topic == None:
@@ -130,6 +130,11 @@ class CreateTopicHandler(BasicPageHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		group_id = self.request.get('groupId')
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+
+
 		title = self.request.get('inputTopicName')
 		what = self.request.get('inputWhat')
 		where= self.request.get('inputWhere')
@@ -137,7 +142,7 @@ class CreateTopicHandler(BasicPageHandler):
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
 		img = self.request.get('inputImg')
-		topic = models.Topic(title=title)
+		topic = models.Topic(title=title, parent=group)
 		topic.activity = what
 		topic.place = where
 		if date != "":
@@ -149,7 +154,7 @@ class CreateTopicHandler(BasicPageHandler):
 		if img != "":
 			topic.img = db.Blob(img)
 		topic.put()
-		self.redirect('/group')
+		self.redirect('/group/'+group_id)
 
 class CreateProposalHandler(BasicPageHandler):
 	def post(self):
@@ -162,7 +167,8 @@ class CreateProposalHandler(BasicPageHandler):
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
 		topic_id = self.request.get('topicId')
-		topic_key = db.Key.from_path('Topic', long(topic_id))
+		group_id = self.request.get('groupId')
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		proposal = models.Proposal(
 			title=title,
@@ -178,7 +184,7 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.description = description
 		proposal.creator = user_id
 		proposal.put()
-		self.redirect('/topic/'+topic_id)
+		self.redirect('/group/'+group_id+'/topic/'+topic_id)
 
 class CreateGroupHandler(BasicPageHandler):
 	def post(self):
@@ -204,9 +210,9 @@ class NotFoundPageHandler(BasicPageHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/topic/(.*)/image', TopicImageHandler),
-	('/topic/(.*)/proposal/(.*)', ProposalHandler),
-	('/topic/(.*)', TopicSampleHandler), #topic-layout
+	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
+	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
+	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/groups', GroupListHandler),
 	('/group', GroupHandler),			#topics-layout.html
 	#('/new-topic', NewTopicHandler),

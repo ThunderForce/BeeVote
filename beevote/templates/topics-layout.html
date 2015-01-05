@@ -77,7 +77,7 @@
     					<div class="modal-body">
     						<form action="create-topic" method="post" class="form-horizontal" enctype="multipart/form-data">
     							<fieldset>
-
+    							<input type="hidden" name="groupId" value="{{ group.key.id }}">
     								<div class="form-group">
     									<label for="inputTopicName" class="col-lg-2 control-label">Title: </label>
     									<div class="col-lg-10">
@@ -177,7 +177,7 @@
 
 	<div class="list-group" id="event_list">
 		<div class="list-group-item">
-			<a href="/topic/{{ topic.key.id }}">
+			<a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}">
 				<div class="well well-lg" color="blue">
 					<!-- interno proposta -->
 					<div class="row-picture">
