@@ -19,6 +19,7 @@ import os
 import webapp2
 import datetime
 import json
+import time
 from google.appengine.ext import db
 from google.appengine.api import users
 
@@ -38,6 +39,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		vote = models.Vote(proposal=proposal, parent=proposal)
 		vote.creator = user_id
 		vote.put()
+		time.sleep(0.25)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {
@@ -58,6 +60,7 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
 		vote = votes.get()
 		vote.delete()
+		time.sleep(0.25)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {

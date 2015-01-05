@@ -13,11 +13,11 @@
 					if ($(this).attr("aria-expanded") != "true") {
 						$("#list_of_votes").html("<li>Loading...</li>");
 						$.ajax({
-							url: "api/load-votes",
+							url: "/api/load-votes",
 							method: "POST",
 							data: {
-								group_id: {{ proposal.parent.parent.key.id }}
-								topic_id: {{ proposal.parent.key.id }}
+								group_id: {{ proposal.parent.parent.key.id }},
+								topic_id: {{ proposal.parent.key.id }},
 								proposal_id: {{ proposal.key.id }}
 							},
 							dataType: "json",
@@ -44,11 +44,11 @@
 			function add_vote() {
 				$("#number_of_votes").html("...");
 				$.ajax({
-					url: "api/create-vote",
+					url: "/api/create-vote",
 					method: "POST",
 					data: {
-						group_id: {{ proposal.parent.parent.key.id }}
-						topic_id: {{ proposal.parent.key.id }}
+						group_id: {{ proposal.parent.parent.key.id }},
+						topic_id: {{ proposal.parent.key.id }},
 						proposal_id: {{ proposal.key.id }}
 					},
 					dataType: "json",
@@ -60,11 +60,11 @@
 			function remove_vote() {
 				$("#number_of_votes").html("...");
 				$.ajax({
-					url: "api/remove-vote",
+					url: "/api/remove-vote",
 					method: "POST",
 					data: {
-						group_id: {{ proposal.parent.parent.key.id }}
-						topic_id: {{ proposal.parent.key.id }}
+						group_id: {{ proposal.parent.parent.key.id }},
+						topic_id: {{ proposal.parent.key.id }},
 						proposal_id: {{ proposal.key.id }}
 					},
 					dataType: "json",
