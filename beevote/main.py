@@ -61,8 +61,8 @@ class MainHandler(BasicPageHandler):
 		self.write_template('index.html')
 
 class TopicSampleHandler(BasicPageHandler):
-	def get(self, topic_id):
-		topic_key = db.Key.from_path('Topic', long(topic_id))
+	def get(self, group_id, topic_id):
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		
 		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(10)
@@ -72,13 +72,13 @@ class TopicSampleHandler(BasicPageHandler):
 		}
 		self.write_template('topic-layout.html', values)
 
-class GroupListHandler(BasicPageHandler):
+class GroupsHandler(BasicPageHandler):
 	def get(self):
 		groups = db.GqlQuery("SELECT * FROM Group")
 		values = {
 		'groups' : groups
 		}
-		self.write_template('groups-list-layout.html',values)
+		self.write_template('groups-layout.html',values)
 
 class GroupHandler(BasicPageHandler):
 	def get(self, group_id):
@@ -92,8 +92,8 @@ class GroupHandler(BasicPageHandler):
 		self.write_template('topics-layout.html', values)
 
 class ProposalHandler(BasicPageHandler):
-	def get(self, topic_id, proposal_id):
-		proposal_key = db.Key.from_path('Topic', long(topic_id), 'Proposal', long(proposal_id))
+	def get(self, group_id, topic_id, proposal_id):
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
@@ -151,7 +151,7 @@ class CreateTopicHandler(BasicPageHandler):
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
 		img = self.request.get('inputImg')
-		topic = models.Topic(title=title, parent=group)
+		topic = models.Topic(title=title, group=group, parent=group)
 		topic.activity = what
 		topic.place = where
 		if date != "":
@@ -204,7 +204,8 @@ class CreateGroupHandler(BasicPageHandler):
 			)
 		group.description = description
 		group.put()
-		self.redirect('/groups')
+		group_id = group.key().id() 
+		self.redirect('/group/'+str(group_id))
 
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
@@ -222,7 +223,7 @@ app = webapp2.WSGIApplication([
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
 	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
 	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
-	('/groups', GroupListHandler),
+	('/groups', GroupsHandler),
 	('/group/(.*)', GroupHandler),			#topics-layout.html
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),

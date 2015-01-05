@@ -52,6 +52,7 @@
 						<div class="modal-body">
 							<form action="/create-proposal" method="post" class="form-horizontal">
 								<fieldset>
+									<input type="hidden" name="groupId" value="{{ topic.parent.key.id }}">
 									<input type="hidden" name="topicId" value="{{ topic.key.id }}">
 									<div class="form-group">
 										<label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
@@ -125,7 +126,7 @@
 				<!-- Card Proposal Big -->
 				<div class="well well-lg" color="blue" style="max-width: 900px;">
 					<div class="row">
-						<a href="/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}">
+						<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}">
 							<div class="col-lg-11">
 								<!-- interno proposta -->
 								<div class="row-picture">

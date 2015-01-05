@@ -8,6 +8,7 @@ class Group(db.Model):
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
+	group = db.ReferenceProperty(Group, required=True)
 	description = db.TextProperty()
 	activity = db.StringProperty()
 	place = db.StringProperty()
