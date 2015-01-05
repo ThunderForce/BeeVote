@@ -81,7 +81,10 @@ class GroupHandler(BasicPageHandler):
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
 		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
-		values = {'topics': topics}
+		values = {
+			'group': group,
+			'topics': topics,
+		}
 		self.write_template('topics-layout.html', values)
 
 class ProposalHandler(BasicPageHandler):
@@ -191,7 +194,7 @@ class CreateProposalHandler(BasicPageHandler):
 class CreateGroupHandler(BasicPageHandler):
 	def post(self):
 		name = self.request.get('inputGroupName')
-		description = self.request.get('inputGroupDescription')
+		description = self.request.get('inputDescription')
 		group = models.Group(
 				name = name,
 			)
