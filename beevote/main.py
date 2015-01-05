@@ -219,14 +219,14 @@ class NotFoundPageHandler(BasicPageHandler):
 class NotAllowedPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(401)
-		self.response.out.write('Not allowed.')
+		self.response.out.write('You\'re not allowed to use the app. Click <a href="/logout">here</a> to logout.')
 
 # End of handlers
 
+allowed = users.is_current_user_admin()
 current_user = users.get_current_user()
-allowed = False
-allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser")
-for allowed_user in allowed_users.run():
+allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
+for allowed_user in allowed_users:
 	if allowed_user.key().name() == str(current_user.user_id()):
 		allowed = True
 if not allowed:
