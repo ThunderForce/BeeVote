@@ -216,24 +216,41 @@ class NotFoundPageHandler(BasicPageHandler):
 		self.error(404)
 		self.write_template('not_found.html', {'url': self.request.path})
 
+class NotAllowedPageHandler(webapp2.RequestHandler):
+	def get(self):
+		self.error(401)
+		self.response.out.write('Not allowed.')
+
 # End of handlers
 
-app = webapp2.WSGIApplication([
-	('/', MainHandler),
-	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
-	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
-	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
-	('/groups', GroupsHandler),
-	('/group/(.*)', GroupHandler),			#topics-layout.html
-	#('/new-topic', NewTopicHandler),
-	#('/new-proposal', NewProposalHandler),
-	('/profile/(.*)', ProfileHandler),
-	('/create-topic', CreateTopicHandler),
-	('/create-proposal', CreateProposalHandler),
-	('/create-group',CreateGroupHandler),
-	('/api/create-vote', api.CreateVoteHandler),
-	('/api/remove-vote', api.RemoveVoteHandler),
-	('/api/load-votes', api.LoadVotesHandler),
-	('/logout', LogoutHandler),
-	('/.*', NotFoundPageHandler)
-], debug=True)
+current_user = users.get_current_user()
+allowed = False
+allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser")
+for allowed_user in allowed_users.run():
+	if allowed_user.key().name() == str(current_user.user_id()):
+		allowed = True
+if not allowed:
+	app = webapp2.WSGIApplication([
+		('/logout', LogoutHandler),
+		('/.*', NotAllowedPageHandler)
+	], debug=True)
+else:
+	app = webapp2.WSGIApplication([
+		('/', MainHandler),
+		('/group/(.*)/topic/(.*)/image', TopicImageHandler),
+		('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
+		('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
+		('/groups', GroupsHandler),
+		('/group/(.*)', GroupHandler),			#topics-layout.html
+		#('/new-topic', NewTopicHandler),
+		#('/new-proposal', NewProposalHandler),
+		('/profile/(.*)', ProfileHandler),
+		('/create-topic', CreateTopicHandler),
+		('/create-proposal', CreateProposalHandler),
+		('/create-group',CreateGroupHandler),
+		('/api/create-vote', api.CreateVoteHandler),
+		('/api/remove-vote', api.RemoveVoteHandler),
+		('/api/load-votes', api.LoadVotesHandler),
+		('/logout', LogoutHandler),
+		('/.*', NotFoundPageHandler)
+	], debug=True)

@@ -2,6 +2,9 @@ from google.appengine.ext import db
 
 # Start of Data Model
 
+class BeeVoteUser(db.Model):
+	email = db.StringProperty(required=True)
+
 class Group(db.Model):
 	name = db.StringProperty(required=True)
 	description = db.TextProperty()
