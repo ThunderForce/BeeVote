@@ -70,7 +70,11 @@ class TopicSampleHandler(BasicPageHandler):
 
 class GroupListHandler(BasicPageHandler):
 	def get(self):
-		self.write_template('groups-list-layout.html')
+		groups = db.GqlQuery("SELECT * FROM Group")
+		values = {
+		'groups' : groups
+		}
+		self.write_template('groups-list-layout.html',values)
 
 class GroupHandler(BasicPageHandler):
 	def get(self):
@@ -100,14 +104,6 @@ class ProposalHandler(BasicPageHandler):
 		}
 		self.write_template('proposal-layout.html', values)
 
-#class NewTopicHandler(BasicPageHandler):
-#	def get(self):
-#		self.write_template('topic-form.html')
-#		
-#class NewProposalHandler(BasicPageHandler):
-#	def get(self):
-#		topic_id = self.request.get('topic')
-#		self.write_template('proposal-form.html', {'topic_id': topic_id})
 
 class ProfileHandler(BasicPageHandler):
 	def get(self, user_id):
@@ -184,6 +180,17 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.put()
 		self.redirect('/topic/'+topic_id)
 
+class CreateGroupHandler(BasicPageHandler):
+	def post(self):
+		name = self.request.get('inputGroupName')
+		description = self.request.get('inputGroupDescription')
+		group = models.Group(
+				name = name,
+			)
+		group.description = description
+		group.put()
+		self.redirect('/groups')
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
@@ -207,6 +214,7 @@ app = webapp2.WSGIApplication([
 	('/profile/(.*)', ProfileHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
+	('/create-group',CreateGroupHandler),
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/load-votes', api.LoadVotesHandler),

@@ -18,212 +18,101 @@
     <div class="row"><div class="col-lg-5"><h1>My Groups</h1></div>
     <div class="col-lg-4"></div>
     <div class="col-lg-3">
-    <a href="javascript:void(0)" class="btn btn-info">Create new Group</a>
+    <!-- New Button -->
+      <button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" >Crea Nuovo Gruppo<i class="mdi-content-add" style="top: 0px;"></i></button>
+      
+      <!-- Old button
+      <button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
+      -->
+
+      <!-- Popup -->
+      <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h2 align="center"><b>Create a new Group</b></h2>
+              </div>
+            <div class="modal-body">
+              <form action="/create-group" method="post" class="form-horizontal">
+                <fieldset>
+                  <div class="form-group">
+                    <label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="inputGroupName" name="inputGroupName" placeholder="Name of the group" type="text">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="textArea" class="col-lg-2 control-label">Description</label>
+                    <div class="col-lg-10">
+                      <textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+                      <span class="help-block">Add here a description of the group</span>
+                    </div>
+                  </div>
+
+                  <!-- OLD BUTTON 
+                  <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                      <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
+                      <button type="submit" class="btn btn-info">Create</button>
+                    </div>
+                  </div>
+                  -->
+
+                  <!-- NEW BUTTON -->
+                  <div class="form-group">
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+                      <button type="submit" class="btn btn-info">Create</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     </div>
 </div>
-  <div class="jumbotron">
-    <div class="list-group" >
-         <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
 
 
-      <div class="list-group-separator"></div>
+
+<div class="list-group">
+      <div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
+      <div><h2>Your Groups</h2></div>
+      <br>
+      {% for group in groups%}
       <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
+
+        <!-- Card Group Big -->
+        <div class="well well-lg" color="blue" style="max-width: 900px;">
+          <div class="row">
+            <a href="/group/{{ group.key.id }}">
+              <div class="col-lg-10">
+                <!-- interno proposta -->
+                <div class="row-picture">
+                  <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
+                </div>
+                <div class="row-content">
+                  <h3 class="list-group-item-heading">{{ group.name }}
+                  </h3>
+                  <h5 class="list-group-item-text" color="black">{{ group.description }}</h5>
+                </div>
+              </div>
+            </a>
+            <div class="col-lg-2">
+              <a href="javascript:void(0)">Members <span class="badge">100</span></a>
             </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
+          </div>
+        </div>
       </div>
-
-
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
+      
+      {% endfor %}
       </div>
+    </div>
 
 
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
-
-
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
-
-
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
-
-
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
-
-
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
-
-
-      <div class="list-group-separator"></div>
-      <div class="list-group-item">
-             <div class="row-picture">
-                 <img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-            </div>
-            <div class="row-content">
-                 <h4 class="list-group-item-heading">Name's Groups</h4>
-
-                 <div class="row"><div class="col-lg-5">
-                      <p class="list-group-item-text">Moderate by: <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-                 </div>
-                 <div class="col-lg-5"></div>
-                 <div class="col-lg-2">
-                      <ul class="nav nav-pills">
-                          <li><a href="javascript:void(0)">Members <span class="badge">100</span></a></li>
-                     </ul>
-                </div>
-                </div>
-           </div>
-      </div>
-
-
-      <div class="list-group-separator"></div>
- </div>
-</div>
     
 </body>
 </html>
