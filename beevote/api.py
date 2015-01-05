@@ -33,7 +33,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
-		vote = models.Vote(proposal=proposal)
+		vote = models.Vote(proposal=proposal, parent=proposal)
 		vote.creator = user_id
 		vote.put()
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)

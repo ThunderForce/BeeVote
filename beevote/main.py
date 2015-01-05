@@ -57,8 +57,8 @@ class MainHandler(BasicPageHandler):
 		self.write_template('index.html')
 
 class TopicSampleHandler(BasicPageHandler):
-	def get(self):
-		topic_key = db.Key.from_path('Topic', long(self.request.get('id')))
+	def get(self, topic_id):
+		topic_key = db.Key.from_path('Topic', long(topic_id))
 		topic = db.get(topic_key)
 		
 		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(10)
@@ -79,8 +79,8 @@ class GroupHandler(BasicPageHandler):
 		self.write_template('topics-layout.html', values)
 
 class ProposalHandler(BasicPageHandler):
-	def get(self):
-		proposal_key = db.Key.from_path('Proposal', long(self.request.get('id')))
+	def get(self, topic_id, proposal_id):
+		proposal_key = db.Key.from_path('Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
@@ -171,6 +171,7 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal = models.Proposal(
 			title=title,
 			topic=topic,
+			parent=topic
 		)
 		proposal.activity = what
 		proposal.place = where
@@ -181,7 +182,7 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.description = description
 		proposal.creator = user_id
 		proposal.put()
-		self.redirect('/view-topic?id='+topic_id)
+		self.redirect('/topic/'+topic_id)
 
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
@@ -196,14 +197,14 @@ class NotFoundPageHandler(BasicPageHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/view-topic', TopicSampleHandler), #topic-layout
+	('/topic/(.*)/image', TopicImageHandler),
+	('/topic/(.*)/proposal/(.*)', ProposalHandler),
+	('/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/groups', GroupListHandler),
 	('/group', GroupHandler),			#topics-layout.html
-	('/view-proposal', ProposalHandler),
 	#('/new-topic', NewTopicHandler),
 	#('/new-proposal', NewProposalHandler),
 	('/profile/(.*)', ProfileHandler),
-	('/topic/(.*)/image', TopicImageHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
 	('/api/create-vote', api.CreateVoteHandler),

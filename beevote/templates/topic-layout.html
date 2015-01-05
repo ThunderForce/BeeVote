@@ -50,7 +50,7 @@
     						<h2 align="center"><b>Create a new Proposal</b></h2>
     					</div>
 						<div class="modal-body">
-							<form action="create-proposal" method="post" class="form-horizontal">
+							<form action="/create-proposal" method="post" class="form-horizontal">
 								<fieldset>
 									<input type="hidden" name="topicId" value="{{ topic.key.id }}">
 									<div class="form-group">
@@ -125,7 +125,7 @@
 				<!-- Card Proposal Big -->
 				<div class="well well-lg" color="blue" style="max-width: 900px;">
 					<div class="row">
-						<a href="/view-proposal?id={{ proposal.key.id }}">
+						<a href="/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}">
 							<div class="col-lg-11">
 								<!-- interno proposta -->
 								<div class="row-picture">
