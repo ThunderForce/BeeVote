@@ -28,7 +28,25 @@ import api
 
 # Start of handlers
 
-class BasicPageHandler(webapp2.RequestHandler):
+# List or URLs that you can access without being "registered" in the app
+public_urls = ["/", "/logout"]
+
+class BaseHandler(webapp2.RequestHandler):
+	def __init__(self, request, response):
+		self.initialize(request, response)
+		if not self.request.path in public_urls:
+			allowed = users.is_current_user_admin()
+			if not allowed:
+				current_user = users.get_current_user()
+				allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
+				for allowed_user in allowed_users:
+					if allowed_user.key().name() == str(current_user.user_id()):
+						allowed = True
+						break
+				if not allowed:
+					self.redirect("/access-denied", abort=True)
+
+class BasicPageHandler(BaseHandler):
 	def write_template(self, template_name, template_values={}):
 		
 		self.response.headers["Pragma"]="no-cache"
@@ -223,34 +241,23 @@ class NotAllowedPageHandler(webapp2.RequestHandler):
 
 # End of handlers
 
-allowed = users.is_current_user_admin()
-current_user = users.get_current_user()
-allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
-for allowed_user in allowed_users:
-	if allowed_user.key().name() == str(current_user.user_id()):
-		allowed = True
-if not allowed:
-	app = webapp2.WSGIApplication([
-		('/logout', LogoutHandler),
-		('/.*', NotAllowedPageHandler)
-	], debug=True)
-else:
-	app = webapp2.WSGIApplication([
-		('/', MainHandler),
-		('/group/(.*)/topic/(.*)/image', TopicImageHandler),
-		('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
-		('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
-		('/groups', GroupsHandler),
-		('/group/(.*)', GroupHandler),			#topics-layout.html
-		#('/new-topic', NewTopicHandler),
-		#('/new-proposal', NewProposalHandler),
-		('/profile/(.*)', ProfileHandler),
-		('/create-topic', CreateTopicHandler),
-		('/create-proposal', CreateProposalHandler),
-		('/create-group',CreateGroupHandler),
-		('/api/create-vote', api.CreateVoteHandler),
-		('/api/remove-vote', api.RemoveVoteHandler),
-		('/api/load-votes', api.LoadVotesHandler),
-		('/logout', LogoutHandler),
-		('/.*', NotFoundPageHandler)
-	], debug=True)
+app = webapp2.WSGIApplication([
+	('/', MainHandler),
+	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
+	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
+	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
+	('/groups', GroupsHandler),
+	('/group/(.*)', GroupHandler),			#topics-layout.html
+	#('/new-topic', NewTopicHandler),
+	#('/new-proposal', NewProposalHandler),
+	('/profile/(.*)', ProfileHandler),
+	('/create-topic', CreateTopicHandler),
+	('/create-proposal', CreateProposalHandler),
+	('/create-group',CreateGroupHandler),
+	('/api/create-vote', api.CreateVoteHandler),
+	('/api/remove-vote', api.RemoveVoteHandler),
+	('/api/load-votes', api.LoadVotesHandler),
+	('/logout', LogoutHandler),
+	('/access-denied', NotAllowedPageHandler),
+	('/.*', NotFoundPageHandler)
+], debug=True)

@@ -58,12 +58,13 @@ class AddUserHandler(webapp2.RequestHandler):
 	def post(self):
 		email = self.request.get("email")
 		user = users.User(email = email)
-		beevote_user = models.BeeVoteUser(key_name = user.user_id(), email = user.email())
-		beevote_user.put()
+		if user.user_id() != None:
+			beevote_user = models.BeeVoteUser(key_name = user.user_id(), email = user.email())
+			beevote_user.put()
 		self.redirect('/admin/allowed-users')
 
 class RemoveUserHandler(webapp2.RequestHandler):
-	def post(self, user_id):
+	def get(self, user_id):
 		beevote_user_key = db.Key.from_path('BeeVoteUser', user_id)
 		beevote_user = db.get(beevote_user_key)
 		beevote_user.delete()
