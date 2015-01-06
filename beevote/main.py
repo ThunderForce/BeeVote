@@ -37,10 +37,10 @@ class BaseHandler(webapp2.RequestHandler):
 		if not self.request.path in public_urls:
 			allowed = users.is_current_user_admin()
 			if not allowed:
-				current_user = users.get_current_user()
+				current_user_email = users.get_current_user().email()
 				allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
 				for allowed_user in allowed_users:
-					if allowed_user.key().name() == str(current_user.user_id()):
+					if allowed_user.email == current_user_email:
 						allowed = True
 						break
 				if not allowed:
@@ -237,7 +237,13 @@ class NotFoundPageHandler(BasicPageHandler):
 class NotAllowedPageHandler(webapp2.RequestHandler):
 	def get(self):
 		self.error(401)
-		self.response.out.write('You\'re not allowed to use the app. Click <a href="/logout">here</a> to logout.')
+		self.response.out.write('You\'re not allowed to use the app.')
+		self.response.out.write('<br>')
+		self.response.out.write('Ask the administrator to allow your Google Account to access this app by giving him your email: ')
+		self.response.out.write('<br>')
+		self.response.out.write('<b>'+users.get_current_user().email()+'</b>')
+		self.response.out.write('<br>')
+		self.response.out.write('Click <a href="/logout">here</a> to logout.')
 
 # End of handlers
 
