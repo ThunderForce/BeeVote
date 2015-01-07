@@ -13,7 +13,7 @@
 				<h1>{{ topic.title }}</h1>
 				<p>{{ topic.description }}</p>
 				{% if topic.img != None %}
-					<img src="group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width: 100%">
+					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width: 100%">
 				{% endif %}
 				{% if topic.img == None %}
 					<i>No image available</i>

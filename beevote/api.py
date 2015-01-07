@@ -31,6 +31,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		email = user.email()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -38,6 +39,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		proposal = db.get(proposal_key)
 		vote = models.Vote(proposal=proposal, parent=proposal)
 		vote.creator = user_id
+		vote.email = email
 		vote.put()
 		time.sleep(0.25)
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
@@ -82,7 +84,7 @@ class LoadVotesHandler(webapp2.RequestHandler):
 		votes = []
 		for vote in votes_db:
 			votes.append({
-				'creator': vote.creator,
+				'email': vote.email,
 			})
 		values = {
 			'success': True,

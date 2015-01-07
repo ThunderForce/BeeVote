@@ -1,88 +1,46 @@
 <!DOCTYPE HTML>
 <html>
 
-    <head>
+	<head>
 
-        <title>Proposal - BeeVote</title>
-        
-        {{ basic_head }}
+		<title>Proposal - BeeVote</title>
+		
+		{{ basic_head }}
 
-        <script>
+		<script src="/static/js/vote-functions.js"></script>
+		
+		<script>
 			$(document).ready(function() {
 				$("#vote_list_button").on("click", function() {
 					if ($(this).attr("aria-expanded") != "true") {
 						$("#list_of_votes").html("<li>Loading...</li>");
-						$.ajax({
-							url: "/api/load-votes",
-							method: "POST",
-							data: {
-								group_id: {{ proposal.parent.parent.key.id }},
-								topic_id: {{ proposal.parent.key.id }},
-								proposal_id: {{ proposal.key.id }}
-							},
-							dataType: "json",
-							success: function(response) {
-								$("#list_of_votes").html("");
-								$.each(response.votes, function(index, vote) {
-									$("#list_of_votes").append("<li>"+vote.creator+"</li>");
-								});
-							}
-						});
+						var success_callback = function(response) {
+							$("#list_of_votes").html("");
+							$.each(response.votes, function(index, vote) {
+								$("#list_of_votes").append("<li>"+vote.email+"</li>");
+							});
+						}
+						load_votes("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}", success_callback);
 					}
 					
 				});
 			});
-			function load_votes() {
-				
-			}
-			function toggle_vote() {
+			function toggle_vote(group, topic, proposal) {
 				if ($("#vote").is(":checked"))
-					add_vote();
+					add_vote(group, topic, proposal);
 				else
-					remove_vote();
+					remove_vote(group, topic, proposal);
 			}
-			function add_vote() {
-				$("#number_of_votes").html("...");
-				$.ajax({
-					url: "/api/create-vote",
-					method: "POST",
-					data: {
-						group_id: {{ proposal.parent.parent.key.id }},
-						topic_id: {{ proposal.parent.key.id }},
-						proposal_id: {{ proposal.key.id }}
-					},
-					dataType: "json",
-					success: function(response) {
-						$("#number_of_votes").html(response.vote_number);
-					}
-				});
-			}
-			function remove_vote() {
-				$("#number_of_votes").html("...");
-				$.ajax({
-					url: "/api/remove-vote",
-					method: "POST",
-					data: {
-						group_id: {{ proposal.parent.parent.key.id }},
-						topic_id: {{ proposal.parent.key.id }},
-						proposal_id: {{ proposal.key.id }}
-					},
-					dataType: "json",
-					success: function(response) {
-						$("#number_of_votes").html(response.vote_number);
-					}
-				});
-			}
-        </script>
+		</script>
 
-    </head>
+	</head>
 
-    <body>
+	<body>
 
-        {{ navbar }}
+		{{ navbar }}
 
-    <div class="jumbotron">
-    	<div class="row">
+	<div class="jumbotron">
+		<div class="row">
             <div class="col-lg-5">
                 <h1>{{ proposal.title }}</h1>
                 <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPropose by <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
@@ -98,7 +56,7 @@
                     </div>
             </div>        
             <div class="col-lg-1">
-                <span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote();' {% if already_voted %}checked {% endif %}></label></span>
+                <span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' {% if already_voted %}checked {% endif %}></label></span>
             </div>
                 
         </div>
