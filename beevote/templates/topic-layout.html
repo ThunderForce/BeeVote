@@ -8,6 +8,17 @@
 	{{ navbar }}
 	<!-- Topic -->
 	<div class="jumbotron" style="max-width: 900px;">
+
+	<h1>{{ topic.title }}</h1>
+				<p>{{ topic.description }}</p>
+				{% if topic.img != None %}
+					<img src="group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width: 100%">
+				{% endif %}
+				{% if topic.img == None %}
+					<i>No image available</i>
+				{% endif %}
+				<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>
+		<!--
 		<div class="row">
 			<div class="col-lg-6">
 				<h1>{{ topic.title }}</h1>
@@ -33,6 +44,7 @@
 				</div>
 			</div>
 		</div>
+		-->
 		<div align="center">
 			
 			<!-- New Button -->

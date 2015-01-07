@@ -1,3 +1,10 @@
 beevote/static/images/Thumbs.db
 beevote/main.pyc
 *.pyc
+beevote/models.pyc
+
+*.pyc
+
+beevote/index.pyc
+
+beevote/main.pyc
