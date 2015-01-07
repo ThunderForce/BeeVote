@@ -8,15 +8,16 @@
 	{{ navbar }}
 	<!-- Topic -->
 	<div class="jumbotron" style="max-width: 900px;">
-
-	<h1>{{ topic.title }}</h1>
+				<h1>{{ topic.title }}</h1>
 				<p>{{ topic.description }}</p>
 				{% if topic.img != None %}
-					<img src="group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width: 100%">
+					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
 				{% endif %}
 				{% if topic.img == None %}
 					<i>No image available</i>
 				{% endif %}
+				<br>
+				
 				<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>
 		<!--
 		<div class="row">
@@ -43,8 +44,10 @@
 					</div>
 				</div>
 			</div>
-		</div>
 		-->
+		</div>
+
+
 		<div align="center">
 			
 			<!-- New Button -->
@@ -151,9 +154,11 @@
 								</div>
 							</div>
 						</a>
+						<!-- VOTE
 						<div class="col-lg-1">
 							<span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:void(0)'></label></span>
 						</div>
+						-->
 					</div>
 				</div>
 			</div>
