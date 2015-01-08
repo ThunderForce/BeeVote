@@ -3,6 +3,14 @@
 <head>
 	<title>Topic - BeeVote</title>
 	{{ basic_head }}
+	
+	<script>
+		$(document).ready(function() {
+			$('#proposal-form').submit(function() {
+				$('#create-proposal').attr("disabled", true);
+			});
+		});
+	</script>
 </head>
 <body>
 	{{ navbar }}
@@ -65,7 +73,7 @@
     						<h2 align="center"><b>Create a new Proposal</b></h2>
     					</div>
 						<div class="modal-body">
-							<form action="/create-proposal" method="post" class="form-horizontal">
+							<form action="/create-proposal" method="post" class="form-horizontal" id="proposal-form">
 								<fieldset>
 									<input type="hidden" name="groupId" value="{{ topic.parent.key.id }}">
 									<input type="hidden" name="topicId" value="{{ topic.key.id }}">
@@ -120,7 +128,7 @@
 									<div class="form-group">
 										<div class="modal-footer">
 											<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
-											<button type="submit" class="btn btn-info">Create</button>
+											<button type="submit" class="btn btn-info" id="create-proposal">Create</button>
 										</div>
 									</div>
 								</fieldset>
