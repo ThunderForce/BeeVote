@@ -41,54 +41,53 @@
 
 	<div class="jumbotron">
 		<div class="row">
-            <div class="col-lg-5">
-                <h1>{{ proposal.title }}</h1>
-                <p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPropose by <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
-    	   </div>
-    	   <div class="col-lg-4"></div>
-    	   <div class="col-lg-2">
-                    <div class="btn-group">
-                        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" id="vote_list_button">Votes&nbsp&nbsp&nbsp
-                            <span class="badge" id="number_of_votes">{{ vote_number }}</span>&nbsp&nbsp<span class="caret"></span></a>
-                        <ul class="dropdown-menu" id="list_of_votes">
-                            <!-- Here there's a dynamic list of votes -->
-                        </ul>
-                    </div>
-            </div>        
-            <div class="col-lg-1">
-                <span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' {% if already_voted %}checked {% endif %}></label></span>
-            </div>
-                
-        </div>
-    	</div>
-    </div>
+			<div class="col-lg-5">
+				<h1>{{ proposal.title }}</h1>
+				<p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPropose by <a href="javascript:void(0)" class="btn btn-flat btn-info">NAME SURNAME</a></p>
+		</div>
+		<div class="col-lg-4"></div>
+		<div class="col-lg-2">
+					<div class="btn-group">
+						<a class="btn btn-info dropdown-toggle" data-toggle="dropdown" id="vote_list_button">Votes&nbsp&nbsp&nbsp
+							<span class="badge" id="number_of_votes">{{ vote_number }}</span>&nbsp&nbsp<span class="caret"></span></a>
+						<ul class="dropdown-menu" id="list_of_votes">
+							<!-- Here there's a dynamic list of votes -->
+						</ul>
+					</div>
+			</div>
+			<div class="col-lg-1">
+				<span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' {% if already_voted %}checked {% endif %}></label></span>
+			</div>
+		</div>
+		</div>
+	</div>
 
-    <div class ="row">
-    	<div class ="col-lg-6">	
-    		<div class="well">
-    	    	Date: {{ proposal.date }}
-    		</div>
-    	</div>
-    	<div class="col-lg-6">
-    		<div class="well">
-    	    	Time: {{ proposal.time }}
-    		</div>
-    	</div>
-    </div>
+	<div class ="row">
+		<div class ="col-lg-6">	
+			<div class="well">
+				Date: {{ proposal.date }}
+			</div>
+		</div>
+		<div class="col-lg-6">
+			<div class="well">
+				Time: {{ proposal.time }}
+			</div>
+		</div>
+	</div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading"><h2>{{ proposal.place }}</h2></div>
-        <div class="panel-body">
-            <p>Place description.</p>
-            <p>Address: ADDRESS</p>
-            <p><a class="btn btn-info btn-lg">View on Google Maps</a></p>
-        </div>
-    </div>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2>{{ proposal.place }}</h2></div>
+		<div class="panel-body">
+			<p>Place description.</p>
+			<p>Address: ADDRESS</p>
+			<p><a class="btn btn-info btn-lg">View on Google Maps</a></p>
+		</div>
+		</div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">Description</div>
-        <div class="panel-body">Description content.</div>
-    </div>
+	<div class="panel panel-default">
+		<div class="panel-heading">Description</div>
+		<div class="panel-body">Description content.</div>
+	</div>
 
-    </body>
+	</body>
 </html>
