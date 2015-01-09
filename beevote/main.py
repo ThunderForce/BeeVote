@@ -54,7 +54,6 @@ class BasicPageHandler(BaseHandler):
 		self.response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 		
 		directory = os.path.dirname(__file__)
-		#import_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
 
@@ -254,8 +253,6 @@ app = webapp2.WSGIApplication([
 	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/groups', GroupsHandler),
 	('/group/(.*)', GroupHandler),			#topics-layout.html
-	#('/new-topic', NewTopicHandler),
-	#('/new-proposal', NewProposalHandler),
 	('/profile/(.*)', ProfileHandler),
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
