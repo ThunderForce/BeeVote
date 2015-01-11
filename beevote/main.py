@@ -83,6 +83,14 @@ class TopicSampleHandler(BasicPageHandler):
 		topic = db.get(topic_key)
 		
 		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(10)
+		
+		# Adding a variable on each proposal containing the NUMBER of votes of the proposal
+		for proposal in proposals:
+			proposal.vote_number = len(proposal.vote_set.fetch(1000))
+		
+		# Sorting the proposal according to vote number
+		proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
+		
 		values = {
 			'topic': topic,
 			'proposals': proposals,
