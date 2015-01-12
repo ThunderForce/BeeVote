@@ -8,6 +8,7 @@ class BeeVoteUser(db.Model):
 class Group(db.Model):
 	name = db.StringProperty(required=True)
 	description = db.TextProperty()
+	members = db.StringListProperty()
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)

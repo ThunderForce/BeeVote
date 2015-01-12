@@ -99,9 +99,14 @@ class TopicSampleHandler(BasicPageHandler):
 
 class GroupsHandler(BasicPageHandler):
 	def get(self):
-		groups = db.GqlQuery("SELECT * FROM Group")
+		user = users.get_current_user()
+		email = user.email()
+		groups = db.GqlQuery("SELECT * FROM Group").fetch(100)
+		for group in groups:
+			if (not email in group.members) and (group.members != []):
+				groups.remove(group)
 		values = {
-		'groups' : groups
+			'groups' : groups
 		}
 		self.write_template('groups-layout.html',values)
 
@@ -115,6 +120,33 @@ class GroupHandler(BasicPageHandler):
 			'topics': topics,
 		}
 		self.write_template('topics-layout.html', values)
+
+class GroupMembersHandler(BasicPageHandler):
+	def get(self, group_id):
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		values = {
+			'group': group,
+		}
+		self.write_template('group-members-layout.html', values)
+
+class AddGroupMemberHandler(BasicPageHandler):
+	def post(self, group_id):
+		email = self.request.get("email")
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		group.members.append(email)
+		group.put()
+		self.redirect("/group/"+group_id+"/members")
+
+class RemoveGroupMemberHandler(BasicPageHandler):
+	def post(self, group_id):
+		email = self.request.get("email")
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		group.members.remove(email)
+		group.put()
+		self.redirect("/group/"+group_id+"/members")
 
 class ProposalHandler(BasicPageHandler):
 	def get(self, group_id, topic_id, proposal_id):
@@ -222,12 +254,15 @@ class CreateProposalHandler(BasicPageHandler):
 
 class CreateGroupHandler(BasicPageHandler):
 	def post(self):
+		user = users.get_current_user()
+		email = user.email()
 		name = self.request.get('inputGroupName')
 		description = self.request.get('inputDescription')
 		group = models.Group(
 				name = name,
 			)
 		group.description = description
+		group.members.append(email)
 		group.put()
 		group_id = group.key().id() 
 		self.redirect('/group/'+str(group_id))
@@ -256,6 +291,9 @@ class NotAllowedPageHandler(webapp2.RequestHandler):
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
+	('/group/(.*)/members/remove', RemoveGroupMemberHandler),
+	('/group/(.*)/members/add', AddGroupMemberHandler),
+	('/group/(.*)/members', GroupMembersHandler),
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
 	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
 	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
