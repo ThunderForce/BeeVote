@@ -306,6 +306,7 @@ app = webapp2.WSGIApplication([
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/load-votes', api.LoadVotesHandler),
+	('/api/load-group-members', api.LoadGroupMembersHandler),
 	('/logout', LogoutHandler),
 	('/access-denied', NotAllowedPageHandler),
 	('/.*', NotFoundPageHandler)

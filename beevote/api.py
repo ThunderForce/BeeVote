@@ -72,7 +72,7 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 		self.response.out.write(json.dumps(values))
 
 class LoadVotesHandler(webapp2.RequestHandler):
-	def post(self):
+	def get(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
 		group_id = self.request.get('group_id')
@@ -89,6 +89,17 @@ class LoadVotesHandler(webapp2.RequestHandler):
 		values = {
 			'success': True,
 			'votes': votes,
+		}
+		self.response.out.write(json.dumps(values))
+
+class LoadGroupMembersHandler(webapp2.RequestHandler):
+	def get(self):
+		group_id = self.request.get('group_id')
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		values = {
+			'success': True,
+			'members': group.members,
 		}
 		self.response.out.write(json.dumps(values))
 
