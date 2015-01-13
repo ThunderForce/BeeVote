@@ -30,6 +30,7 @@ class Proposal(db.Model):
 	date = db.DateProperty()
 	time = db.TimeProperty()
 	creator = db.StringProperty()
+	email = db.StringProperty()
 	
 class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)

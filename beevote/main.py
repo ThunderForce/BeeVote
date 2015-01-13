@@ -152,6 +152,7 @@ class ProposalHandler(BasicPageHandler):
 	def get(self, group_id, topic_id, proposal_id):
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
+
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		
@@ -196,6 +197,7 @@ class CreateTopicHandler(BasicPageHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		email = user.email()
 		group_id = self.request.get('groupId')
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
@@ -217,6 +219,7 @@ class CreateTopicHandler(BasicPageHandler):
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
 		topic.description = description
 		topic.creator = user_id
+		topic.email=email
 		if img != "":
 			topic.img = db.Blob(img)
 		topic.put()
@@ -226,6 +229,7 @@ class CreateProposalHandler(BasicPageHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		email = user.email()
 		title = self.request.get('inputProposalName')
 		what = self.request.get('inputWhat')
 		where= self.request.get('inputWhere')
@@ -249,6 +253,7 @@ class CreateProposalHandler(BasicPageHandler):
 			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 		proposal.description = description
 		proposal.creator = user_id
+		proposal.email=email
 		proposal.put()
 		self.redirect('/group/'+group_id+'/topic/'+topic_id)
 
