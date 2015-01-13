@@ -210,7 +210,11 @@ class CreateTopicHandler(BasicPageHandler):
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
 		img = self.request.get('inputImg')
-		topic = models.Topic(title=title, group=group, parent=group)
+		topic = models.Topic(
+			title=title,
+			group=group,
+			parent=group
+			  )
 		topic.activity = what
 		topic.place = where
 		if date != "":
@@ -232,7 +236,7 @@ class CreateProposalHandler(BasicPageHandler):
 		email = user.email()
 		title = self.request.get('inputProposalName')
 		what = self.request.get('inputWhat')
-		where= self.request.get('inputWhere')
+		where = self.request.get('inputWhere')
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
 		description = self.request.get('inputDescription')
@@ -245,8 +249,10 @@ class CreateProposalHandler(BasicPageHandler):
 			topic=topic,
 			parent=topic
 		)
-		proposal.activity = what
-		proposal.place = where
+		if what != "":
+			proposal.activity = what
+		if where != "":
+			proposal.place = where
 		if date != "":
 			proposal.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
 		if time != "":
