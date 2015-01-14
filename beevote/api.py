@@ -92,6 +92,29 @@ class LoadVotesHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
+class LoadProposalHandler(webapp2.RequestHandler):
+	def get(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		group_id = self.request.get('group_id')
+		topic_id = self.request.get('topic_id')
+		proposal_id = self.request.get('proposal_id')
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
+		proposal = db.get(proposal_key)
+		values = {
+			'success': True,
+			'proposal': {
+				'title': proposal.title,
+				'description': proposal.description,
+				'creator_email': proposal.email,
+				'activity': proposal.activity,
+				'place': proposal.place,
+				'date': proposal.date,
+				'time': proposal.time,
+			}
+		}
+		self.response.out.write(json.dumps(values))
+
 class LoadGroupMembersHandler(webapp2.RequestHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
