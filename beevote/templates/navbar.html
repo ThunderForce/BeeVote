@@ -21,68 +21,59 @@
 			<li class="active">Data</li>
 			</ul>
 		</ul>
-		-->
+	-->
 
-		
+
 		<ul class="nav navbar-nav navbar-right">
 			<li>
-				<!--	
-				<form class="navbar-form navbar-left">
-					<input type="text" class="form-control col-lg-8 " placeholder="Search">
-				</form>
+					<!--	
+					<form class="navbar-form navbar-left">
+						<input type="text" class="form-control col-lg-8 " placeholder="Search">
+					</form>
 				-->
 			</li>
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-					<span>{{ user.email }}</span> 
+					<span>
+						{{ user.email }}
+					</span> 
 					<b class="caret"> </b>
-					
+
 				</a>
 				<ul class="dropdown-menu">
-						<!-- <li><a href="/profile/{{ user.user_id }}">Setting</a></li> -->
-						<li><a href="https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform?usp=send_form" target="_blank" title="Click here to fedback">Feedback</a></li>
-						<li class="divider"></li>
-						<li><a href="/logout" title="Click here to logout">Logout</a></li>
+					<!-- <li><a href="/profile/{{ user.user_id }}">Setting</a></li> -->
+					<li>
+						<a href="https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform?usp=send_form" target="_blank" title="Click here to fedback">Feedback</a>
+					</li>
+					<li class="divider">
+					</li>
+					<li>
+						<a href="/logout" title="Click here to logout">Logout</a>
+					</li>
 				</ul>
 			</li>
-				<li>
-				
-					<img class="image-circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" title="Click here to logout" alt="icon">
-				</li>
-			</li>
-		</div>
-	</div>
-
-
-<!--
-<div class="navbar navbar-default navbar-fixed-top" color="blue">
-	<div class="navbar-header">
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
-		<a class="navbar-brand" href="/">
-			<div>
-				<img src="static/images/logo-inverted-48.png" style="margin: auto auto;">
-			</div>
-		</a>
-	</div>
-	<div class="navbar-collapse collapse navbar-responsive-collapse">
-		<ul class="nav navbar-nav">
-			<li class="active"><a href="javascript:void(0)">Where we are</a></li>
-		</ul>
-
-		<form class="navbar-form navbar-left">
-			<input type="text" class="form-control col-lg-8 " placeholder="Search">
-		</form>
-		<ul class="nav navbar-nav navbar-right">
 			<li>
-				<a href="logout" style="padding-top: 0px; padding-bottom: 0px;">
-					<img class="image-circle" src="http://lorempixel.com/56/56/people/1" title="Click here to logout" alt="icon">
-				</a>
+				<img class="image-circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" title="Click here to logout" alt="icon">
 			</li>
 		</ul>
 	</div>
 </div>
+
+<!-- sagoma della navbar -->
+<div style="height: 75px;">
+</div>
+
+<div class="alert alert-dismissable alert-success" style="max-width: 900px; margin-left: auto; margin-right: auto; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
+    <button type="button" class="close" data-dismiss="alert">X</button>
+    <h3 style="margin-top: 0px;">We would like to know what you think about BeeVote!</h3>
+    <h3 style="margin-bottom: 0px;">Click <a href='https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform' style='color: #DEF321;' target='_blank'><strong>here</strong></a> to give us feedback!
+    </h3>
+</div>
+
+
+<!-- feedback script
+    		$.snackbar({
+    			content: "We would like to know what you think about BeeVote! Click <a href='https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform' style='color: #2196F3;' target='_blank'>here</a> to give us feedback!", 
+    			timeout: 0
+    		});
 -->

@@ -23,13 +23,13 @@
         });
     </script>
     <!-- Popup JS -->
-	<script>
-		$(document).ready(function() {
-			$('#topic-form').submit(function() {
-				$('#create-topic').attr("disabled", true);
-			});
-		});
-	</script>
+    <script>
+    	$(document).ready(function() {
+    		$('#topic-form').submit(function() {
+    			$('#create-topic').attr("disabled", true);
+    		});
+    	});
+    </script>
 
 </head>
 
@@ -37,7 +37,7 @@
 
 	{{ navbar }}
 
-	<div class="jumbotron" style="max-width: 900px; margin-top: 70px;">
+	<div class="jumbotron" style="max-width: 900px;">
 		<h1>{{group.name}} </h1>
 		<h2>&nbsp<small>{{group.description}}</small></h2>
 		<a href="/group/{{ group.key.id }}/members"><button class="btn btn-info">View members</button></a>
@@ -60,18 +60,18 @@
 			</div>
 			
 		</div>
-		-->
+	-->
 
-		<div class="jumbotron" style="max-width: 900px; background-color: #DDD">
-			<div><h2>List of Topics</h2></div>
-			<br>
-			<div class="row">
+	<div class="jumbotron" style="max-width: 900px; background-color: #DDD">
+		<div><h2>List of Topics</h2></div>
+		<br>
+		<div class="row">
 
 
-				<div align="center">
+			<div align="center">
 
-					<!-- New Button -->
-					<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" ></i></button>
+				<!-- New Button -->
+				<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" ></i></button>
 
 				<!-- Old Button
     			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new topic&nbsp<span class="mdi-content-add-circle-outline"></span></button>
@@ -192,13 +192,13 @@
 				<div class="well well-lg" color="blue">
 					<!-- interno proposta -->
 					<div class="row">
-					<div class="row-picture">
-						<img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-					</div>
-					<div class="row-content">
-					<h3 class="list-group-item-heading">{{topic.title}}</h3>
-					<h5 class="list-group-item-text">{{topic.description}}</h5>
-					</div>
+						<div class="row-picture">
+							<img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
+						</div>
+						<div class="row-content">
+							<h3 class="list-group-item-heading">{{topic.title}}</h3>
+							<h5 class="list-group-item-text">{{topic.description}}</h5>
+						</div>
 					</div>
 				</div>
 			</a>
