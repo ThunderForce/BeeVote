@@ -8,6 +8,35 @@
 			$('#proposal-form').submit(function() {
 				$('#create-proposal').attr("disabled", true);
 			});
+			$("div.proposal-well").on("click", function() {
+				var proposal_id = $(this).data("proposal");
+				if ($("p.proposal-details[data-proposal='" + proposal_id +"']").html() == "") {
+					$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
+					$.ajax({
+						url: "/api/load-proposal",
+						method: "GET",
+						data: {
+							group_id: {{ topic.parent.key.id }},
+							topic_id: {{ topic.key.id }},
+							proposal_id: proposal_id
+						},
+						dataType: "json",
+						success: function(response) {
+							$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
+							var proposal = response.proposal;
+							$("p.proposal-details[data-proposal='" + proposal_id +"']").html(
+								'<h5 class="list-group-item-text" color="black">'+proposal.activity+'</h5>'+
+								'<h5 class="list-group-item-text" color="black">'+proposal.description+'</h5>'+
+								'<h5 class="list-group-item-text" color="black">'+proposal.date+'</h5>'+
+								'<h5 class="list-group-item-text" color="black">'+proposal.time+'</h5>'+
+								'<h5 class="list-group-item-text" color="black">'+proposal.place+'</h5>'+
+								'<h5 class="list-group-item-text" color="black"> Create by: '+proposal.cerator_email+' </h5>');
+							$("p.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+						}
+					});
+				} else
+					$("p.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+			});
 		});
 	</script>
 </head>
@@ -156,28 +185,34 @@
 			<div class="list-group-item">
 
 				<!-- Card Proposal Big -->
-				<div class="well well-lg" color="blue" style="max-width: 900px;">
+				<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="blue" style="max-width: 900px;">
 					<div class="row">
-						<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}">
-							<div class="col-lg-11">
-								<!-- interno proposta -->
-								<div class="row-picture">
-									<img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
-								</div>
-								<div class="row-content">
-									<h2 class="list-group-item-heading">{{ proposal.title }}
+						<!--<div class="col-lg-11">-->
+							<!-- interno proposta -->
+							<div class="row-picture">
+								<img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
+							</div>
+							<div class="row-content">
+								<div class="col-lg-11">
+									<h2 class="list-group-item-heading">
+										{{ proposal.title }}
+										<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 									</h2>
-									<h5 class="list-group-item-text" color="black"> Create by: {{ proposal.email}} </h5>
-									<h5 class="list-group-item-text" color="black">{{ proposal.description }}</h5>
+									<p class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;"></p>
+									<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red">view details</a>
+								</div>
+								<div class="least-content">
+									Votes: <span class="badge" id="number_of_votes">{{ proposal.vote_number }}</span>
+									<input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' >
 								</div>
 							</div>
-						</a>
+						<!--</div>-->
 						<!-- VOTE
 						<div class="col-lg-1">
 							<span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:void(0)'></label></span>
 						</div>
 						-->
-						Votes: <span class="badge" id="number_of_votes">{{ proposal.vote_number }}</span>
+						
 					</div>
 				</div>
 			</div>

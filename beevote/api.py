@@ -109,8 +109,8 @@ class LoadProposalHandler(webapp2.RequestHandler):
 				'creator_email': proposal.email,
 				'activity': proposal.activity,
 				'place': proposal.place,
-				'date': proposal.date,
-				'time': proposal.time,
+				'date': str(proposal.date),
+				'time': str(proposal.time),
 			}
 		}
 		self.response.out.write(json.dumps(values))
