@@ -32,27 +32,7 @@ import api
 public_urls = ["/", "/logout"]
 
 class BaseHandler(webapp2.RequestHandler):
-	def __init__(self, request, response):
-		self.initialize(request, response)
-		if not self.request.path in public_urls:
-			allowed = users.is_current_user_admin()
-			if not allowed:
-				current_user_email = users.get_current_user().email()
-				allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
-				for allowed_user in allowed_users:
-					if allowed_user.email == current_user_email:
-						allowed = True
-						break
-				if not allowed:
-					self.redirect("/access-denied", abort=True)
-
-class BasicPageHandler(BaseHandler):
-	def write_template(self, template_name, template_values={}):
-		
-		self.response.headers["Pragma"]="no-cache"
-		self.response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
-		self.response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
-		
+	def get_template(self, template_name, template_values={}):
 		directory = os.path.dirname(__file__)
 		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 		navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
@@ -71,7 +51,30 @@ class BasicPageHandler(BaseHandler):
 		values.update(template_values)
 
 		path = os.path.join(directory, os.path.join('templates', template_name))
-		self.response.out.write(template.render(path, values))
+		return template.render(path, values)
+	def __init__(self, request, response):
+		self.initialize(request, response)
+		if not self.request.path in public_urls:
+			allowed = users.is_current_user_admin()
+			if not allowed:
+				current_user_email = users.get_current_user().email()
+				allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
+				for allowed_user in allowed_users:
+					if allowed_user.email == current_user_email:
+						allowed = True
+						break
+				if not allowed:
+					template = self.get_template("errors/401.html", template_values={'detail': "You are not authorized to use this app. Ask the administrator to allow your Google Account to access this app by giving him your email: <b>"+users.get_current_user().email()+"</b><br>Click <a href='/logout'>here</a> to logout."})
+					self.abort(401, body_template=template)
+
+class BasicPageHandler(BaseHandler):
+	def write_template(self, template_name, template_values={}):
+		
+		self.response.headers["Pragma"]="no-cache"
+		self.response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
+		self.response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
+		
+		self.response.out.write(self.get_template(template_name, template_values))
 
 class MainHandler(BasicPageHandler):
 	def get(self):
@@ -286,19 +289,12 @@ class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
 		self.error(404)
 		self.write_template('not_found.html', {'url': self.request.path})
-
-class NotAllowedPageHandler(webapp2.RequestHandler):
-	def get(self):
-		self.error(401)
-		self.response.out.write('You\'re not allowed to use the app.')
-		self.response.out.write('<br>')
-		self.response.out.write('Ask the administrator to allow your Google Account to access this app by giving him your email: ')
-		self.response.out.write('<br>')
-		self.response.out.write('<b>'+users.get_current_user().email()+'</b>')
-		self.response.out.write('<br>')
-		self.response.out.write('Click <a href="/logout">here</a> to logout.')
-
+		
 # End of handlers
+
+def handle_401(request, response, exception):
+	response.set_status(401)
+	response.write(exception.body_template)
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
@@ -319,6 +315,7 @@ app = webapp2.WSGIApplication([
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
 	('/logout', LogoutHandler),
-	('/access-denied', NotAllowedPageHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
+
+app.error_handlers[401] = handle_401
