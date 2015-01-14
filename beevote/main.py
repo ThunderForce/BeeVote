@@ -18,7 +18,6 @@
 import os
 import webapp2
 import datetime
-#import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -31,27 +30,36 @@ import api
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
 
+def get_template(template_name, template_values={}):
+	directory = os.path.dirname(__file__)
+	basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
+	navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
+
+	user = users.get_current_user()
+
+	val_user = {
+		'user': user,
+	}
+
+	values = {
+		'basic_head': template.render(basic_head_path, {}),
+		'navbar': template.render(navbar_path, val_user),
+	}
+	
+	values.update(template_values)
+
+	path = os.path.join(directory, os.path.join('templates', template_name))
+	return template.render(path, values)
+
+def write_template(response, template_name, template_values={}):
+	response.headers["Pragma"]="no-cache"
+	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
+	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
+	response.out.write(get_template(template_name, template_values))
+
 class BaseHandler(webapp2.RequestHandler):
-	def get_template(self, template_name, template_values={}):
-		directory = os.path.dirname(__file__)
-		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-		navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
+	
 
-		user = users.get_current_user()
-
-		val_user = {
-			'user': user,
-		}
-
-		values = {
-			'basic_head': template.render(basic_head_path, {}),
-			'navbar': template.render(navbar_path, val_user),
-		}
-		
-		values.update(template_values)
-
-		path = os.path.join(directory, os.path.join('templates', template_name))
-		return template.render(path, values)
 	def __init__(self, request, response):
 		self.initialize(request, response)
 		if not self.request.path in public_urls:
@@ -64,23 +72,13 @@ class BaseHandler(webapp2.RequestHandler):
 						allowed = True
 						break
 				if not allowed:
-					template = self.get_template("errors/401.html", template_values={'detail': "You are not authorized to use this app. Ask the administrator to allow your Google Account to access this app by giving him your email: <b>"+users.get_current_user().email()+"</b><br>Click <a href='/logout'>here</a> to logout."})
-					self.abort(401, body_template=template)
+					self.abort(401, detail="You are not authorized to use this app. Ask the administrator to allow your Google Account to access this app by giving him your email: <b>"+users.get_current_user().email()+"</b><br>Click <a href='/logout'>here</a> to logout.")
 
-class BasicPageHandler(BaseHandler):
-	def write_template(self, template_name, template_values={}):
-		
-		self.response.headers["Pragma"]="no-cache"
-		self.response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
-		self.response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
-		
-		self.response.out.write(self.get_template(template_name, template_values))
-
-class MainHandler(BasicPageHandler):
+class MainHandler(BaseHandler):
 	def get(self):
-		self.write_template('index.html')
+		write_template(self.response, 'index.html')
 
-class TopicSampleHandler(BasicPageHandler):
+class TopicSampleHandler(BaseHandler):
 	def get(self, group_id, topic_id):
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
@@ -98,9 +96,9 @@ class TopicSampleHandler(BasicPageHandler):
 			'topic': topic,
 			'proposals': proposals,
 		}
-		self.write_template('topic-layout.html', values)
+		write_template(self.response, 'topic-layout.html', values)
 
-class GroupsHandler(BasicPageHandler):
+class GroupsHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
 		email = user.email()
@@ -111,9 +109,9 @@ class GroupsHandler(BasicPageHandler):
 		values = {
 			'groups' : groups
 		}
-		self.write_template('groups-layout.html',values)
+		write_template(self.response, 'groups-layout.html',values)
 
-class GroupHandler(BasicPageHandler):
+class GroupHandler(BaseHandler):
 	def get(self, group_id):
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
@@ -122,18 +120,18 @@ class GroupHandler(BasicPageHandler):
 			'group': group,
 			'topics': topics,
 		}
-		self.write_template('topics-layout.html', values)
+		write_template(self.response, 'topics-layout.html', values)
 
-class GroupMembersHandler(BasicPageHandler):
+class GroupMembersHandler(BaseHandler):
 	def get(self, group_id):
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
 		values = {
 			'group': group,
 		}
-		self.write_template('group-members-layout.html', values)
+		write_template(self.response, 'group-members-layout.html', values)
 
-class AddGroupMemberHandler(BasicPageHandler):
+class AddGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
 		email = self.request.get("email")
 		group_key = db.Key.from_path('Group', long(group_id))
@@ -142,7 +140,7 @@ class AddGroupMemberHandler(BasicPageHandler):
 		group.put()
 		self.redirect("/group/"+group_id+"/members")
 
-class RemoveGroupMemberHandler(BasicPageHandler):
+class RemoveGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
 		email = self.request.get("email")
 		group_key = db.Key.from_path('Group', long(group_id))
@@ -151,7 +149,7 @@ class RemoveGroupMemberHandler(BasicPageHandler):
 		group.put()
 		self.redirect("/group/"+group_id+"/members")
 
-class ProposalHandler(BasicPageHandler):
+class ProposalHandler(BaseHandler):
 	def get(self, group_id, topic_id, proposal_id):
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
@@ -172,14 +170,14 @@ class ProposalHandler(BasicPageHandler):
 			'vote_number': vote_number,
 			'already_voted': already_voted,
 		}
-		self.write_template('proposal-layout.html', values)
+		write_template(self.response, 'proposal-layout.html', values)
 
 
-class ProfileHandler(BasicPageHandler):
+class ProfileHandler(BaseHandler):
 	def get(self, user_id):
 		# Use user_id to get user and put it in values
 		values = {}
-		self.write_template('user-profile.html', values)
+		write_template(self.response, 'user-profile.html', values)
 
 class TopicImageHandler(webapp2.RequestHandler):
 	def get(self, group_id, topic_id):
@@ -196,7 +194,7 @@ class TopicImageHandler(webapp2.RequestHandler):
 				self.error(404)
 				self.response.out.write("Topic "+topic_id+" does not have an image")
 
-class CreateTopicHandler(BasicPageHandler):
+class CreateTopicHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -204,7 +202,6 @@ class CreateTopicHandler(BasicPageHandler):
 		group_id = self.request.get('groupId')
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-
 
 		title = self.request.get('inputTopicName')
 		what = self.request.get('inputWhat')
@@ -232,7 +229,7 @@ class CreateTopicHandler(BasicPageHandler):
 		topic.put()
 		self.redirect('/group/'+group_id)
 
-class CreateProposalHandler(BasicPageHandler):
+class CreateProposalHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -266,7 +263,7 @@ class CreateProposalHandler(BasicPageHandler):
 		proposal.put()
 		self.redirect('/group/'+group_id+'/topic/'+topic_id)
 
-class CreateGroupHandler(BasicPageHandler):
+class CreateGroupHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
 		email = user.email()
@@ -284,17 +281,16 @@ class CreateGroupHandler(BasicPageHandler):
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
-
-class NotFoundPageHandler(BasicPageHandler):
-	def get(self):
-		self.error(404)
-		self.write_template('not_found.html', {'url': self.request.path})
 		
 # End of handlers
 
 def handle_401(request, response, exception):
 	response.set_status(401)
-	response.write(exception.body_template)
+	write_template(response, 'errors/401.html', {'detail': exception.detail})
+
+def handle_404(request, response, exception):
+	response.set_status(404)
+	write_template(response, 'not_found.html', {'url': request.path})
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
@@ -315,8 +311,8 @@ app = webapp2.WSGIApplication([
 	('/api/load-proposal', api.LoadProposalHandler),
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
-	('/logout', LogoutHandler),
-	('/.*', NotFoundPageHandler)
+	('/logout', LogoutHandler)
 ], debug=True)
 
 app.error_handlers[401] = handle_401
+app.error_handlers[404] = handle_404
