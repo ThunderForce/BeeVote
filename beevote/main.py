@@ -57,9 +57,13 @@ def write_template(response, template_name, template_values={}):
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 	response.out.write(get_template(template_name, template_values))
 
-class BaseHandler(webapp2.RequestHandler):
-	
+def is_user_in_group(user, group):
+	if user.email() in group.members:
+		return True
+	else:
+		return False
 
+class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
 		self.initialize(request, response)
 		if not self.request.path in public_urls:
@@ -80,6 +84,11 @@ class MainHandler(BaseHandler):
 
 class TopicSampleHandler(BaseHandler):
 	def get(self, group_id, topic_id):
+		user = users.get_current_user()
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		
@@ -113,8 +122,11 @@ class GroupsHandler(BaseHandler):
 
 class GroupHandler(BaseHandler):
 	def get(self, group_id):
+		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
+		if not is_user_in_group(user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
 		values = {
 			'group': group,
@@ -124,8 +136,11 @@ class GroupHandler(BaseHandler):
 
 class GroupMembersHandler(BaseHandler):
 	def get(self, group_id):
+		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
+		if not is_user_in_group(user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		values = {
 			'group': group,
 		}
@@ -133,6 +148,11 @@ class GroupMembersHandler(BaseHandler):
 
 class AddGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
+		user = users.get_current_user()
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		email = self.request.get("email")
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
@@ -142,6 +162,11 @@ class AddGroupMemberHandler(BaseHandler):
 
 class RemoveGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
+		user = users.get_current_user()
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		email = self.request.get("email")
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
@@ -151,6 +176,12 @@ class RemoveGroupMemberHandler(BaseHandler):
 
 class ProposalHandler(BaseHandler):
 	def get(self, group_id, topic_id, proposal_id):
+		user = users.get_current_user()
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 
