@@ -258,7 +258,8 @@ class CreateTopicHandler(BaseHandler):
 			topic.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
 		if time != "":
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
-		topic.deadline = deadline
+		if deadline !="":
+			topic.deadline = datetime.datetime.strptime(deadline, "%Y/%m/%d %H:%M")
 		topic.description = description
 		topic.creator = user_id
 		topic.email=email
