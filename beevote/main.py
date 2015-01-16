@@ -100,7 +100,12 @@ class TopicSampleHandler(BaseHandler):
 		
 		# Sorting the proposal according to vote number
 		proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
-		
+
+		# Evaluation about topic deadline
+		currentdatetime = datetime.datetime.now()
+		delta = (topic.deadline - currentdatetime).total_seconds()
+		topic.expired = delta < 0
+
 		values = {
 			'topic': topic,
 			'proposals': proposals,
@@ -239,6 +244,7 @@ class CreateTopicHandler(BaseHandler):
 		where= self.request.get('inputWhere')
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
+		deadline = self.request.get('inputDeadline')
 		description = self.request.get('inputDescription')
 		img = self.request.get('inputImg')
 		topic = models.Topic(
@@ -252,6 +258,7 @@ class CreateTopicHandler(BaseHandler):
 			topic.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
 		if time != "":
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
+		topic.deadline = deadline
 		topic.description = description
 		topic.creator = user_id
 		topic.email=email

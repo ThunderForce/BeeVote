@@ -18,6 +18,7 @@ class Topic(db.Model):
 	place = db.StringProperty()
 	date = db.DateProperty()
 	time = db.TimeProperty()
+	deadline = db.DateTimeProperty()
 	creator = db.StringProperty()
 	img = db.BlobProperty()
 
