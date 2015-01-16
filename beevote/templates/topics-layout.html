@@ -28,6 +28,7 @@
     		$('#topic-form').submit(function() {
     			$('#create-topic').attr("disabled", true);
     		});
+    		$('#datetimepicker').datetimepicker();
     	});
     </script>
 
@@ -130,9 +131,9 @@
     								</div>
 
     								<div class="form-group">
-    									<label for="expireDateTime" class="col-lg-2 control-label">Expire Date: </label>
+    									<label for="datetimepicker" class="col-lg-2 control-label">Expire Date: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="expireDateTime" name="expireDateTime"  type="datetime">
+    										<input class="form-control" id="datetimepicker" name="datetimepicker"  type="datetime">
     									</div>
     								</div>
 
