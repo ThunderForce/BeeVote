@@ -102,9 +102,9 @@ class TopicSampleHandler(BaseHandler):
 		proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
 
 		# Evaluation about topic deadline
-		currentdatetime = datetime.datetime.now()
-		delta = (topic.deadline - currentdatetime).total_seconds()
-		topic.expired = delta < 0
+		if topic.deadline != None:
+			currentdatetime = datetime.datetime.now()
+			topic.expired = topic.deadline < currentdatetime
 
 		values = {
 			'topic': topic,
@@ -247,6 +247,7 @@ class CreateTopicHandler(BaseHandler):
 		deadline = self.request.get('inputDeadline')
 		description = self.request.get('inputDescription')
 		img = self.request.get('inputImg')
+		tzoffset = self.request.get('timezoneOffset')
 		topic = models.Topic(
 			title=title,
 			group=group,

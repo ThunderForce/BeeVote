@@ -46,6 +46,9 @@
 	<div class="jumbotron" style="max-width: 900px;">
 				<h1>{{ topic.title }}</h1>
 				<p>{{ topic.description }}</p>
+				{% if topic.expired %}
+					<p>Scaduto!</p>
+				{% endif %}
 				{% if topic.img != None %}
 					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
 				{% endif %}
