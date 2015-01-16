@@ -114,7 +114,7 @@ class TopicSampleHandler(BaseHandler):
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
 		
-		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(10)
+		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(1000)
 		
 		# Adding a variable on each proposal containing the NUMBER of votes of the proposal
 		for proposal in proposals:
@@ -151,7 +151,7 @@ class GroupsHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
 		email = user.email()
-		groups = db.GqlQuery("SELECT * FROM Group").fetch(100)
+		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
 		for group in groups:
 			if (not email in group.members) and (group.members != []):
 				groups.remove(group)
@@ -390,6 +390,20 @@ class CreateGroupHandler(BaseHandler):
 		group_id = group.key().id() 
 		self.redirect('/group/'+str(group_id))
 
+class RegistrationHandler(BaseHandler):
+	def post(self):
+		user = users.get_current_user()
+		name = self.request.get('name')
+		surname = self.request.get('surname')
+		beevote_user = models.BeeVoteUser(
+			name = name,
+			surname = surname,
+			email = user.email(),
+			user_id = user.user_id(),
+		)
+		beevote_user.put()
+		self.redirect('/groups')
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
@@ -423,6 +437,7 @@ app = webapp2.WSGIApplication([
 	('/api/load-proposal', api.LoadProposalHandler),
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
+	('/register', RegistrationHandler)
 	('/logout', LogoutHandler)
 ], debug=True)
 

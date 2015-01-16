@@ -1,0 +1,20 @@
+<html>
+	<head>
+		<title>Welcome to BeeVote!</title>
+		
+		{{ basic_head }}
+		
+	</head>
+	<body>
+		<h1>Welcome to BeeVote!</h1>
+		<p>Your Google account is not yet registered in the app.</p>
+		<p>To fully access the app complete the registration by filling the following fields.</p>
+		<form action="/register" method="POST">
+			<fieldset>
+				Name: <input type="text" name="name">
+				Surname: <input type="text" name="surname">
+				<input type="submit" value="Register">
+			</fieldset>
+		</form>
+	</body>
+</html>
