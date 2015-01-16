@@ -13,15 +13,21 @@
 	</div>
 	<div class="navbar-collapse collapse navbar-responsive-collapse">
 		
-		<!-- DA ULTIMARE
+		{% if breadcumb %}
 		<ul class="nav navbar-nav">
-			<ul class="breadcrumb list-inline">
-			<li> </li>
-			<li><a href="#" style="color: #DCEEFD;">Library</a></li>
-			<li class="active">Data</li>
+			<ul class="breadcrumb list-inline" style="margin-left: -20px;">
+				<!--
+				<li></li>
+				<li><a href="#" style="color: #DCEEFD;">Library</a></li>
+				<li class="active">Data</li>
+				-->
+				{% for element in breadcumb.previous_elements %}
+				<li><a href="{{ element.href }}" style="color: #DCEEFD;">{{ element.title }}</a></li>
+				{% endfor %}
+				<li class="active">{{ breadcumb.current_element.title }}</li>
 			</ul>
 		</ul>
-	-->
+		{% endif %}
 
 
 		<ul class="nav navbar-nav navbar-right">

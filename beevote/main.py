@@ -30,20 +30,42 @@ import api
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
 
-def get_template(template_name, template_values={}):
+def get_template(template_name, template_values={}, navbar_values={}):
 	directory = os.path.dirname(__file__)
 	basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 	navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
 
 	user = users.get_current_user()
 
-	val_user = {
+	def_navbar_values = {
 		'user': user,
+		'breadcumb': None
 	}
+	def_navbar_values.update(navbar_values)
+	
+	import logging
+	logging.info(def_navbar_values)
+	
+	'''
+	breadcumb: {
+		previous_elements: [
+			{
+				title: "",
+				href: "",
+			},{
+				title: "",
+				href: "",
+			}
+		],
+		current_element: {
+			title: ""
+		}
+	}
+	'''
 
 	values = {
 		'basic_head': template.render(basic_head_path, {}),
-		'navbar': template.render(navbar_path, val_user),
+		'navbar': template.render(navbar_path, def_navbar_values),
 	}
 	
 	values.update(template_values)
@@ -51,14 +73,14 @@ def get_template(template_name, template_values={}):
 	path = os.path.join(directory, os.path.join('templates', template_name))
 	return template.render(path, values)
 
-def write_template(response, template_name, template_values={}):
+def write_template(response, template_name, template_values={}, navbar_values={}):
 	response.headers["Pragma"]="no-cache"
 	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
-	response.out.write(get_template(template_name, template_values))
+	response.out.write(get_template(template_name, template_values, navbar_values))
 
 def is_user_in_group(user, group):
-	if user.email() in group.members:
+	if group.members == [] or user.email() in group.members:
 		return True
 	else:
 		return False
@@ -110,7 +132,20 @@ class TopicSampleHandler(BaseHandler):
 			'topic': topic,
 			'proposals': proposals,
 		}
-		write_template(self.response, 'topic-layout.html', values)
+		navbar_values = {
+			'breadcumb': {
+				'previous_elements': [
+					{
+						'title': group.name,
+						'href': "/group/"+str(group.key().id()),
+					}
+				],
+				'current_element': {
+					'title': topic.title,
+				}
+			}
+		}
+		write_template(self.response, 'topic-layout.html', values, navbar_values=navbar_values)
 
 class GroupsHandler(BaseHandler):
 	def get(self):
@@ -137,7 +172,15 @@ class GroupHandler(BaseHandler):
 			'group': group,
 			'topics': topics,
 		}
-		write_template(self.response, 'topics-layout.html', values)
+		navbar_values = {
+			'breadcumb': {
+				'previous_elements': [],
+				'current_element': {
+					'title': group.name,
+				}
+			}
+		}
+		write_template(self.response, 'topics-layout.html', values, navbar_values=navbar_values)
 
 class GroupMembersHandler(BaseHandler):
 	def get(self, group_id):
@@ -149,7 +192,20 @@ class GroupMembersHandler(BaseHandler):
 		values = {
 			'group': group,
 		}
-		write_template(self.response, 'group-members-layout.html', values)
+		navbar_values = {
+			'breadcumb': {
+				'previous_elements': [
+					{
+						'title': group.name,
+						'href': "/group/"+str(group.key().id()),
+					}
+				],
+				'current_element': {
+					'title': 'Members',
+				}
+			}
+		}
+		write_template(self.response, 'group-members-layout.html', values, navbar_values=navbar_values)
 
 class AddGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
@@ -206,7 +262,23 @@ class ProposalHandler(BaseHandler):
 			'vote_number': vote_number,
 			'already_voted': already_voted,
 		}
-		write_template(self.response, 'proposal-layout.html', values)
+		navbar_values = {
+			'breadcumb': {
+				'previous_elements': [
+					{
+						'title': group.name,
+						'href': "/group/"+str(group.key().id()),
+					},{
+						'title': proposal.parent().title,
+						'href': "/group/"+str(group.key().id())+"/topic/"+str(proposal.parent().key().id()),
+					}
+				],
+				'current_element': {
+					'title': proposal.title,
+				}
+			}
+		}
+		write_template(self.response, 'proposal-layout.html', values, navbar_values=navbar_values)
 
 
 class ProfileHandler(BaseHandler):
