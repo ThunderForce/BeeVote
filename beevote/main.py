@@ -393,15 +393,16 @@ class CreateGroupHandler(BaseHandler):
 class RegistrationHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
-		name = self.request.get('name')
-		surname = self.request.get('surname')
-		beevote_user = models.BeeVoteUser(
-			name = name,
-			surname = surname,
-			email = user.email(),
-			user_id = user.user_id(),
-		)
-		beevote_user.put()
+		if db.GqlQuery('SELECT * FROM BeeVoteUser WHERE user_id = :1', user.user_id()).get() == None:
+			name = self.request.get('name')
+			surname = self.request.get('surname')
+			beevote_user = models.BeeVoteUser(
+				name = name,
+				surname = surname,
+				email = user.email(),
+				user_id = user.user_id(),
+			)
+			beevote_user.put()
 		self.redirect('/groups')
 
 class LogoutHandler(webapp2.RequestHandler):
@@ -437,7 +438,7 @@ app = webapp2.WSGIApplication([
 	('/api/load-proposal', api.LoadProposalHandler),
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
-	('/register', RegistrationHandler)
+	('/register', RegistrationHandler),
 	('/logout', LogoutHandler)
 ], debug=True)
 
