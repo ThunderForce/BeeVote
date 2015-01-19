@@ -1,45 +1,68 @@
 <html>
-<head>
-	<title>Topic - BeeVote</title>
-	{{ basic_head }}
-	
-	<script>
-		$(document).ready(function() {
-			$('#proposal-form').submit(function() {
-				$('#create-proposal').attr("disabled", true);
+	<head>
+		<title>Topic - BeeVote</title>
+		
+		{{ basic_head }}
+		
+		<script src="/static/js/vote-functions.js"></script>
+		<script>
+			$(document).ready(function() {
+				$('#proposal-form').submit(function() {
+					$('#create-proposal').attr("disabled", true);
+				});
+				$("div.proposal-well").on("click", function() {
+					var proposal_id = $(this).data("proposal");
+					if ($("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html() == "") {
+						$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
+						$.ajax({
+							url: "/api/load-proposal",
+							method: "GET",
+							data: {
+								group_id: {{ topic.parent.key.id }},
+								topic_id: {{ topic.key.id }},
+								proposal_id: proposal_id
+							},
+							dataType: "json",
+							success: function(response) {
+								$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
+								var proposal = response.proposal;
+								$("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html(
+									'<h5 class="list-group-item-text" color="black">'+'What: '+proposal.activity+'</h5>'+
+									'<h5 class="list-group-item-text" color="black">'+'Details: '+proposal.description+'</h5>'+
+									'<h5 class="list-group-item-text" color="black">'+'Date: '+proposal.date+'</h5>'+
+									'<h5 class="list-group-item-text" color="black">'+'Time: '+proposal.time+'</h5>'+
+									'<h5 class="list-group-item-text" color="black">'+'Place: '+proposal.place+'</h5>'+
+									'<h5 class="list-group-item-text" color="black"> Created by: '+proposal.creator_email+' </h5>');
+								$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+							}
+						});
+					} else
+						$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+				});
+				$('.vote-checkbox').on('click', function(e) {
+					
+					var group_id = {{ topic.parent.key.id }};
+					var topic_id = {{ topic.key.id }};
+					var proposal_id = $(this).data("proposal");
+					
+					$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
+					success_callback = function(response) {
+						$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
+					};
+					if ($(this).is(":checked"))
+						add_vote(group_id, topic_id, proposal_id, success_callback);
+					else
+						remove_vote(group_id, topic_id, proposal_id, success_callback);
+					
+					if (e.stopPropagation) {
+						e.stopPropagation();   // W3C model
+					} else {
+						e.cancelBubble = true; // IE model
+					}
+				});
 			});
-			$("div.proposal-well").on("click", function() {
-				var proposal_id = $(this).data("proposal");
-				if ($("p.proposal-details[data-proposal='" + proposal_id +"']").html() == "") {
-					$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
-					$.ajax({
-						url: "/api/load-proposal",
-						method: "GET",
-						data: {
-							group_id: {{ topic.parent.key.id }},
-							topic_id: {{ topic.key.id }},
-							proposal_id: proposal_id
-						},
-						dataType: "json",
-						success: function(response) {
-							$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
-							var proposal = response.proposal;
-							$("p.proposal-details[data-proposal='" + proposal_id +"']").html(
-								'<h5 class="list-group-item-text" color="black">'+'What: '+proposal.activity+'</h5>'+
-								'<h5 class="list-group-item-text" color="black">'+'Details: '+proposal.description+'</h5>'+
-								'<h5 class="list-group-item-text" color="black">'+'Date: '+proposal.date+'</h5>'+
-								'<h5 class="list-group-item-text" color="black">'+'Time: '+proposal.time+'</h5>'+
-								'<h5 class="list-group-item-text" color="black">'+'Place: '+proposal.place+'</h5>'+
-								'<h5 class="list-group-item-text" color="black"> Created by: '+proposal.creator_email+' </h5>');
-							$("p.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
-						}
-					});
-				} else
-					$("p.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
-			});
-		});
-	</script>
-</head>
+		</script>
+	</head>
 <body>
 	{{ navbar }}
 	<!-- Topic -->
@@ -201,12 +224,14 @@
 										<b>{{ proposal.title }}</b>
 										<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 									</h2>
-									<p class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;"></p>
-									<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red">view details</a>
+									<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
+										<p></p>
+										<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red"><button class="btn btn-default btn-raised">View details</button></a>
+									</div>
 								</div>
 								<div class="least-content">
-									<b>Votes: </b><span class="badge" id="number_of_votes">{{ proposal.vote_number }}</span>
-									<input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' >
+									<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>
+									<input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" >
 								</div>
 							</div>
 						<!--</div>-->

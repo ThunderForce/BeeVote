@@ -49,7 +49,7 @@
 				<ul class="dropdown-menu">
 					<!-- <li><a href="/profile/{{ user.user_id }}">Setting</a></li> -->
 					<li>
-						<a href="https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform?usp=send_form" target="_blank" title="Click here to fedback">Feedback</a>
+						<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to fedback">Feedback</a>
 					</li>
 					<li class="divider">
 					</li>
@@ -72,14 +72,14 @@
 <div class="alert alert-dismissable alert-success" style="max-width: 900px; margin-left: auto; margin-right: auto; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
     <button type="button" class="close" data-dismiss="alert">X</button>
     <h3 style="margin-top: 0px;">We would like to know what you think about BeeVote!</h3>
-    <h3 style="margin-bottom: 0px;">Click <a href='https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform' style='color: #DEF321;' target='_blank'><strong>here</strong></a> to give us feedback!
+    <h3 style="margin-bottom: 0px;">Click <a href='{{ feedback_url }}' style='color: #DEF321;' target='_blank'><strong>here</strong></a> to give us feedback!
     </h3>
 </div>
 
 
 <!-- feedback script
     		$.snackbar({
-    			content: "We would like to know what you think about BeeVote! Click <a href='https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform' style='color: #2196F3;' target='_blank'>here</a> to give us feedback!", 
+    			content: "We would like to know what you think about BeeVote! Click <a href='{{ feedback_url }}' style='color: #2196F3;' target='_blank'>here</a> to give us feedback!", 
     			timeout: 0
     		});
 -->

@@ -26,10 +26,14 @@
 				});
 			});
 			function toggle_vote(group, topic, proposal) {
+				$("#number_of_votes").html("...");
+				success_callback = function(response) {
+					$("#number_of_votes").html(response.vote_number);
+				};
 				if ($("#vote").is(":checked"))
-					add_vote(group, topic, proposal);
+					add_vote(group, topic, proposal, success_callback);
 				else
-					remove_vote(group, topic, proposal);
+					remove_vote(group, topic, proposal, success_callback);
 			}
 		</script>
 

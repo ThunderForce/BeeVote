@@ -13,8 +13,7 @@ function load_votes(group, topic, proposal, success_callback) {
 		}
 	});
 }
-function add_vote(group, topic, proposal) {
-	$("#number_of_votes").html("...");
+function add_vote(group, topic, proposal, success_callback) {
 	$.ajax({
 		url: "/api/create-vote",
 		method: "POST",
@@ -25,12 +24,11 @@ function add_vote(group, topic, proposal) {
 		},
 		dataType: "json",
 		success: function(response) {
-			$("#number_of_votes").html(response.vote_number);
+			success_callback(response);
 		}
 	});
 }
-function remove_vote(group, topic, proposal) {
-	$("#number_of_votes").html("...");
+function remove_vote(group, topic, proposal, success_callback) {
 	$.ajax({
 		url: "/api/remove-vote",
 		method: "POST",
@@ -41,7 +39,7 @@ function remove_vote(group, topic, proposal) {
 		},
 		dataType: "json",
 		success: function(response) {
-			$("#number_of_votes").html(response.vote_number);
+			success_callback(response);
 		}
 	});
 }

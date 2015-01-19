@@ -39,7 +39,8 @@ def get_template(template_name, template_values={}, navbar_values={}):
 
 	def_navbar_values = {
 		'user': user,
-		'breadcumb': None
+		'breadcumb': None,
+		'feedback_url': 'https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform',
 	}
 	def_navbar_values.update(navbar_values)
 	
