@@ -61,7 +61,9 @@
 								</div>
 					</div>
 					<div class="col-lg-1">
-							<span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' {% if already_voted %}checked {% endif %}></label></span>
+						{% if not proposal.parent.expired %}
+						<span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' {% if already_voted %}checked {% endif %}></label></span>
+						{% endif %}
 					</div>
 				</div>
 				

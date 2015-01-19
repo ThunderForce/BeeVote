@@ -275,6 +275,9 @@ class ProposalHandler(BaseHandler):
 			already_voted = True
 		else:
 			already_voted = False
+		if proposal.parent().deadline != None:
+			currentdatetime = datetime.datetime.now()
+			proposal.parent().expired = proposal.parent().deadline < currentdatetime
 		values = {
 			'proposal': proposal,
 			'vote_number': vote_number,

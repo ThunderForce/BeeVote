@@ -30,23 +30,30 @@ import models
 class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
-		user_id = user.user_id()
-		email = user.email()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
-		vote = models.Vote(proposal=proposal, parent=proposal)
-		vote.creator = user_id
-		vote.email = email
-		vote.put()
-		time.sleep(0.25)
+		if proposal.parent().deadline != None:
+			currentdatetime = datetime.datetime.now()
+			proposal.parent().expired = proposal.parent().deadline < currentdatetime
+			if not proposal.parent().expired:
+				success = False
+		else:
+			user_id = user.user_id()
+			email = user.email()
+			vote = models.Vote(proposal=proposal, parent=proposal)
+			vote.creator = user_id
+			vote.email = email
+			vote.put()
+			time.sleep(0.25)
+			success = True
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {
-			'success': True,
-			'vote_number': vote_number,
+			'success': success,
+			'vote_number': vote_number
 		}
 		self.response.out.write(json.dumps(values))
 
@@ -59,14 +66,21 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
-		vote = votes.get()
-		vote.delete()
-		time.sleep(0.25)
+		if proposal.parent().deadline != None:
+			currentdatetime = datetime.datetime.now()
+			proposal.parent().expired = proposal.parent().deadline < currentdatetime
+			if not proposal.parent().expired:
+				success = False
+		else:
+			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
+			vote = votes.get()
+			vote.delete()
+			time.sleep(0.25)
+			success = True;
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {
-			'success': True,
+			'success': success,
 			'vote_number': vote_number,
 		}
 		self.response.out.write(json.dumps(values))

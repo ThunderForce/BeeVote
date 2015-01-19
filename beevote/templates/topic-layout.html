@@ -231,7 +231,9 @@
 								</div>
 								<div class="least-content">
 									<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>
+									{% if not topic.expired %}
 									<input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" >
+									{% endif %}
 								</div>
 							</div>
 						<!--</div>-->
