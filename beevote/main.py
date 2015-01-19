@@ -89,6 +89,13 @@ class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
 		self.initialize(request, response)
 		if not self.request.path in public_urls:
+			user = users.get_current_user()
+			if not user:
+				url = request.url
+				if request.query_string != "":
+					url += '?' + request.query_string
+				self.redirect(users.create_login_url(url))
+				return
 			allowed = users.is_current_user_admin()
 			if not allowed:
 				current_user_email = users.get_current_user().email()
@@ -102,7 +109,17 @@ class BaseHandler(webapp2.RequestHandler):
 
 class MainHandler(BaseHandler):
 	def get(self):
-		write_template(self.response, 'index.html')
+		user = users.get_current_user()
+		if user:
+			# Here we can show the page with groups and topic (basically the home).
+			# Until we don't have a home, the handler redirects to /groups.
+			# When the home is ready we will remove the redirect
+			self.redirect('/groups')
+		else:
+			values = {
+				'login_url': users.create_login_url('/'),
+			}
+			write_template(self.response, 'index.html', values)
 
 class TopicSampleHandler(BaseHandler):
 	def get(self, group_id, topic_id):
@@ -291,12 +308,14 @@ class TopicImageHandler(webapp2.RequestHandler):
 	def get(self, group_id, topic_id):
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
-		# Need to set header ContentType as image
 		if topic == None:
 			self.error(404)
 			self.response.out.write("Topic "+topic_id+" does not exist")
 		else:
 			if topic.img != None:
+				self.response.headers['Content-Type'] = 'image/png'
+				self.response.headers['Content-Disposition'] = 'inline; filename="topic-'+topic_id+'.png"'
+				
 				self.response.out.write(topic.img)
 			else:
 				self.error(404)

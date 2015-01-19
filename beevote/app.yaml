@@ -1,5 +1,5 @@
 application: beevote
-version: 2
+version: 3
 runtime: python27
 api_version: 1
 threadsafe: yes
@@ -8,19 +8,12 @@ handlers:
 - url: /static
   static_dir: static
 
-- url: /
-  script: index.app
-
-- url: /logout
-  script: main.app
-
 - url: /admin/.*
   script: admin.app
   login: admin
 
 - url: .*
   script: main.app
-  login: required
 
 libraries:
 - name: webapp2
