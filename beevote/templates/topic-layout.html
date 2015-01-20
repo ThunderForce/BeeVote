@@ -70,7 +70,7 @@
 				<h1>{{ topic.title }}</h1>
 				<p>{{ topic.description }}</p>
 				{% if topic.expired %}
-					<p>Scaduto!</p>
+					<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
 				{% endif %}
 				{% if topic.img != None %}
 					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">

@@ -63,12 +63,12 @@
 					<div class="col-lg-1">
 						{% if not proposal.parent.expired %}
 						<span class="label label-info">Vote</span><span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:toggle_vote("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}");' {% if already_voted %}checked {% endif %}></label></span>
+						{% else %}
+						<span class="row-action-primary checkbox disabled" title="You cannot change your vote because the topic has reached its deadline."><label><input type="checkbox" {% if already_voted %}checked {% endif %} disabled></label></span>
 						{% endif %}
 					</div>
 				</div>
-				
 			</div>
-
 
 			<div class ="row">
 				<div class ="col-lg-6">	

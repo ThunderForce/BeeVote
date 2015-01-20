@@ -186,6 +186,10 @@ class GroupHandler(BaseHandler):
 		if not is_user_in_group(user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
+		currentdatetime = datetime.datetime.now()
+		for topic in topics:
+			if topic.deadline != None:
+				topic.expired = topic.deadline < currentdatetime
 		values = {
 			'group': group,
 			'topics': topics,

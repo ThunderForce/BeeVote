@@ -38,7 +38,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		if proposal.parent().deadline != None:
 			currentdatetime = datetime.datetime.now()
 			proposal.parent().expired = proposal.parent().deadline < currentdatetime
-			if not proposal.parent().expired:
+			if proposal.parent().expired:
 				success = False
 		else:
 			user_id = user.user_id()
@@ -69,7 +69,7 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 		if proposal.parent().deadline != None:
 			currentdatetime = datetime.datetime.now()
 			proposal.parent().expired = proposal.parent().deadline < currentdatetime
-			if not proposal.parent().expired:
+			if proposal.parent().expired:
 				success = False
 		else:
 			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
