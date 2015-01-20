@@ -145,6 +145,13 @@ class TopicSampleHandler(BaseHandler):
 		if topic.deadline != None:
 			currentdatetime = datetime.datetime.now()
 			topic.expired = topic.deadline < currentdatetime
+			time_before_deadline = topic.deadline - currentdatetime
+			topic.time_before_deadline = {
+				'seconds': time_before_deadline.seconds % 60,
+				'minutes': (time_before_deadline.seconds/60) % 60,
+				'hours': time_before_deadline.seconds/3600,
+				'days': time_before_deadline.days,
+			}
 
 		values = {
 			'topic': topic,

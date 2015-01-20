@@ -26,13 +26,19 @@
 							success: function(response) {
 								$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
 								var proposal = response.proposal;
-								$("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html(
-									'<h5 class="list-group-item-text" color="black">'+'What: '+proposal.activity+'</h5>'+
-									'<h5 class="list-group-item-text" color="black">'+'Details: '+proposal.description+'</h5>'+
-									'<h5 class="list-group-item-text" color="black">'+'Date: '+proposal.date+'</h5>'+
-									'<h5 class="list-group-item-text" color="black">'+'Time: '+proposal.time+'</h5>'+
-									'<h5 class="list-group-item-text" color="black">'+'Place: '+proposal.place+'</h5>'+
-									'<h5 class="list-group-item-text" color="black"> Created by: '+proposal.creator_email+' </h5>');
+								var html = "";
+								if (proposal.activity != null)
+									html += '<h5 class="list-group-item-text" color="black">'+'What: '+proposal.activity+'</h5>';
+								if (proposal.description != null && proposal.description != "")
+									html += '<h5 class="list-group-item-text" color="black">'+'Details: '+proposal.description+'</h5>';
+								if (proposal.date != "None")
+									html += '<h5 class="list-group-item-text" color="black">'+'Date: '+proposal.date+'</h5>';
+								if (proposal.time != "None")
+									html += '<h5 class="list-group-item-text" color="black">'+'Time: '+proposal.time+'</h5>';
+								if (proposal.place != null)
+									html +=	'<h5 class="list-group-item-text" color="black">'+'Place: '+proposal.place+'</h5>';
+								html += '<h5 class="list-group-item-text" color="black"> Created by: '+proposal.creator_email+' </h5>';
+								$("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html(html);
 								$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 							}
 						});
@@ -71,6 +77,25 @@
 				<p>{{ topic.description }}</p>
 				{% if topic.expired %}
 					<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
+				{% else %}
+					{% if topic.time_before_deadline %}
+						<p>Time before deadline: 
+							<span style="color: red">
+							{% if topic.time_before_deadline.days != 0 %}
+								{{ topic.time_before_deadline.days }} days
+							{% endif %}
+							{% if topic.time_before_deadline.hours != 0 %}
+								{{ topic.time_before_deadline.hours }} hours
+							{% endif %}
+							{% if topic.time_before_deadline.minutes != 0 %}
+								{{ topic.time_before_deadline.minutes }} minutes
+							{% endif %}
+							{% if topic.time_before_deadline.seconds != 0 %}
+								{{ topic.time_before_deadline.seconds }} seconds
+							{% endif %}
+							</span>
+						</p>
+					{% endif %}
 				{% endif %}
 				{% if topic.img != None %}
 					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
@@ -79,8 +104,7 @@
 					<i>No image available</i>
 				{% endif %}
 				<br>
-				
-				<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>
+				<!--<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>-->
 		<!--
 		<div class="row">
 			<div class="col-lg-6">
@@ -113,8 +137,11 @@
 		<div align="center">
 			
 			<!-- New Button -->
+			{% if not topic.expired %}
 			<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
-			
+			{% else %}
+			<button class="btn btn-fab btn-raised btn-material-grey disabled" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+			{% endif %}
 			<!-- Old button
 			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
 			-->
