@@ -1,0 +1,21 @@
+<html>
+	<head>
+		<title>Registration pending - BeeVote</title>
+		
+		{{ basic_head }}
+		
+	</head>
+	<body>
+		<h1>Welcome to BeeVote!</h1>
+		<p>You have sent the following registration request:</p>
+		<ul>
+			<li>Google account email: <b>{{ request.email }}</b></li>
+			<li>Name: <b>{{ request.name }}</b></li>
+			<li>Surname: <b>{{ request.surname }}</b></li>
+			<li>Request creation: <b>{{ request.creation }}</b></li>
+			<li>Request ID: <b>{{ request.key.id }}</b></li>
+		</ul>
+		<p>An administrator will accept your registration request soon.</p>
+		<p><a href="/logout">Logout</a></p>
+	</body>
+</html>

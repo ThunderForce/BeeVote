@@ -68,6 +68,25 @@ class RemoveUserHandler(webapp2.RequestHandler):
 		beevote_user.delete()
 		self.redirect('/admin/allowed-users')
 
+class PendingRegistrationRequestsPageHandler(BasicPageHandler):
+	def get(self):
+		requests = db.GqlQuery("SELECT * FROM RegistrationRequest")
+		self.write_template('pending-requests.html', {'requests': requests})
+
+class AcceptRegistrationRequestHandler(webapp2.RequestHandler):
+	def get(self, request_id):
+		request_key = db.Key.from_path('RegistrationRequest', long(request_id))
+		request = db.get(request_key)
+		beevote_user = models.BeeVoteUser(
+			user_id = request.user_id,
+			email = request.email,
+			name = request.name,
+			surname = request.surname
+		)
+		beevote_user.put()
+		request.delete()
+		self.redirect('/admin/pending-requests')
+
 class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
 		self.error(404)
@@ -79,5 +98,7 @@ app = webapp2.WSGIApplication([
 	('/admin/user/add', AddUserHandler),
 	('/admin/user/remove/(.*)', RemoveUserHandler),
 	('/admin/allowed-users', AllowedUsersPageHandler),
+	('/admin/pending-requests', PendingRegistrationRequestsPageHandler),
+	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)

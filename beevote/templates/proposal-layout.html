@@ -17,7 +17,7 @@
 						var success_callback = function(response) {
 							$("#list_of_votes").html("");
 							$.each(response.votes, function(index, vote) {
-								$("#list_of_votes").append("<li>"+vote.email+"</li>");
+								$("#list_of_votes").append("<li>"+vote.name+" "+vote.surname+"</li>");
 							});
 						}
 						load_votes("{{ proposal.parent.parent.key.id }}", "{{ proposal.parent.key.id }}", "{{ proposal.key.id }}", success_callback);
@@ -48,7 +48,7 @@
 				<div class="row">
 					<div class="col-lg-5">
 						<h1>{{ proposal.title }}</h1>
-						<p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspProposed by <a href="javascript:void(0)" class="btn btn-flat btn-info">{{proposal.email}}</a></p>
+						<p>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspProposed by <a href="javascript:void(0)" class="btn btn-flat btn-info">{{proposal.creator.name}} {{proposal.creator.surname}}</a></p>
 					</div>
 					<div class="col-lg-3"></div>
 					<div class="col-lg-3">

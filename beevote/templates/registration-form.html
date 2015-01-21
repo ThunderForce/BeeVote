@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Welcome to BeeVote!</title>
+		<title>Request registration - BeeVote</title>
 		
 		{{ basic_head }}
 		
@@ -8,14 +8,20 @@
 	<body>
 		<h1>Welcome to BeeVote!</h1>
 		<p>Your Google account is not yet registered in the app.</p>
-		<p>To fully access the app complete the registration by filling the following fields.</p>
+		<p>To fully access the app complete the registration form by filling the following fields.</p>
+		{% if is_user_admin %}
+		<p>Since you are already an administrator your account will be instantly registered.</p>
+		{% else %}
+		<p>An administrator will accept your registration request within a few days.</p>
+		{% endif %}
 		<p>Please make sure that the fields correspond to your Google account data, as in the future your personal data will be fetched by your account.</p>
-		<form action="/register" method="POST">
+		<form action="/request-registration" method="POST">
 			<fieldset>
 				Name: <input type="text" name="name">
 				Surname: <input type="text" name="surname">
 				<input type="submit" value="Register">
 			</fieldset>
 		</form>
+		<p><a href="/logout">Logout</a></p>
 	</body>
 </html>

@@ -35,20 +35,22 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
+		success = True
 		if proposal.parent().deadline != None:
 			currentdatetime = datetime.datetime.now()
 			proposal.parent().expired = proposal.parent().deadline < currentdatetime
 			if proposal.parent().expired:
 				success = False
-		else:
+		if success:
 			user_id = user.user_id()
-			email = user.email()
-			vote = models.Vote(proposal=proposal, parent=proposal)
-			vote.creator = user_id
-			vote.email = email
+			beevote_user = models.get_beevote_user_from_google_id(user_id)
+			vote = models.Vote(
+				proposal = proposal,
+				parent=proposal,
+				creator = beevote_user
+			)
 			vote.put()
 			time.sleep(0.25)
-			success = True
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {
@@ -61,22 +63,23 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
+		success = True
 		if proposal.parent().deadline != None:
 			currentdatetime = datetime.datetime.now()
 			proposal.parent().expired = proposal.parent().deadline < currentdatetime
 			if proposal.parent().expired:
 				success = False
-		else:
-			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
+		if success:
+			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
 			vote = votes.get()
 			vote.delete()
 			time.sleep(0.25)
-			success = True;
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		values = {
@@ -98,7 +101,9 @@ class LoadVotesHandler(webapp2.RequestHandler):
 		votes = []
 		for vote in votes_db:
 			votes.append({
-				'email': vote.email,
+				'name': vote.creator.name,
+				'surname': vote.creator.surname,
+				'email': vote.creator.email,
 			})
 		values = {
 			'success': True,
@@ -109,7 +114,6 @@ class LoadVotesHandler(webapp2.RequestHandler):
 class LoadProposalHandler(webapp2.RequestHandler):
 	def get(self):
 		user = users.get_current_user()
-		user_id = user.user_id()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -120,7 +124,11 @@ class LoadProposalHandler(webapp2.RequestHandler):
 			'proposal': {
 				'title': proposal.title,
 				'description': proposal.description,
-				'creator_email': proposal.email,
+				'creator': {
+					'name': proposal.creator.name,
+					'surname': proposal.creator.surname,
+					'email': proposal.creator.email,
+				},
 				'activity': proposal.activity,
 				'place': proposal.place,
 				'date': str(proposal.date),

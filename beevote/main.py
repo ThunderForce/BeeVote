@@ -27,25 +27,23 @@ import api
 
 # Start of handlers
 
-# List or URLs that you can access without being "registered" in the app
-public_urls = ["/", "/logout"]
-
 def get_template(template_name, template_values={}, navbar_values={}):
 	directory = os.path.dirname(__file__)
 	basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
 	navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
 
 	user = users.get_current_user()
-
+	if user:
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+	else:
+		beevote_user = None
+	
 	def_navbar_values = {
-		'user': user,
+		'user': beevote_user,
 		'breadcumb': None,
 		'feedback_url': 'https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform',
 	}
 	def_navbar_values.update(navbar_values)
-	
-	import logging
-	logging.info(def_navbar_values)
 	
 	'''
 	breadcumb: {
@@ -80,11 +78,14 @@ def write_template(response, template_name, template_values={}, navbar_values={}
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 	response.out.write(get_template(template_name, template_values, navbar_values))
 
-def is_user_in_group(user, group):
-	if group.members == [] or user.email() in group.members:
+def is_user_in_group(beevote_user, group):
+	if group.members == [] or beevote_user.key() in group.members:
 		return True
 	else:
 		return False
+
+# List or URLs that you can access without being "registered" in the app
+public_urls = ["/", "/logout", "/register", "/request-registration", "/registration-pending"]
 
 class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
@@ -97,25 +98,27 @@ class BaseHandler(webapp2.RequestHandler):
 					url += '?' + request.query_string
 				self.redirect(users.create_login_url(url))
 				return
-			allowed = users.is_current_user_admin()
-			if not allowed:
-				current_user_email = users.get_current_user().email()
-				allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser").run()
-				for allowed_user in allowed_users:
-					if allowed_user.email == current_user_email:
-						allowed = True
-						break
-				if not allowed:
-					self.abort(401, detail="You are not authorized to use this app. Ask the administrator to allow your Google Account to access this app by giving him your email: <b>"+users.get_current_user().email()+"</b><br>Click <a href='/logout'>here</a> to logout.")
+			self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+			if not self.beevote_user:
+				registration_request = models.get_registration_request_from_google_id(user.user_id())
+				if not registration_request:
+					self.redirect("/register")
+				else:
+					self.redirect("/registration-pending")
 
 class MainHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
 		if user:
-			# Here we can show the page with groups and topic (basically the home).
-			# Until we don't have a home, the handler redirects to /groups.
-			# When the home is ready we will remove the redirect
-			self.redirect('/groups')
+			beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+			if not beevote_user:
+				self.redirect("/register")
+				return
+			else:
+				# Here we can show the page with groups and topic (basically the home).
+				# Until we don't have a home, the handler redirects to /groups.
+				# When the home is ready we will remove the redirect
+				self.redirect('/groups')
 		else:
 			values = {
 				'login_url': users.create_login_url('/'),
@@ -127,7 +130,7 @@ class TopicSampleHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(user, group):
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
@@ -175,10 +178,10 @@ class TopicSampleHandler(BaseHandler):
 class GroupsHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
-		email = user.email()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
 		for group in groups:
-			if (not email in group.members) and (group.members != []):
+			if (not beevote_user.key() in group.members) and (group.members != []):
 				groups.remove(group)
 		values = {
 			'groups' : groups
@@ -190,7 +193,7 @@ class GroupHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(user, group):
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
 		currentdatetime = datetime.datetime.now()
@@ -216,8 +219,9 @@ class GroupMembersHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(user, group):
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		group.members_data = db.get(group.members)
 		values = {
 			'group': group,
 		}
@@ -241,13 +245,13 @@ class AddGroupMemberHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(user, group):
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		email = self.request.get("email")
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		group.members.append(email)
-		group.put()
+		beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
+		if beevote_user:
+			group.members.append(beevote_user.key())
+			group.put()
 		self.redirect("/group/"+group_id+"/members")
 
 class RemoveGroupMemberHandler(BaseHandler):
@@ -255,7 +259,7 @@ class RemoveGroupMemberHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(user, group):
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		email = self.request.get("email")
 		group_key = db.Key.from_path('Group', long(group_id))
@@ -269,7 +273,7 @@ class ProposalHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(user, group):
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
@@ -280,7 +284,8 @@ class ProposalHandler(BaseHandler):
 		
 		user = users.get_current_user()
 		user_id = user.user_id()
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, user_id)
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
 		own_vote = votes.get()
 		if own_vote:
 			already_voted = True
@@ -339,8 +344,7 @@ class TopicImageHandler(webapp2.RequestHandler):
 class CreateTopicHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
-		user_id = user.user_id()
-		email = user.email()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		group_id = self.request.get('groupId')
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
@@ -357,7 +361,8 @@ class CreateTopicHandler(BaseHandler):
 		topic = models.Topic(
 			title=title,
 			group=group,
-			parent=group
+			parent=group,
+			creator=beevote_user,
 			  )
 		topic.activity = what
 		topic.place = where
@@ -368,8 +373,6 @@ class CreateTopicHandler(BaseHandler):
 		if deadline !="":
 			topic.deadline = datetime.datetime.strptime(deadline, "%Y/%m/%d %H:%M")
 		topic.description = description
-		topic.creator = user_id
-		topic.email=email
 		if img != "":
 			topic.img = db.Blob(img)
 		topic.put()
@@ -378,8 +381,7 @@ class CreateTopicHandler(BaseHandler):
 class CreateProposalHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
-		user_id = user.user_id()
-		email = user.email()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		title = self.request.get('inputProposalName')
 		what = self.request.get('inputWhat')
 		where = self.request.get('inputWhere')
@@ -393,7 +395,8 @@ class CreateProposalHandler(BaseHandler):
 		proposal = models.Proposal(
 			title=title,
 			topic=topic,
-			parent=topic
+			parent=topic,
+			creator=beevote_user,
 		)
 		if what != "":
 			proposal.activity = what
@@ -404,40 +407,83 @@ class CreateProposalHandler(BaseHandler):
 		if time != "":
 			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 		proposal.description = description
-		proposal.creator = user_id
-		proposal.email=email
 		proposal.put()
 		self.redirect('/group/'+group_id+'/topic/'+topic_id)
 
 class CreateGroupHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
-		email = user.email()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('inputGroupName')
 		description = self.request.get('inputDescription')
 		group = models.Group(
 				name = name,
+				creator = beevote_user,
 			)
 		group.description = description
-		group.members.append(email)
+		group.members.append(beevote_user.key())
 		group.put()
 		group_id = group.key().id() 
 		self.redirect('/group/'+str(group_id))
 
 class RegistrationHandler(BaseHandler):
+	def get(self):
+		if models.get_beevote_user_from_google_id(users.get_current_user().user_id()):
+			self.redirect("/")
+			return
+		if models.get_registration_request_from_google_id(users.get_current_user().user_id()):
+			self.redirect("/registration-pending")
+			return
+		values = {
+			'is_user_admin': users.is_current_user_admin()
+		}
+		write_template(self.response, 'registration-form.html', values)
+
+class RequestRegistrationHandler(BaseHandler):
+	def get(self):
+		self.redirect("/register")
+		return
 	def post(self):
 		user = users.get_current_user()
-		if db.GqlQuery('SELECT * FROM BeeVoteUser WHERE user_id = :1', user.user_id()).get() == None:
+		if models.get_beevote_user_from_google_id(user.user_id()) == None:
 			name = self.request.get('name')
 			surname = self.request.get('surname')
-			beevote_user = models.BeeVoteUser(
-				name = name,
-				surname = surname,
-				email = user.email(),
-				user_id = user.user_id(),
-			)
-			beevote_user.put()
-		self.redirect('/groups')
+			if not users.is_current_user_admin():
+				request = models.RegistrationRequest(
+					user_id = user.user_id(),
+					email = user.email(),
+					name = name,
+					surname = surname,
+				)
+				request.put()
+				self.redirect('/registration-pending')
+				return
+			else:
+				beevote_user = models.BeeVoteUser(
+					user_id = user.user_id(),
+					email = user.email(),
+					name = name,
+					surname = surname,
+				)
+				beevote_user.put()
+				self.redirect('/')
+				return
+		self.redirect('/')
+
+class RegistrationPendingHandler(BaseHandler):
+	def get(self):
+		user_id = users.get_current_user().user_id()
+		if models.get_beevote_user_from_google_id(user_id):
+			self.redirect("/")
+			return
+		request = models.get_registration_request_from_google_id(user_id)
+		if not request:
+			self.redirect("/register")
+			return
+		values = {
+			'request': request,
+		}
+		write_template(self.response, 'registration-pending.html', values)
 
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
@@ -473,6 +519,8 @@ app = webapp2.WSGIApplication([
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
 	('/register', RegistrationHandler),
+	('/request-registration',RequestRegistrationHandler),
+	('/registration-pending',RegistrationPendingHandler),
 	('/logout', LogoutHandler)
 ], debug=True)
 

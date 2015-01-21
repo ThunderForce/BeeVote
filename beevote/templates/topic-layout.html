@@ -37,7 +37,7 @@
 									html += '<h5 class="list-group-item-text" color="black">'+'Time: '+proposal.time+'</h5>';
 								if (proposal.place != null)
 									html +=	'<h5 class="list-group-item-text" color="black">'+'Place: '+proposal.place+'</h5>';
-								html += '<h5 class="list-group-item-text" color="black"> Created by: '+proposal.creator_email+' </h5>';
+								html += '<h5 class="list-group-item-text" color="black"> Created by: '+proposal.creator.name+' '+proposal.creator.surname+' </h5>';
 								$("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html(html);
 								$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 							}
