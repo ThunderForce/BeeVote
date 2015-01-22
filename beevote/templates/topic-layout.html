@@ -104,6 +104,19 @@
 					<i>No image available</i>
 				{% endif %}
 				<br>
+				{% if topic.activity != "" %}
+				<p><b>Activity: </b>{{ topic.activity }}</p>
+				{% endif %}
+				{% if topic.place != "" %}
+				<p><b>Place: </b>{{ topic.place }}</p>
+				{% endif %}
+				{% if topic.date %}
+				<p><b>Date: </b>{{ topic.date }}</p>
+				{% endif %}
+				{% if topic.time %}
+				<p><b>Time: </b>{{ topic.time }}</p>
+				{% endif %}
+				<br>
 				<!--<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>-->
 		<!--
 		<div class="row">
@@ -259,7 +272,7 @@
 								<div class="least-content">
 									<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>
 									{% if not topic.expired %}
-									<input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" >
+									<input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" {% if proposal.already_voted %}checked {% endif %}>
 									{% endif %}
 								</div>
 							</div>

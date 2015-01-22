@@ -128,9 +128,10 @@ class MainHandler(BaseHandler):
 class TopicSampleHandler(BaseHandler):
 	def get(self, group_id, topic_id):
 		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(beevote_user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
@@ -139,6 +140,12 @@ class TopicSampleHandler(BaseHandler):
 		
 		# Adding a variable on each proposal containing the NUMBER of votes of the proposal
 		for proposal in proposals:
+			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
+			own_vote = votes.get()
+			if own_vote:
+				proposal.already_voted = True
+			else:
+				proposal.already_voted = False
 			proposal.vote_number = len(proposal.vote_set.fetch(1000))
 		
 		# Sorting the proposal according to vote number
