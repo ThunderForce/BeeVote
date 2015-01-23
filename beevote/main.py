@@ -17,7 +17,9 @@
 
 import os
 import webapp2
+from webapp2_extras import sessions
 import datetime
+from datetime import timedelta
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -105,6 +107,22 @@ class BaseHandler(webapp2.RequestHandler):
 					self.redirect("/register")
 				else:
 					self.redirect("/registration-pending")
+
+	def dispatch(self):
+		# Get a session store for this request.
+		self.session_store = sessions.get_store(request=self.request)
+
+		try:
+			# Dispatch the request.
+			webapp2.RequestHandler.dispatch(self)
+		finally:
+			# Save all sessions.
+			self.session_store.save_sessions(self.response)
+
+	#@webapp2.cached_property
+	def session(self):
+		# Returns a session using the default cookie key.
+		return self.session_store.get_session()
 
 class MainHandler(BaseHandler):
 	def get(self):
@@ -207,6 +225,19 @@ class GroupHandler(BaseHandler):
 		for topic in topics:
 			if topic.deadline != None:
 				topic.expired = topic.deadline < currentdatetime
+				time_before_deadline = topic.deadline - currentdatetime
+				topic.seconds_before_deadline = time_before_deadline.total_seconds()
+				topic.time_before_deadline = {
+					'seconds': time_before_deadline.seconds % 60,
+					'minutes': (time_before_deadline.seconds/60) % 60,
+					'hours': time_before_deadline.seconds/3600,
+					'days': time_before_deadline.days,
+				}
+			else:
+				topic.seconds_before_deadline = timedelta.max.total_seconds()
+		
+		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
+		
 		values = {
 			'group': group,
 			'topics': topics,
@@ -231,6 +262,7 @@ class GroupMembersHandler(BaseHandler):
 		group.members_data = db.get(group.members)
 		values = {
 			'group': group,
+			'unknown_email': self.session().get_flashes('unknown_email'),
 		}
 		navbar_values = {
 			'breadcumb': {
@@ -259,7 +291,12 @@ class AddGroupMemberHandler(BaseHandler):
 		if beevote_user:
 			group.members.append(beevote_user.key())
 			group.put()
-		self.redirect("/group/"+group_id+"/members")
+		else:
+			sess = self.session()
+			sess.add_flash(email, key="unknown_email")
+		# TODO : MUST BE ABLE TO PASS THE EMAIL AS unknown_email
+		self.redirect(self.request.referer)
+		#self.redirect("/group/"+group_id+"/members")
 
 class RemoveGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
@@ -506,6 +543,11 @@ def handle_404(request, response, exception):
 	response.set_status(404)
 	write_template(response, 'not_found.html', {'url': request.path})
 
+config = {}
+config['webapp2_extras.sessions'] = {
+    'secret_key': '20beeVote15',
+}
+
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
 	('/group/(.*)/members/remove', RemoveGroupMemberHandler),
@@ -529,7 +571,7 @@ app = webapp2.WSGIApplication([
 	('/request-registration',RequestRegistrationHandler),
 	('/registration-pending',RegistrationPendingHandler),
 	('/logout', LogoutHandler)
-], debug=True)
+], debug=True, config=config)
 
 app.error_handlers[401] = handle_401
 app.error_handlers[404] = handle_404

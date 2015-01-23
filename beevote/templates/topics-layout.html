@@ -42,7 +42,7 @@
 
 	<div class="jumbotron" style="max-width: 900px;">
 		<h1>{{group.name}} </h1>
-		<h2>&nbsp<small>{{group.description}}</small></h2>
+		<h2>&nbsp;<small>{{group.description}}</small></h2>
 		<a href="/group/{{ group.key.id }}/members"><button class="btn btn-info">View members</button></a>
 	</div>
 	<!-- 
@@ -203,13 +203,39 @@
 					<!-- interno proposta -->
 					<div class="row">
 						<div class="row-picture">
-							<img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
+							{% if topic.img != None %}
+							<img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+							{% else %}
+							<img class="circle" src="/static/images/topic-icon.png" alt="icon">
+							{% endif %}
 						</div>
 						<div class="row-content">
 							<h3 class="list-group-item-heading">{{topic.title}}</h3>
 							<h5 class="list-group-item-text">{{topic.description}}</h5>
 							{% if topic.expired %}
-							<p style="color: red;">This topic is expired</p>
+								<p style="color: red;">This topic has reached its deadline.</p>
+							{% else %}
+								{% if topic.time_before_deadline %}
+									<p>Deadline: {{ topic.deadline }}</p>
+									<p>Time before deadline: 
+										<span style="color: red">
+										{% if topic.time_before_deadline.days != 0 %}
+											{{ topic.time_before_deadline.days }} days
+										{% endif %}
+										{% if topic.time_before_deadline.hours != 0 %}
+											{{ topic.time_before_deadline.hours }} hours
+										{% endif %}
+										{% if topic.time_before_deadline.minutes != 0 %}
+											{{ topic.time_before_deadline.minutes }} minutes
+										{% endif %}
+										{% if topic.time_before_deadline.seconds != 0 %}
+											{{ topic.time_before_deadline.seconds }} seconds
+										{% endif %}
+										</span>
+									</p>
+								{% else %}
+									<p>This topic has no deadline.</p>
+								{% endif %}
 							{% endif %}
 						</div>
 					</div>

@@ -79,6 +79,7 @@
 					<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
 				{% else %}
 					{% if topic.time_before_deadline %}
+						<p>Deadline: {{ topic.deadline }}</p>
 						<p>Time before deadline: 
 							<span style="color: red">
 							{% if topic.time_before_deadline.days != 0 %}
@@ -256,7 +257,7 @@
 						<!--<div class="col-lg-11">-->
 							<!-- interno proposta -->
 							<div class="row-picture">
-								<img class="circle" src="/static/images/lorempixel_com-56-56-people-1.jpg" alt="icon">
+								<img class="circle" src="/static/images/user-default.jpg" alt="icon">
 							</div>
 							<div class="row-content">
 								<div class="col-lg-11">
