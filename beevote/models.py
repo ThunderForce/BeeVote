@@ -8,6 +8,7 @@ class BeeVoteUser(db.Model):
 	user_id = db.StringProperty()
 	email = db.StringProperty(required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
+	img = db.BlobProperty()
 
 class RegistrationRequest(db.Model):
 	user_id = db.StringProperty()
