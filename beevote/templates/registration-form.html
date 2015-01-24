@@ -6,8 +6,10 @@
 		
 	</head>
 	<body>
-		<h1>Welcome to BeeVote!</h1>
-		<p>Your Google account is not yet registered in the app.</p>
+		{{navbar}}
+		<div class="jumbotron">
+			<h1>Welcome to BeeVote!</h1>
+			<p>Your Google account is not yet registered in the app.</p>
 		<p>To fully access the app complete the registration form by filling the following fields.</p>
 		{% if is_user_admin %}
 		<p>Since you are already an administrator your account will be instantly registered.</p>
@@ -15,13 +17,44 @@
 		<p>An administrator will accept your registration request within a few days.</p>
 		{% endif %}
 		<p>Please make sure that the fields correspond to your Google account data, as in the future your personal data will be fetched by your account.</p>
-		<form action="/request-registration" method="POST">
+			<div class="jumbotron">
+				<h2 align="center"><b>Sign in !! </b></h2>
+				<form action="/request-registration" method="POST" class="form-horizontal" id="user-form">
+                <fieldset>
+                  <div class="form-group">
+                    <label for="inputName" class="col-lg-2 control-label">Name: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="inputName" name="name" placeholder="Your name" type="text" maxlength="32">
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="inputSurname" class="col-lg-2 control-label">Surname: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="inputSurname" name="surname" placeholder="Your surname" type="text" maxlength="32">
+                    </div>
+                  </div>
+
+                  <!-- NEW BUTTON -->
+                  <div class="form-group">
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+                      <button type="submit" class="btn btn-info" id="request-registration">Create</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+              <p><a href="/logout">Logout</a></p>
+			</div>
+		</div>
+
+		<!--<form action="/request-registration" method="POST">
 			<fieldset>
 				Name: <input type="text" name="name">
 				Surname: <input type="text" name="surname">
 				<input type="submit" value="Register">
 			</fieldset>
 		</form>
-		<p><a href="/logout">Logout</a></p>
+		<p><a href="/logout">Logout</a></p> -->
 	</body>
 </html>
