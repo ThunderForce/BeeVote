@@ -3,7 +3,7 @@
 	<title>Topic - BeeVote</title>
 
 	{{ basic_head }}
-
+	
 	<script src="/static/js/vote-functions.js"></script>
 	<script>
 		$(document).ready(function() {
@@ -42,32 +42,37 @@
 							$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 						}
 					});
-} else
-$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
-});
-$('.vote-checkbox').on('click', function(e) {
+				} else
+					$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+			});
+			$('.vote-checkbox').on('click', function(e) {
 
-	var group_id = {{ topic.parent.key.id }};
-	var topic_id = {{ topic.key.id }};
-	var proposal_id = $(this).data("proposal");
+				var group_id = {{ topic.parent.key.id }};
+				var topic_id = {{ topic.key.id }};
+				var proposal_id = $(this).data("proposal");
 
-	$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
-	success_callback = function(response) {
-		$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
-	};
-	if ($(this).is(":checked"))
-		add_vote(group_id, topic_id, proposal_id, success_callback);
-	else
-		remove_vote(group_id, topic_id, proposal_id, success_callback);
+				$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
+				success_callback = function(response) {
+					$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
+					$("button.vote-checkbox[data-proposal='" + proposal_id +"']").removeClass("proposal-pending-vote disabled");
+				};
+				
+				$(this).toggleClass("proposal-voted proposal-not-voted");
+				$(this).addClass("proposal-pending-vote disabled")
+				if ($(this).hasClass("proposal-voted"))
+					add_vote(group_id, topic_id, proposal_id, success_callback);
+				else
+					remove_vote(group_id, topic_id, proposal_id, success_callback);
 
-	if (e.stopPropagation) {
+				if (e.stopPropagation) {
 						e.stopPropagation();   // W3C model
 					} else {
 						e.cancelBubble = true; // IE model
 					}
 				});
-});
-</script>
+			});
+	</script>
+	
 </head>
 <body>
 	{{ navbar }}
@@ -273,16 +278,11 @@ $('.vote-checkbox').on('click', function(e) {
 								</div>
 							</div>
 							<div class="least-content" style="margin-top: 35px; margin-right: 16px;">
-							<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>&nbsp
+							<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>&nbsp;
 							
 							{% if not topic.expired %}
-							
-							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox" style="background-color: rgb(254, 255, 255); width: 40px; height: 40px;  padding: 8px;" {% if proposal.already_voted %}checked {% endif %}></button>
-
-							<!--							
-							<input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" {% if proposal.already_voted %}checked {% endif %}>
-							-->
-
+							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;"></button>
+							<!-- <input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" {% if proposal.already_voted %}checked {% endif %}> -->
 							{% endif %}
 						</div>
 					</div>

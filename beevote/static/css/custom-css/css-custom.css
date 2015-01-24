@@ -58,6 +58,16 @@ img.image-circle {
 
 }
 
+button.btn.mdi-action-thumb-up.vote-checkbox.proposal-not-voted {
+	background-color: rgb(254, 255, 255);
+}
+button.btn.mdi-action-thumb-up.vote-checkbox.proposal-voted {
+	background-color: rgb(64, 255, 64);
+}
+button.btn.mdi-action-thumb-up.vote-checkbox.proposal-pending-vote {
+	background-color: rgb(128, 128, 128);
+}
+
 /*
 body .jumbotron,
 .container .jumbotron,
