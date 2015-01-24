@@ -205,11 +205,18 @@ class GroupsHandler(BaseHandler):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
+		topics=[]
 		for group in groups:
 			if (not beevote_user.key() in group.members) and (group.members != []):
 				groups.remove(group)
+			else: 
+				topics_gruop = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
+				topics.extend(topics_gruop)
+		
 		values = {
-			'groups' : groups
+			'groups' : groups,
+			'topics' : topics,
+			'user' : user,
 		}
 		write_template(self.response, 'groups-layout.html',values)
 
