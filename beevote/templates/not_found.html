@@ -1,15 +1,41 @@
 <html>
-	<head>
-		<title>404 error - BeeVote</title>
+<head>
+	<title>404 error - BeeVote</title>
+
+	{{ basic_head }}
+
+</head>
+<body>
+
+	{{ navbar }}
+
+	<div class="jumbotron">
+		<div class="list-group">
+			<div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
+			<div class="list-group-item">
+					<div class="row">
+					<div class="row-content"><h1><b>404</b></h1>
+					<div class="least-content">
+							<img src="/static/images/favicon.png" class="logo">
+							</div>
+					</div>
+			</div>
+		</div>
+
+
+					<div class="well well-lg proposal-well" color="red" style="max-width: 900px;">
+									<h2 >
+										<b>This is not the page you are looking for !!</b>
+									</h2>
+					</div>
+				
+				<h5>For less geek guys: It means that probably the page is not available on our server</h5>
+				<h5>Or you made a typo in the url ! Please check the url :)</h5>
+			</div>
+		</div>
+
 		
-		{{ basic_head }}
-		
-	</head>
-	<body>
-		<h1>Oops, something went wrong!</h1>
-		
-		<p>A <b>404 error</b> occurred. This mean we could not find the resource you asked for.</p>
-		<p>Please check your URL and try again.</p>
-		<p>Resource {{url}} not found.</p>
-	</body>
+	</div>
+	
+</body>
 </html>

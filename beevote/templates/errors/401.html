@@ -1,14 +1,37 @@
 <html>
-	<head>
-		<title>401 error - BeeVote</title>
-		
-		{{ basic_head }}
-		
-	</head>
-	<body>
-		<h1>Oops, something went wrong!</h1>
-		
-		<p>A <b>401 error</b> occurred. This usually appear when there is trouble with authentication.</p>
+<head>
+	<title>401 error - BeeVote</title>
+	
+	{{ basic_head }}
+	
+</head>
+<body>
+	{{ navbar }}
+
+	<div class="jumbotron">
+		<div class="list-group">
+			<div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
+				<div class="list-group-item">
+					<div class="row">
+						<div class="row-content"><h1><b>401</b></h1>
+							<div class="least-content">
+								<img src="/static/images/favicon.png" class="logo">
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="well well-lg proposal-well" color="red" style="max-width: 900px;">
+					<h2 >
+						<b>There's a problem with your authentication !!</b>
+					</h2>
+				</div>
+
+			</div>
+		</div>
 		<p>{{ detail|safe }}</p>
-	</body>
+		
+	</div>
+</body>
 </html>
