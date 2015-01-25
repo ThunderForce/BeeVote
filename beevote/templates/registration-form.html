@@ -6,8 +6,7 @@
 		
 	</head>
 	<body>
-		{{navbar}}
-		<div class="jumbotron">
+		<div class="jumbotron"  style="max-width:900px;margin-top:20px;">
 			<h1>Welcome to BeeVote!</h1>
 			<p>Your Google account is not yet registered in the app.</p>
 		<p>To fully access the app complete the registration form by filling the following fields.</p>
@@ -18,7 +17,7 @@
 		{% endif %}
 		<p>Please make sure that the fields correspond to your Google account data, as in the future your personal data will be fetched by your account.</p>
 			<div class="jumbotron">
-				<h2 align="center"><b>Sign in !! </b></h2>
+				<h2 align="center"><b>Sign in</b></h2>
 				<form action="/request-registration" method="POST" class="form-horizontal" id="user-form">
                 <fieldset>
                   <div class="form-group">
@@ -35,16 +34,15 @@
                     </div>
                   </div>
 
-                  <!-- NEW BUTTON -->
+                  <!-- BUTTON -->
                   <div class="form-group">
                     <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
-                      <button type="submit" class="btn btn-info" id="request-registration">Create</button>
+                      <button type="submit" class="btn btn-info" value="Register">Submit</button>
                     </div>
                   </div>
                 </fieldset>
               </form>
-              <p><a href="/logout">Logout</a></p>
+              <p><a href="/logout">Back</a></p>
 			</div>
 		</div>
 

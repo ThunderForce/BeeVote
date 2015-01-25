@@ -6,16 +6,18 @@
 		
 	</head>
 	<body>
-		<h1>Welcome to BeeVote!</h1>
-		<p>You have sent the following registration request:</p>
-		<ul>
-			<li>Google account email: <b>{{ request.email }}</b></li>
-			<li>Name: <b>{{ request.name }}</b></li>
-			<li>Surname: <b>{{ request.surname }}</b></li>
-			<li>Request creation: <b>{{ request.creation }}</b></li>
-			<li>Request ID: <b>{{ request.key.id }}</b></li>
-		</ul>
-		<p>An administrator will accept your registration request soon.</p>
-		<p><a href="/logout">Logout</a></p>
+		<div class="jumbotron" style="max-width:900px;margin-top:20px;">
+			<h1>Welcome to BeeVote!</h1>
+			<p>You have sent the following registration request:</p>
+			<ul>
+				<li>Google account email: <b>{{ request.email }}</b></li>
+				<li>Name: <b>{{ request.name }}</b></li>
+				<li>Surname: <b>{{ request.surname }}</b></li>
+				<li>Request creation: <b>{{ request.creation }}</b></li>
+				<li>Request ID: <b>{{ request.key.id }}</b></li>
+			</ul>
+			<p>An administrator will accept your registration request soon.</p>
+			<p><a href="/logout">Back</a></p>
+		</div>
 	</body>
 </html>
