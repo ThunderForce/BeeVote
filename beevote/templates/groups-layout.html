@@ -26,35 +26,35 @@
     <a href="javascript:void(0)" class="btn btn-default">Topics</a>
     <a href="javascript:void(0)" class="btn btn-default">Groups</a>
   </div>
-  -->
+-->
 <!-- Button + Popup -->
-  <!-- Material Button -->
-  <button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: -3px;"></i></button>
+<!-- Material Button -->
+<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: -3px;"></i></button>
 
-  <!-- Popup-Form New Group -->
-  <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2 align="center"><b>Create a new Group</b></h2>
-        </div>
-        <div class="modal-body">
-          <form action="/create-group" method="post" class="form-horizontal" id="group-form">
-            <fieldset>
-              <div class="form-group">
-                <label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
-                <div class="col-lg-10">
-                  <input class="form-control" id="inputGroupName" name="inputGroupName" placeholder="Name of the group" type="text" maxlength="32">
-                </div>
+<!-- Popup-Form New Group -->
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 align="center"><b>Create a new Group</b></h2>
+      </div>
+      <div class="modal-body">
+        <form action="/create-group" method="post" class="form-horizontal" id="group-form">
+          <fieldset>
+            <div class="form-group">
+              <label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
+              <div class="col-lg-10">
+                <input class="form-control" id="inputGroupName" name="inputGroupName" placeholder="Name of the group" type="text" maxlength="32">
               </div>
+            </div>
 
-              <div class="form-group">
-                <label for="textArea" class="col-lg-2 control-label">Description</label>
-                <div class="col-lg-10">
-                  <textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
-                  <span class="help-block">Add here a description of the group</span>
-                </div>
+            <div class="form-group">
+              <label for="textArea" class="col-lg-2 control-label">Description</label>
+              <div class="col-lg-10">
+                <textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+                <span class="help-block">Add here a description of the group</span>
               </div>
+            </div>
 
                 <!-- OLD BUTTON 
                 <div class="form-group">
@@ -79,173 +79,118 @@
     </div>
   </div>
 
-<!-- Jumbotron -->
+  <!-- Jumbotron Contenitore -->
   <div class="jumbotron" style="max-width: 900px; background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
 
 
     <div class="row">
-     <div class="col-lg-4" >
-        
-      
+      <!-- Colonna sinistra -->
+      <div class="col-lg-4" >
+        <!-- Jumbotron con immagine profilo -->
         <div class="jumbotron" style="background-color: #2196F3; max-width: 900px;">
           <div class="row">
-            
-              <div class="col-lg-12">
-                <!-- interno proposta -->
-                <div class="row-picture">
-                  <img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
-                </div>
-                  <br>
-
-                  <h4 class="list-group-item-heading" color="black">
-                    {{user.email}}
-                  </h4>
-                
-                
+            <div class="col-lg-12">
+              <div class="row-picture">
+                <img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
               </div>
-
-            
-          </div>
+              <br>
+              <h4 class="list-group-item-heading" color="black">
+                {{user.email}}
+              </h4>
+            </div><!-- /col-lg-12 -->            
+          </div><!-- /row -->
+        </div><!-- /jumbotron Immagine profilo -->
         
-      </div>
-        
 
-        <!-- Lista Gruppi -->
+        <!-- Jumbotron Lista Gruppi -->
         <div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
-        <div>
-          <h2>Your Groups</h2>
-        </div>
-        <br>
+          <div>
+            <h2>Your Groups</h2>
+          </div>
+          <br>
+          <div class="list-group">
 
-        <!-- ----------------------------- 
-
-        <div class="list-group">
-          <div class="list-group-item">
-            <div class="row-picture">
-              <img class="circle" src="http://lorempixel.com/56/56/people/1" alt="icon">
-            </div>
-            <div class="row-content">
-              <h4 class="list-group-item-heading">Tile with avatar</h4>
-              <p class="list-group-item-text">Donec id elit non mi porta gravida at eget metus</p>
-            </div>
-        </div>
-
-        <div class="list-group-separator"></div>
-
-
-         ---------------------------- -->
-
-        <div class="list-group">
-          
-          {% for group in groups%}
-
-          <div class="list-group-item">
-
-            <!-- Card Group Big -->
-            
+            {% for group in groups%}
+            <div class="list-group-item">
               <div class="row">
                 <a href="/group/{{ group.key.id }}">
                   <div class="col-lg-10">
-
-                    <!-- interno proposta -->
                     <div class="row-picture">
                       <img class="circle" src="/static/images/group-default.jpg" alt="icon">
                     </div>
-
                     <div class="row-content">
                       <h3 class="list-group-item-heading" color="black">
                         {{ group.name }}
                       </h3>
                     </div>
-
-                  </div>
+                  </div><!-- /col-lg-10 -->
                 </a>
-              </div>
-            <!-- <div class="well well-lg" color="blue" style="max-width: 900px;"></div>-->
+              </div><!-- /row -->
+            </div><!-- /list-group-item -->
+            <div class="list-group-separator"></div>
+            {% endfor %}
+          </div><!-- /list-group -->
+        </div><!-- /jumbotron Lista Gruppi-->
+      </div> <!-- /col-lg-4 -->
+
+
+        <!-- Colonna destra -->
+        <div class="col-lg-8" >
+          <div>
+            <h2 style="margin-top: 11px;">Your Topics</h2>
           </div>
-          <div class="list-group-separator"></div>
-          {% endfor %}
-        </div>
-        
-        <!-- Lista Topic Utente -->
-      </div> <!-- /jumbotron -->
-    </div> <!-- /coll -->
-
-    <!-- TOPIC -->
-
-    <div class="col-lg-8" >
-      
-
-        <div>
-          <h2 style="margin-top: 11px;">Your Topics</h2>
-        </div>
-        <br>
-
-        <!-- -->
-
-        <div class="list-group" id="event_list">
-        
-        {% for topic in topics %}
-
-        <!-- Card Proposal Big -->
-          <div class="list-group-item">
-            <a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}">
-              <div class="well well-lg" color="blue">
-                <!-- interno proposta -->
-                <div class="row">
-                  <div class="row-picture">
-                    {% if topic.img != None %}
-                    <img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
-                    {% else %}
-                    <img class="circle" src="/static/images/topic-icon.png" alt="icon">
-                    {% endif %}
-                  </div>
-                  <div class="row-content">
-                    <h3 class="list-group-item-heading">{{topic.title}}</h3>
-                    <h5 class="list-group-item-text">{{topic.description}}</h5>
-                    {% if topic.expired %}
-                    <h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>
-                    {% else %}
-                    {% if topic.time_before_deadline %}
-                    <h5 class="list-group-item-text">Deadline: {{ topic.deadline }}</h5>
-                    <h5 class="list-group-item-text">Time before deadline: 
-                      <span style="color: red">
-                        {% if topic.time_before_deadline.days != 0 %}
-                        {{ topic.time_before_deadline.days }} days
-                        {% endif %}
-                        {% if topic.time_before_deadline.hours != 0 %}
-                        {{ topic.time_before_deadline.hours }} hours
-                        {% endif %}
-                        {% if topic.time_before_deadline.minutes != 0 %}
-                        {{ topic.time_before_deadline.minutes }} minutes
-                        {% endif %}
-                        {% if topic.time_before_deadline.seconds != 0 %}
-                        {{ topic.time_before_deadline.seconds }} seconds
-                        {% endif %}
-                      </span>
-                    </h5>
-                    {% else %}
-                    <h5 class="list-group-item-text">This topic has no deadline.</h5>
-                    {% endif %}
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {% endfor %}
-
-
-        <!-- -->
-      </div>
-    <!--<div class="jumbotron" style="background-color: #DDD; max-width: 900px;"></div>-->
-    </div><!-- Jumbotron 1°-->
-    </div>
-
-
-
+          <br>
+          <div class="list-group">
+            {% for topic in topics %}
+            <div class="list-group-item">
+              <a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}">
+                <div class="well well-lg" color="blue">
+                  <div class="row">
+                    <div class="row-picture">
+                      {% if topic.img != None %}
+                      <img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+                      {% else %}
+                      <img class="circle" src="/static/images/topic-icon.png" alt="icon">
+                      {% endif %}
+                    </div><!-- /row-picture -->
+                    <div class="row-content">
+                      <h3 class="list-group-item-heading">{{topic.title}}</h3>
+                      <h5 class="list-group-item-text">{{topic.description}}</h5>
+                      {% if topic.expired %}
+                      <h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>
+                      {% else %}
+                      {% if topic.time_before_deadline %}
+                      <h5 class="list-group-item-text">Deadline: {{ topic.deadline }}</h5>
+                      <h5 class="list-group-item-text">Time before deadline: 
+                        <span style="color: red">
+                          {% if topic.time_before_deadline.days != 0 %}
+                          {{ topic.time_before_deadline.days }} days
+                          {% endif %}
+                          {% if topic.time_before_deadline.hours != 0 %}
+                          {{ topic.time_before_deadline.hours }} hours
+                          {% endif %}
+                          {% if topic.time_before_deadline.minutes != 0 %}
+                          {{ topic.time_before_deadline.minutes }} minutes
+                          {% endif %}
+                          {% if topic.time_before_deadline.seconds != 0 %}
+                          {{ topic.time_before_deadline.seconds }} seconds
+                          {% endif %}
+                        </span>
+                      </h5>
+                      {% else %}
+                      <h5 class="list-group-item-text">This topic has no deadline.</h5>
+                      {% endif %}
+                      {% endif %}
+                    </div><!-- /row-content -->
+                  </div><!-- /row -->
+                </div><!-- /well -->
+              </a>
+            </div><!-- /list-group-item -->
+            {% endfor %}
+          </div><!-- /list-group -->
+        </div><!-- /col-lg-8 -->
+      </div><!-- /row-inizio -->
+    </div><!-- /Jumbotron Contenitore -->
     
   </body>
   </html>
