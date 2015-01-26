@@ -9,10 +9,10 @@
 
 	<!-- Popup JS -->
 	<script>
-		function centerModal() {
-			$(this).css('display', 'block');
-			var $dialog = $(this).find(".modal-dialog");
-			var offset = ($(window).height() - $dialog.height()) / 2;
+	function centerModal() {
+		$(this).css('display', 'block');
+		var $dialog = $(this).find(".modal-dialog");
+		var offset = ($(window).height() - $dialog.height()) / 2;
             // Center modal vertically in window
             $dialog.css("margin-top", offset);
         }
@@ -21,30 +21,30 @@
         $(window).on("resize", function () {
         	$('.modal:visible').each(centerModal);
         });
-    </script>
-    <!-- Popup JS -->
-    <script>
-    	$(document).ready(function() {
-    		$('#topic-form').submit(function() {
-    			$(this).append('<input type="hidden" name="timezoneOffset" value="'+new Date().getTimezoneOffset()+'" /> ');
-    			$('#create-topic').attr("disabled", true);
-    			return true;
-    		});
-    		$('#inputDeadline').datetimepicker();
-    	});
-    </script>
+        </script>
+        <!-- Popup JS -->
+        <script>
+        $(document).ready(function() {
+        	$('#topic-form').submit(function() {
+        		$(this).append('<input type="hidden" name="timezoneOffset" value="'+new Date().getTimezoneOffset()+'" /> ');
+        		$('#create-topic').attr("disabled", true);
+        		return true;
+        	});
+        	$('#inputDeadline').datetimepicker();
+        });
+        </script>
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-	{{ navbar }}
+    	{{ navbar }}
 
-	<div class="jumbotron" style="max-width: 900px;">
-		<h1>{{group.name}} </h1>
-		<h2>&nbsp;<small>{{group.description}}</small></h2>
-		<a href="/group/{{ group.key.id }}/members"><button class="btn btn-info">View members</button></a>
-	</div>
+    	<div class="jumbotron" style="max-width: 900px;">
+    		<h1>{{group.name}} </h1>
+    		<h2>&nbsp;<small>{{group.description}}</small></h2>
+    		<a href="/group/{{ group.key.id }}/members"><button class="btn btn-info">Add members</button></a>
+    	</div>
 	<!-- 
 		<div class="row">
 			<div class="col-lg-5">
@@ -87,6 +87,10 @@
 
     					<div class="modal-header">
     						<h2 align="center"><b>Create a new Topic</b></h2>
+    						<div class="alert alert-dismissable alert-danger">
+    							<strong>Remember! </strong>You don't have to fill every field!!
+    							Leave blank the fields that you want to discuss with your friends.
+    						</div>
     					</div>
     					<div class="modal-body">
     						<form action="/create-topic" method="post" class="form-horizontal" enctype="multipart/form-data" id="topic-form">
@@ -102,7 +106,7 @@
     								<div class="form-group">
     									<label for="inputWhat" class="col-lg-2 control-label">What: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do" type="text">
+    										<input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do " type="text">
 
     									</div>
     								</div>
@@ -110,7 +114,7 @@
     								<div class="form-group">
     									<label for="inputWhere" class="col-lg-2 control-label">Where: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities" type="text">
+    										<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities " type="text">
 
     									</div>
     								</div>
@@ -119,7 +123,7 @@
     								<div class="form-group">
     									<label for="inputDate" class="col-lg-2 control-label">Date: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" type="date">
+    										<input class="form-control" id="inputDate" name="inputDate" placeholder=" Which date " type="date">
 
     									</div>
     								</div>
@@ -127,7 +131,7 @@
     								<div class="form-group">
     									<label for="inputTime" class="col-lg-2 control-label">Time: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" type="time">
+    										<input class="form-control" id="inputTime" name="inputTime" placeholder="At what time " type="time">
 
     									</div>
     								</div>
@@ -135,7 +139,7 @@
     								<div class="form-group">
     									<label for="inputDeadline" class="col-lg-2 control-label">Expire Date: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputDeadline" name="inputDeadline"  type="datetime">
+    										<input class="form-control" id="inputDeadline" name="inputDeadline"  type="datetime" placeholder="Fill this field if you want to set an expire time for the topic">
     									</div>
     								</div>
 
@@ -146,6 +150,9 @@
     										<input id="inputImg" type="file" name="inputImg"/>
     									</div>
     								</div>
+
+
+
 									<!-- OLD INPUT FILE
 									<div class="form-group">
 										<label for="inputFile" class="col-lg-2 control-label">Photo</label>
@@ -213,29 +220,29 @@
 							<h3 class="list-group-item-heading">{{topic.title}}</h3>
 							<h5 class="list-group-item-text">{{topic.description}}</h5>
 							{% if topic.expired %}
-								<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>
+							<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>
 							{% else %}
-								{% if topic.time_before_deadline %}
-									<h5 class="list-group-item-text">Deadline: {{ topic.deadline }}</h5>
-									<h5 class="list-group-item-text">Time before deadline: 
-										<span style="color: red">
-										{% if topic.time_before_deadline.days != 0 %}
-											{{ topic.time_before_deadline.days }} days
-										{% endif %}
-										{% if topic.time_before_deadline.hours != 0 %}
-											{{ topic.time_before_deadline.hours }} hours
-										{% endif %}
-										{% if topic.time_before_deadline.minutes != 0 %}
-											{{ topic.time_before_deadline.minutes }} minutes
-										{% endif %}
-										{% if topic.time_before_deadline.seconds != 0 %}
-											{{ topic.time_before_deadline.seconds }} seconds
-										{% endif %}
-										</span>
-									</h5>
-								{% else %}
-									<h5 class="list-group-item-text">This topic has no deadline.</h5>
-								{% endif %}
+							{% if topic.time_before_deadline %}
+							<h5 class="list-group-item-text">Deadline: {{ topic.deadline }}</h5>
+							<h5 class="list-group-item-text">Time before deadline: 
+								<span style="color: red">
+									{% if topic.time_before_deadline.days != 0 %}
+									{{ topic.time_before_deadline.days }} days
+									{% endif %}
+									{% if topic.time_before_deadline.hours != 0 %}
+									{{ topic.time_before_deadline.hours }} hours
+									{% endif %}
+									{% if topic.time_before_deadline.minutes != 0 %}
+									{{ topic.time_before_deadline.minutes }} minutes
+									{% endif %}
+									{% if topic.time_before_deadline.seconds != 0 %}
+									{{ topic.time_before_deadline.seconds }} seconds
+									{% endif %}
+								</span>
+							</h5>
+							{% else %}
+							<h5 class="list-group-item-text">This topic has no deadline.</h5>
+							{% endif %}
 							{% endif %}
 						</div>
 					</div>
