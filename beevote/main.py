@@ -202,16 +202,28 @@ class TopicSampleHandler(BaseHandler):
 
 class GroupsHandler(BaseHandler):
 	def get(self):
+		
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		
 		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
+		
 		topics=[]
+		
+		groups = [g for g in groups if not (not beevote_user.key() in g.members) and (g.members != [])]
+		
 		for group in groups:
+			
+			'''
 			if (not beevote_user.key() in group.members) and (group.members != []):
 				groups.remove(group)
 			else: 
-				topics_gruop = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
-				topics.extend(topics_gruop)
+				topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
+				topics.extend(topics_group)
+			'''
+			
+			topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
+			topics.extend(topics_group)
 		
 		values = {
 			'groups' : groups,
@@ -308,14 +320,16 @@ class AddGroupMemberHandler(BaseHandler):
 class RemoveGroupMemberHandler(BaseHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
+		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(current_beevote_user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		email = self.request.get("email")
+		deleted_beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
 		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		group.members.remove(email)
+		group = db.get(group_key)		
+		group.members.remove(deleted_beevote_user.key())
 		group.put()
 		self.redirect("/group/"+group_id+"/members")
 
