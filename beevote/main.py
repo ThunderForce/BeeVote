@@ -228,7 +228,7 @@ class GroupsHandler(BaseHandler):
 		values = {
 			'groups' : groups,
 			'topics' : topics,
-			'user' : user,
+			'user' : beevote_user,
 		}
 		write_template(self.response, 'groups-layout.html',values)
 

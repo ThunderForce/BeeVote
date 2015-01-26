@@ -43,6 +43,10 @@ img.image-circle {
   background-color: #2196F3;
 }
 
+[color="red_g"].well {
+  background-color: #f44336;
+}
+
 [color="blue"].navbar {
 	background-color: #2196F3;
 }

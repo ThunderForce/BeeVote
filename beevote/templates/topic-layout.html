@@ -76,10 +76,11 @@
 </head>
 <body>
 	{{ navbar }}
+	<div class="jumbotron" style="max-width:900px;">
 	<!-- Topic -->
-	<div class="jumbotron" style="max-width: 900px;">
-		<h1>{{ topic.title }}</h1>
-		<p>{{ topic.description }}</p>
+	<div class="jumbotron" style="max-width:900px;">
+		<h1 style="word-wrap:break-word;">{{ topic.title }}</h1>
+		<p style="word-wrap:break-word;">{{ topic.description }}</p>
 		{% if topic.expired %}
 		<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
 		{% else %}
@@ -103,26 +104,32 @@
 		</p>
 		{% endif %}
 		{% endif %}
+		<div class="row">
+		<div class="col-lg-6">
 		{% if topic.img != None %}
 		<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
+		<br><br>
 		{% endif %}
 		{% if topic.img == None %}
 		<i>No image available</i>
+		<br><br>
 		{% endif %}
-		<br>
+		</div>
+		<div class="col-lg-6">
 		{% if topic.activity != "" %}
-		<p><b>Activity: </b>{{ topic.activity }}</p>
+		<p><span class="mdi-action-announcement"></span> {{ topic.activity }}</p>
 		{% endif %}
 		{% if topic.place != "" %}
-		<p><b>Place: </b>{{ topic.place }}</p>
+		<p><span class="mdi-communication-location-on"></span> {{ topic.place }}</p>
 		{% endif %}
 		{% if topic.date %}
-		<p><b>Date: </b>{{ topic.date }}</p>
+		<p><span class="mdi-editor-insert-invitation"></span> {{ topic.date }}</p>
 		{% endif %}
 		{% if topic.time %}
-		<p><b>Time: </b>{{ topic.time }}</p>
+		<p><span class="mdi-action-query-builder"></span> {{ topic.time }}</p>
 		{% endif %}
-		<br>
+		</div>
+		</div>
 		<!--<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>-->
 		<!--
 		<div class="row">
@@ -157,7 +164,7 @@
 
 		<!-- New Button -->
 		{% if not topic.expired %}
-		<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+		<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;background-color:#2196F3;"><i class="mdi-content-add" style="top: 0px;"></i></button>
 		{% else %}
 		<button class="btn btn-fab btn-raised btn-material-grey disabled" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
 		{% endif %}
@@ -267,7 +274,7 @@
 						<div class="row-content">
 							<div class="col-lg-11">
 								<h2 class="list-group-item-heading">
-									<b style="font-size: 30px;">{{ proposal.title }}</b>
+									<b style="font-size: 25px;">{{ proposal.title }}</b>
 									<br>
 									<br>
 									<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
@@ -299,6 +306,7 @@
 
 		{% endfor %}
 	</div>
+</div>
 </div>
 </body>
 </html>

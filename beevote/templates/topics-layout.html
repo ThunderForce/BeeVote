@@ -40,6 +40,7 @@
 
 	{{ navbar }}
 
+	<div class="jumbotron" style="max-width:900px;">
 	<div class="jumbotron" style="max-width: 900px;">
 		<h1>{{group.name}} </h1>
 		<h2>&nbsp;<small>{{group.description}}</small></h2>
@@ -74,7 +75,7 @@
 			<div align="center">
 
 				<!-- New Button -->
-				<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" ></i></button>
+				<button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;background-color:#2196F3;"><i class="mdi-content-add" ></i></button>
 
 				<!-- Old Button
     			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new topic&nbsp<span class="mdi-content-add-circle-outline"></span></button>
@@ -245,6 +246,7 @@
 	</div>
 
 	{% endfor %}
+</div>
 </div>
 </div>
 </div>

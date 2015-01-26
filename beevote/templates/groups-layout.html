@@ -95,7 +95,7 @@
               </div>
               <br>
               <h4 class="list-group-item-heading" color="black">
-                {{user.email}}
+                <b>{{user.name}} {{user.surname}}</b>
               </h4>
             </div><!-- /col-lg-12 -->            
           </div><!-- /row -->
@@ -103,7 +103,7 @@
         
 
         <!-- Jumbotron Lista Gruppi -->
-        <div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
+        
           <div>
             <h2>Your Groups</h2>
           </div>
@@ -112,6 +112,7 @@
 
             {% for group in groups%}
             <div class="list-group-item">
+              <div class="well well-lg" color="red_g" style="padding:0px;padding-top:9px;padding-left:9px;">
               <div class="row">
                 <a href="/group/{{ group.key.id }}">
                   <div class="col-lg-10">
@@ -127,10 +128,10 @@
                 </a>
               </div><!-- /row -->
             </div><!-- /list-group-item -->
-            <div class="list-group-separator"></div>
+            </div>
             {% endfor %}
           </div><!-- /list-group -->
-        </div><!-- /jumbotron Lista Gruppi-->
+        
       </div> <!-- /col-lg-4 -->
 
 
