@@ -135,10 +135,7 @@ class MainHandler(BaseHandler):
 				self.redirect("/register")
 				return
 			else:
-				# Here we can show the page with groups and topic (basically the home).
-				# Until we don't have a home, the handler redirects to /groups.
-				# When the home is ready we will remove the redirect
-				self.redirect('/groups')
+				self.redirect('/home')
 		else:
 			values = {
 				'login_url': users.create_login_url('/'),
@@ -202,7 +199,7 @@ class TopicSampleHandler(BaseHandler):
 		}
 		write_template(self.response, 'topic-layout.html', values, navbar_values=navbar_values)
 
-class GroupsHandler(BaseHandler):
+class HomeHandler(BaseHandler):
 	def get(self):
 		
 		user = users.get_current_user()
@@ -223,6 +220,9 @@ class GroupsHandler(BaseHandler):
 				topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
 				topics.extend(topics_group)
 			'''
+			
+			if len(group.name) > 20:
+				group.name_short = group.name[:16]
 			
 			topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
 			topics.extend(topics_group)
@@ -616,7 +616,7 @@ app = webapp2.WSGIApplication([
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
 	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
 	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
-	('/groups', GroupsHandler),
+	('/home', HomeHandler),
 	('/group/(.*)', GroupHandler),			#topics-layout.html
 	('/profile/(.*)', ProfileHandler),
 	('/create-topic', CreateTopicHandler),
