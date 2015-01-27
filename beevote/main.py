@@ -24,6 +24,8 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 
+from google.appengine.api import mail
+
 import models
 import api
 
@@ -521,6 +523,43 @@ class RequestRegistrationHandler(BaseHandler):
 					surname = surname,
 				)
 				request.put()
+				
+				mail.send_mail_to_admins(
+					sender="BeeVote Registration Notifier <notify-registration@beevote.appspotmail.com>",
+					subject="BeeVote registration request received",
+					body="""
+Dear BeeVote admin,
+
+Your application has received the following registration request:
+- User ID: {request.user_id}
+- User email: {request.email}
+- Name: {request.name}
+- Surname: {request.surname}
+
+Follow this link to see all requests:
+{link}
+
+The BeeVote Team
+        """.format(request=request, link=self.request.host+"/admin/pending-requests"))
+				
+				mail.send_mail(
+					sender='BeeVote Registration Notifier <registration-pending@beevote.appspotmail.com>',
+					to=request.email,
+					subject="BeeVote registration request pending",
+					body="""
+Dear {request.name} {request.surname},
+
+Your registration request has been sent: you will receive an email when an admininstrator accepts your request.
+
+Details of registration request:
+- User ID: {request.user_id}
+- User email: {request.email}
+- Name: {request.name}
+- Surname: {request.surname}
+
+The BeeVote Team
+""".format(request=request, link=self.request.host))
+				
 				self.redirect('/registration-pending')
 				return
 			else:

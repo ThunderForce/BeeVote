@@ -23,6 +23,8 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 
+from google.appengine.api import mail
+
 import models
 import api
 
@@ -85,6 +87,28 @@ class AcceptRegistrationRequestHandler(webapp2.RequestHandler):
 		)
 		beevote_user.put()
 		request.delete()
+		
+		mail.send_mail(
+			sender='BeeVote Registration Notifier <registration-accepted@beevote.appspotmail.com>',
+			to=request.email,
+			subject="BeeVote registration request accepted",
+			body="""
+Dear {request.name} {request.surname},
+
+Your registration request has been accepted: now you can access BeeVote features!
+
+Follow this link to start:
+{link}
+
+Details of registration request:
+- User ID: {request.user_id}
+- User email: {request.email}
+- Name: {request.name}
+- Surname: {request.surname}
+
+The BeeVote Team
+""".format(request=request, link=self.request.host))
+		
 		self.redirect('/admin/pending-requests')
 
 class NotFoundPageHandler(BasicPageHandler):
