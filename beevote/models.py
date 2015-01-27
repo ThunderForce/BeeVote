@@ -21,6 +21,7 @@ class Group(db.Model):
 	name = db.StringProperty(required=True)
 	description = db.TextProperty()
 	members = db.ListProperty(db.Key) # BeeVoteUser Key
+	admins = db.ListProperty(db.Key) # BeeVoteUser Key
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
 
@@ -36,6 +37,11 @@ class Topic(db.Model):
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	img = db.BlobProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
+	def delete(self):
+		proposals = db.GqlQuery("SELECT * FROM Proposal WHERE topic = :1", self)
+		for proposal in proposals:
+			proposal.delete()
+		db.Model.delete(self)
 
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)
@@ -47,6 +53,11 @@ class Proposal(db.Model):
 	time = db.TimeProperty()
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
+	def delete(self):
+		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", self)
+		for vote in votes:
+			vote.delete()
+		db.Model.delete(self)
 	
 class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)

@@ -7,7 +7,10 @@
 	<script src="/static/js/vote-functions.js"></script>
 	<script>
 		$(document).ready(function() {
-			
+			if ($('#delete-topic').length > 0)
+					$('#delete-topic').on('click', function () {
+						return confirm('Are you sure you want to delete this topic?');
+					});
 			if ($('#inputDate').length > 0)
 				$('#inputDate').datetimepicker({
 					timepicker:false,
@@ -139,6 +142,9 @@
 		{% endif %}
 		{% if topic.time %}
 		<p><span class="mdi-action-query-builder"></span> {{ topic.time }}</p>
+		{% endif %}
+		{% if is_owner %}
+		<a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
 		{% endif %}
 		</div>
 		</div>

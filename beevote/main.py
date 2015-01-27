@@ -142,6 +142,25 @@ class MainHandler(BaseHandler):
 			}
 			write_template(self.response, 'index.html', values)
 
+class RemoveTopicHandler(BaseHandler):
+	def get(self, group_id, topic_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(beevote_user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
+		topic = db.get(topic_key)
+
+		if topic.creator.key() == beevote_user.key():
+			topic.delete()
+			self.redirect("/group/"+group_id)
+		else:
+			self.abort(401, detail="You are not the creator of the topic and so you cannot remove it.")
+
 class TopicSampleHandler(BaseHandler):
 	def get(self, group_id, topic_id):
 		user = users.get_current_user()
@@ -152,6 +171,13 @@ class TopicSampleHandler(BaseHandler):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
+		if (not topic):
+			self.abort(404, detail="This topic does not exist.")
+		
+		if topic.creator.key() == beevote_user.key():
+			is_owner = True
+		else:
+			is_owner = False
 		
 		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(1000)
 		
@@ -183,6 +209,7 @@ class TopicSampleHandler(BaseHandler):
 		values = {
 			'topic': topic,
 			'proposals': proposals,
+			'is_owner': is_owner,
 		}
 		navbar_values = {
 			'breadcumb': {
@@ -239,6 +266,8 @@ class GroupHandler(BaseHandler):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
+		if (not group):
+			self.abort(404, detail="This group does not exist.")
 		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
@@ -335,6 +364,26 @@ class RemoveGroupMemberHandler(BaseHandler):
 		group.put()
 		self.redirect("/group/"+group_id+"/members")
 
+class RemoveProposalHandler(BaseHandler):
+	def get(self, group_id, topic_id, proposal_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(beevote_user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
+		proposal = db.get(proposal_key)
+		
+		if proposal.creator.key() == beevote_user.key():
+			proposal.delete()
+			self.redirect("/group/"+group_id+"/topic/"+topic_id)
+		else:
+			self.abort(401, detail="You are not the creator of the proposal and so you cannot remove it.")
+
+
 class ProposalHandler(BaseHandler):
 	def get(self, group_id, topic_id, proposal_id):
 		user = users.get_current_user()
@@ -346,12 +395,21 @@ class ProposalHandler(BaseHandler):
 		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
 		proposal = db.get(proposal_key)
 
+		if (not proposal):
+			self.abort(404, detail="This proposal does not exist.")
+		
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
 		vote_number = votes.count()
 		
 		user = users.get_current_user()
 		user_id = user.user_id()
 		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		
+		if proposal.creator.key() == beevote_user.key():
+			is_owner = True
+		else:
+			is_owner = False
+		
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
 		own_vote = votes.get()
 		if own_vote:
@@ -365,6 +423,7 @@ class ProposalHandler(BaseHandler):
 			'proposal': proposal,
 			'vote_number': vote_number,
 			'already_voted': already_voted,
+			'is_owner': is_owner,
 		}
 		navbar_values = {
 			'breadcumb': {
@@ -489,6 +548,7 @@ class CreateGroupHandler(BaseHandler):
 			)
 		group.description = description
 		group.members.append(beevote_user.key())
+		group.admins.append(beevote_user.key())
 		group.put()
 		group_id = group.key().id() 
 		self.redirect('/group/'+str(group_id))
@@ -614,7 +674,9 @@ app = webapp2.WSGIApplication([
 	('/group/(.*)/members/add', AddGroupMemberHandler),
 	('/group/(.*)/members', GroupMembersHandler),
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
+	('/group/(.*)/topic/(.*)/proposal/(.*)/remove', RemoveProposalHandler),
 	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
+	('/group/(.*)/topic/(.*)/remove', RemoveTopicHandler),
 	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/home', HomeHandler),
 	('/group/(.*)', GroupHandler),			#topics-layout.html
