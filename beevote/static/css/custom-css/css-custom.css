@@ -51,6 +51,10 @@ img.image-circle {
 	background-color: #2196F3;
 }
 
+[color="green"].well {
+	background-color: #0F9D58
+}
+
 [color="red"].well{
   background-color: #D32F2F;
 }
