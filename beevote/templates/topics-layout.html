@@ -7,21 +7,20 @@
 
 	{{ basic_head }}
 
-	<!-- Popup JS -->
-	<script>
-	function centerModal() {
-		$(this).css('display', 'block');
-		var $dialog = $(this).find(".modal-dialog");
-		var offset = ($(window).height() - $dialog.height()) / 2;
-            // Center modal vertically in window
-            $dialog.css("margin-top", offset);
-        }
+		<!-- Popup JS -->
+		<script>
+			function centerModal() {
+				$(this).css('display', 'block');
+				var $dialog = $(this).find(".modal-dialog");
+				var offset = ($(window).height() - $dialog.height()) / 2;
+					// Center modal vertically in window
+					$dialog.css("margin-top", offset);
+			}
 
-        $('.modal').on('show.bs.modal', centerModal);
-        $(window).on("resize", function () {
-        	$('.modal:visible').each(centerModal);
-        });
-<<<<<<< HEAD
+			$('.modal').on('show.bs.modal', centerModal);
+			$(window).on("resize", function () {
+				$('.modal:visible').each(centerModal);
+			});
         </script>
         <!-- Popup JS -->
         <script>
@@ -31,7 +30,17 @@
         		$('#create-topic').attr("disabled", true);
         		return true;
         	});
-        	$('#inputDeadline').datetimepicker();
+			$('#inputDate').datetimepicker({
+				timepicker:false,
+				format:'d/m/Y'
+			});
+			$('#inputTime').datetimepicker({
+				datepicker:false,
+				format:'H:i'
+			});
+        	$('#inputDeadline').datetimepicker({
+				format:'d/m/Y H:i'
+			});
         });
         </script>
 
@@ -125,7 +134,7 @@
     								<div class="form-group">
     									<label for="inputDate" class="col-lg-2 control-label">Date: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputDate" name="inputDate" placeholder=" Which date " type="date">
+    										<input class="form-control" id="inputDate" name="inputDate" placeholder=" Which date " autocomplete="off">
 
     									</div>
     								</div>
@@ -133,7 +142,7 @@
     								<div class="form-group">
     									<label for="inputTime" class="col-lg-2 control-label">Time: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputTime" name="inputTime" placeholder="At what time " type="time">
+    										<input class="form-control" id="inputTime" name="inputTime" placeholder="At what time " autocomplete="off">
 
     									</div>
     								</div>
@@ -141,7 +150,7 @@
     								<div class="form-group">
     									<label for="inputDeadline" class="col-lg-2 control-label">Expire Date: </label>
     									<div class="col-lg-10">
-    										<input class="form-control" id="inputDeadline" name="inputDeadline"  type="datetime" placeholder="Fill this field if you want to set an expire time for the topic">
+    										<input class="form-control" id="inputDeadline" name="inputDeadline" autocomplete="off" placeholder="Fill this field if you want to set an expire time for the topic">
     									</div>
     								</div>
 

@@ -434,11 +434,11 @@ class CreateTopicHandler(BaseHandler):
 		topic.activity = what
 		topic.place = where
 		if date != "":
-			topic.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+			topic.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
 		if time != "":
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
 		if deadline !="":
-			topic.deadline = datetime.datetime.strptime(deadline, "%Y/%m/%d %H:%M")
+			topic.deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
 		topic.description = description
 		if img != "":
 			topic.img = db.Blob(img)
@@ -470,7 +470,7 @@ class CreateProposalHandler(BaseHandler):
 		if where != "":
 			proposal.place = where
 		if date != "":
-			proposal.date = datetime.datetime.strptime(date, "%Y-%m-%d").date()
+			proposal.date = datetime.datetime.strptime(date, "%d-%m-%Y").date()
 		if time != "":
 			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 		proposal.description = description

@@ -7,6 +7,18 @@
 	<script src="/static/js/vote-functions.js"></script>
 	<script>
 		$(document).ready(function() {
+			
+			if ($('#inputDate').length > 0)
+				$('#inputDate').datetimepicker({
+					timepicker:false,
+					format:'d/m/Y'
+				});
+			if ($('#inputTime').length > 0)
+				$('#inputTime').datetimepicker({
+					datepicker:false,
+					format:'H:i'
+				});
+			
 			$('#proposal-form').submit(function() {
 				$('#create-proposal').attr("disabled", true);
 			});
@@ -212,7 +224,7 @@
 								<div class="form-group">
 									<label for="inputDate" class="col-lg-2 control-label">Date: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" type="date">
+										<input class="form-control" id="inputDate" name="inputDate" placeholder="Date for the activity" autocomplete="off">
 									</div>
 								</div>
 								{% endif %}
@@ -220,7 +232,7 @@
 								<div class="form-group">
 									<label for="inputTime" class="col-lg-2 control-label">Time: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" type="time">
+										<input class="form-control" id="inputTime" name="inputTime" placeholder="Time for the activity" autocomplete="off">
 									</div>
 								</div>
 								{% endif %}
