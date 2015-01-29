@@ -690,6 +690,7 @@ app = webapp2.WSGIApplication([
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
 	('/api/group/(.*)/topic/(.*)', api.LoadTopicHandler),
+	('/api/groups', api.LoadGroupsHandler),
 	('/api/group/(.*)', api.LoadGroupHandler),
 	('/register', RegistrationHandler),
 	('/request-registration',RequestRegistrationHandler),

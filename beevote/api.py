@@ -43,6 +43,11 @@ def get_proposal_from_id(group_id, topic_id, proposal_id):
 	proposal = db.get(proposal_key)
 	return proposal
 
+def get_groups_by_membership(beevote_user):
+	groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
+	groups = [g for g in groups if not (not beevote_user.key() in g.members) and (g.members != [])]
+	return groups
+
 def get_topics_from_group(group):
 	return db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
 
@@ -58,7 +63,7 @@ def fetch_group(group,arguments):
 		]))
 	])
 	if arguments['fetch_topics']:
-		group_json['topics'] = fetch_topics(group, arguments)
+		group_json['topics'] = fetch_topics_from_group(group, arguments)
 	return group_json
 	
 def fetch_topic(topic, arguments):
@@ -79,10 +84,17 @@ def fetch_topic(topic, arguments):
 			('seconds', time_before_deadline.seconds % 60),
 		])
 	if arguments['fetch_proposals']:
-		topic_dict['proposals'] = fetch_proposals(topic, arguments)
+		topic_dict['proposals'] = fetch_proposals_from_topic(topic, arguments)
 	return topic_dict
 
-def fetch_topics(group, arguments):
+def fetch_groups(groups, arguments):
+	groups_ret = []
+	for datastore_group in groups:
+		group = fetch_group(datastore_group, arguments)
+		groups_ret.append(group)
+	return groups_ret
+
+def fetch_topics_from_group(group, arguments):
 	datastore_topics = get_topics_from_group(group)
 	topics = []
 	for datastore_topic in datastore_topics:
@@ -98,7 +110,7 @@ def fetch_proposal(proposal, arguments):
 	])
 	return proposal_dict
 
-def fetch_proposals(topic, arguments):
+def fetch_proposals_from_topic(topic, arguments):
 	datastore_proposals = get_proposals_from_topic(topic)
 	proposals = []
 	for datastore_proposal in datastore_proposals:
@@ -134,6 +146,20 @@ class BaseApiHandler(webapp2.RequestHandler):
 		'''
 		
 		self.response.headers['Content-Type'] = "application/json"
+
+class LoadGroupsHandler(BaseApiHandler):
+	def get(self):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		datastore_groups = get_groups_by_membership(beevote_user)
+		arguments = {
+			'fetch_topics': self.request.get('fetch_topics', 'false') == 'true',
+			'evaluate_deadlines': self.request.get('evaluate_deadlines', 'false') == 'true',
+			'fetch_proposals': self.request.get('fetch_proposals', 'false') == 'true',
+		}
+		groups = fetch_groups(datastore_groups, arguments)
+		
+		self.response.out.write(json.dumps(groups, indent=4, separators=(',', ': ')))
 
 class LoadGroupHandler(BaseApiHandler):
 	def get(self, group_id):
