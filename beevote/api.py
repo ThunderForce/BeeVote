@@ -23,11 +23,14 @@ import time
 from google.appengine.ext import db
 from google.appengine.api import users
 
-from sets import Set
 import collections
 
 import models
+
 # Start of functions
+
+def get_json(json_obj):
+	return json.dumps(json_obj, indent=4, separators=(',', ': '))
 
 def get_group_from_id(group_id):
 	group_key = db.Key.from_path('Group', long(group_id))
@@ -166,6 +169,7 @@ class BaseApiHandler(webapp2.RequestHandler):
 		'''
 		
 		self.response.headers['Content-Type'] = "application/json"
+		
 
 class LoadGroupsHandler(BaseApiHandler):
 	def get(self):
@@ -179,7 +183,7 @@ class LoadGroupsHandler(BaseApiHandler):
 		}
 		groups = fetch_groups(datastore_groups, arguments)
 		
-		self.response.out.write(json.dumps(groups, indent=4, separators=(',', ': ')))
+		self.response.out.write(get_json(groups))
 
 class LoadGroupHandler(BaseApiHandler):
 	def get(self, group_id):
@@ -199,7 +203,7 @@ class LoadGroupHandler(BaseApiHandler):
 		
 		group_json = fetch_group(group, arguments)
 		
-		self.response.out.write(json.dumps(group_json, indent=4, separators=(',', ': ')))
+		self.response.out.write(get_json(group_json))
 
 class LoadTopicHandler(BaseApiHandler):
 	def get(self, group_id, topic_id):
@@ -219,7 +223,7 @@ class LoadTopicHandler(BaseApiHandler):
 		topic = get_topic_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
 		
-		self.response.out.write(json.dumps(topic_json, indent=4, separators=(',', ': ')))
+		self.response.out.write(get_json(topic_json))
 
 class LoadUserHandler(BaseApiHandler):
 	def get(self, user_id):
@@ -234,7 +238,7 @@ class LoadUserHandler(BaseApiHandler):
 		
 		beevote_user_ret = fetch_user(target_beevote_user, arguments)
 		
-		self.response.out.write(json.dumps(beevote_user_ret, indent=4, separators=(',', ': ')))
+		self.response.out.write(get_json(beevote_user_ret))
 
 class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
