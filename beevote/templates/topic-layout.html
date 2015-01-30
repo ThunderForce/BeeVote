@@ -6,45 +6,43 @@
 	
 	<script src="/static/js/vote-functions.js"></script>
 	<script>
-		$(document).ready(function() {
-			if ($('#delete-topic').length > 0)
-					$('#delete-topic').on('click', function () {
-						return confirm('Are you sure you want to delete this topic?');
-					});
-			if ($('#inputDate').length > 0)
-				$('#inputDate').datetimepicker({
-					timepicker:false,
-					format:'d-m-Y'
-				});
-			if ($('#inputTime').length > 0)
-				$('#inputTime').datetimepicker({
-					datepicker:false,
-					format:'H:i'
-				});
-			
-			$('#proposal-form').submit(function() {
-				$('#create-proposal').attr("disabled", true);
+	$(document).ready(function() {
+		if ($('#delete-topic').length > 0)
+			$('#delete-topic').on('click', function () {
+				return confirm('Are you sure you want to delete this topic?');
 			});
-			$("div.proposal-well").on("click", function() {
-				var proposal_id = $(this).data("proposal");
-				if ($("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html() == "") {
-					$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
-					$.ajax({
-						url: "/api/load-proposal",
-						method: "GET",
-						data: {
-							group_id: {{ topic.parent.key.id }},
-							topic_id: {{ topic.key.id }},
-							proposal_id: proposal_id
-						},
-						dataType: "json",
-						success: function(response) {
-							$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
-							var proposal = response.proposal;
-							var html = "";
-							if (proposal.activity != null)
-								html += '<h4 class="list-group-item-text" color="black">'+'<i class="mdi-action-announcement"></i>&nbsp&nbsp'+proposal.activity+'</h4>';
-							if (proposal.description != null && proposal.description != "")
+		if ($('#inputDate').length > 0)
+			$('#inputDate').datetimepicker({
+				timepicker:false,
+				format:'d-m-Y'
+			});
+		if ($('#inputTime').length > 0)
+			$('#inputTime').datetimepicker({
+				datepicker:false,
+				format:'H:i'
+			});
+
+		$('#proposal-form').submit(function() {
+			$('#create-proposal').attr("disabled", true);
+		});
+		$("div.proposal-well").on("click", function() {
+			var proposal_id = $(this).data("proposal");
+			if ($("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html() == "") {
+				$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
+				$.ajax({
+					url: "/api/load-proposal",
+					method: "GET",
+					data: {
+						group_id: {{ topic.parent.key.id }},
+						topic_id: {{ topic.key.id }},
+						proposal_id: proposal_id
+					},
+					dataType: "json",
+					success: function(response) {
+						$("span.proposal-details-message[data-proposal='" + proposal_id +"']").toggle({duration: 100});
+						var proposal = response.proposal;
+						var html = "";
+							/*if (proposal.description != null && proposal.description != "")
 								html += '<h4 class="list-group-item-text" color="black">'+'<i class="mdi-action-subject"></i>&nbsp&nbsp'+proposal.description+'</h4>';
 							if (proposal.date != "None")
 								html += '<h4 class="list-group-item-text" color="black">'+'<i class="mdi-editor-insert-invitation"></i>&nbsp&nbsp'+proposal.date+'</h4>';
@@ -52,103 +50,103 @@
 								html += '<h4 class="list-group-item-text" color="black">'+'<i class="mdi-action-query-builder"></i>&nbsp&nbsp'+proposal.time+'</h4>';
 							if (proposal.place != null)
 								html +=	'<h4 class="list-group-item-text" color="black">'+'<i class="mdi-communication-location-on"></i>&nbsp&nbsp'+proposal.place+'</h4>';
-							html += '<h4 class="list-group-item-text" color="black"> <i class="mdi-action-account-box"></i>&nbsp&nbsp'+proposal.creator.name+' '+proposal.creator.surname+' </h4>';
+							html += '<h4 class="list-group-item-text" color="black"> <i class="mdi-action-account-box"></i>&nbsp&nbsp'+proposal.creator.name+' '+proposal.creator.surname+' </h4>';*/
 							$("div.proposal-details[data-proposal='" + proposal_id +"'] p:first-child").html(html);
 							$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 						}
 					});
-				} else
-					$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
-			});
-			$('.vote-checkbox').on('click', function(e) {
+} else
+$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+});
+$('.vote-checkbox').on('click', function(e) {
 
-				var group_id = {{ topic.parent.key.id }};
-				var topic_id = {{ topic.key.id }};
-				var proposal_id = $(this).data("proposal");
+	var group_id = {{ topic.parent.key.id }};
+	var topic_id = {{ topic.key.id }};
+	var proposal_id = $(this).data("proposal");
 
-				$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
-				success_callback = function(response) {
-					$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
-					$("button.vote-checkbox[data-proposal='" + proposal_id +"']").removeClass("proposal-pending-vote disabled");
-				};
-				
-				$(this).toggleClass("proposal-voted proposal-not-voted");
-				$(this).addClass("proposal-pending-vote disabled")
-				if ($(this).hasClass("proposal-voted"))
-					add_vote(group_id, topic_id, proposal_id, success_callback);
-				else
-					remove_vote(group_id, topic_id, proposal_id, success_callback);
+	$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
+	success_callback = function(response) {
+		$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
+		$("button.vote-checkbox[data-proposal='" + proposal_id +"']").removeClass("proposal-pending-vote disabled");
+	};
 
-				if (e.stopPropagation) {
+	$(this).toggleClass("proposal-voted proposal-not-voted");
+	$(this).addClass("proposal-pending-vote disabled")
+	if ($(this).hasClass("proposal-voted"))
+		add_vote(group_id, topic_id, proposal_id, success_callback);
+	else
+		remove_vote(group_id, topic_id, proposal_id, success_callback);
+
+	if (e.stopPropagation) {
 						e.stopPropagation();   // W3C model
 					} else {
 						e.cancelBubble = true; // IE model
 					}
 				});
-			});
-	</script>
-	
+});
+</script>
+
 </head>
 <body>
 	{{ navbar }}
 	
 	<!-- Topic -->
-	<div class="jumbotron" style="max-width:900px; background-color:#2196F3">
-		<h1 style="word-wrap:break-word;">{{ topic.title }}</h1>
-		<p style="word-wrap:break-word;">{{ topic.description }}</p>
-		{% if topic.expired %}
-		<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
-		{% else %}
-		{% if topic.time_before_deadline %}
-		<p>Deadline: {{ topic.deadline }}</p>
-		<p>Time before deadline: 
-			<span style="color: red">
-				{% if topic.time_before_deadline.days != 0 %}
-				{{ topic.time_before_deadline.days }} days
-				{% endif %}
-				{% if topic.time_before_deadline.hours != 0 %}
-				{{ topic.time_before_deadline.hours }} hours
-				{% endif %}
-				{% if topic.time_before_deadline.minutes != 0 %}
-				{{ topic.time_before_deadline.minutes }} minutes
-				{% endif %}
-				{% if topic.time_before_deadline.seconds != 0 %}
-				{{ topic.time_before_deadline.seconds }} seconds
-				{% endif %}
-			</span>
-		</p>
-		{% endif %}
-		{% endif %}
-		<div class="row">
+	<div class="row">
 		<div class="col-lg-6">
-		{% if topic.img != None %}
-		<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
-		<br><br>
-		{% endif %}
-		{% if topic.img == None %}
-		<i>No image available</i>
-		<br><br>
-		{% endif %}
-		</div>
-		<div class="col-lg-6">
-		{% if topic.activity != "" %}
-		<p><span class="mdi-action-announcement"></span> {{ topic.activity }}</p>
-		{% endif %}
-		{% if topic.place != "" %}
-		<p><span class="mdi-communication-location-on"></span> {{ topic.place }}</p>
-		{% endif %}
-		{% if topic.date %}
-		<p><span class="mdi-editor-insert-invitation"></span> {{ topic.date }}</p>
-		{% endif %}
-		{% if topic.time %}
-		<p><span class="mdi-action-query-builder"></span> {{ topic.time }}</p>
-		{% endif %}
-		{% if is_owner %}
-		<a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
-		{% endif %}
-		</div>
-		</div>
-		<!--<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>-->
+			<div class="jumbotron" style="max-width:900px; background-color:#2196F3;margin-left:12px;">
+				<h1 style="word-wrap:break-word;">{{ topic.title }}</h1>
+				<p style="word-wrap:break-word;">{{ topic.description }}</p>
+				{% if topic.expired %}
+				<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
+				{% else %}
+				{% if topic.time_before_deadline %}
+				<p>Deadline: {{ topic.deadline }}</p>
+				<p>Time before deadline: 
+					<span style="color: red">
+						{% if topic.time_before_deadline.days != 0 %}
+						{{ topic.time_before_deadline.days }} days
+						{% endif %}
+						{% if topic.time_before_deadline.hours != 0 %}
+						{{ topic.time_before_deadline.hours }} hours
+						{% endif %}
+						{% if topic.time_before_deadline.minutes != 0 %}
+						{{ topic.time_before_deadline.minutes }} minutes
+						{% endif %}
+						{% if topic.time_before_deadline.seconds != 0 %}
+						{{ topic.time_before_deadline.seconds }} seconds
+						{% endif %}
+					</span>
+				</p>
+				{% endif %}
+				{% endif %}
+				<div class="row">
+					<div class="col-lg-6">
+						{% if topic.img != None %}
+						<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
+						<br><br>
+						{% endif %}
+						{% if topic.img == None %}
+						<i>No image available</i>
+						<br><br>
+						{% endif %}
+					</div>
+					<div class="col-lg-6">
+						<p><span class="mdi-action-account-box"></span> {{ topic.creator.name }} {{ topic.creator.surname }}</p>
+						{% if topic.place != "" %}
+						<p><span class="mdi-communication-location-on"></span> {{ topic.place }}</p>
+						{% endif %}
+						{% if topic.date %}
+						<p><span class="mdi-editor-insert-invitation"></span> {{ topic.date }}</p>
+						{% endif %}
+						{% if topic.time %}
+						<p><span class="mdi-action-query-builder"></span> {{ topic.time }}</p>
+						{% endif %}
+					</div>
+				</div>
+				{% if is_owner %}
+				<div class="row"><div class="col-lg-10"></div><div class="col-lg-2" style="padding:0px;"><a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete" style="margin:0px;margin-left:20px;"></a></div></div>
+				{% endif %}
+				<!--<p><a class="btn btn-info btn-lg">PARTICIPATE</a><a class="btn btn-info btn-lg">I CAN'T PARTICIPATE</a></p>-->
 		<!--
 		<div class="row">
 			<div class="col-lg-6">
@@ -176,16 +174,17 @@
 			</div>
 		-->
 	</div>
+</div>
 
 
-	<div align="center">
+<div align="center">
 
-		<!-- New Button -->
-		{% if not topic.expired %}
-		<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: fixed; bottom: 20px; right: 20px; z-index:10;background-color:#0F9D58;"><i class="mdi-content-add" style="top: 0px;"></i></button>
-		{% else %}
-		<button class="btn btn-fab btn-raised btn-material-grey disabled" style="position: fixed; bottom: 20px; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
-		{% endif %}
+	<!-- New Button -->
+	{% if not topic.expired %}
+	<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position: absolute; right: 20px; z-index:10;background-color:#0F9D58;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+	{% else %}
+	<button class="btn btn-fab btn-raised btn-material-grey disabled" style="position: absolute; right: 20px; z-index:10;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+	{% endif %}
 			<!-- Old button
 			<button type="button" class="btn btn-info btn-raised btn-lg" data-toggle="modal" data-target="#myModal">Create a new proposal&nbsp<span class="mdi-content-add-circle-outline"></span></button>
 		-->
@@ -205,18 +204,10 @@
 								<div class="form-group">
 									<label for="inputProposalName" class="col-lg-2 control-label">Title: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="inputProposalName" name="inputProposalName" placeholder="Title of the Proposal" type="text" maxlength="64">
+										<input class="form-control" id="inputProposalName" name="inputProposalName" placeholder="Title of the Proposal" type="text" maxlength="64" required>
 									</div>
 								</div>
 
-								{% if topic.activity == "" %}
-								<div class="form-group">
-									<label for="inputWhat" class="col-lg-2 control-label">What: </label>
-									<div class="col-lg-10">
-										<input class="form-control" id="inputWhat" name="inputWhat" placeholder="What to do" type="text">
-									</div>
-								</div>
-								{% endif %}
 
 								{% if topic.place == "" %}
 								<div class="form-group">
@@ -274,15 +265,17 @@
 		</div>
 	</div>
 	<!-- Group Proposals -->
-	<div class="list-group">
-		<div class="jumbotron" style="background-color: #DDD; max-width: 900px;">
-			<div><h2>List of Proposals</h2></div>
+	<div class="col-lg-6" style="padding:0px;">
+		<div class="list-group">
+
+			<div style="margin-left:10px;"><h2>List of Proposals</h2></div>
 			<br>
+			<div class="box_proposals">
 			{% for proposal in proposals %}
 			<div class="list-group-item">
 
 				<!-- Card Proposal Big -->
-				<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="max-width: 900px; cursor: pointer;">
+				<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;">
 					<div class="row">
 						<!--<div class="col-lg-11">-->
 						<!-- interno proposta -->
@@ -295,6 +288,16 @@
 									<b style="font-size: 25px;">{{ proposal.title }}</b>
 									<br>
 									<br>
+									{% if proposal.place %}
+									<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
+									{% endif %}
+									{% if proposal.date %}
+									<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.date }}
+									{% endif %}
+									{% if proposal.time %}
+									<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
+									{% endif %}
+									<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
 									<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 								</h2>
 								<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
@@ -302,16 +305,16 @@
 									<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red"><button class="btn btn-default btn-raised">View details</button></a>
 								</div>
 							</div>
-							<div class="least-content" style="margin-top: 35px; margin-right: 16px;">
-							<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>&nbsp;
-							
-							{% if not topic.expired %}
-							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;"></button>
-							<!-- <input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" {% if proposal.already_voted %}checked {% endif %}> -->
-							{% endif %}
+							<div class="least-content" style="margin-top: 15px; margin-right: 15px;">
+								<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>&nbsp;
+
+								{% if not topic.expired %}
+								<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;"></button>
+								<!-- <input id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="vote-checkbox" {% if proposal.already_voted %}checked {% endif %}> -->
+								{% endif %}
+							</div>
 						</div>
-					</div>
-					<!--</div>-->
+						<!--</div>-->
 						<!-- VOTE
 						<div class="col-lg-1">
 							<span class="row-action-primary checkbox"><label><input id="vote" type="checkbox" onClick='javascript:void(0)'></label></span>
@@ -322,9 +325,12 @@
 			</div>
 		</div>
 
+
 		{% endfor %}
+		</div>
 	</div>
-</div>
+	<div>
+	</div>
 </body>
 </html>
 

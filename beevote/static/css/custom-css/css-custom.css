@@ -26,7 +26,7 @@ img.image-circle {
 */
 
 .well, .panel {
-	max-width: 1000px;
+	/*max-width: 1000px;*/
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -74,6 +74,20 @@ button.btn.mdi-action-thumb-up.vote-checkbox.proposal-voted {
 }
 button.btn.mdi-action-thumb-up.vote-checkbox.proposal-pending-vote {
 	background-color: rgb(128, 128, 128);
+}
+
+div.box_proposals
+{
+    width:665px !important;  width /**/:900px;
+    height:440px !important; height /**/:900px;
+    overflow:auto
+}
+
+div.box_groups
+{
+    width:445px !important;  width /**/:900px;
+    height:275px !important; height /**/:900px;
+    overflow:auto
 }
 
 /*

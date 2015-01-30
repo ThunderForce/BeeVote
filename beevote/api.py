@@ -338,7 +338,6 @@ class LoadProposalHandler(webapp2.RequestHandler):
 					'surname': proposal.creator.surname,
 					'email': proposal.creator.email,
 				},
-				'activity': proposal.activity,
 				'place': proposal.place,
 				'date': str(proposal.date),
 				'time': str(proposal.time),

@@ -476,7 +476,6 @@ class CreateTopicHandler(BaseHandler):
 		group = db.get(group_key)
 
 		title = self.request.get('inputTopicName')
-		what = self.request.get('inputWhat')
 		where= self.request.get('inputWhere')
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
@@ -490,7 +489,6 @@ class CreateTopicHandler(BaseHandler):
 			parent=group,
 			creator=beevote_user,
 			  )
-		topic.activity = what
 		topic.place = where
 		if date != "":
 			topic.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
@@ -509,7 +507,6 @@ class CreateProposalHandler(BaseHandler):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		title = self.request.get('inputProposalName')
-		what = self.request.get('inputWhat')
 		where = self.request.get('inputWhere')
 		date = self.request.get('inputDate')
 		time = self.request.get('inputTime')
@@ -524,8 +521,6 @@ class CreateProposalHandler(BaseHandler):
 			parent=topic,
 			creator=beevote_user,
 		)
-		if what != "":
-			proposal.activity = what
 		if where != "":
 			proposal.place = where
 		if date != "":
