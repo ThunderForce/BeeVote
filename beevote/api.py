@@ -23,6 +23,7 @@ import time
 from google.appengine.ext import db
 from google.appengine.api import users
 
+from sets import Set
 import collections
 
 import models
@@ -43,6 +44,11 @@ def get_proposal_from_id(group_id, topic_id, proposal_id):
 	proposal = db.get(proposal_key)
 	return proposal
 
+def get_beevote_user_from_id(beevote_user_id):
+	beevote_user_key = db.Key.from_path('BeeVoteUser', long(beevote_user_id))
+	beevote_user = db.get(beevote_user_key)
+	return beevote_user
+
 def get_groups_by_membership(beevote_user):
 	groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
 	groups = [g for g in groups if not (not beevote_user.key() in g.members) and (g.members != [])]
@@ -54,7 +60,21 @@ def get_topics_from_group(group):
 def get_proposals_from_topic(topic):
 	return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(1000)
 
-def fetch_group(group,arguments):
+def fetch_user(beevote_user, arguments):
+	user = collections.OrderedDict([
+		('user_data_data', collections.OrderedDict([
+			('name', beevote_user.name),
+			('surname', beevote_user.surname),
+			('email', beevote_user.email),
+			('creation', str(beevote_user.creation)),
+		]))
+	])
+	if 'is_current_user' in arguments and arguments['is_current_user']:
+		groups = get_groups_by_membership(beevote_user)
+		user['groups'] = fetch_groups(groups, arguments)
+	return user
+
+def fetch_group(group, arguments):
 	group_json = collections.OrderedDict([
 		('group_data', collections.OrderedDict([
 			('name', group.name),
@@ -62,7 +82,7 @@ def fetch_group(group,arguments):
 			('creation', str(group.creation)),
 		]))
 	])
-	if arguments['fetch_topics']:
+	if 'fetch_topics' in arguments and arguments['fetch_topics']:
 		group_json['topics'] = fetch_topics_from_group(group, arguments)
 	return group_json
 	
@@ -72,7 +92,7 @@ def fetch_topic(topic, arguments):
 		('description', topic.description),
 		('deadline', str(topic.deadline) if topic.deadline else None),
 	])
-	if arguments['evaluate_deadlines'] and topic.deadline != None:
+	if 'evaluate_deadlines' in arguments and arguments['evaluate_deadlines'] and topic.deadline != None:
 		currentdatetime = datetime.datetime.now()
 		topic_dict['expired'] = topic.deadline < currentdatetime
 		time_before_deadline = topic.deadline - currentdatetime
@@ -83,7 +103,7 @@ def fetch_topic(topic, arguments):
 			('minutes', (time_before_deadline.seconds/60) % 60),
 			('seconds', time_before_deadline.seconds % 60),
 		])
-	if arguments['fetch_proposals']:
+	if 'fetch_proposals' in arguments and arguments['fetch_proposals']:
 		topic_dict['proposals'] = fetch_proposals_from_topic(topic, arguments)
 	return topic_dict
 
@@ -200,6 +220,21 @@ class LoadTopicHandler(BaseApiHandler):
 		topic_json = fetch_topic(topic, arguments)
 		
 		self.response.out.write(json.dumps(topic_json, indent=4, separators=(',', ': ')))
+
+class LoadUserHandler(BaseApiHandler):
+	def get(self, user_id):
+		user = users.get_current_user()
+		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		
+		target_beevote_user = get_beevote_user_from_id(user_id)
+		
+		arguments = {
+			'is_current_user': target_beevote_user.key() == current_beevote_user.key()
+		}
+		
+		beevote_user_ret = fetch_user(target_beevote_user, arguments)
+		
+		self.response.out.write(json.dumps(beevote_user_ret, indent=4, separators=(',', ': ')))
 
 class CreateVoteHandler(webapp2.RequestHandler):
 	def post(self):
