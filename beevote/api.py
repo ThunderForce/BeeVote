@@ -63,6 +63,9 @@ def get_topics_from_group(group):
 def get_proposals_from_topic(topic):
 	return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(1000)
 
+def get_votes_from_proposal(proposal):
+	return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', proposal).fetch(1000)
+
 def fetch_user(beevote_user, arguments):
 	user = collections.OrderedDict([
 		('user_data_data', collections.OrderedDict([
@@ -110,6 +113,17 @@ def fetch_topic(topic, arguments):
 		topic_dict['proposals'] = fetch_proposals_from_topic(topic, arguments)
 	return topic_dict
 
+def fetch_proposal(proposal, arguments):
+	proposal_dict = collections.OrderedDict([
+		('title', proposal.title),
+		('description', proposal.description),
+	])
+	if 'fetch_votes' in arguments and arguments['fetch_votes']:
+		votes = get_votes_from_proposal(proposal)
+		proposal_dict['vote_number'] = len(votes)
+		proposal_dict['votes'] = fetch_votes(votes, arguments)
+	return proposal_dict
+
 def fetch_groups(groups, arguments):
 	groups_ret = []
 	for datastore_group in groups:
@@ -125,13 +139,19 @@ def fetch_topics_from_group(group, arguments):
 		topics.append(topic)
 	topics = sorted(topics, key=lambda topic: topic['total_seconds_before_deadline'] if 'total_seconds_before_deadline' in topic else datetime.timedelta.max.total_seconds())
 	return topics
+	
+def fetch_votes(votes, arguments):
+	votes_ret = []
+	for datastore_vote in votes:
+		vote = fetch_vote(datastore_vote, arguments)
+		votes_ret.append(vote)
+	return votes_ret
 
-def fetch_proposal(proposal, arguments):
-	proposal_dict = collections.OrderedDict([
-		('title', proposal.title),
-		('description', proposal.description),
+def fetch_vote(vote, arguments):
+	vote_dict = collections.OrderedDict([
+		('creator', fetch_user(vote.creator, arguments))
 	])
-	return proposal_dict
+	return vote_dict
 
 def fetch_proposals_from_topic(topic, arguments):
 	datastore_proposals = get_proposals_from_topic(topic)
@@ -218,6 +238,7 @@ class LoadTopicHandler(BaseApiHandler):
 		arguments = {
 			'evaluate_deadlines': self.request.get('evaluate_deadlines', 'false') == 'true',
 			'fetch_proposals': self.request.get('fetch_proposals', 'false') == 'true',
+			'fetch_votes': self.request.get('fetch_votes', 'false') == 'true',
 		}
 		
 		topic = get_topic_from_id(group_id, topic_id)
