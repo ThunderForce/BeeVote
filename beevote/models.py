@@ -9,6 +9,17 @@ class BeeVoteUser(db.Model):
 	email = db.StringProperty(required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
 	img = db.BlobProperty()
+	
+	@staticmethod
+	def get_from_id(beevote_user_id):
+		beevote_user_key = db.Key.from_path('BeeVoteUser', long(beevote_user_id))
+		beevote_user = db.get(beevote_user_key)
+		return beevote_user
+	
+	def get_groups_by_membership(self):
+		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
+		groups = [g for g in groups if not (not self.key() in g.members) and (g.members != [])]
+		return groups
 
 class RegistrationRequest(db.Model):
 	user_id = db.StringProperty()
@@ -24,6 +35,15 @@ class Group(db.Model):
 	admins = db.ListProperty(db.Key) # BeeVoteUser Key
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
+	
+	@staticmethod
+	def get_from_id(group_id):
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		return group
+	
+	def get_topics(self):
+		return db.GqlQuery('SELECT * FROM Topic WHERE group = :1', self).fetch(1000)
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
@@ -36,11 +56,21 @@ class Topic(db.Model):
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	img = db.BlobProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
+	
+	@staticmethod
+	def get_from_id(group_id, topic_id):
+		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
+		topic = db.get(topic_key)
+		return topic
+	
 	def delete(self):
 		proposals = db.GqlQuery("SELECT * FROM Proposal WHERE topic = :1", self)
 		for proposal in proposals:
 			proposal.delete()
 		db.Model.delete(self)
+	
+	def get_proposals(self):
+		return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', self).fetch(1000)
 
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)
@@ -51,11 +81,21 @@ class Proposal(db.Model):
 	time = db.TimeProperty()
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
+	
+	@staticmethod
+	def get_from_id(group_id, topic_id, proposal_id):
+		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
+		proposal = db.get(proposal_key)
+		return proposal
+	
 	def delete(self):
 		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", self)
 		for vote in votes:
 			vote.delete()
 		db.Model.delete(self)
+	
+	def get_votes(self):
+		return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', self).fetch(1000)
 	
 class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)

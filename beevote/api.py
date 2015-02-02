@@ -32,40 +32,6 @@ import models
 def get_json(json_obj):
 	return json.dumps(json_obj, indent=4, separators=(',', ': '))
 
-def get_group_from_id(group_id):
-	group_key = db.Key.from_path('Group', long(group_id))
-	group = db.get(group_key)
-	return group
-
-def get_topic_from_id(group_id, topic_id):
-	topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-	topic = db.get(topic_key)
-	return topic
-
-def get_proposal_from_id(group_id, topic_id, proposal_id):
-	proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-	proposal = db.get(proposal_key)
-	return proposal
-
-def get_beevote_user_from_id(beevote_user_id):
-	beevote_user_key = db.Key.from_path('BeeVoteUser', long(beevote_user_id))
-	beevote_user = db.get(beevote_user_key)
-	return beevote_user
-
-def get_groups_by_membership(beevote_user):
-	groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
-	groups = [g for g in groups if not (not beevote_user.key() in g.members) and (g.members != [])]
-	return groups
-
-def get_topics_from_group(group):
-	return db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
-
-def get_proposals_from_topic(topic):
-	return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(1000)
-
-def get_votes_from_proposal(proposal):
-	return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', proposal).fetch(1000)
-
 def fetch_user(beevote_user, arguments):
 	user = collections.OrderedDict([
 		('user_data_data', collections.OrderedDict([
@@ -76,7 +42,7 @@ def fetch_user(beevote_user, arguments):
 		]))
 	])
 	if 'is_current_user' in arguments and arguments['is_current_user']:
-		groups = get_groups_by_membership(beevote_user)
+		groups = beevote_user.get_groups_by_membership()
 		user['groups'] = fetch_groups(groups, arguments)
 	return user
 
@@ -119,7 +85,7 @@ def fetch_proposal(proposal, arguments):
 		('description', proposal.description),
 	])
 	if 'fetch_votes' in arguments and arguments['fetch_votes']:
-		votes = get_votes_from_proposal(proposal)
+		votes = proposal.get_votes()
 		proposal_dict['vote_number'] = len(votes)
 		proposal_dict['votes'] = fetch_votes(votes, arguments)
 	return proposal_dict
@@ -132,7 +98,7 @@ def fetch_groups(groups, arguments):
 	return groups_ret
 
 def fetch_topics_from_group(group, arguments):
-	datastore_topics = get_topics_from_group(group)
+	datastore_topics = group.get_topics()
 	topics = []
 	for datastore_topic in datastore_topics:
 		topic = fetch_topic(datastore_topic, arguments)
@@ -154,7 +120,7 @@ def fetch_vote(vote, arguments):
 	return vote_dict
 
 def fetch_proposals_from_topic(topic, arguments):
-	datastore_proposals = get_proposals_from_topic(topic)
+	datastore_proposals = topic.get_proposals()
 	proposals = []
 	for datastore_proposal in datastore_proposals:
 		proposal = fetch_proposal(datastore_proposal, arguments)
@@ -195,7 +161,7 @@ class LoadGroupsHandler(BaseApiHandler):
 	def get(self):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		datastore_groups = get_groups_by_membership(beevote_user)
+		datastore_groups = beevote_user.get_groups_by_membership()
 		arguments = {
 			'fetch_topics': self.request.get('fetch_topics', 'false') == 'true',
 			'evaluate_deadlines': self.request.get('evaluate_deadlines', 'false') == 'true',
@@ -208,7 +174,7 @@ class LoadGroupsHandler(BaseApiHandler):
 class LoadGroupHandler(BaseApiHandler):
 	def get(self, group_id):
 		user = users.get_current_user()
-		group = get_group_from_id(group_id)
+		group = models.Group.get_from_id(group_id)
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
@@ -228,7 +194,7 @@ class LoadGroupHandler(BaseApiHandler):
 class LoadTopicHandler(BaseApiHandler):
 	def get(self, group_id, topic_id):
 		user = users.get_current_user()
-		group = get_group_from_id(group_id)
+		group = models.Group.get_from_id(group_id)
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
@@ -241,7 +207,7 @@ class LoadTopicHandler(BaseApiHandler):
 			'fetch_votes': self.request.get('fetch_votes', 'false') == 'true',
 		}
 		
-		topic = get_topic_from_id(group_id, topic_id)
+		topic = models.Topic.get_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
 		
 		self.response.out.write(get_json(topic_json))
@@ -251,7 +217,7 @@ class LoadUserHandler(BaseApiHandler):
 		user = users.get_current_user()
 		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		
-		target_beevote_user = get_beevote_user_from_id(user_id)
+		target_beevote_user = models.BeeVoteUser.get_from_id(user_id)
 		
 		arguments = {
 			'is_current_user': target_beevote_user.key() == current_beevote_user.key()
