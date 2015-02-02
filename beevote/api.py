@@ -35,6 +35,7 @@ def get_json(json_obj):
 def fetch_user(beevote_user, arguments):
 	user = collections.OrderedDict([
 		('user_data_data', collections.OrderedDict([
+			('id', beevote_user.key().id()),
 			('name', beevote_user.name),
 			('surname', beevote_user.surname),
 			('email', beevote_user.email),
@@ -48,7 +49,8 @@ def fetch_user(beevote_user, arguments):
 
 def fetch_group(group, arguments):
 	group_json = collections.OrderedDict([
-		('group_data', collections.OrderedDict([
+		('data', collections.OrderedDict([
+			('id', group.key().id()),
 			('name', group.name),
 			('description', group.description),
 			('creation', str(group.creation)),
@@ -60,9 +62,18 @@ def fetch_group(group, arguments):
 	
 def fetch_topic(topic, arguments):
 	topic_dict = collections.OrderedDict([
-		('title', topic.title),
-		('description', topic.description),
-		('deadline', str(topic.deadline) if topic.deadline else None),
+		('data', collections.OrderedDict([
+			('id', topic.key().id()),
+			('title', topic.title),
+			('description', topic.description),
+			('has_image', topic.img != None),
+			('place', topic.place if topic.place != "" else None),
+			('date', str(topic.date) if topic.date else None),
+			('time', str(topic.time) if topic.time else None),
+			('deadline', str(topic.deadline) if topic.deadline else None),
+			('creator', topic.creator.key().id()),
+			('group_id', topic.parent().key().id())
+		]))
 	])
 	if 'evaluate_deadlines' in arguments and arguments['evaluate_deadlines'] and topic.deadline != None:
 		currentdatetime = datetime.datetime.now()
@@ -81,6 +92,7 @@ def fetch_topic(topic, arguments):
 
 def fetch_proposal(proposal, arguments):
 	proposal_dict = collections.OrderedDict([
+		('id', proposal.key().id()),
 		('title', proposal.title),
 		('description', proposal.description),
 	])

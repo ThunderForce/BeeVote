@@ -76,6 +76,10 @@ button.btn.mdi-action-thumb-up.vote-checkbox.proposal-pending-vote {
 	background-color: rgb(128, 128, 128);
 }
 
+div.well.well-lg.group-selected {
+	background-color: #F4A936
+}
+
 div.box_proposals
 {
     width:665px !important;  width /**/:900px;

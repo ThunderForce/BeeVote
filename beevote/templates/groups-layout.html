@@ -11,9 +11,141 @@
 				$('#group-form').submit(function() {
 					$('#create-group').attr("disabled", true);
 				});
+				$('div.group-well').on('click', function() {
+					if ($(this).hasClass("group-selected")) {
+						$('div.group-well').removeClass('group-selected');
+						load_all_topics();
+					}
+					else {
+						$('div.group-well').removeClass('group-selected');
+						$(this).addClass('group-selected');
+						load_group_topics($(this).data('group_id'));
+					}
+				});
+				load_all_topics();
 			});
+			function get_topic_list(topics) {
+				var topic_list = $('<div></div>')
+				topic_list.addClass('list-group');
+				$.each( topics, function( index, topic ) {
+						var div_list_item = $('<div></div>');
+						div_list_item.addClass('list-group-item');
+							var a_href = $('<a href="/group/'+topic.data.group_id+'/topic/'+topic.data.id+'">');
+								var div_well = $('<div></div>');
+								div_well.addClass('well well-lg');
+								div_well.attr('color', 'blue');
+								div_well.css('padding', '0px');
+								div_well.css('padding-top', '10px');
+								div_well.css('padding-left', '26px');
+								div_well.css('padding-bottom', '6px');
+									var div_row = $('<div></div>');
+									div_row.addClass('row');
+										var div_picture = $('<div></div>');
+										div_picture.addClass('row-picture');
+											var image_src;
+											if (topic.data.has_image)
+												image_src = "/group/"+topic.data.group_id+"/topic/"+topic.data.id+"/image";
+											else
+												image_src = "/static/images/topic-icon.png";
+										div_picture.append('<img class="circle" src="'+image_src+'" alt="icon">');
+									div_row.append(div_picture);
+										var div_row_content = $('<div></div>');
+										div_row_content.addClass('row-content');
+										div_row_content.append('<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">'+topic.data.title+'</h3>');
+											var tag_h4 = $('<h4></h4>');
+											if (topic.data.place != null)
+												tag_h4.append('<span class="mdi-communication-location-on" style="margin-left:5px;"></span>'+topic.data.place);
+											if (topic.data.date != null)
+												tag_h4.append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>'+topic.data.date);
+											if (topic.data.time != null)
+												tag_h4.append('<span class="mdi-action-query-builder" style="margin-left:5px;"></span>'+topic.data.time);
+										div_row_content.append(tag_h4);
+										if (topic.data.deadline == null)
+											div_row_content.append('<h5 class="list-group-item-text">This topic has no deadline.</h5>');
+										else if (topic.expired)
+											div_row_content.append('<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>');
+										else {
+											var time_left = topic.time_before_deadline;
+												var tag_h5 = $('<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: </h5>');
+													var span_red = $('<span style="color: red"></span>')
+													if (time_left.days != 0)
+														span_red.append(time_left.days+' days ');
+													if (time_left.hours != 0)
+														span_red.append(time_left.hours+' hours ');
+													if (time_left.minutes != 0)
+														span_red.append(time_left.minutes+' minutes ');
+													if (time_left.seconds != 0)
+														span_red.append(time_left.seconds+' seconds ');
+												tag_h5.append(span_red);
+											div_row_content.append(tag_h5);
+										}
+										if (topic.data.creator == {{ user.key.id }}) {
+												var div_least_content = $('<div></div>');
+												div_least_content.addClass('least-content');
+												// TODO sicuramente non funziona
+												div_least_content.append('<a id="delete-topic" title="Delete this topic" href="/group/'+topic.data.group_id+'/topic/'+topic.data.id+'/remove" class="btn btn-danger mdi-action-delete disabled"></a>');
+											div_row_content.append(div_least_content);
+										}
+									div_row.append(div_row_content);
+								div_well.append(div_row);
+							a_href.append(div_well);
+						div_list_item.append(a_href);
+					topic_list.append(div_list_item);
+				});
+				return topic_list;
+			}
+			function load_group_topics(group_id) {
+				$('div#right-column').html('Loading...');
+				$.ajax({
+					url: '/api/group/'+group_id,
+					method: 'GET',
+					data: {
+						'fetch_topics': true,
+						'evaluate_deadlines': true
+					},
+					success: function(group) {
+						var topic_column = $('div#right-column');
+						topic_column.html('');
+							var group_head = $('<div></div>');
+							group_head.addClass('jumbotron')
+							group_head.css('background-color', '#f44336');
+							group_head.append('<h1>'+group.data.name+'</h1>');
+							group_head.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
+							group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
+							group_head.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
+						topic_column.append(group_head);
+						topic_column.append('<br>');
+						
+						topic_column.append(get_topic_list(group.topics));
+					}
+				});
+			}
+			function load_all_topics() {
+				$('div#right-column').html('Loading...');
+				$.ajax({
+					url: '/api/groups',
+					method: 'GET',
+					data: {
+						'fetch_topics': true,
+						'evaluate_deadlines': true
+					},
+					success: function(groups) {
+						var topic_column = $('div#right-column');
+						topic_column.html('');
+						topic_column.append('List of all topics');
+						topic_column.append('<br>');
+						
+						var topics = [];
+						$.each(groups, function(index, group) {
+							topics = topics.concat(group.topics);
+						})
+						
+						topic_column.append(get_topic_list(topics));
+					}
+				});
+			}
 		</script>
-
+		
 	</head>
 
 	<body>
@@ -109,24 +241,22 @@
 						<div class="list-group">
 							{% for group in groups%}
 							<div class="list-group-item">
-								<div class="well well-lg" color="red_g" style="padding:0px;padding-top:9px;padding-left:9px;margin-left:25px;">
+								<div class="well well-lg group-well" color="red_g" data-group_id="{{ group.key.id }}" style="padding:0px;padding-top:9px;padding-left:9px;margin-left:25px;cursor: pointer;">
 									<div class="row">
-										<a href="/group/{{ group.key.id }}">
-											<div class="col-lg-10">
-												<div class="row-picture">
-													<img class="circle" src="/static/images/group-default.jpg" alt="icon">
-												</div>
-												<div class="row-content">
-													<h3 class="list-group-item-heading">
-														{% if group.name_short %}
-														<span title="{{ group.name }}">{{group.name_short}}...</span>
-														{% else %}
-														{{ group.name }}
-														{% endif %}
-													</h3>
-												</div>
-											</div><!-- /col-lg-10 -->
-										</a>
+										<div class="col-lg-10">
+											<div class="row-picture">
+												<img class="circle" src="/static/images/group-default.jpg" alt="icon">
+											</div>
+											<div class="row-content">
+												<h3 class="list-group-item-heading">
+													{% if group.name_short %}
+													<span title="{{ group.name }}">{{group.name_short}}...</span>
+													{% else %}
+													{{ group.name }}
+													{% endif %}
+												</h3>
+											</div>
+										</div><!-- /col-lg-10 -->
 									</div><!-- /row -->
 								</div><!-- /list-group-item -->
 							</div>
@@ -136,7 +266,8 @@
 				</div> <!-- /col-lg-4 -->
 
 				<!-- Colonna destra -->
-				<div class="col-lg-8" >
+				<div class="col-lg-8" id="right-column">
+					<!--
 					<div>
 						<h2 style="margin-top: 11px;">Your Topics</h2>
 					</div>
@@ -153,7 +284,7 @@
 											{% else %}
 											<img class="circle" src="/static/images/topic-icon.png" alt="icon">
 											{% endif %}
-										</div><!-- /row-picture -->
+										</div><!-- /row-picture --/>
 										<div class="row-content">
 											<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">
 												{{topic.title}}
@@ -201,14 +332,14 @@
 
 											{% endif %}
 											{% endif %}
-										</div><!-- /row-content -->
-									</div><!-- /row -->
-								</div><!-- /well -->
+										</div><!-- /row-content --/>
+									</div><!-- /row --/>
+								</div><!-- /well --/>
 							</a>
-						</div><!-- /list-group-item -->
+						</div><!-- /list-group-item --/>
 						{% endfor %}
-					</div><!-- /list-group -->
-
+					</div><!-- /list-group --/>
+					-->
 				</div><!-- /col-lg-8 -->
 			</div><!-- /row-inizio -->
 		</div>
