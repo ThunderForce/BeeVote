@@ -1,220 +1,216 @@
-
 <!DOCTYPE HTML>
 <html>
-<head>
+	<head>
 
-  <title>My Groups - BeeVote</title>
+		<title>My Groups - BeeVote</title>
 
-  {{ basic_head }}
+		{{ basic_head }}
 
-  <script>
-  $(document).ready(function() {
-    $('#group-form').submit(function() {
-     $('#create-group').attr("disabled", true);
-   });
-  });
-  </script>
+		<script>
+			$(document).ready(function() {
+				$('#group-form').submit(function() {
+					$('#create-group').attr("disabled", true);
+				});
+			});
+		</script>
 
-</head>
+	</head>
 
-<body>
+	<body>
 
-	{{ navbar }}
+		{{ navbar }}
 
-  <!-- bar TOPICS/GROUPS 
-  <div class="btn-group btn-group-justified" style="margin-top: 70px; max-width: 900px; margin-left: auto; margin-right: auto;">
-    <a href="javascript:void(0)" class="btn btn-default">Topics</a>
-    <a href="javascript:void(0)" class="btn btn-default">Groups</a>
-  </div>
--->
-<!-- Button + Popup -->
-
-
-<!-- Popup-Form New Group -->
-<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 align="center"><b>Create a new Group</b></h2>
-      </div>
-      <div class="modal-body">
-        <form action="/create-group" method="post" class="form-horizontal" id="group-form">
-          <fieldset>
-            <div class="form-group">
-              <label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
-              <div class="col-lg-10">
-                <input class="form-control" id="inputGroupName" name="inputGroupName" placeholder="Name of the group" type="text" maxlength="32" required>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="textArea" class="col-lg-2 control-label">Description</label>
-              <div class="col-lg-10">
-                <textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
-                <span class="help-block">Add here a description of the group</span>
-              </div>
-            </div>
-
-                <!-- OLD BUTTON 
-                <div class="form-group">
-                  <div class="col-lg-10 col-lg-offset-2">
-                    <button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
-                    <button type="submit" class="btn btn-info">Create</button>
-                  </div>
-                </div>
-              -->
-
-              <!-- NEW BUTTON -->
-              <div class="form-group">
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
-                  <button type="submit" class="btn" id="create-group" style="background-color:#f44336;">Create</button>
-                </div>
-              </div>
-            </fieldset>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Jumbotron Contenitore -->
-  <div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
+		<!-- bar TOPICS/GROUPS 
+		<div class="btn-group btn-group-justified" style="margin-top: 70px; max-width: 900px; margin-left: auto; margin-right: auto;">
+		<a href="javascript:void(0)" class="btn btn-default">Topics</a>
+		<a href="javascript:void(0)" class="btn btn-default">Groups</a>
+		</div>
+		-->
+		<!-- Button + Popup -->
 
 
-    <div class="row">
-      <!-- Colonna sinistra -->
-      <div class="col-lg-4" >
-        <!-- Jumbotron con immagine profilo -->
-        <div class="jumbotron" style="margin-left:13px;background-color: #2196F3; max-width: 900px;">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="row-picture">
-                <img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
-              </div>
-              <br>
-              <h4 class="list-group-item-heading" color="black">
-                <b>{{user.name}} {{user.surname}}</b>
-              </h4>
-            </div><!-- /col-lg-12 -->            
-          </div><!-- /row -->
-        </div><!-- /jumbotron Immagine profilo -->
-        
+		<!-- Popup-Form New Group -->
+		<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 align="center">
+							<b>Create a new Group</b>
+						</h2>
+					</div>
+					<div class="modal-body">
+						<form action="/create-group" method="post" class="form-horizontal" id="group-form">
+							<fieldset>
+								<div class="form-group">
+									<label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
+									<div class="col-lg-10">
+										<input class="form-control" id="inputGroupName" name="inputGroupName" placeholder="Name of the group" type="text" maxlength="32" required>
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="textArea" class="col-lg-2 control-label">Description</label>
+									<div class="col-lg-10">
+										<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+										<span class="help-block">Add here a description of the group</span>
+									</div>
+								</div>
 
-        <!-- Jumbotron Lista Gruppi -->
+								<!-- OLD BUTTON 
+								<div class="form-group">
+								<div class="col-lg-10 col-lg-offset-2">
+								<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
+								<button type="submit" class="btn btn-info">Create</button>
+								</div>
+								</div>
+								-->
 
-        <div style="margin-left:25px;">
-          <h2>Your Groups</h2>
-          <!-- Material Button -->
-          <button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position:absolute;z-index:10;top:185px;left:380px;"><i class="mdi-content-add" style="top: -3px;"></i></button>
-        </div>
-        <br>
-        <div class="box_groups">
-        <div class="list-group">
-          {% for group in groups%}
-          <div class="list-group-item">
-            <div class="well well-lg" color="red_g" style="padding:0px;padding-top:9px;padding-left:9px;margin-left:25px;">
-             <div class="row">
-              <a href="/group/{{ group.key.id }}">
-               <div class="col-lg-10">
-                <div class="row-picture">
-                 <img class="circle" src="/static/images/group-default.jpg" alt="icon">
-               </div>
-               <div class="row-content">
-                 <h3 class="list-group-item-heading">
-                   {% if group.name_short %}
-                   <span title="{{ group.name }}">{{group.name_short}}...</span>
-                   {% else %}
-                   {{ group.name }}
-                   {% endif %}
-                 </h3>
-               </div>
-             </div><!-- /col-lg-10 -->
-           </a>
-         </div><!-- /row -->
-       </div><!-- /list-group-item -->
-     </div>
-     {% endfor %}
-  </div><!-- /list-group -->
-  </div>
+								<!-- NEW BUTTON -->
+								<div class="form-group">
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+										<button type="submit" class="btn" id="create-group" style="background-color:#f44336;">Create</button>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 
- </div> <!-- /col-lg-4 -->
+		<!-- Jumbotron Contenitore -->
+		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
+			<div class="row">
+				<!-- Colonna sinistra -->
+				<div class="col-lg-4" >
+					<!-- Jumbotron con immagine profilo -->
+					<div class="jumbotron" style="margin-left:13px;background-color: #2196F3; max-width: 900px;">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="row-picture">
+									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
+								</div>
+								<br>
+								<h4 class="list-group-item-heading" color="black">
+									<b>{{user.name}} {{user.surname}}</b>
+								</h4>
+							</div><!-- /col-lg-12 -->            
+						</div><!-- /row -->
+					</div><!-- /jumbotron Immagine profilo -->
 
+					<!-- Jumbotron Lista Gruppi -->
+					<div style="margin-left:25px;">
+						<h2>Your Groups</h2>
+						<!-- Material Button -->
+						<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position:absolute;z-index:10;top:185px;left:380px;"><i class="mdi-content-add" style="top: -3px;"></i></button>
+					</div>
+					<br>
+					<div class="box_groups">
+						<div class="list-group">
+							{% for group in groups%}
+							<div class="list-group-item">
+								<div class="well well-lg" color="red_g" style="padding:0px;padding-top:9px;padding-left:9px;margin-left:25px;">
+									<div class="row">
+										<a href="/group/{{ group.key.id }}">
+											<div class="col-lg-10">
+												<div class="row-picture">
+													<img class="circle" src="/static/images/group-default.jpg" alt="icon">
+												</div>
+												<div class="row-content">
+													<h3 class="list-group-item-heading">
+														{% if group.name_short %}
+														<span title="{{ group.name }}">{{group.name_short}}...</span>
+														{% else %}
+														{{ group.name }}
+														{% endif %}
+													</h3>
+												</div>
+											</div><!-- /col-lg-10 -->
+										</a>
+									</div><!-- /row -->
+								</div><!-- /list-group-item -->
+							</div>
+							{% endfor %}
+						</div><!-- /list-group -->
+					</div>
+				</div> <!-- /col-lg-4 -->
 
- <!-- Colonna destra -->
+				<!-- Colonna destra -->
+				<div class="col-lg-8" >
+					<div>
+						<h2 style="margin-top: 11px;">Your Topics</h2>
+					</div>
+					<br>
+					<div class="list-group">
+						{% for topic in topics %}
+						<div class="list-group-item">
+							<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}">
+								<div class="well well-lg" color="blue" style="padding:0px;padding-top:10px;padding-left:26px;padding-bottom:6px;">
+									<div class="row">
+										<div class="row-picture">
+											{% if topic.img != None %}
+											<img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+											{% else %}
+											<img class="circle" src="/static/images/topic-icon.png" alt="icon">
+											{% endif %}
+										</div><!-- /row-picture -->
+										<div class="row-content">
+											<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">
+												{{topic.title}}
+											</h3>
+											<h4>
+												{% if topic.place != "" %}
+												<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ topic.place }}
+												{% endif %}
+												{% if topic.date %}
+												<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ topic.date }}
+												{% endif %}
+												{% if topic.time %}
+												<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ topic.time }}
+												{% endif %}
+											</h4>
+											{% if is_owner %}
+											<a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
+											{% endif %}
 
- <div class="col-lg-8" >
+											{% if topic.expired %}
+											<h5 class="list-group-item-text" style="margin-left:5px;color:red;">
+												This topic has reached its deadline.
+											</h5>
+											{% else %}
+											{% if topic.time_before_deadline %}
+											<h5 class="list-group-item-text" style="margin-left:5px;">
+												Deadline: {{ topic.deadline }}
+											</h5>
+											<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: 
+												<span style="color: red">
+													{% if topic.time_before_deadline.days != 0 %}
+													{{ topic.time_before_deadline.days }} days
+													{% endif %}
+													{% if topic.time_before_deadline.hours != 0 %}
+													{{ topic.time_before_deadline.hours }} hours
+													{% endif %}
+													{% if topic.time_before_deadline.minutes != 0 %}
+													{{ topic.time_before_deadline.minutes }} minutes
+													{% endif %}
+													{% if topic.time_before_deadline.seconds != 0 %}
+													{{ topic.time_before_deadline.seconds }} seconds
+													{% endif %}
+												</span>
+											</h5>
 
-  <div>
-    <h2 style="margin-top: 11px;">Your Topics</h2>
-  </div>
-  <br>
-  <div class="list-group">
-    {% for topic in topics %}
-    <div class="list-group-item">
-      <a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}">
-        <div class="well well-lg" color="blue" style="padding:0px;padding-top:10px;padding-left:26px;padding-bottom:6px;">
-          <div class="row">
-            <div class="row-picture">
-              {% if topic.img != None %}
-              <img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
-              {% else %}
-              <img class="circle" src="/static/images/topic-icon.png" alt="icon">
-              {% endif %}
-            </div><!-- /row-picture -->
-            <div class="row-content">
-              <h3 style="font-size:32px;padding-bottom:5px;margin:0px;">{{topic.title}}</h3>
+											{% endif %}
+											{% endif %}
+										</div><!-- /row-content -->
+									</div><!-- /row -->
+								</div><!-- /well -->
+							</a>
+						</div><!-- /list-group-item -->
+						{% endfor %}
+					</div><!-- /list-group -->
 
-              <h4>
-                {% if topic.place != "" %}
-                <span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ topic.place }}
-                {% endif %}
-                {% if topic.date %}
-                <span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ topic.date }}
-                {% endif %}
-                {% if topic.time %}
-                <span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ topic.time }}
-                {% endif %}
-              </h4>
-              {% if is_owner %}
-              <a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
-              {% endif %}
-
-              {% if topic.expired %}
-              <h5 class="list-group-item-text" style="margin-left:5px;color:red;">This topic has reached its deadline.</h5>
-              {% else %}
-              {% if topic.time_before_deadline %}
-              <h5 class="list-group-item-text" style="margin-left:5px;">Deadline: {{ topic.deadline }}</h5>
-              <h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: 
-                <span style="color: red">
-                  {% if topic.time_before_deadline.days != 0 %}
-                  {{ topic.time_before_deadline.days }} days
-                  {% endif %}
-                  {% if topic.time_before_deadline.hours != 0 %}
-                  {{ topic.time_before_deadline.hours }} hours
-                  {% endif %}
-                  {% if topic.time_before_deadline.minutes != 0 %}
-                  {{ topic.time_before_deadline.minutes }} minutes
-                  {% endif %}
-                  {% if topic.time_before_deadline.seconds != 0 %}
-                  {{ topic.time_before_deadline.seconds }} seconds
-                  {% endif %}
-                </span>
-              </h5>
-
-              {% endif %}
-              {% endif %}
-            </div><!-- /row-content -->
-          </div><!-- /row -->
-        </div><!-- /well -->
-      </a>
-    </div><!-- /list-group-item -->
-    {% endfor %}
-  </div><!-- /list-group -->
-
-</div><!-- /col-lg-8 -->
-</div><!-- /row-inizio -->
-
-
-</body>
+				</div><!-- /col-lg-8 -->
+			</div><!-- /row-inizio -->
+		</div>
+	</body>
 </html>
