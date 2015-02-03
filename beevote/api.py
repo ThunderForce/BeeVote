@@ -53,6 +53,7 @@ def fetch_group(group, arguments):
 			('id', group.key().id()),
 			('name', group.name),
 			('description', group.description),
+			('has_image', group.img != None),
 			('creation', str(group.creation)),
 		]))
 	])

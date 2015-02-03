@@ -450,6 +450,23 @@ class ProfileHandler(BaseHandler):
 		values = {}
 		write_template(self.response, 'user-profile.html', values)
 
+class GroupImageHandler(webapp2.RequestHandler):
+	def get(self, group_id):
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if group == None:
+			self.error(404)
+			self.response.out.write("Group "+group_id+" does not exist")
+		else:
+			if group.img != None:
+				self.response.headers['Content-Type'] = 'image/png'
+				self.response.headers['Content-Disposition'] = 'inline; filename="group-'+group_id+'.png"'
+				
+				self.response.out.write(group.img)
+			else:
+				self.error(404)
+				self.response.out.write("Group "+group_id+" does not have an image")
+
 class TopicImageHandler(webapp2.RequestHandler):
 	def get(self, group_id, topic_id):
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
@@ -537,11 +554,14 @@ class CreateGroupHandler(BaseHandler):
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('inputGroupName')
 		description = self.request.get('inputDescription')
+		img = self.request.get('inputImg')
 		group = models.Group(
 				name = name,
 				creator = beevote_user,
 			)
 		group.description = description
+		if img != "":
+			group.img = db.Blob(img)
 		group.members.append(beevote_user.key())
 		group.admins.append(beevote_user.key())
 		group.put()
@@ -669,6 +689,7 @@ app = webapp2.WSGIApplication([
 	('/group/(.*)/members/add', AddGroupMemberHandler),
 	('/group/(.*)/members', GroupMembersHandler),
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
+	('/group/(.*)/image', GroupImageHandler),
 	('/group/(.*)/topic/(.*)/proposal/(.*)/remove', RemoveProposalHandler),
 	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
 	('/group/(.*)/topic/(.*)/remove', RemoveTopicHandler),

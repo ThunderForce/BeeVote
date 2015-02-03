@@ -211,7 +211,7 @@
 						</h2>
 					</div>
 					<div class="modal-body">
-						<form action="/create-group" method="post" class="form-horizontal" id="group-form">
+						<form action="/create-group" method="post" class="form-horizontal" enctype="multipart/form-data" id="group-form">
 							<fieldset>
 								<div class="form-group">
 									<label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
@@ -227,6 +227,13 @@
 									</div>
 								</div>
 
+								<div class="form-group" >
+									<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
+									<div class="col-lg-10">
+										<input id="inputImg" type="file" name="inputImg"/>
+									</div>
+								</div>
+								
 								<!-- OLD BUTTON 
 								<div class="form-group">
 								<div class="col-lg-10 col-lg-offset-2">

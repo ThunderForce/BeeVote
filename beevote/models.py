@@ -34,6 +34,7 @@ class Group(db.Model):
 	members = db.ListProperty(db.Key) # BeeVoteUser Key
 	admins = db.ListProperty(db.Key) # BeeVoteUser Key
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
+	img = db.BlobProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
 	
 	@staticmethod
