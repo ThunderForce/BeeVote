@@ -38,6 +38,9 @@
 								div_well.css('padding-top', '10px');
 								div_well.css('padding-left', '26px');
 								div_well.css('padding-bottom', '6px');
+								div_well.css('max-width', '900px');
+								div_well.css('margin-left', '20px');
+								div_well.css('margin-right', '20px');
 									var div_row = $('<div></div>');
 									div_row.addClass('row');
 										var div_picture = $('<div></div>');
@@ -60,24 +63,24 @@
 											if (topic.data.time != null)
 												tag_h4.append('<span class="mdi-action-query-builder" style="margin-left:5px;"></span>'+topic.data.time);
 										div_row_content.append(tag_h4);
-										if (topic.data.deadline == null)
-											div_row_content.append('<h5 class="list-group-item-text">This topic has no deadline.</h5>');
-										else if (topic.expired)
-											div_row_content.append('<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>');
-										else {
-											var time_left = topic.time_before_deadline;
-												var tag_h5 = $('<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: </h5>');
-													var span_red = $('<span style="color: red"></span>')
-													if (time_left.days != 0)
-														span_red.append(time_left.days+' days ');
-													if (time_left.hours != 0)
-														span_red.append(time_left.hours+' hours ');
-													if (time_left.minutes != 0)
-														span_red.append(time_left.minutes+' minutes ');
-													if (time_left.seconds != 0)
-														span_red.append(time_left.seconds+' seconds ');
-												tag_h5.append(span_red);
-											div_row_content.append(tag_h5);
+										if (topic.data.deadline != null) {
+											if (topic.expired)
+												div_row_content.append('<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>');
+											else {
+												var time_left = topic.time_before_deadline;
+													var tag_h5 = $('<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: </h5>');
+														var span_red = $('<span style="color: red"></span>')
+														if (time_left.days != 0)
+															span_red.append(time_left.days+' days ');
+														if (time_left.hours != 0)
+															span_red.append(time_left.hours+' hours ');
+														if (time_left.minutes != 0)
+															span_red.append(time_left.minutes+' minutes ');
+														if (time_left.seconds != 0)
+															span_red.append(time_left.seconds+' seconds ');
+													tag_h5.append(span_red);
+												div_row_content.append(tag_h5);
+											}
 										}
 										if (topic.data.creator == {{ user.key.id }}) {
 												var div_least_content = $('<div></div>');
@@ -100,6 +103,7 @@
 					url: '/api/group/'+group_id,
 					method: 'GET',
 					data: {
+						'fetch_group_members': true,
 						'fetch_topics': true,
 						'evaluate_deadlines': true
 					},
@@ -109,25 +113,40 @@
 							var group_head = $('<div></div>');
 							group_head.addClass('jumbotron')
 							group_head.css('background-color', '#f44336');
+							group_head.css('max-width', '900px');
+							group_head.css('margin-right', '20px');
+							group_head.css('margin-left', '20px');
 							group_head.append('<h1>'+group.data.name+'</h1>');
-							group_head.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
-							group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
-							group_head.append('<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>');
-							group_head.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
+								var col_lg_sx = $('<div></div>');
+								col_lg_sx.addClass('col-lg-6');
+								col_lg_sx.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
+								//group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
+								col_lg_sx.append('<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>');
+								col_lg_sx.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
+							group_head.append(col_lg_sx);
+								var col_lg_dx = $('<div></div>');
+									var img_src;
+									if(group.data.has_image)
+										img_src = "/group/"+group.data.id+"/image";
+									else
+										img_src = "/static/images/group_default.jpg";
+								col_lg_dx.append('<img src="'+img_src+'" alt="icon">');
+							group_head.append(col_lg_dx);
 							$('span#group_name').html(group.data.name);
 							var member_list = $('div#member_list');
+							member_list.html('');
 							$.each(group.members, function(index, member) {
 									var div_list_item = $('<div></div>');
 									div_list_item.addClass('list-group-item');
 										var div_row_picture = $('<div></div>');
 										div_row_picture.addClass('row-picture');
-										div_row_picture.append('<img class="cirlce" src="/static/images/user-default.jpg" alt="icon">');
+										div_row_picture.append('<img class="circle" src="/static/images/user-default.jpg" alt="icon">');
 									div_list_item.append(div_row_picture);
 										var div_row_content = $('<div></div>');
 										div_row_content.addClass('row-content');
-										div_row_content.append('<h4 class="list-group-item-heading">{{member.data.name}} {{member.data.surname}}</h4>');
-										div_row_content.append('<p>{{member.data.email}}</p>');
-										div_row_content.append('<form action="/group/{{ group.key.id }}/members/remove" method="POST"><input type="text" id="email" name="email" value="{{ member.data.email }}" hidden><div class="least-content"><button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button></div></form>');
+										div_row_content.append('<h4 class="list-group-item-heading">'+member.data.name+' '+member.data.surname+'</h4>');
+										div_row_content.append('<p>'+member.data.email+'</p>');
+										div_row_content.append('<form action="/group/{{ group.key.id }}/members/remove" method="POST"><input type="text" id="email" name="email" value="'+member.data.email+'" hidden><div class="least-content"><button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button></div></form>');
 									div_list_item.append(div_row_content);
 									var line_separator = $('<div></div>');
 										line_separator.addClass('list-group-separator');
@@ -237,10 +256,10 @@
 				<div class="modal-content">
 					
 					<div class="modal-body">
-						<div class="jumbotron" style="max-width:900px;">
+						
 							<div class="list-group">
+								<h2 align="center">Members of "<span id="group_name"></span>"</h2>
 								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
-									<h2 align="center">Members of "<span id="group_name"></span>"</h2>
 									<form class="form-horizontal" action="/group/{{ group.key.id }}/members/add" method="POST">
 										<fieldset>
 											<div class="form-group" style="padding:19px;">
@@ -282,9 +301,9 @@
 									<div class="list-group-separator"></div>
 									{% endfor %} -->
 								</div>
-						</div>
+							</div>
+						
 					</div>
-
 				</div>
 			</div>
 		</div>
