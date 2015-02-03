@@ -87,7 +87,6 @@
 										if (topic.data.creator == {{ user.key.id }}) {
 												var div_least_content = $('<div></div>');
 												div_least_content.addClass('least-content');
-												// TODO sicuramente non funziona
 												div_least_content.append('<a id="delete-topic" title="Delete this topic" href="/group/'+topic.data.group_id+'/topic/'+topic.data.id+'/remove" class="btn btn-danger mdi-action-delete"></a>');
 											div_row_content.append(div_least_content);
 										}

@@ -1,5 +1,7 @@
 from google.appengine.ext import db
 
+import datetime
+
 # Start of Data Model
 
 class BeeVoteUser(db.Model):
@@ -43,6 +45,19 @@ class Group(db.Model):
 		group = db.get(group_key)
 		return group
 	
+	@staticmethod
+	def create(name, creator, description="", img=""):
+		group = Group(
+				name = name,
+				creator = creator,
+				description = description,
+			)
+		if img != "":
+			group.img = db.Blob(img)
+		group.members.append(creator.key())
+		group.admins.append(creator.key())
+		return group
+	
 	def get_topics(self):
 		return db.GqlQuery('SELECT * FROM Topic WHERE group = :1', self).fetch(1000)
 	
@@ -65,6 +80,26 @@ class Topic(db.Model):
 	def get_from_id(group_id, topic_id):
 		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 		topic = db.get(topic_key)
+		return topic
+	
+	@staticmethod
+	def create(title, group, creator, place="", date="", time="", deadline="", description="", img=""):
+		topic = Topic(
+			title=title,
+			group=group,
+			parent=group,
+			creator=creator,
+			  )
+		topic.place = place
+		if date != "":
+			topic.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
+		if time != "":
+			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
+		if deadline !="":
+			topic.deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
+		topic.description = description
+		if img != "":
+			topic.img = db.Blob(img)
 		return topic
 	
 	def delete(self):

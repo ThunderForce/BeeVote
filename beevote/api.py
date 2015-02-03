@@ -29,6 +29,14 @@ import models
 
 # Start of functions
 
+# TEMPORARY
+def is_user_in_group(beevote_user, group):
+	if group.members == [] or beevote_user.key() in group.members:
+		return True
+	else:
+		return False
+# TEMPORARY
+
 def get_json(json_obj):
 	return json.dumps(json_obj, indent=4, separators=(',', ': '))
 
@@ -371,6 +379,133 @@ class LoadGroupMembersHandler(webapp2.RequestHandler):
 			'success': True,
 			'members': group.members,
 		}
+		self.response.out.write(json.dumps(values))
+
+class CreateGroupHandler(webapp2.RequestHandler):
+	def post(self):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		name = self.request.get('name')
+		description = self.request.get('description')
+		img = self.request.get('img')
+		if name == "":
+			values = {
+				'success': False,
+				'error': 'Name is required',
+			}
+		else:
+			group = models.Group.create(
+				name = name,
+				creator = beevote_user,
+				description = description,
+				img = img
+			)
+			group.put()
+			group_id = group.key().id()
+			values = {
+				'success': True,
+				'group_id': group_id,
+			}
+		self.response.out.write(json.dumps(values))
+
+class CreateTopicHandler(webapp2.RequestHandler):
+	def post(self):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		group_id = self.request.get('group_id')
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		
+		title = self.request.get('title')
+		place= self.request.get('place')
+		date = self.request.get('date')
+		time = self.request.get('time')
+		deadline = self.request.get('deadline')
+		description = self.request.get('description')
+		img = self.request.get('img')
+		tzoffset = self.request.get('timezoneOffset')
+		
+		if title == "":
+			values = {
+				'success': False,
+				'error': 'Title is required',
+			}
+		elif group_id == "":
+			values = {
+				'success': False,
+				'error': 'Group ID is required',
+			}
+		else:
+			topic = models.Topic.create(
+				title=title,
+				group=group,
+				creator=beevote_user,
+				place=place,
+				date=date,
+				time=time,
+				deadline=deadline,
+				description=description,
+				img=img
+			)
+			topic.put()
+			values = {
+				'success': True,
+				'topic_id': topic.key().id(),
+			}
+		self.response.out.write(json.dumps(values))
+
+class RemoveTopicHandler(webapp2.RequestHandler):
+	def post(self, group_id, topic_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(beevote_user, group):
+			values = {
+				'success': False,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
+			topic = db.get(topic_key)
+
+			if topic.creator.key() == beevote_user.key():
+				topic.delete()
+				values = {
+					'success': True,
+				}
+			else:
+				values = {
+					'success': False,
+					'error': "You are not the creator of the topic",
+				}
+		self.response.out.write(json.dumps(values))
+
+class AddGroupMemberHandler(webapp2.RequestHandler):
+	def post(self, group_id):
+		user = users.get_current_user()
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+			values = {
+				'success': False,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			email = self.request.get("email")
+			beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
+			if beevote_user:
+				group.members.append(beevote_user.key())
+				group.put()
+				values = {
+					'success': True,
+				}
+			else:
+				values = {
+					'success': False,
+					'error': "Email '"+email+"' is not associated to any BeeVote account",
+				}
 		self.response.out.write(json.dumps(values))
 
 class LogoutHandler(webapp2.RequestHandler):
