@@ -146,7 +146,7 @@
 										div_row_content.addClass('row-content');
 										div_row_content.append('<h4 class="list-group-item-heading">'+member.data.name+' '+member.data.surname+'</h4>');
 										div_row_content.append('<p>'+member.data.email+'</p>');
-										div_row_content.append('<form action="/group/{{ group.key.id }}/members/remove" method="POST"><input type="text" id="email" name="email" value="'+member.data.email+'" hidden><div class="least-content"><button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button></div></form>');
+										div_row_content.append('<form action="/group/'+group.data.id+'/members/remove" method="POST"><input type="text" id="email" name="email" value="'+member.data.email+'" hidden><div class="least-content"><button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button></div></form>');
 									div_list_item.append(div_row_content);
 									var line_separator = $('<div></div>');
 										line_separator.addClass('list-group-separator');
@@ -155,6 +155,8 @@
 
 						topic_column.append(group_head);
 						topic_column.append('<br>');
+						
+						$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
 						
 						topic_column.append(get_topic_list(group.topics));
 					}
@@ -267,7 +269,7 @@
 							<div class="list-group">
 								<h2 align="center">Members of "<span id="group_name"></span>"</h2>
 								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
-									<form class="form-horizontal" action="/group/{{ group.key.id }}/members/add" method="POST">
+									<form id="add-member-form" class="form-horizontal" action="/group/{{ group.key.id }}/members/add" method="POST">
 										<fieldset>
 											<div class="form-group" style="padding:19px;">
 												<legend>Add member</legend>
