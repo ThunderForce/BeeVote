@@ -112,7 +112,28 @@
 							group_head.append('<h1>'+group.data.name+'</h1>');
 							group_head.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
 							group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
+							group_head.append('<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>');
 							group_head.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
+							$('span#group_name').html(group.data.name);
+							var member_list = $('div#member_list');
+							$.each(group.members, function(index, member) {
+									var div_list_item = $('<div></div>');
+									div_list_item.addClass('list-group-item');
+										var div_row_picture = $('<div></div>');
+										div_row_picture.addClass('row-picture');
+										div_row_picture.append('<img class="cirlce" src="/static/images/user-default.jpg" alt="icon">');
+									div_list_item.append(div_row_picture);
+										var div_row_content = $('<div></div>');
+										div_row_content.addClass('row-content');
+										div_row_content.append('<h4 class="list-group-item-heading">{{member.data.name}} {{member.data.surname}}</h4>');
+										div_row_content.append('<p>{{member.data.email}}</p>');
+										div_row_content.append('<form action="/group/{{ group.key.id }}/members/remove" method="POST"><input type="text" id="email" name="email" value="{{ member.data.email }}" hidden><div class="least-content"><button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button></div></form>');
+									div_list_item.append(div_row_content);
+									var line_separator = $('<div></div>');
+										line_separator.addClass('list-group-separator');
+								member_list.append(div_list_item);
+							});
+
 						topic_column.append(group_head);
 						topic_column.append('<br>');
 						
@@ -206,6 +227,64 @@
 							</fieldset>
 						</form>
 					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Popup-Add members -->
+		<div id="addMembers" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					
+					<div class="modal-body">
+						<div class="jumbotron" style="max-width:900px;">
+							<div class="list-group">
+								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
+									<h2 align="center">Members of "<span id="group_name"></span>"</h2>
+									<form class="form-horizontal" action="/group/{{ group.key.id }}/members/add" method="POST">
+										<fieldset>
+											<div class="form-group" style="padding:19px;">
+												<legend>Add member</legend>
+												<div class="input-group">
+													<input type="email" class="form-control" id="email" name="email" placeholder="Email">
+													<span class="input-group-btn">
+														<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-person-add"></button>
+													</span>
+												</div>
+											</div>
+										</fieldset>
+									</form>
+									{% if unknown_email %}
+									<div class="alert alert-dismissable alert-warning" style="max-width: 900px; margin-left: auto; margin-right: auto; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
+										<button type="button" class="close" data-dismiss="alert">X</button>
+										<h3 style="margin-top: 0px;">{{ unknown_email.0.0 }} is not associated to any BeeVote account.</h3>
+									</div>
+									{% endif %}
+								</div>
+								<div id="member_list">
+									<!-- {% for user in group.members_data %}
+									<div class="list-group-item">
+										<div class="row-picture">
+											<img class="circle" src="/static/images/user-default.jpg" alt="icon">
+										</div>
+										<div class="row-content">
+											<h4 class="list-group-item-heading">{{user.name}} {{user.surname}}</h4>
+											<p>{{user.email}}</p>
+											<form action="/group/{{ group.key.id }}/members/remove" method="POST">
+												<input type="text" id="email" name="email" value="{{ user.email }}" hidden>
+												<div class="least-content">
+													<button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button>
+												</div>
+											</form>
+										</div>
+									</div>
+									</div>
+									<div class="list-group-separator"></div>
+									{% endfor %} -->
+								</div>
+						</div>
+					</div>
+
 				</div>
 			</div>
 		</div>
