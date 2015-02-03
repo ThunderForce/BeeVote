@@ -24,8 +24,10 @@
 				});
 				load_all_topics();
 			});
-			function get_topic_list(topics) {
-				var topic_list = $('<div></div>')
+			function get_topic_list(topics,global_topics) {
+				var topic_list = $('<div class="box_topics"></div>')
+				if (global_topics)
+					topic_list.addClass('global-topics');
 				topic_list.addClass('list-group');
 				$.each( topics, function( index, topic ) {
 						var div_list_item = $('<div></div>');
@@ -116,22 +118,29 @@
 							group_head.css('max-width', '900px');
 							group_head.css('margin-right', '20px');
 							group_head.css('margin-left', '20px');
-							group_head.append('<h1>'+group.data.name+'</h1>');
-								var col_lg_sx = $('<div></div>');
-								col_lg_sx.addClass('col-lg-6');
-								col_lg_sx.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
-								//group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
-								col_lg_sx.append('<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>');
-								col_lg_sx.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
-							group_head.append(col_lg_sx);
-								var col_lg_dx = $('<div></div>');
-									var img_src;
-									if(group.data.has_image)
-										img_src = "/group/"+group.data.id+"/image";
-									else
-										img_src = "/static/images/group_default.jpg";
-								col_lg_dx.append('<img src="'+img_src+'" alt="icon">');
-							group_head.append(col_lg_dx);
+							group_head.append('<h1 style="margin-top:-15px;">'+group.data.name+'</h1>');
+								var div_row = $('<div></div>');
+								div_row.addClass('row');
+									var col_lg_sx = $('<div></div>');
+									col_lg_sx.addClass('col-lg-5');
+										var img_src;
+										if(group.data.has_image)
+											img_src = "/group/"+group.data.id+"/image";
+										else
+											img_src = "/static/images/group-default-240x240.jpg";
+									col_lg_sx.append('<img src="'+img_src+'" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">');
+								div_row.append(col_lg_sx);
+									var col_lg_cx = $('<div></div>');
+									col_lg_cx.addClass('col-lg-5');
+									col_lg_cx.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
+								div_row.append(col_lg_cx);
+									var col_lg_dx = $('<div></div>');
+									col_lg_dx.addClass('col-lg-1');
+									//group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
+									col_lg_dx.append('<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>');
+									//col_lg_dx.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
+								div_row.append(col_lg_dx);
+							group_head.append(div_row);
 							$('span#group_name').html(group.data.name);
 							var member_list = $('div#member_list');
 							member_list.html('');
@@ -156,7 +165,7 @@
 						topic_column.append(group_head);
 						topic_column.append('<br>');
 						
-						topic_column.append(get_topic_list(group.topics));
+						topic_column.append(get_topic_list(group.topics, false));
 					}
 				});
 			}
@@ -180,7 +189,7 @@
 							topics = topics.concat(group.topics);
 						})
 						
-						topic_column.append(get_topic_list(topics));
+						topic_column.append(get_topic_list(topics, true));
 					}
 				});
 			}
@@ -321,7 +330,7 @@
 				<!-- Colonna sinistra -->
 				<div class="col-lg-4" >
 					<!-- Jumbotron con immagine profilo -->
-					<div class="jumbotron" style="margin-left:13px;background-color: #2196F3; max-width: 900px;">
+					<div class="jumbotron" style="margin-left:13px;background-color: #2196F3; width: 100%;">
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="row-picture">
@@ -337,9 +346,7 @@
 
 					<!-- Jumbotron Lista Gruppi -->
 					<div style="margin-left:25px;">
-						<h2>Your Groups</h2>
-						<!-- Material Button -->
-						<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="position:absolute;z-index:10;top:185px;left:380px;"><i class="mdi-content-add" style="top: -3px;"></i></button>
+						<h2><span style="margin-right:175px;">Your Groups</span><button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal"><i class="mdi-content-add" style="top: -3px;"></i></button></h2>
 					</div>
 					<br>
 					<div class="box_groups">
@@ -350,7 +357,11 @@
 									<div class="row">
 										<div class="col-lg-10">
 											<div class="row-picture">
-												<img class="circle" src="/static/images/group-default.jpg" alt="icon">
+												{% if group.img != None %}
+													<img class="circle" src="/group/{{ group.key.id }}/image" alt="icon">
+												{% else %}
+													<img class="circle" src="/static/images/group-default.jpg" alt="icon">
+												{% endif %}
 											</div>
 											<div class="row-content">
 												<h3 class="list-group-item-heading">

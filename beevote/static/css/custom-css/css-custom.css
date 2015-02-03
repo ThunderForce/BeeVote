@@ -82,16 +82,30 @@ div.well.well-lg.group-selected {
 
 div.box_proposals
 {
-    width:665px !important;  width /**/:900px;
-    height:440px !important; height /**/:900px;
+    width:100% !important;
+    height:418px !important;
     overflow:auto
 }
 
 div.box_groups
 {
-    width:445px !important;  width /**/:900px;
-    height:275px !important; height /**/:900px;
+    width:100% !important;
+    height:242px !important;
     overflow:auto
+}
+
+div.box_topics
+{
+	width:100% !important;
+	height:320px !important;
+	overflow:auto;
+}
+
+div.box_topics.global-topics
+{
+	width:100% !important;
+	height:480px !important;
+	overflow:auto;
 }
 
 /*
