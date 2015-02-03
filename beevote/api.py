@@ -34,7 +34,7 @@ def get_json(json_obj):
 
 def fetch_user(beevote_user, arguments):
 	user = collections.OrderedDict([
-		('user_data_data', collections.OrderedDict([
+		('data', collections.OrderedDict([
 			('id', beevote_user.key().id()),
 			('name', beevote_user.name),
 			('surname', beevote_user.surname),
@@ -56,6 +56,8 @@ def fetch_group(group, arguments):
 			('creation', str(group.creation)),
 		]))
 	])
+	if 'fetch_group_members' in arguments and arguments['fetch_group_members']:
+		group_json['members'] = fetch_members_from_group(group, arguments)
 	if 'fetch_topics' in arguments and arguments['fetch_topics']:
 		group_json['topics'] = fetch_topics_from_group(group, arguments)
 	return group_json
@@ -109,6 +111,15 @@ def fetch_groups(groups, arguments):
 		groups_ret.append(group)
 	return groups_ret
 
+def fetch_members_from_group(group, arguments):
+	datastore_members = group.get_members()
+	# TODO
+	members = []
+	for datastore_member in datastore_members:
+		member = fetch_user(datastore_member, arguments)
+		members.append(member)
+	return members
+	
 def fetch_topics_from_group(group, arguments):
 	datastore_topics = group.get_topics()
 	topics = []
@@ -175,6 +186,7 @@ class LoadGroupsHandler(BaseApiHandler):
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		datastore_groups = beevote_user.get_groups_by_membership()
 		arguments = {
+			'fetch_group_members': self.request.get('fetch_group_members', 'false') == 'true',
 			'fetch_topics': self.request.get('fetch_topics', 'false') == 'true',
 			'evaluate_deadlines': self.request.get('evaluate_deadlines', 'false') == 'true',
 			'fetch_proposals': self.request.get('fetch_proposals', 'false') == 'true',
@@ -194,6 +206,7 @@ class LoadGroupHandler(BaseApiHandler):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
+			'fetch_group_members': self.request.get('fetch_group_members', 'false') == 'true',
 			'fetch_topics': self.request.get('fetch_topics', 'false') == 'true',
 			'evaluate_deadlines': self.request.get('evaluate_deadlines', 'false') == 'true',
 			'fetch_proposals': self.request.get('fetch_proposals', 'false') == 'true',

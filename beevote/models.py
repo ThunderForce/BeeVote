@@ -44,6 +44,9 @@ class Group(db.Model):
 	
 	def get_topics(self):
 		return db.GqlQuery('SELECT * FROM Topic WHERE group = :1', self).fetch(1000)
+	
+	def get_members(self):
+		return db.get(self.members)
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
