@@ -496,15 +496,52 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 			email = self.request.get("email")
 			beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
 			if beevote_user:
-				group.members.append(beevote_user.key())
-				group.put()
-				values = {
-					'success': True,
-				}
+				beevote_user_key = beevote_user.key()
+				if beevote_user_key not in group.members:
+					group.members.append(beevote_user_key)
+					group.put()
+					values = {
+						'success': True,
+					}
+				else:
+					values = {
+						'success': False,
+						'error': "User associated to email '"+email+"' is already in the group",
+					}
 			else:
 				values = {
 					'success': False,
 					'error': "Email '"+email+"' is not associated to any BeeVote account",
+				}
+		self.response.out.write(json.dumps(values))
+
+class RemoveGroupMemberHandler(webapp2.RequestHandler):
+	def post(self, group_id):
+		user = users.get_current_user()
+		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(current_beevote_user, group):
+			values = {
+				'success': False,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			email = self.request.get("email")
+			deleted_beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
+			group_key = db.Key.from_path('Group', long(group_id))
+			group = db.get(group_key)
+			deleted_user_key = deleted_beevote_user.key()
+			if deleted_user_key not in group.members:
+				values = {
+					'success': False,
+					'error': "User associated to email '"+email+"' is not in the group",
+				}
+			else:
+				group.members.remove(deleted_user_key)
+				group.put()
+				values = {
+					'success': True,
 				}
 		self.response.out.write(json.dumps(values))
 

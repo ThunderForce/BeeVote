@@ -700,6 +700,7 @@ app = webapp2.WSGIApplication([
 	('/create-topic', CreateTopicHandler),
 	('/create-proposal', CreateProposalHandler),
 	('/create-group', CreateGroupHandler),
+	('/api/group/(.*)/members/remove', api.RemoveGroupMemberHandler),
 	('/api/group/(.*)/members/add', api.AddGroupMemberHandler),
 	('/api/group/(.*)/topic/(.*)/remove', api.RemoveTopicHandler),
 	('/api/create-group', api.CreateGroupHandler),
