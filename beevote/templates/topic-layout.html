@@ -261,26 +261,25 @@ $('.vote-checkbox').on('click', function(e) {
 		</div>
 	</div>
 	<!-- Group Proposals -->
-	<div class="col-lg-6">
+	<div class="col-lg-6" style="padding-right:75px;">
 		<div class="list-group">
 
-			<div class="list-group" style="margin-left:10px;"><div class="list-group-item"><div class="row"><div class="row-content">
+			<!-- <div class="list-group" style="margin-left:10px;"><div class="list-group-item"><div class="row"><div class="row-content"> -->
 				<h2 style="margin-left:10px;">List of Proposals</h2>
-				<div class="least-content">
+				<!-- <div class="least-content"> -->
 					{% if not topic.expired %}
-					<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="margin-left:10px;background-color:#0F9D58;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+					<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="background-color:#0F9D58;z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
 					{% else %}
-					<button class="btn btn-fab btn-raised btn-material-grey disabled" style="margin-left:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+					<button class="btn btn-fab btn-raised btn-material-grey disabled" style="z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
 					{% endif %}
-				</div>
-			</div></div></div></div>
+				<!-- </div> -->
+			<!-- </div></div></div></div> -->
 			<br>
-			<div class="box_proposals">
 			{% for proposal in proposals %}
 			<div class="list-group-item">
 
 				<!-- Card Proposal Big -->
-				<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;">
+				<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 10px 25px;">
 					<div class="row">
 						<!--<div class="col-lg-11">-->
 						<!-- interno proposta -->
@@ -291,20 +290,19 @@ $('.vote-checkbox').on('click', function(e) {
 							<div class="col-lg-11">
 								<h2 class="list-group-item-heading">
 									<b style="font-size: 25px;">{{ proposal.title }}</b>
-									<br>
-									<br>
-									{% if proposal.place %}
-									<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
-									{% endif %}
-									{% if proposal.date %}
-									<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.date }}
-									{% endif %}
-									{% if proposal.time %}
-									<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
-									{% endif %}
-									<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
-									<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 								</h2>
+								<br>
+								{% if proposal.place %}
+								<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
+								{% endif %}
+								{% if proposal.date %}
+								<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.date }}
+								{% endif %}
+								{% if proposal.time %}
+								<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
+								{% endif %}
+								<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
+								<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 								<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
 									<p></p>
 									<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red"><button class="btn btn-default btn-raised">View details</button></a>
@@ -332,7 +330,6 @@ $('.vote-checkbox').on('click', function(e) {
 
 
 		{% endfor %}
-		</div>
 	</div>
 	<div>
 	</div>

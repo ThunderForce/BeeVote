@@ -71,7 +71,7 @@
 				load_all_topics();
 			});
 			function get_topic_list(topics,global_topics) {
-				var topic_list = $('<div class="box_topics"></div>')
+				var topic_list = $('<div></div>')
 				if (global_topics)
 					topic_list.addClass('global-topics');
 				topic_list.addClass('list-group');
@@ -209,8 +209,7 @@
 							});
 
 						topic_column.append(group_head);
-						topic_column.append('<br>');
-							var div_topics = $('<div class="list-group"><div class="list-group-item"><div class="row" style="margin-left:25px;"><div class="row-content"><h2>Topics</h2><div class="least-content"><button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;"><i class="mdi-content-add" ></i></button></div></div></div></div></div>');
+							var div_topics = $('<div style="margin-left:25px;"><h2>Topics</h2></div><button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" ></i></button>');
 						topic_column.append(div_topics);
 						topic_column.append(get_topic_list(group.topics, false));
 						$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
@@ -229,7 +228,7 @@
 					success: function(groups) {
 						var topic_column = $('div#right-column');
 						topic_column.html('');
-						topic_column.append('List of all topics');
+						topic_column.append('<h2>List of all topics</h2>');
 						topic_column.append('<br>');
 						
 						var topics = [];
@@ -399,7 +398,7 @@
 											Details
 										</h4>
 									</div>
-									<div class="row">
+									<!-- <div class="row">
 										<div class="col-lg-3">
 											<div class="list-group-item">
 												<h4> Place </h4>
@@ -420,32 +419,33 @@
 												<h4> Deadline </h4>
 											</div>
 										</div>
-									</div>
+									</div> -->
 									<div class="list-group">
 										<div class="row">
 											<div class="col-lg-3">
 												<div class="list-group-item">
+													<h4> Place </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised  mdi-communication-location-on" id="locationButton"></button>
 												</div>
 											</div>
 											<div class="col-lg-3">
 												<div class="list-group-item">
+													<h4> Date </h4>
 													<button  type="button" class="btn btn-info btn-fab btn-raised mdi-editor-insert-invitation" id="dateButton"></button>
 												</div>
 											</div>
 											<div class="col-lg-3">
 												<div class="list-group-item">
+													<h4> Time </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised mdi-action-query-builder" id="timeButton"></button>
 												</div>
 											</div>
 											<div class="col-lg-3">
 												<div class="list-group-item">
+													<h4> Deadline </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised mdi-notification-event-busy" id="deadLineButton"></button>
 												</div>
 											</div>
-											<br>
-											<br>
-											<br>
 											<div class="form-group" id="topicWhereInput" style="display:none;">
 												<label for="inputWhere" class="col-lg-2 control-label">Place: </label>
 												<div class="col-lg-10">
@@ -470,7 +470,7 @@
 													<input class="form-control" id="inputDeadline" name="inputDeadline" autocomplete="off" placeholder="Fill this field if you want to set an expire time for the topic">
 												</div>
 											</div>
-											<div class="list-group-separator" style="border-bottom: 3px solid #2196F3"></div>
+											<div class="list-group-separator" style="border-bottom: 3px solid #2196F3;padding-top:20px;"></div>
 											<br>
 											<div class="form-group" >
 												<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
@@ -506,7 +506,7 @@
 		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
 			<div class="row">
 				<!-- Colonna sinistra -->
-				<div class="col-lg-4" >
+				<div class="col-lg-5" style="padding-left:60px;">
 					<!-- Jumbotron con immagine profilo -->
 					<div class="jumbotron" style="margin-left:13px;background-color: #2196F3; width: 100%;">
 						<div class="row">
@@ -523,16 +523,16 @@
 					</div><!-- /jumbotron Immagine profilo -->
 
 					<!-- Jumbotron Lista Gruppi -->
-					<div class="list-group"><div class="list-group-item"><div class="row" style="margin-left:25px;"><div class="row-content">
+					<div style="margin-left:25px;">
 						<h2>Your Groups</h2>
-						<div class="least-content"><button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal"><i class="mdi-content-add" style="top: -3px;"></i></button></div>
-					</div></div></div></div>
+						<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="z-index:10;position:fixed;bottom:10px;left:10px;"><i class="mdi-content-add" style="top: -3px;"></i></button>
+					</div>
 					<br>
-					<div id="group-list" class="box_groups"></div>
+					<div id="group-list"></div>
 				</div> <!-- /col-lg-4 -->
 
 				<!-- Colonna destra -->
-				<div class="col-lg-8" id="right-column">
+				<div class="col-lg-7" id="right-column" style="padding-right:60px;">
 					
 				</div><!-- /col-lg-8 -->
 			</div><!-- /row-inizio -->
