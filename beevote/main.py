@@ -28,6 +28,7 @@ from google.appengine.api import mail
 
 import models
 import api
+import time
 
 # Start of handlers
 
@@ -587,6 +588,7 @@ class RequestRegistrationHandler(BaseHandler):
 		return
 	def post(self):
 		user = users.get_current_user()
+		redirect_url = '/'
 		if models.get_beevote_user_from_google_id(user.user_id()) == None:
 			name = self.request.get('name')
 			surname = self.request.get('surname')
@@ -635,8 +637,7 @@ Details of registration request:
 The BeeVote Team
 """.format(request=request, link=self.request.host))
 				
-				self.redirect('/registration-pending')
-				return
+				redirect_url = '/registration-pending'	
 			else:
 				beevote_user = models.BeeVoteUser(
 					user_id = user.user_id(),
@@ -645,9 +646,9 @@ The BeeVote Team
 					surname = surname,
 				)
 				beevote_user.put()
-				self.redirect('/')
-				return
-		self.redirect('/')
+				redirect_url = '/'	
+		time.sleep(1.00)
+		self.redirect(redirect_url)
 
 class RegistrationPendingHandler(BaseHandler):
 	def get(self):

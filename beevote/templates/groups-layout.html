@@ -163,6 +163,8 @@
 
 						topic_column.append(group_head);
 						topic_column.append('<br>');
+							var div_topics = $('<div class="list-group"><div class="list-group-item"><div class="row" style="margin-left:25px;"><div class="row-content"><h2>Topics</h2><div class="least-content"><button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#addTopic" style="background-color:#2196F3;"><i class="mdi-content-add" ></i></button></div></div></div></div></div>');
+						topic_column.append(div_topics);
 						topic_column.append(get_topic_list(group.topics, false));
 						$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
 					}
