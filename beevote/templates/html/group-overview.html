@@ -1,0 +1,73 @@
+
+<div>
+	<h2 style="margin-top: 11px;">Your Topics</h2>
+</div>
+<br>
+<div class="list-group">
+	{% for topic in topics %}
+	<div class="list-group-item">
+		<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}">
+			<div class="well well-lg" color="blue" style="padding:0px;padding-top:10px;padding-left:26px;padding-bottom:6px;">
+				<div class="row">
+					<div class="row-picture">
+						{% if topic.img != None %}
+						<img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+						{% else %}
+						<img class="circle" src="/static/images/topic-icon.png" alt="icon">
+						{% endif %}
+										</div><!-- /row-picture --/>
+										<div class="row-content">
+											<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">
+												{{topic.title}}
+											</h3>
+											<h4>
+												{% if topic.place != "" %}
+												<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ topic.place }}
+												{% endif %}
+												{% if topic.date %}
+												<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ topic.date }}
+												{% endif %}
+												{% if topic.time %}
+												<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ topic.time }}
+												{% endif %}
+											</h4>
+											{% if is_owner %}
+											<a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
+											{% endif %}
+
+											{% if topic.expired %}
+											<h5 class="list-group-item-text" style="margin-left:5px;color:red;">
+												This topic has reached its deadline.
+											</h5>
+											{% else %}
+											{% if topic.time_before_deadline %}
+											<h5 class="list-group-item-text" style="margin-left:5px;">
+												Deadline: {{ topic.deadline }}
+											</h5>
+											<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: 
+												<span style="color: red">
+													{% if topic.time_before_deadline.days != 0 %}
+													{{ topic.time_before_deadline.days }} days
+													{% endif %}
+													{% if topic.time_before_deadline.hours != 0 %}
+													{{ topic.time_before_deadline.hours }} hours
+													{% endif %}
+													{% if topic.time_before_deadline.minutes != 0 %}
+													{{ topic.time_before_deadline.minutes }} minutes
+													{% endif %}
+													{% if topic.time_before_deadline.seconds != 0 %}
+													{{ topic.time_before_deadline.seconds }} seconds
+													{% endif %}
+												</span>
+											</h5>
+
+											{% endif %}
+											{% endif %}
+										</div><!-- /row-content --/>
+									</div><!-- /row --/>
+								</div><!-- /well --/>
+							</a>
+						</div><!-- /list-group-item --/>
+						{% endfor %}
+					</div><!-- /list-group --/>
+					

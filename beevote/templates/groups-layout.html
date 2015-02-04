@@ -8,36 +8,28 @@
 
 		<script>
 			$(document).ready(function() {
-				/*
-				$('#group-form').submit(function() {
-					$('#create-group').attr("disabled", true);
-					fields = $(this).serializeArray();
-					console.log(fields);
-					data = {};
-					$.each(fields, function(index, field) {
-						data[field.name] = field.value;
+
+				$('#topic-form').submit(function() {
+						$(this).append('<input type="hidden" name="timezoneOffset" value="'+new Date().getTimezoneOffset()+'" /> ');
+						$('#create-topic').attr("disabled", true);
+						return true;
 					});
-					$.ajax({
-						url: '/api/create-group',
-						method: "POST",
-						data: data,
-						dataType: "json",
-						error: function() {
-							alert("Errore inaspettato!");
-						},
-						success: function(response) {
-							if (response.success) {
-								alert("Gruppo creato! Refreshare.");
-								$('#myModal').modal('hide');
-							} else {
-								alert(response.error);
-							}
-							$('#create-group').attr("disabled", false);
-						}
+					$('#inputDate').datetimepicker({
+						timepicker:false,
+						format:'d/m/Y'
 					});
-					return false;
-				});
-				*/
+					$('#inputTime').datetimepicker({
+						datepicker:false,
+						format:'H:i'
+					});
+					$('#inputDeadline').datetimepicker({
+						format:'d/m/Y H:i'
+					});
+
+				checkDisplay("locationButton", "topicWhereInput");
+				checkDisplay("dateButton", "topicDateInput");
+				checkDisplay("timeButton", "topicTimeInput");
+				checkDisplay("deadLineButton", "topicDeadLineInput");
 
 				$('#group-form').ajaxForm({
 					// Impostare action a '/api/create-group',
@@ -195,6 +187,7 @@
 								div_row.append(col_lg_dx);
 							group_head.append(div_row);
 							$('span#group_name').html(group.data.name);
+							$('input#groupId').val(group.data.id);
 							var member_list = $('div#member_list');
 							member_list.html('');
 							$.each(group.members, function(index, member) {
@@ -217,7 +210,7 @@
 
 						topic_column.append(group_head);
 						topic_column.append('<br>');
-							var div_topics = $('<div class="list-group"><div class="list-group-item"><div class="row" style="margin-left:25px;"><div class="row-content"><h2>Topics</h2><div class="least-content"><button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#addTopic" style="background-color:#2196F3;"><i class="mdi-content-add" ></i></button></div></div></div></div></div>');
+							var div_topics = $('<div class="list-group"><div class="list-group-item"><div class="row" style="margin-left:25px;"><div class="row-content"><h2>Topics</h2><div class="least-content"><button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;"><i class="mdi-content-add" ></i></button></div></div></div></div></div>');
 						topic_column.append(div_topics);
 						topic_column.append(get_topic_list(group.topics, false));
 						$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
@@ -248,6 +241,15 @@
 					}
 				});
 			}
+
+		function checkDisplay(button, field) {
+			$('#'+button).on('click', function() {
+				$('#'+field+' input').val('');
+				$(this).toggleClass('selected');
+				$('#'+button).css('background-color', $(this).hasClass('selected') ? '#40FF40' : '#2196F3');
+				$('#'+field).css('display', $(this).hasClass('selected') ? 'block' : 'none');
+			});
+		};
 		</script>
 		
 	</head>
@@ -372,6 +374,134 @@
 			</div>
 		</div>
 
+		<!-- Popup-CreateTopic -->
+		<div id="createTopic" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 align="center"><b>Create a new Topic</b></h2>
+					</div>
+					<div class="modal-body">
+						<form action="/create-topic" method="post" class="form-horizontal" enctype="multipart/form-data" id="topic-form">
+							<fieldset>
+								<input id="groupId" type="hidden" name="groupId">
+								<div><h4 style="text-align:center;">Title</h4></div>
+								<div class="list-group">
+									<div class="form-group">
+										<div class="col-lg-10" style="margin-left:45px;">
+											<input class="form-control" id="inputTopicName" name="inputTopicName" placeholder="Title of the Topic" type="text" maxlength="64" required>
+										</div>
+									</div>
+									<!-- NEW INPUT FILE-->
+									<div class="list-group-separator" style="border-bottom: 3px solid #2196F3"></div>
+									<div>
+										<h4 style="text-align:center;">
+											Details
+										</h4>
+									</div>
+									<div class="row">
+										<div class="col-lg-3">
+											<div class="list-group-item">
+												<h4> Place </h4>
+											</div>
+										</div>
+										<div class="col-lg-3">
+											<div class="list-group-item">
+												<h4> Date </h4>
+											</div>
+										</div>
+										<div class="col-lg-3">
+											<div class="list-group-item">
+												<h4> Time </h4>
+											</div>
+										</div>
+										<div class="col-lg-3">
+											<div class="list-group-item">
+												<h4> Deadline </h4>
+											</div>
+										</div>
+									</div>
+									<div class="list-group">
+										<div class="row">
+											<div class="col-lg-3">
+												<div class="list-group-item">
+													<button type="button" class="btn btn-info btn-fab btn-raised  mdi-communication-location-on" id="locationButton"></button>
+												</div>
+											</div>
+											<div class="col-lg-3">
+												<div class="list-group-item">
+													<button  type="button" class="btn btn-info btn-fab btn-raised mdi-editor-insert-invitation" id="dateButton"></button>
+												</div>
+											</div>
+											<div class="col-lg-3">
+												<div class="list-group-item">
+													<button type="button" class="btn btn-info btn-fab btn-raised mdi-action-query-builder" id="timeButton"></button>
+												</div>
+											</div>
+											<div class="col-lg-3">
+												<div class="list-group-item">
+													<button type="button" class="btn btn-info btn-fab btn-raised mdi-notification-event-busy" id="deadLineButton"></button>
+												</div>
+											</div>
+											<br>
+											<br>
+											<br>
+											<div class="form-group" id="topicWhereInput" style="display:none;">
+												<label for="inputWhere" class="col-lg-2 control-label">Place: </label>
+												<div class="col-lg-10">
+													<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities " type="text">
+												</div>
+											</div>
+											<div class="form-group" id="topicDateInput" style="display:none;">
+												<label for="inputDate" class="col-lg-2 control-label">Date: </label>
+												<div class="col-lg-10">
+													<input class="form-control" id="inputDate" name="inputDate" placeholder=" Which date " autocomplete="off">
+												</div>
+											</div>
+											<div class="form-group" id="topicTimeInput" style="display:none;">
+												<label for="inputTime" class="col-lg-2 control-label">Time: </label>
+												<div class="col-lg-10">
+													<input class="form-control" id="inputTime" name="inputTime" placeholder="At what time " autocomplete="off">
+												</div>
+											</div>
+											<div class="form-group" id="topicDeadLineInput" style="display:none;">
+												<label for="inputDeadline" class="col-lg-2 control-label">Expire Date: </label>
+												<div class="col-lg-10">
+													<input class="form-control" id="inputDeadline" name="inputDeadline" autocomplete="off" placeholder="Fill this field if you want to set an expire time for the topic">
+												</div>
+											</div>
+											<div class="list-group-separator" style="border-bottom: 3px solid #2196F3"></div>
+											<br>
+											<div class="form-group" >
+												<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
+												<div class="col-lg-10">
+													<input id="inputImg" type="file" name="inputImg"/>
+												</div>
+											</div>
+											<div class="form-group">
+												<label for="textArea" class="col-lg-2 control-label">Other details: </label>
+												<div class="col-lg-10">
+													<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+													<span class="help-block">Add here details that you want the others will know </span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- NEW BUTTON -->
+									<div class="form-group">
+										<div class="modal-footer">
+											<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+											<button type="submit" class="btn btn-info" id="create-topic">Create</button>
+										</div>
+									</div>
+								</fieldset>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div>
+
 		<!-- Jumbotron Contenitore -->
 		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
 			<div class="row">
@@ -403,79 +533,7 @@
 
 				<!-- Colonna destra -->
 				<div class="col-lg-8" id="right-column">
-					<!--
-					<div>
-						<h2 style="margin-top: 11px;">Your Topics</h2>
-					</div>
-					<br>
-					<div class="list-group">
-						{% for topic in topics %}
-						<div class="list-group-item">
-							<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}">
-								<div class="well well-lg" color="blue" style="padding:0px;padding-top:10px;padding-left:26px;padding-bottom:6px;">
-									<div class="row">
-										<div class="row-picture">
-											{% if topic.img != None %}
-											<img class="circle" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
-											{% else %}
-											<img class="circle" src="/static/images/topic-icon.png" alt="icon">
-											{% endif %}
-										</div><!-- /row-picture --/>
-										<div class="row-content">
-											<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">
-												{{topic.title}}
-											</h3>
-											<h4>
-												{% if topic.place != "" %}
-												<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ topic.place }}
-												{% endif %}
-												{% if topic.date %}
-												<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ topic.date }}
-												{% endif %}
-												{% if topic.time %}
-												<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ topic.time }}
-												{% endif %}
-											</h4>
-											{% if is_owner %}
-											<a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
-											{% endif %}
-
-											{% if topic.expired %}
-											<h5 class="list-group-item-text" style="margin-left:5px;color:red;">
-												This topic has reached its deadline.
-											</h5>
-											{% else %}
-											{% if topic.time_before_deadline %}
-											<h5 class="list-group-item-text" style="margin-left:5px;">
-												Deadline: {{ topic.deadline }}
-											</h5>
-											<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: 
-												<span style="color: red">
-													{% if topic.time_before_deadline.days != 0 %}
-													{{ topic.time_before_deadline.days }} days
-													{% endif %}
-													{% if topic.time_before_deadline.hours != 0 %}
-													{{ topic.time_before_deadline.hours }} hours
-													{% endif %}
-													{% if topic.time_before_deadline.minutes != 0 %}
-													{{ topic.time_before_deadline.minutes }} minutes
-													{% endif %}
-													{% if topic.time_before_deadline.seconds != 0 %}
-													{{ topic.time_before_deadline.seconds }} seconds
-													{% endif %}
-												</span>
-											</h5>
-
-											{% endif %}
-											{% endif %}
-										</div><!-- /row-content --/>
-									</div><!-- /row --/>
-								</div><!-- /well --/>
-							</a>
-						</div><!-- /list-group-item --/>
-						{% endfor %}
-					</div><!-- /list-group --/>
-					-->
+					
 				</div><!-- /col-lg-8 -->
 			</div><!-- /row-inizio -->
 		</div>
