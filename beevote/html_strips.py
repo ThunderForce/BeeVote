@@ -102,3 +102,40 @@ class GroupsHandler(BaseHandler):
 			'groups' : groups,
 		}
 		write_template(self.response, 'html/groups.html',values)
+
+class GroupHandler(BaseHandler):
+	def get(self, group_id):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		group = models.Group.get_from_id(long(group_id))
+		if (not group):
+			self.abort(404, detail="This group does not exist.")
+		if not is_user_in_group(beevote_user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		topics = group.get_topics()
+		currentdatetime = datetime.datetime.now()
+		for topic in topics:
+			if topic.deadline != None:
+				topic.expired = topic.deadline < currentdatetime
+				time_before_deadline = topic.deadline - currentdatetime
+				topic.seconds_before_deadline = time_before_deadline.total_seconds()
+				topic.time_before_deadline = {
+					'seconds': time_before_deadline.seconds % 60,
+					'minutes': (time_before_deadline.seconds/60) % 60,
+					'hours': time_before_deadline.seconds/3600,
+					'days': time_before_deadline.days,
+				}
+			else:
+				topic.seconds_before_deadline = timedelta.max.total_seconds()
+			if topic.creator.key() == beevote_user.key():
+				topic.is_own = True
+			else:
+				topic.is_own = False
+		
+		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
+		
+		values = {
+			'group': group,
+			'topics': topics,
+		}
+		write_template(self.response, 'html/group-overview.html', values)
