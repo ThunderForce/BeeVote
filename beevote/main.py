@@ -28,6 +28,7 @@ from google.appengine.api import mail
 
 import models
 import api
+import html_strips
 import time
 
 # Start of handlers
@@ -715,6 +716,7 @@ app = webapp2.WSGIApplication([
 	('/api/groups', api.LoadGroupsHandler),
 	('/api/group/(.*)', api.LoadGroupHandler),
 	('/api/user/(.*)', api.LoadUserHandler),
+	('/html/groups', html_strips.GroupsHandler),
 	('/register', RegistrationHandler),
 	('/request-registration',RequestRegistrationHandler),
 	('/registration-pending',RegistrationPendingHandler),

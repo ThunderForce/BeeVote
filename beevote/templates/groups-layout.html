@@ -8,20 +8,74 @@
 
 		<script>
 			$(document).ready(function() {
+				/*
 				$('#group-form').submit(function() {
 					$('#create-group').attr("disabled", true);
+					fields = $(this).serializeArray();
+					console.log(fields);
+					data = {};
+					$.each(fields, function(index, field) {
+						data[field.name] = field.value;
+					});
+					$.ajax({
+						url: '/api/create-group',
+						method: "POST",
+						data: data,
+						dataType: "json",
+						error: function() {
+							alert("Errore inaspettato!");
+						},
+						success: function(response) {
+							if (response.success) {
+								alert("Gruppo creato! Refreshare.");
+								$('#myModal').modal('hide');
+							} else {
+								alert(response.error);
+							}
+							$('#create-group').attr("disabled", false);
+						}
+					});
+					return false;
 				});
-				$('div.group-well').on('click', function() {
-					if ($(this).hasClass("group-selected")) {
-						$('div.group-well').removeClass('group-selected');
-						load_all_topics();
-					}
-					else {
-						$('div.group-well').removeClass('group-selected');
-						$(this).addClass('group-selected');
-						load_group_topics($(this).data('group_id'));
+				*/
+
+				$('#group-form').ajaxForm({
+					// Impostare action a '/api/create-group',
+					dataType: "json",
+					beforeSubmit: function() {
+						$('#create-group').attr("disabled", true);
+					},
+					error: function() {
+						alert("Errore inaspettato!");
+					},
+					success: function(response) {
+						if (response.success) {
+							load_groups();
+							$('#myModal').modal('hide');
+						} else {
+							alert(response.error);
+						}
+						$('#create-group').attr("disabled", false);
 					}
 				});
+
+				function load_groups() {
+					$('#group-list').html("Loading...");
+					$('#group-list').load('/html/groups', function() {
+						$('div.group-well').on('click', function() {
+							if ($(this).hasClass("group-selected")) {
+								$('div.group-well').removeClass('group-selected');
+								load_all_topics();
+							}
+							else {
+								$('div.group-well').removeClass('group-selected');
+								$(this).addClass('group-selected');
+								load_group_topics($(this).data('group_id'));
+							}
+						});
+					});
+				}
+				load_groups();
 				load_all_topics();
 			});
 			function get_topic_list(topics,global_topics) {
@@ -214,18 +268,18 @@
 						</h2>
 					</div>
 					<div class="modal-body">
-						<form action="/create-group" method="post" class="form-horizontal" enctype="multipart/form-data" id="group-form">
+						<form action="/api/create-group" method="post" class="form-horizontal" enctype="multipart/form-data" id="group-form">
 							<fieldset>
 								<div class="form-group">
 									<label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="inputGroupName" name="inputGroupName" placeholder="Name of the group" type="text" maxlength="32" required>
+										<input class="form-control" id="inputGroupName" name="name" placeholder="Name of the group" type="text" maxlength="32" required>
 									</div>
 								</div>
 								<div class="form-group">
 									<label for="textArea" class="col-lg-2 control-label">Description</label>
 									<div class="col-lg-10">
-										<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+										<textarea class="form-control" rows="3" id="inputDescription" name="description"></textarea>
 										<span class="help-block">Add here a description of the group</span>
 									</div>
 								</div>
@@ -233,7 +287,7 @@
 								<div class="form-group" >
 									<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
 									<div class="col-lg-10">
-										<input id="inputImg" type="file" name="inputImg"/>
+										<input id="inputImg" type="file" name="img"/>
 									</div>
 								</div>
 								
@@ -344,36 +398,7 @@
 						<div class="least-content"><button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal"><i class="mdi-content-add" style="top: -3px;"></i></button></div>
 					</div></div></div></div>
 					<br>
-					<div class="box_groups">
-						<div class="list-group">
-							{% for group in groups%}
-							<div class="list-group-item">
-								<div class="well well-lg group-well" color="red_g" data-group_id="{{ group.key.id }}" style="padding:0px;padding-top:9px;padding-left:9px;margin-left:25px;cursor: pointer;">
-									<div class="row">
-										<div class="col-lg-10">
-											<div class="row-picture">
-												{% if group.img != None %}
-													<img class="circle" src="/group/{{ group.key.id }}/image" alt="icon">
-												{% else %}
-													<img class="circle" src="/static/images/group-default.jpg" alt="icon">
-												{% endif %}
-											</div>
-											<div class="row-content">
-												<h3 class="list-group-item-heading">
-													{% if group.name_short %}
-													<span title="{{ group.name }}">{{group.name_short}}...</span>
-													{% else %}
-													{{ group.name }}
-													{% endif %}
-												</h3>
-											</div>
-										</div><!-- /col-lg-10 -->
-									</div><!-- /row -->
-								</div><!-- /list-group-item -->
-							</div>
-							{% endfor %}
-						</div><!-- /list-group -->
-					</div>
+					<div id="group-list" class="box_groups"></div>
 				</div> <!-- /col-lg-4 -->
 
 				<!-- Colonna destra -->

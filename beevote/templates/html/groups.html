@@ -1,0 +1,28 @@
+<div class="list-group">
+	{% for group in groups%}
+	<div class="list-group-item">
+		<div class="well well-lg group-well" color="red_g" data-group_id="{{ group.key.id }}" style="padding:0px;padding-top:9px;padding-left:9px;margin-left:25px;cursor: pointer;">
+			<div class="row">
+				<div class="col-lg-10">
+					<div class="row-picture">
+						{% if group.img != None %}
+							<img class="circle" src="/group/{{ group.key.id }}/image" alt="icon">
+						{% else %}
+							<img class="circle" src="/static/images/group-default.jpg" alt="icon">
+						{% endif %}
+					</div>
+					<div class="row-content">
+						<h3 class="list-group-item-heading">
+							{% if group.name_short %}
+							<span title="{{ group.name }}">{{group.name_short}}...</span>
+							{% else %}
+							{{ group.name }}
+							{% endif %}
+						</h3>
+					</div>
+				</div><!-- /col-lg-10 -->
+			</div><!-- /row -->
+		</div><!-- /list-group-item -->
+	</div>
+	{% endfor %}
+</div><!-- /list-group -->
