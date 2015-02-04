@@ -117,7 +117,7 @@
 							group_head.css('max-width', '900px');
 							group_head.css('margin-right', '20px');
 							group_head.css('margin-left', '20px');
-							group_head.append('<h1 style="margin-top:-15px;">'+group.data.name+'</h1>');
+							group_head.append('<h1 style="margin-top:-15px;color:#000000">'+group.data.name+'</h1>');
 								var div_row = $('<div></div>');
 								div_row.addClass('row');
 									var col_lg_sx = $('<div></div>');
@@ -131,7 +131,7 @@
 								div_row.append(col_lg_sx);
 									var col_lg_cx = $('<div></div>');
 									col_lg_cx.addClass('col-lg-5');
-									col_lg_cx.append('<h2>&nbsp;<small>'+group.data.description+'</small></h2>');
+									col_lg_cx.append('<h2><small style="color:#000">'+group.data.description+'</small></h2>');
 								div_row.append(col_lg_cx);
 									var col_lg_dx = $('<div></div>');
 									col_lg_dx.addClass('col-lg-1');
@@ -344,9 +344,10 @@
 					</div><!-- /jumbotron Immagine profilo -->
 
 					<!-- Jumbotron Lista Gruppi -->
-					<div style="margin-left:25px;">
-						<h2><span style="margin-right:175px;">Your Groups</span><button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal"><i class="mdi-content-add" style="top: -3px;"></i></button></h2>
-					</div>
+					<div class="list-group"><div class="list-group-item"><div class="row" style="margin-left:25px;"><div class="row-content">
+						<h2>Your Groups</h2>
+						<div class="least-content"><button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal"><i class="mdi-content-add" style="top: -3px;"></i></button></div>
+					</div></div></div></div>
 					<br>
 					<div class="box_groups">
 						<div class="list-group">
