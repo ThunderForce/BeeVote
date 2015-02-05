@@ -140,3 +140,19 @@ class GroupHandler(BaseHandler):
 			'group': group,
 		}
 		write_template(self.response, 'html/group-overview.html', values)
+
+class GroupMembersHandler(BaseHandler):
+	def get(self, group_id):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		group = models.Group.get_from_id(long(group_id))
+		if (not group):
+			self.abort(404, detail="This group does not exist.")
+		if not is_user_in_group(beevote_user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		group.member_list = db.get(group.members)
+		
+		values = {
+			'group': group,
+		}
+		write_template(self.response, 'html/group-members.html', values)

@@ -490,6 +490,7 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			values = {
 				'success': False,
+				'group_id': group_id,
 				'error': "You are not authorized to interact with this group",
 			}
 		else:
@@ -502,10 +503,12 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 					group.put()
 					values = {
 						'success': True,
+						'group_id': group_id
 					}
 				else:
 					values = {
 						'success': False,
+						'group_id': group_id,
 						'error': "User associated to email '"+email+"' is already in the group",
 					}
 			else:
@@ -524,6 +527,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 		if not is_user_in_group(current_beevote_user, group):
 			values = {
 				'success': False,
+				'group_id': group_id,
 				'error': "You are not authorized to interact with this group",
 			}
 		else:
@@ -535,6 +539,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 			if deleted_user_key not in group.members:
 				values = {
 					'success': False,
+					'group_id': group_id,
 					'error': "User associated to email '"+email+"' is not in the group",
 				}
 			else:
@@ -542,6 +547,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 				group.put()
 				values = {
 					'success': True,
+					'group_id': group_id,
 				}
 		self.response.out.write(json.dumps(values))
 

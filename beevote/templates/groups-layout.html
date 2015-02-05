@@ -32,7 +32,6 @@
 				checkDisplay("deadLineButton", "topicDeadLineInput");
 
 				$('#group-form').ajaxForm({
-					// Impostare action a '/api/create-group',
 					dataType: "json",
 					beforeSubmit: function() {
 						$('#create-group').attr("disabled", true);
@@ -48,6 +47,25 @@
 							alert(response.error);
 						}
 						$('#create-group').attr("disabled", false);
+					}
+				});
+				
+				$('form#add-member-form').ajaxForm({
+					dataType: "json",
+					beforeSubmit: function() {
+						$('button#add-member-button').attr("disabled", true);
+					},
+					error: function() {
+						alert("Errore inaspettato!");
+						$('button#add-member-button').attr("disabled", false);
+					},
+					success: function(response) {
+						if (response.success) {
+							$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+response.group_id+'/members');
+						} else {
+							alert(response.error);
+						}
+						$('button#add-member-button').attr("disabled", false);
 					}
 				});
 
@@ -127,77 +145,8 @@
 			function load_group_topics(group_id) {
 				$('div#right-column').html('<div class="loader"></div>');
 				$('div#right-column').load('html/group/'+group_id);
-				/*
-				$.ajax({
-					url: '/api/group/'+group_id,
-					method: 'GET',
-					data: {
-						'fetch_group_members': true,
-						'fetch_topics': true,
-						'evaluate_deadlines': true
-					},
-					success: function(group) {
-						var topic_column = $('div#right-column');
-						topic_column.html('');
-							var group_head = $('<div></div>');
-							group_head.addClass('jumbotron')
-							group_head.css('background-color', '#f44336');
-							group_head.css('max-width', '900px');
-							group_head.css('margin-right', '20px');
-							group_head.css('margin-left', '20px');
-							group_head.append('<h1 style="margin-top:-15px;color:#000000">'+group.data.name+'</h1>');
-								var div_row = $('<div></div>');
-								div_row.addClass('row');
-									var col_lg_sx = $('<div></div>');
-									col_lg_sx.addClass('col-lg-5');
-										var img_src;
-										if(group.data.has_image)
-											img_src = "/group/"+group.data.id+"/image";
-										else
-											img_src = "/static/images/group-default-240x240.jpg";
-									col_lg_sx.append('<img src="'+img_src+'" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">');
-								div_row.append(col_lg_sx);
-									var col_lg_cx = $('<div></div>');
-									col_lg_cx.addClass('col-lg-5');
-									col_lg_cx.append('<h2><small style="color:#000">'+group.data.description+'</small></h2>');
-								div_row.append(col_lg_cx);
-									var col_lg_dx = $('<div></div>');
-									col_lg_dx.addClass('col-lg-1');
-									//group_head.append('<a href="/group/'+group.data.id+'/members"><button class="btn" style="background-color:#FFFFFF">Add members</button></a>');
-									col_lg_dx.append('<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>');
-									//col_lg_dx.append('<a href="/group/'+group.data.id+'"><button class="btn" style="background-color:#FFFFFF">View group</button></a>');
-								div_row.append(col_lg_dx);
-							group_head.append(div_row);
-							$('span#group_name').html(group.data.name);
-							$('input#groupId').val(group.data.id);
-							var member_list = $('div#member_list');
-							member_list.html('');
-							$.each(group.members, function(index, member) {
-									var div_list_item = $('<div></div>');
-									div_list_item.addClass('list-group-item');
-										var div_row_picture = $('<div></div>');
-										div_row_picture.addClass('row-picture');
-										div_row_picture.append('<img class="circle" src="/static/images/user-default.jpg" alt="icon">');
-									div_list_item.append(div_row_picture);
-										var div_row_content = $('<div></div>');
-										div_row_content.addClass('row-content');
-										div_row_content.append('<h4 class="list-group-item-heading">'+member.data.name+' '+member.data.surname+'</h4>');
-										div_row_content.append('<p>'+member.data.email+'</p>');
-										div_row_content.append('<form action="/group/'+group.data.id+'/members/remove" method="POST"><input type="text" id="email" name="email" value="'+member.data.email+'" hidden><div class="least-content"><button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button></div></form>');
-									div_list_item.append(div_row_content);
-									var line_separator = $('<div></div>');
-										line_separator.addClass('list-group-separator');
-								member_list.append(div_list_item);
-							});
-
-						topic_column.append(group_head);
-							var div_topics = $('<div style="margin-left:25px;"><h2>Topics</h2></div><button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" ></i></button>');
-						topic_column.append(div_topics);
-						topic_column.append(get_topic_list(group.topics, false));
-						$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
-					}
-				});
-				*/
+				$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+group_id+'/members');
+				$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
 			}
 			function load_all_topics() {
 				$('div#right-column').html('<div class="loader"></div>');
@@ -308,14 +257,14 @@
 							<div class="list-group">
 								<h2 align="center">Members of "<span id="group_name"></span>"</h2>
 								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
-									<form id="add-member-form" class="form-horizontal" action="/group/{{ group.key.id }}/members/add" method="POST">
+									<form id="add-member-form" class="form-horizontal" method="POST">
 										<fieldset>
 											<div class="form-group" style="padding:19px;">
 												<legend>Add member</legend>
 												<div class="input-group">
 													<input type="email" class="form-control" id="email" name="email" placeholder="Email">
 													<span class="input-group-btn">
-														<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-person-add"></button>
+														<button id="add-member-button" type="submit" class="btn btn-info btn-fab btn-raised mdi-social-person-add"></button>
 													</span>
 												</div>
 											</div>
@@ -328,27 +277,7 @@
 									</div>
 									{% endif %}
 								</div>
-								<div id="member_list">
-									<!-- {% for user in group.members_data %}
-									<div class="list-group-item">
-										<div class="row-picture">
-											<img class="circle" src="/static/images/user-default.jpg" alt="icon">
-										</div>
-										<div class="row-content">
-											<h4 class="list-group-item-heading">{{user.name}} {{user.surname}}</h4>
-											<p>{{user.email}}</p>
-											<form action="/group/{{ group.key.id }}/members/remove" method="POST">
-												<input type="text" id="email" name="email" value="{{ user.email }}" hidden>
-												<div class="least-content">
-													<button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button>
-												</div>
-											</form>
-										</div>
-									</div>
-									</div>
-									<div class="list-group-separator"></div>
-									{% endfor %} -->
-								</div>
+								<div id="member_list"></div>
 							</div>
 						
 					</div>

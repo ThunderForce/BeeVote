@@ -1,0 +1,42 @@
+<script>
+	$(document).ready(function() {
+		$('form.remove-member-form').ajaxForm({
+			dataType: "json",
+			beforeSubmit: function() {
+				//$('button#add-member-button').attr("disabled", true);
+			},
+			error: function() {
+				alert("Errore inaspettato!");
+				//$('button#add-member-button').attr("disabled", false);
+			},
+			success: function(response) {
+				if (response.success) {
+					$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+response.group_id+'/members');
+				} else {
+					alert(response.error);
+				}
+				//$('button#add-member-button').attr("disabled", false);
+			}
+		});
+	});
+</script>
+<div class="group-members">
+	{% for member in group.member_list %}
+	<div class="list-group-item">
+		<div class="row-picture">
+			<img class="circle" src="/static/images/user-default.jpg" alt="icon">
+		</div>
+		<div class="row-content">
+			<h4 class="list-group-item-heading">{{member.name}} {{member.surname}}</h4>
+			<p>{{member.email}}</p>
+			<form class="remove-member-form" action="/api/group/{{ group.key.id }}/members/remove" method="POST">
+				<input type="text" id="email" name="email" value="{{ member.email }}" hidden>
+				<div class="least-content">
+					<button id="remove-member-{{member.email}}" type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button>
+				</div>
+			</form>
+		</div>
+		<div class="list-group-separator"></div>'
+	</div>
+	{% endfor %}
+</div>
