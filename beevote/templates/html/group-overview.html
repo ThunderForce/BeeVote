@@ -16,18 +16,18 @@
 	$('form#add-member-form').attr('action', '/group/{{ group.key.id }}/members/add');
 </script>
 <div class="group-overview">
-	<div class="jumbotron" style="background-color: #f44336; max-width: 900px; margin-right: 20px; margin-left: 20px;">
+	<div class="jumbotron" style="background-color: #f44336; max-width: 900px;">
 		<h1 style="margin-top:-15px;color:#000000">{{group.name}}</h1>
 		<div class="row">
 			<div class="col-lg-5">
-				{% if group.data.has_image %}
+				{% if group.img %}
 					<img src="/group/{{group.key.id}}/image" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
 				{% else %}
 					<img src="/static/images/group-default-240x240.jpg" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
 				{% endif %}
 			</div>
 			<div class="col-lg-5">
-				<h2><small style="color:#000">{{group.data.description}}</small></h2>
+				<h2><small style="color:#000">{{group.description}}</small></h2>
 			</div>
 			<div class="col-lg-1">
 				<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
@@ -54,17 +54,14 @@
 		</div>
 	{% endfor %}
 	</div>
-	<br>
 	<div class="list-group">
 		<div class="list-group-item">
-			<div class="row" style="margin-left:25px;">
+			<div class="row">
 				<div class="row-content">
 					<h2>Topics</h2>
-					<div class="least-content">
 						<button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;z-index:10;position:fixed;bottom:10px;right:10px;">
 							<i class="mdi-content-add" ></i>
 						</button>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -73,7 +70,7 @@
 		{% for topic in group.topics %}
 		<div class="list-group-item topic-item">
 			<a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}">
-				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; max-width: 900px; margin-left: 20px; margin-right: 20px;">
+				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; max-width: 900px;">
 					<div class="row">
 						<div class="row-picture">
 							{% if topic.img %}
@@ -83,7 +80,7 @@
 							{% endif %}
 						</div>
 						<div class="row-content">
-							<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
+							<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
 							<h4>
 								{% if topic.place != "" %}
 								<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
@@ -117,11 +114,11 @@
 									</h5>
 								{% endif %}
 							{% endif %}
-							{% if topic.creator == user.key.id %}
-								<div class="least-content">
-									<a id="delete-topic" title="Delete this topic" href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
+							<!-- {% if topic.is_own %}
+								<div style="float:right;">
+									<button id="delete-topic" title="Delete this topic" href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></button>
 								</div>
-							{% endif %}
+							{% endif %} -->
 						</div>
 					</div>
 				</div>

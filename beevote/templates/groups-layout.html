@@ -75,8 +75,6 @@
 								div_well.css('padding-left', '26px');
 								div_well.css('padding-bottom', '6px');
 								div_well.css('max-width', '900px');
-								div_well.css('margin-left', '20px');
-								div_well.css('margin-right', '20px');
 									var div_row = $('<div></div>');
 									div_row.addClass('row');
 										var div_picture = $('<div></div>');
@@ -90,7 +88,7 @@
 									div_row.append(div_picture);
 										var div_row_content = $('<div></div>');
 										div_row_content.addClass('row-content');
-										div_row_content.append('<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">'+topic.data.title+'</h3>');
+										div_row_content.append('<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">'+topic.data.title+'</h3>');
 											var tag_h4 = $('<h4></h4>');
 											if (topic.data.place != null)
 												tag_h4.append('<span class="mdi-communication-location-on" style="margin-left:5px;"></span>'+topic.data.place);
@@ -117,12 +115,6 @@
 													tag_h5.append(span_red);
 												div_row_content.append(tag_h5);
 											}
-										}
-										if (topic.data.creator == {{ user.key.id }}) {
-												var div_least_content = $('<div></div>');
-												div_least_content.addClass('least-content');
-												div_least_content.append('<a id="delete-topic" title="Delete this topic" href="/group/'+topic.data.group_id+'/topic/'+topic.data.id+'/remove" class="btn btn-danger mdi-action-delete"></a>');
-											div_row_content.append(div_least_content);
 										}
 									div_row.append(div_row_content);
 								div_well.append(div_row);
@@ -476,9 +468,9 @@
 		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
 			<div class="row">
 				<!-- Colonna sinistra -->
-				<div class="col-lg-5" style="padding-left:60px;">
+				<div class="col-lg-5" style="padding-left:85px;padding-right:85px;">
 					<!-- Jumbotron con immagine profilo -->
-					<div class="jumbotron" style="margin-left:13px;background-color: #2196F3; width: 100%;">
+					<div class="jumbotron" style="background-color: #2196F3; max-width: 900px;">
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="row-picture">
@@ -493,7 +485,7 @@
 					</div><!-- /jumbotron Immagine profilo -->
 
 					<!-- Jumbotron Lista Gruppi -->
-					<div style="margin-left:25px;">
+					<div>
 						<h2>Your Groups</h2>
 						<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="z-index:10;position:fixed;bottom:10px;left:10px;"><i class="mdi-content-add" style="top: -3px;"></i></button>
 					</div>
@@ -502,7 +494,7 @@
 				</div> <!-- /col-lg-4 -->
 
 				<!-- Colonna destra -->
-				<div class="col-lg-7" id="right-column" style="padding-right:60px;">
+				<div class="col-lg-7" id="right-column" style="padding-left:85px;padding-right:85px;">
 					
 				</div><!-- /col-lg-8 -->
 			</div><!-- /row-inizio -->
