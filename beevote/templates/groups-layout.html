@@ -52,7 +52,7 @@
 				});
 
 				function load_groups() {
-					$('#group-list').html("Loading...");
+					$('#group-list').html('<div class="loader"></div>');
 					$('#group-list').load('/html/groups');
 				}
 				load_groups();
@@ -125,7 +125,7 @@
 				return topic_list;
 			}
 			function load_group_topics(group_id) {
-				$('div#right-column').html('Loading...');
+				$('div#right-column').html('<div class="loader"></div>');
 				$('div#right-column').load('html/group/'+group_id);
 				/*
 				$.ajax({
@@ -200,7 +200,7 @@
 				*/
 			}
 			function load_all_topics() {
-				$('div#right-column').html('Loading...');
+				$('div#right-column').html('<div class="loader"></div>');
 				$.ajax({
 					url: '/api/groups',
 					method: 'GET',
