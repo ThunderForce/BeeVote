@@ -8,29 +8,24 @@
 
 		<script>
 			$(document).ready(function() {
-
-				$('#topic-form').submit(function() {
-						$(this).append('<input type="hidden" name="timezoneOffset" value="'+new Date().getTimezoneOffset()+'" /> ');
-						$('#create-topic').attr("disabled", true);
-						return true;
-					});
-					$('#inputDate').datetimepicker({
-						timepicker:false,
-						format:'d/m/Y'
-					});
-					$('#inputTime').datetimepicker({
-						datepicker:false,
-						format:'H:i'
-					});
-					$('#inputDeadline').datetimepicker({
-						format:'d/m/Y H:i'
-					});
+				
+				$('#inputDate').datetimepicker({
+					timepicker:false,
+					format:'d/m/Y'
+				});
+				$('#inputTime').datetimepicker({
+					datepicker:false,
+					format:'H:i'
+				});
+				$('#inputDeadline').datetimepicker({
+					format:'d/m/Y H:i'
+				});
 
 				checkDisplay("locationButton", "topicWhereInput");
 				checkDisplay("dateButton", "topicDateInput");
 				checkDisplay("timeButton", "topicTimeInput");
 				checkDisplay("deadLineButton", "topicDeadLineInput");
-
+				
 				$('#group-form').ajaxForm({
 					dataType: "json",
 					beforeSubmit: function() {
@@ -69,6 +64,33 @@
 					}
 				});
 
+				$('form#topic-form').ajaxForm({
+					dataType: "json",
+					beforeSubmit: function(arr) {
+						arr.push({name: 'timezoneOffset', value: new Date().getTimezoneOffset()})
+						$('button#create-topic').attr("disabled", true);
+					},
+					error: function() {
+						alert("Errore inaspettato!");
+						$('button#create-topic').attr("disabled", false);
+					},
+					success: function(response) {
+						if (response.success) {
+							load_group_topics(response.group_id)
+							$('#createTopic').modal('hide');
+						} else {
+							alert(response.error);
+						}
+						$('button#create-topic').attr("disabled", false);
+					}
+				});
+				
+				$('#topic-form').submit(function() {
+					$(this).append('<input type="hidden" name="timezoneOffset" value="'+new Date().getTimezoneOffset()+'" /> ');
+					$('#create-topic').attr("disabled", true);
+					return true;
+				});
+				
 				function load_groups() {
 					$('#group-list').html('<div class="loader"></div>');
 					$('#group-list').load('/html/groups');
@@ -147,6 +169,7 @@
 				$('div#right-column').load('html/group/'+group_id);
 				$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+group_id+'/members');
 				$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
+				$('#groupId').val(group_id);
 			}
 			function load_all_topics() {
 				$('div#right-column').html('<div class="loader"></div>');
@@ -293,14 +316,14 @@
 						<h2 align="center"><b>Create a new Topic</b></h2>
 					</div>
 					<div class="modal-body">
-						<form action="/create-topic" method="post" class="form-horizontal" enctype="multipart/form-data" id="topic-form">
+						<form action="/api/create-topic" method="post" class="form-horizontal" enctype="multipart/form-data" id="topic-form">
 							<fieldset>
-								<input id="groupId" type="hidden" name="groupId">
+								<input id="groupId" type="hidden" name="group_id">
 								<div><h4 style="text-align:center;">Title</h4></div>
 								<div class="list-group">
 									<div class="form-group">
 										<div class="col-lg-10" style="margin-left:45px;">
-											<input class="form-control" id="inputTopicName" name="inputTopicName" placeholder="Title of the Topic" type="text" maxlength="64" required>
+											<input class="form-control" id="inputTopicName" name="title" placeholder="Title of the Topic" type="text" maxlength="64" required>
 										</div>
 									</div>
 									<!-- NEW INPUT FILE-->
@@ -340,25 +363,25 @@
 											<div class="form-group" id="topicWhereInput" style="display:none;">
 												<label for="inputWhere" class="col-lg-2 control-label" style="margin-top:10px;">Place: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputWhere" name="inputWhere" placeholder="Location for the activities " type="text">
+													<input class="form-control" id="inputWhere" name="place" placeholder="Location for the activities " type="text">
 												</div>
 											</div>
 											<div class="form-group" id="topicDateInput" style="display:none;">
 												<label for="inputDate" class="col-lg-2 control-label" style="margin-top:10px;">Date: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputDate" name="inputDate" placeholder=" Which date " autocomplete="off">
+													<input class="form-control" id="inputDate" name="date" placeholder=" Which date " autocomplete="off">
 												</div>
 											</div>
 											<div class="form-group" id="topicTimeInput" style="display:none;">
 												<label for="inputTime" class="col-lg-2 control-label" style="margin-top:10px;">Time: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputTime" name="inputTime" placeholder="At what time " autocomplete="off">
+													<input class="form-control" id="inputTime" name="time" placeholder="At what time " autocomplete="off">
 												</div>
 											</div>
 											<div class="form-group" id="topicDeadLineInput" style="display:none;">
 												<label for="inputDeadline" class="col-lg-2 control-label" style="margin-top:10px;">Deadline: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputDeadline" name="inputDeadline" autocomplete="off" placeholder="Fill this field if you want to set an expire time for the topic">
+													<input class="form-control" id="inputDeadline" name="deadline" autocomplete="off" placeholder="Fill this field if you want to set an expire time for the topic">
 												</div>
 											</div>
 											<div class="list-group-separator" style="border-bottom: 3px solid #2196F3;padding-top:20px;"></div>
@@ -366,13 +389,13 @@
 											<div class="form-group" >
 												<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
 												<div class="col-lg-10">
-													<input id="inputImg" type="file" name="inputImg"/>
+													<input id="inputImg" type="file" name="img"/>
 												</div>
 											</div>
 											<div class="form-group">
 												<label for="textArea" class="col-lg-2 control-label">Other details: </label>
 												<div class="col-lg-10">
-													<textarea class="form-control" rows="3" id="inputDescription" name="inputDescription"></textarea>
+													<textarea class="form-control" rows="3" id="inputDescription" name="description"></textarea>
 													<span class="help-block">Add here details that you want the others will know </span>
 												</div>
 											</div>

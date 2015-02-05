@@ -450,6 +450,7 @@ class CreateTopicHandler(webapp2.RequestHandler):
 			topic.put()
 			values = {
 				'success': True,
+				'group_id': group_id,
 				'topic_id': topic.key().id(),
 			}
 		self.response.out.write(json.dumps(values))
