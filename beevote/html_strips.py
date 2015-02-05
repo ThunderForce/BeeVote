@@ -112,6 +112,7 @@ class GroupHandler(BaseHandler):
 			self.abort(404, detail="This group does not exist.")
 		if not is_user_in_group(beevote_user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		group.member_list = db.get(group.members)
 		topics = group.get_topics()
 		currentdatetime = datetime.datetime.now()
 		for topic in topics:
@@ -133,9 +134,9 @@ class GroupHandler(BaseHandler):
 				topic.is_own = False
 		
 		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
+		group.topics = topics
 		
 		values = {
 			'group': group,
-			'topics': topics,
 		}
 		write_template(self.response, 'html/group-overview.html', values)

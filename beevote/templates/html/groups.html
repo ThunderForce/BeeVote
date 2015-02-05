@@ -1,3 +1,18 @@
+<script>
+	$(document).ready(function() {
+		$('div.group-well').on('click', function() {
+			if ($(this).hasClass("group-selected")) {
+				$('div.group-well').removeClass('group-selected');
+				load_all_topics();
+			}
+			else {
+				$('div.group-well').removeClass('group-selected');
+				$(this).addClass('group-selected');
+				load_group_topics($(this).data('group_id'));
+			}
+		});
+	});
+</script>
 <div class="list-group">
 	{% for group in groups%}
 	<div class="list-group-item">

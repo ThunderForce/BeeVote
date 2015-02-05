@@ -53,19 +53,7 @@
 
 				function load_groups() {
 					$('#group-list').html("Loading...");
-					$('#group-list').load('/html/groups', function() {
-						$('div.group-well').on('click', function() {
-							if ($(this).hasClass("group-selected")) {
-								$('div.group-well').removeClass('group-selected');
-								load_all_topics();
-							}
-							else {
-								$('div.group-well').removeClass('group-selected');
-								$(this).addClass('group-selected');
-								load_group_topics($(this).data('group_id'));
-							}
-						});
-					});
+					$('#group-list').load('/html/groups');
 				}
 				load_groups();
 				load_all_topics();
@@ -146,6 +134,8 @@
 			}
 			function load_group_topics(group_id) {
 				$('div#right-column').html('Loading...');
+				$('div#right-column').load('html/group/'+group_id);
+				/*
 				$.ajax({
 					url: '/api/group/'+group_id,
 					method: 'GET',
@@ -215,6 +205,7 @@
 						$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
 					}
 				});
+				*/
 			}
 			function load_all_topics() {
 				$('div#right-column').html('Loading...');

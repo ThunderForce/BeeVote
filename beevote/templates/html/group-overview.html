@@ -1,29 +1,41 @@
-<div class="jumbotron" style="background-color: #f44336; max-width: 900px; margin-right: 20px; margin-left: 20px;">
-	<h1 style="margin-top:-15px;color:#000000">{{group.name}}</h1>
-	<div class="row">
-		<div class="col-lg-5">
-			{% if group.data.has_image %}
-				<img src="/group/{{group.key.id}}/image" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
-			{% else %}
-				<img src="/static/images/group-default-240x240.jpg" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
-			{% endif %}
-		</div>
-		<div class="col-lg-5">
-			<h2><small style="color:#000">{{group.data.description}}</small></h2>
-		</div>
-		<div class="col-lg-1">
-			<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
+<script>
+	
+	$(document).ready(function() {
+		/*
+		$('div.topic-item').on('click', function() {
+			$('div#right-column').load('html/topic-overview');
+		});
+		*/
+		var member_list = $('div#member_list');
+		member_list.html('');
+		$( "div.group-overview div#member-list" ).appendTo( "div#member_list:not(div.group-overview div#member-list)" );
+	});
+	
+	$('span#group_name').html("{{ group.name }}");
+	$('input#groupId').val("{{ group.key.id }}");
+	$('form#add-member-form').attr('action', '/group/{{ group.key.id }}/members/add');
+</script>
+<div class="group-overview">
+	<div class="jumbotron" style="background-color: #f44336; max-width: 900px; margin-right: 20px; margin-left: 20px;">
+		<h1 style="margin-top:-15px;color:#000000">{{group.name}}</h1>
+		<div class="row">
+			<div class="col-lg-5">
+				{% if group.data.has_image %}
+					<img src="/group/{{group.key.id}}/image" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
+				{% else %}
+					<img src="/static/images/group-default-240x240.jpg" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
+				{% endif %}
+			</div>
+			<div class="col-lg-5">
+				<h2><small style="color:#000">{{group.data.description}}</small></h2>
+			</div>
+			<div class="col-lg-1">
+				<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
+			</div>
 		</div>
 	</div>
-</div>
-<script>
-	$('span#group_name').html(group.data.name);
-	$('input#groupId').val(group.data.id);
-	var member_list = $('div#member_list');
-	member_list.html('');
-</script>
-<div id="member-list">
-{% for member in group.members %}
+	<div id="member-list">
+	{% for member in group.member_list %}
 		<div class="list-group-item">
 			<div class="row-picture">
 				<img class="circle" src="/static/images/user-default.jpg" alt="icon">
@@ -31,8 +43,8 @@
 			<div class="row-content">
 				<h4 class="list-group-item-heading">{{member.name}} {{member.surname}}</h4>
 				<p>{{member.email}}</p>
-				<form action="/group/'+group.data.id+'/members/remove" method="POST">
-					<input type="text" id="email" name="email" value="'+member.data.email+'" hidden>
+				<form action="/group/{{ group.key.id }}/members/remove" method="POST">
+					<input type="text" id="email" name="email" value="{{ member.email }}" hidden>
 					<div class="least-content">
 						<button type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button>
 					</div>
@@ -40,24 +52,81 @@
 			</div>
 			<div class="list-group-separator"></div>'
 		</div>
-{% endfor %}
-</div>
-<br>
-<div class="list-group">
-	<div class="list-group-item">
-		<div class="row" style="margin-left:25px;">
-			<div class="row-content">
-				<h2>Topics</h2>
-				<div class="least-content">
-					<button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;">
-						<i class="mdi-content-add" ></i>
-					</button>
+	{% endfor %}
+	</div>
+	<br>
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="row" style="margin-left:25px;">
+				<div class="row-content">
+					<h2>Topics</h2>
+					<div class="least-content">
+						<button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;z-index:10;position:fixed;bottom:10px;right:10px;">
+							<i class="mdi-content-add" ></i>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-</div>'
-<script>
-	get_topic_list(group.topics, false)
-	$('form#add-member-form').attr('action', '/group/'+group.data.id+'/members/add');
-</script>
+	<div class="list-group global-topics">
+		{% for topic in group.topics %}
+		<div class="list-group-item topic-item">
+			<a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}">
+				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; max-width: 900px; margin-left: 20px; margin-right: 20px;">
+					<div class="row">
+						<div class="row-picture">
+							{% if topic.img %}
+							<img class="circle" src="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+							{% else %}
+							<img class="circle" src="/static/images/topic-icon.png" alt="icon">
+							{% endif %}
+						</div>
+						<div class="row-content">
+							<h3 style="font-size:32px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
+							<h4>
+								{% if topic.place != "" %}
+								<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
+								{% endif %}
+								{% if topic.date %}
+								<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.date }}
+								{% endif %}
+								{% if topic.time %}
+								<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
+								{% endif %}
+							</h4>
+							{% if topic.deadline %}
+								{% if topic.expired %}
+									<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>
+								{% else %}
+									<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: </h5>
+										<span style="color: red">
+											{% if topic.time_before_deadline.days != 0 %}
+												{{ topic.time_before_deadline.days }} days 
+											{% endif %}
+											{% if topic.time_before_deadline.hours != 0 %}
+												{{ topic.time_before_deadline.hours }} hours 
+											{% endif %}
+											{% if topic.time_before_deadline.minutes != 0 %}
+												{{ topic.time_before_deadline.minutes }} minutes 
+											{% endif %}
+											{% if topic.time_before_deadline.seconds != 0 %}
+												{{ topic.time_before_deadline.seconds }} seconds 
+											{% endif %}
+										</span>
+									</h5>
+								{% endif %}
+							{% endif %}
+							{% if topic.creator == user.key.id %}
+								<div class="least-content">
+									<a id="delete-topic" title="Delete this topic" href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></a>
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</a>
+		</div>
+		{% endfor %}
+	</div>
+</div>
