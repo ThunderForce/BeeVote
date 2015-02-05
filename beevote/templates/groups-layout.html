@@ -313,10 +313,10 @@
 		<div id="createTopic" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
-					<div class="modal-header">
+					<div class="modal-header" style="padding:1px;">
 						<h2 align="center"><b>Create a new Topic</b></h2>
 					</div>
-					<div class="modal-body">
+					<div class="modal-body" style="padding:1px;padding-left:45px;padding-right:45px;">
 						<form action="/api/create-topic" method="post" class="form-horizontal" enctype="multipart/form-data" id="topic-form">
 							<fieldset>
 								<input id="groupId" type="hidden" name="group_id">
@@ -404,7 +404,7 @@
 									</div>
 									<!-- NEW BUTTON -->
 									<div class="form-group">
-										<div class="modal-footer">
+										<div class="modal-footer" style="padding:1px;">
 											<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
 											<button type="submit" class="btn btn-info" id="create-topic">Create</button>
 										</div>
