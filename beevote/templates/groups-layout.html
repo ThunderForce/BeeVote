@@ -51,6 +51,7 @@
 					beforeSubmit: function() {
 						$('button#add-member-button').attr("disabled", true);
 					},
+					clearForm: true,
 					error: function() {
 						alert("Errore inaspettato!");
 						$('button#add-member-button').attr("disabled", false);

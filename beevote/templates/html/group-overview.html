@@ -43,6 +43,9 @@
 		</div>
 	</div>
 	<div class="list-group global-topics">
+		{% if not group.topics %}
+		<p>There are no topics in this group yet. Create one now!</p>
+		{% endif %}
 		{% for topic in group.topics %}
 		<div class="list-group-item topic-item">
 			<a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}">
@@ -70,9 +73,9 @@
 							</h4>
 							{% if topic.deadline %}
 								{% if topic.expired %}
-									<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>
+									<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span style="color: red;">This topic has reached its deadline.</span></h5>
 								{% else %}
-									<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: </h5>
+									<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span>
 										<span style="color: red">
 											{% if topic.time_before_deadline.days != 0 %}
 												{{ topic.time_before_deadline.days }} days 
@@ -83,9 +86,9 @@
 											{% if topic.time_before_deadline.minutes != 0 %}
 												{{ topic.time_before_deadline.minutes }} minutes 
 											{% endif %}
-											{% if topic.time_before_deadline.seconds != 0 %}
+											<!-- {% if topic.time_before_deadline.seconds != 0 %}
 												{{ topic.time_before_deadline.seconds }} seconds 
-											{% endif %}
+											{% endif %} -->
 										</span>
 									</h5>
 								{% endif %}

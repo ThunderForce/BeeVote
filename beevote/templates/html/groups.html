@@ -14,6 +14,9 @@
 	});
 </script>
 <div class="list-group">
+	{% if not groups %}
+	<p>You have no groups yet. Create one now!</p>
+	{% endif %}
 	{% for group in groups%}
 	<div class="list-group-item">
 		<div class="well well-lg group-well" color="red_g" data-group_id="{{ group.key.id }}" style="padding:0px;padding-top:9px;padding-left:9px;cursor: pointer; max-width:900px;">
