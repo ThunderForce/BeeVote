@@ -1,0 +1,106 @@
+<div>
+	<div class="jumbotron" style="max-width:900px; background-color:#2196F3;margin-left:12px;">
+		<h1 style="word-wrap:break-word;">{{ topic.title }}</h1>
+		<p style="word-wrap:break-word;">{{ topic.description }}</p>
+		{% if topic.expired %}
+		<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
+		{% else %}
+		{% if topic.time_before_deadline %}
+		<p>Deadline: {{ topic.deadline }}</p>
+		<p>Time before deadline: 
+			<span style="color: red">
+				{% if topic.time_before_deadline.days != 0 %}
+				{{ topic.time_before_deadline.days }} days
+				{% endif %}
+				{% if topic.time_before_deadline.hours != 0 %}
+				{{ topic.time_before_deadline.hours }} hours
+				{% endif %}
+				{% if topic.time_before_deadline.minutes != 0 %}
+				{{ topic.time_before_deadline.minutes }} minutes
+				{% endif %}
+				{% if topic.time_before_deadline.seconds != 0 %}
+				{{ topic.time_before_deadline.seconds }} seconds
+				{% endif %}
+			</span>
+		</p>
+		{% endif %}
+		{% endif %}
+		<div class="row">
+			<div class="col-lg-6">
+				{% if topic.img != None %}
+				<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
+				<br><br>
+				{% endif %}
+				{% if topic.img == None %}
+				<i>No image available</i>
+				<br><br>
+				{% endif %}
+			</div>
+			<div class="col-lg-6">
+				<p><span class="mdi-action-account-box"></span> {{ topic.creator.name }} {{ topic.creator.surname }}</p>
+				{% if topic.place != "" %}
+				<p><span class="mdi-communication-location-on"></span> {{ topic.place }}</p>
+				{% endif %}
+				{% if topic.date %}
+				<p><span class="mdi-editor-insert-invitation"></span> {{ topic.date }}</p>
+				{% endif %}
+				{% if topic.time %}
+				<p><span class="mdi-action-query-builder"></span> {{ topic.time }}</p>
+				{% endif %}
+			</div>
+		</div>
+		{% if is_owner %}
+		<div class="row"><div class="col-lg-10"></div><div class="col-lg-2" style="padding:0px;"><a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete" style="margin:0px;margin-left:20px;"></a></div></div>
+		{% endif %}
+	</div>
+
+	<div class="list-group">
+		<h2>Proposals</h2>
+		{% if not topic.expired %}
+		<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="background-color:#0F9D58;z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+		{% else %}
+		<button class="btn btn-fab btn-raised btn-material-grey disabled" style="z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
+		{% endif %}
+		{% for proposal in proposals %}
+		<div class="list-group-item">
+			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 10px 25px;">
+				<div class="row">
+					<!-- interno proposta -->
+					<div class="row-picture">
+						<img class="circle" src="/static/images/user-default.jpg" alt="icon">
+					</div>
+					<div class="row-content">
+						<div class="col-lg-11">
+							<h2 class="list-group-item-heading">
+								<b style="font-size: 25px;">{{ proposal.title }}</b>
+							</h2>
+							<br>
+							{% if proposal.place %}
+							<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
+							{% endif %}
+							{% if proposal.date %}
+							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.date }}
+							{% endif %}
+							{% if proposal.time %}
+							<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
+							{% endif %}
+							<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
+							<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
+							<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
+								<p></p>
+								<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red"><button class="btn btn-default btn-raised">View details</button></a>
+							</div>
+						</div>
+						<div class="least-content" style="margin-top: 15px; margin-right: 15px;">
+							<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>&nbsp;
+							{% if not topic.expired %}
+							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;"></button>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
