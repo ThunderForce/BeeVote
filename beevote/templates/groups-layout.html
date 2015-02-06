@@ -25,6 +25,10 @@
 				checkDisplay("dateButton", "topicDateInput");
 				checkDisplay("timeButton", "topicTimeInput");
 				checkDisplay("deadLineButton", "topicDeadLineInput");
+
+				resetForm("group-cancel", "group-form");
+				/*resetForm("proposal-cancel","proposal-form");*/
+				resetFormTopic("topic-cancel","topic-form",["locationButton","dateButton","timeButton","deadLineButton"],["topicWhereInput","topicDateInput","topicTimeInput","topicDeadLineInput"]);
 				
 				$('#group-form').ajaxForm({
 					dataType: "json",
@@ -37,8 +41,8 @@
 					},
 					success: function(response) {
 						if (response.success) {
-							load_groups();
-							$('#myModal').modal('hide');
+							load_groups(response.group_id);
+							$('#createGroup').modal('hide');
 						} else {
 							alert(response.error);
 						}
@@ -72,6 +76,7 @@
 						arr.push({name: 'timezoneOffset', value: new Date().getTimezoneOffset()})
 						$('button#create-topic').attr("disabled", true);
 					},
+					clearForm: true,
 					error: function() {
 						alert("Errore inaspettato!");
 						$('button#create-topic').attr("disabled", false);
@@ -93,13 +98,38 @@
 					return true;
 				});
 				
-				function load_groups() {
+				function load_groups(opened_group) {
 					$('#group-list').html('<div class="loader"></div>');
-					$('#group-list').load('/html/groups');
+					if (opened_group == null)
+						$('#group-list').load('/html/groups');
+					else
+						$('#group-list').load('/html/groups', function() {
+							$('div.group-well[data-group_id="'+opened_group+'"]').click();
+						});
 				}
-				load_groups();
+				load_groups(null);
 				load_all_topics();
 			});
+			var buttons = {
+				create_group:
+					'<li style="padding-top:20px;padding-bottom:20px;">'+
+						'<button data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" data-mfb-label="label with long long title" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FF5722;">'+
+							'<i class="mdi-social-group" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
+						'</button>'+
+					'</li>',
+				create_topic:
+					'<li style="padding-top:20px;padding-bottom:20px;">'+
+						'<button data-target="#createTopic" data-toggle="modal" data-mfb-label="Create Topic" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #2196F3;">'+
+							'<i class="mdi-communication-forum" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
+						'</button>'+
+					'</li>',
+				create_proposal:
+					'<li style="padding-top:20px;padding-bottom:20px;">'+
+						'<button data-mfb-label="Create Proposal" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #0F9D58;">'+
+							'<i class="mdi-communication-messenger" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
+						'</button>'+
+					'</li>'
+			}
 			function get_topic_list(topics,global_topics) {
 				var topic_list = $('<div></div>')
 				if (global_topics)
@@ -168,7 +198,11 @@
 			}
 			function load_group_topics(group_id) {
 				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('html/group/'+group_id);
+				$('div#right-column').load('html/group/'+group_id, function() {
+					$('#creation-buttons').html('');
+					$('#creation-buttons').append(buttons.create_topic);
+					$('#creation-buttons').append(buttons.create_group);
+				});
 				$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+group_id+'/members');
 				$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
 				$('#groupId').val(group_id);
@@ -194,6 +228,9 @@
 						})
 						
 						topic_column.append(get_topic_list(topics, true));
+
+						$('#creation-buttons').html('');
+						$('#creation-buttons').append(buttons.create_group);
 					}
 				});
 			}
@@ -204,6 +241,29 @@
 				$(this).toggleClass('selected');
 				$('#'+button).css('background-color', $(this).hasClass('selected') ? '#40FF40' : '#2196F3');
 				$('#'+field).css('display', $(this).hasClass('selected') ? 'block' : 'none');
+			});
+		};
+
+		function resetForm(cancel_button, form_id) {
+			$('#'+cancel_button).on('click', function() {
+				$('#'+form_id).each(function(){
+					this.reset();
+				});
+			});
+		};
+
+		function resetFormTopic(cancel_button,form_id,buttons_id,fields_id) {
+			$('#'+cancel_button).on('click', function() {
+				$('#'+form_id).each(function() {
+					this.reset();
+					$(buttons_id).each(function(index, value) {
+						$('#'+value).removeClass('selected');
+						$('#'+value).css('background-color', '#2196F3');
+					});
+					$(fields_id).each(function(index, value) {
+						$('#'+value).css('display', 'none');
+					});
+				});
 			});
 		};
 		</script>
@@ -217,7 +277,7 @@
 
 
 		<!-- Popup-Form New Group -->
-		<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div id="createGroup" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -248,21 +308,12 @@
 										<input id="inputImg" type="file" name="img"/>
 									</div>
 								</div>
-								
-								<!-- OLD BUTTON 
-								<div class="form-group">
-								<div class="col-lg-10 col-lg-offset-2">
-								<button type="button" data-toggle="modal" data-target="#myModal" class="btn btn-default">Cancel</button>
-								<button type="submit" class="btn btn-info">Create</button>
-								</div>
-								</div>
-								-->
 
 								<!-- NEW BUTTON -->
 								<div class="form-group">
 									<div class="modal-footer">
-										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
-										<button type="submit" class="btn" id="create-group" style="background-color:#f44336;">Create</button>
+										<button type="button" id="group-cancel" class="btn btn-default" data-dismiss="modal" data-target="#createGroup">Cancel</button>
+										<button type="submit" class="btn" id="create-group" style="background-color:#FF5722;">Create</button>
 									</div>
 								</div>
 							</fieldset>
@@ -406,7 +457,7 @@
 									<!-- NEW BUTTON -->
 									<div class="form-group">
 										<div class="modal-footer" style="padding:1px;">
-											<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+											<button type="button" id="topic-cancel" class="btn btn-default" data-dismiss="modal" data-target="#createGroup">Cancel</button>
 											<button type="submit" class="btn btn-info" id="create-topic">Create</button>
 										</div>
 									</div>
@@ -418,11 +469,40 @@
 			</div>	
 		</div>
 
+		<!-- Buttons -->
+		<ul class="bt mfb-component--br mfb-zoomin" style="bottom:-10px;right:-10px;">
+			<li class="mfb-component__wrap">
+				<a href="#" data-mfb-label="Create" class="btn btn-fab btn-raised" style="background-color: #db4437;pointer-events:none;">
+					<i class="mfb-component__main-icon--resting mdi-content-add" style="top:-14px;font-size:27px;"></i>
+					<i class="mfb-component__main-icon--active"></i>
+				</a>
+				<ul id="creation-buttons" class="mfb-component__list" style="padding: 8px; margin-bottom: -20px;">
+					<!--
+					<li style="padding-top:20px;padding-bottom:20px;">
+						<a href="#" data-mfb-label="Create Proposal" class="btn btn-fab btn-raised" style="height: 40px;width: 40px; background-color: #0F9D58;">
+							<i class="mdi-communication-messenger" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>
+						</a>
+					</li>
+					<li style="padding-top:20px;padding-bottom:20px;">
+						<a href="#" data-mfb-label="Create Topic" class="btn btn-fab btn-raised" style="height: 40px;width: 40px; background-color: #2196F3;">
+							<i class="mdi-communication-forum" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>
+						</a>
+					</li>
+					<li style="padding-top:20px;padding-bottom:20px;">
+						<a href="#" data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" data-mfb-label="label with long long title" class="btn btn-fab btn-raised" style="height: 40px;width: 40px; background-color: #FF5722;">
+							<i class="mdi-social-group" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>
+						</a>
+					</li>
+					-->
+				</ul>        
+			</li>
+		</ul>
+
 		<!-- Jumbotron Contenitore -->
 		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
 			<div class="row">
 				<!-- Colonna sinistra -->
-				<div class="col-lg-5" style="padding-left:85px;padding-right:85px;">
+				<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
 					<!-- Jumbotron con immagine profilo -->
 					<div class="jumbotron" style="background-color: #2196F3; max-width: 900px;">
 						<div class="row">
@@ -441,14 +521,13 @@
 					<!-- Jumbotron Lista Gruppi -->
 					<div>
 						<h2>Your Groups</h2>
-						<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="z-index:10;position:fixed;bottom:10px;left:10px;"><i class="mdi-content-add" style="top: -3px;"></i></button>
 					</div>
 					<br>
 					<div id="group-list"></div>
 				</div> <!-- /col-lg-4 -->
 
 				<!-- Colonna destra -->
-				<div class="col-lg-7" id="right-column" style="padding-left:85px;padding-right:85px;">
+				<div class="col-lg-7" id="right-column" style="padding-left:20px;padding-right:20px;">
 					
 				</div><!-- /col-lg-8 -->
 			</div><!-- /row-inizio -->

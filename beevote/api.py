@@ -465,6 +465,7 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 		if not is_user_in_group(beevote_user, group):
 			values = {
 				'success': False,
+				'group_id': group_id,
 				'error': "You are not authorized to interact with this group",
 			}
 		else:
@@ -475,10 +476,12 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 				topic.delete()
 				values = {
 					'success': True,
+					'group_id': group_id,
 				}
 			else:
 				values = {
 					'success': False,
+					'group_id': group_id,
 					'error': "You are not the creator of the topic",
 				}
 		self.response.out.write(json.dumps(values))

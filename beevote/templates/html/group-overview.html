@@ -3,7 +3,12 @@
 	$(document).ready(function() {
 		$('div.topic-item').on('click', function() {
 			$('div#right-column').html('<div class="loader"></div>');
-			$('div#right-column').load('html/group/{{ group.key.id }}/topic/'+$(this).data('topic-id'));
+			$('div#right-column').load('html/group/{{ group.key.id }}/topic/'+$(this).data('topic-id'), function() {
+				$('#creation-buttons').html('');
+				$('#creation-buttons').append(buttons.create_proposal);
+				$('#creation-buttons').append(buttons.create_topic);
+				$('#creation-buttons').append(buttons.create_group);
+			});
 		});
 	});
 	
@@ -11,7 +16,7 @@
 	$('input#groupId').val("{{ group.key.id }}");
 </script>
 <div class="group-overview">
-	<div class="jumbotron" style="background-color: #f44336; max-width: 900px;">
+	<div class="jumbotron" color="orange_g" style="max-width: 900px;">
 		<h1 style="margin-top:-15px;color:#000000">{{group.name}}</h1>
 		<div class="row">
 			<div class="col-lg-5">
@@ -34,9 +39,6 @@
 			<div class="row">
 				<div class="row-content">
 					<h2>Topics</h2>
-						<button class="btn btn-fab btn-raised btn-material-blue" data-toggle="modal" data-target="#createTopic" style="background-color:#2196F3;z-index:10;position:fixed;bottom:10px;right:10px;">
-							<i class="mdi-content-add" ></i>
-						</button>
 				</div>
 			</div>
 		</div>

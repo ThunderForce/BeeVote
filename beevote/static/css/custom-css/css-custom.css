@@ -38,6 +38,9 @@ img.image-circle {
 	border-radius: 0;
 }
 
+[color="blue"].navbar {
+	background-color: #2196F3;
+}
 
 [color="blue"].well {
   background-color: #2196F3;
@@ -47,8 +50,12 @@ img.image-circle {
   background-color: #f44336;
 }
 
-[color="blue"].navbar {
-	background-color: #2196F3;
+[color="yellow_g"].well {
+	background-color: #FDD835;
+}
+
+[color="orange_g"].well {
+	background-color: #FF5722;
 }
 
 [color="green"].well {
@@ -57,6 +64,18 @@ img.image-circle {
 
 [color="red"].well{
   background-color: #D32F2F;
+}
+
+[color="red_g"].jumbotron {
+	background-color: #f44336;
+}
+
+[color="yellow_g"].jumbotron {
+	background-color: #FDD835;
+}
+
+[color="orange_g"].jumbotron {
+	background-color: #FF5722;
 }
 
 /*occhio non so se questo è giusto!!! XD */
@@ -76,8 +95,12 @@ button.btn.mdi-action-thumb-up.vote-checkbox.proposal-pending-vote {
 	background-color: rgb(128, 128, 128);
 }
 
+button.btn.btn-fab.btn-raised.btn-shadow {
+	box-shadow: 0 1px 10px 10px rgba(0, 0, 0, 0.2)
+}
+
 div.well.well-lg.group-selected {
-	background-color: #F4A936
+	background-color: #FF9100
 }
 
 div.loader
@@ -87,6 +110,14 @@ div.loader
 	z-index: 9999;
 	background: url('/static/images/loading.gif') no-repeat;
 	background-size: contain;
+}
+
+topic_color {
+	background-color: #2196F3;
+}
+
+proposal_color {
+	background-color: #0F9D58;
 }
 
 /*

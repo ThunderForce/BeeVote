@@ -1,7 +1,29 @@
+<script>
+$(document).ready(function() {
+	$('button#delete-topic').on('click', function() {
+		if (confirm("Are you sure to delete this topic?")) {
+			$.ajax({
+				url: '/api/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove',
+				method: 'POST',
+				dataType: 'json',
+				error: function() {
+					alert("Errore inaspettato!");
+				},
+				success: function(response) {
+					if (response.success) {
+						load_group_topics(response.group_id);
+					} else {
+						alert(response.error);
+					}
+				}
+			});
+		}
+	});
+});
+</script>
 <div class="topic-overview">
-	<div class="jumbotron" style="max-width:900px; background-color:#2196F3;margin-left:12px;">
-		<h1 style="word-wrap:break-word;">{{ topic.title }}</h1>
-		<p style="word-wrap:break-word;">{{ topic.description }}</p>
+	<div class="jumbotron" style="max-width:900px; background-color:#2196F3;padding:0px;padding-left:18px;">
+		<h1 style="word-wrap:break-word;padding-top:5px;">{{ topic.title }}</h1>
 		{% if topic.expired %}
 		<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
 		{% else %}
@@ -26,9 +48,9 @@
 		{% endif %}
 		{% endif %}
 		<div class="row">
-			<div class="col-lg-6">
+			<div class="col-lg-5">
 				{% if topic.img != None %}
-				<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 500px; max-width: 100%;">
+				<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 175px; max-width: 100%;">
 				<br><br>
 				{% endif %}
 				{% if topic.img == None %}
@@ -36,7 +58,8 @@
 				<br><br>
 				{% endif %}
 			</div>
-			<div class="col-lg-6">
+			<div class="col-lg-3"><p style="word-wrap:break-word;">{{ topic.description }}</p></div>
+			<div class="col-lg-4">
 				<p><span class="mdi-action-account-box"></span> {{ topic.creator.name }} {{ topic.creator.surname }}</p>
 				{% if topic.place != "" %}
 				<p><span class="mdi-communication-location-on"></span> {{ topic.place }}</p>
@@ -50,7 +73,12 @@
 			</div>
 		</div>
 		{% if topic.is_own %}
-		<div class="row"><div class="col-lg-10"></div><div class="col-lg-2" style="padding:0px;"><a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete" style="margin:0px;margin-left:20px;"></a></div></div>
+		<div class="row">
+			<div class="col-lg-10"></div>
+			<div class="col-lg-2" style="padding:0px;">
+				<button id="delete-topic" title="Delete this topic" class="btn btn-danger mdi-action-delete" style="margin-left:20px;"></button>
+			</div>
+		</div>
 		{% endif %}
 	</div>
 
@@ -63,7 +91,7 @@
 		{% endif %}
 		{% for proposal in topic.proposals %}
 		<div class="list-group-item">
-			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 10px 25px;">
+			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 0px 25px;">
 				<div class="row">
 					<!-- interno proposta -->
 					<div class="row-picture">
@@ -71,10 +99,9 @@
 					</div>
 					<div class="row-content">
 						<div class="col-lg-11">
-							<h2 class="list-group-item-heading">
-								<b style="font-size: 25px;">{{ proposal.title }}</b>
-							</h2>
-							<br>
+							<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">
+								{{ proposal.title }}
+							</h3>
 							{% if proposal.place %}
 							<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
 							{% endif %}
