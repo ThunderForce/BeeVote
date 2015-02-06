@@ -627,7 +627,7 @@ The BeeVote Team
 					body="""
 Dear {request.name} {request.surname},
 
-Your registration request has been sent: you will receive an email when an admininstrator accepts your request.
+Your registration request has been sent: you will receive an email when an administrator accepts your request.
 
 Details of registration request:
 - User ID: {request.user_id}
@@ -717,6 +717,7 @@ app = webapp2.WSGIApplication([
 	('/api/group/(.*)', api.LoadGroupHandler),
 	('/api/user/(.*)', api.LoadUserHandler),
 	('/html/groups', html_strips.GroupsHandler),
+	('/html/group/(.*)/topic/(.*)', html_strips.TopicHandler),
 	('/html/group/(.*)/members', html_strips.GroupMembersHandler),
 	('/html/group/(.*)', html_strips.GroupHandler),
 	('/register', RegistrationHandler),

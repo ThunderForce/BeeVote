@@ -1,11 +1,10 @@
 <script>
 	
 	$(document).ready(function() {
-		/*
 		$('div.topic-item').on('click', function() {
-			$('div#right-column').load('html/topic-overview');
+			$('div#right-column').html('<div class="loader"></div>');
+			$('div#right-column').load('html/group/{{ group.key.id }}/topic/'+$(this).data('topic-id'));
 		});
-		*/
 	});
 	
 	$('span#group_name').html("{{ group.name }}");
@@ -47,9 +46,9 @@
 		<p>There are no topics in this group yet. Create one now!</p>
 		{% endif %}
 		{% for topic in group.topics %}
-		<div class="list-group-item topic-item">
-			<a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}">
-				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; max-width: 900px;">
+		<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}">
+			<!-- <a href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}"> -->
+				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
 					<div class="row">
 						<div class="row-picture">
 							{% if topic.img %}
@@ -101,7 +100,7 @@
 						</div>
 					</div>
 				</div>
-			</a>
+			<!-- </a> -->
 		</div>
 		{% endfor %}
 	</div>

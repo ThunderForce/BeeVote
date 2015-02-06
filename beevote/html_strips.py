@@ -156,3 +156,51 @@ class GroupMembersHandler(BaseHandler):
 			'group': group,
 		}
 		write_template(self.response, 'html/group-members.html', values)
+
+class TopicHandler(BaseHandler):
+	def get(self, group_id, topic_id):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		group = models.Group.get_from_id(long(group_id))
+		if not is_user_in_group(beevote_user, group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		topic = models.Topic.get_from_id(group_id, topic_id)
+		if (not topic):
+			self.abort(404, detail="This topic does not exist.")
+		
+		if topic.creator.key() == beevote_user.key():
+			topic.is_own = True
+		else:
+			topic.is_own = False
+		
+		proposals = topic.get_proposals()
+		
+		# Adding a variable on each proposal containing the NUMBER of votes of the proposal
+		for proposal in proposals:
+			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
+			own_vote = votes.get()
+			if own_vote:
+				proposal.already_voted = True
+			else:
+				proposal.already_voted = False
+			proposal.vote_number = len(proposal.vote_set.fetch(1000))
+		
+		# Sorting the proposal according to vote number
+		topic.proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
+
+		# Evaluation about topic deadline
+		if topic.deadline != None:
+			currentdatetime = datetime.datetime.now()
+			topic.expired = topic.deadline < currentdatetime
+			time_before_deadline = topic.deadline - currentdatetime
+			topic.time_before_deadline = {
+				'seconds': time_before_deadline.seconds % 60,
+				'minutes': (time_before_deadline.seconds/60) % 60,
+				'hours': time_before_deadline.seconds/3600,
+				'days': time_before_deadline.days,
+			}
+			
+		values = {
+			'topic': topic,
+		}
+		write_template(self.response, 'html/topic-overview.html', values)

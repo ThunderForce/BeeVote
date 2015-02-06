@@ -1,4 +1,4 @@
-<div>
+<div class="topic-overview">
 	<div class="jumbotron" style="max-width:900px; background-color:#2196F3;margin-left:12px;">
 		<h1 style="word-wrap:break-word;">{{ topic.title }}</h1>
 		<p style="word-wrap:break-word;">{{ topic.description }}</p>
@@ -49,7 +49,7 @@
 				{% endif %}
 			</div>
 		</div>
-		{% if is_owner %}
+		{% if topic.is_own %}
 		<div class="row"><div class="col-lg-10"></div><div class="col-lg-2" style="padding:0px;"><a id="delete-topic" title="Delete this topic" href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete" style="margin:0px;margin-left:20px;"></a></div></div>
 		{% endif %}
 	</div>
@@ -61,7 +61,7 @@
 		{% else %}
 		<button class="btn btn-fab btn-raised btn-material-grey disabled" style="z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
 		{% endif %}
-		{% for proposal in proposals %}
+		{% for proposal in topic.proposals %}
 		<div class="list-group-item">
 			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 10px 25px;">
 				<div class="row">
