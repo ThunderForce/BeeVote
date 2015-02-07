@@ -555,6 +555,84 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
+class CreateProposalHandler(webapp2.RequestHandler):
+	def post(self):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		title = self.request.get('title')
+		where = self.request.get('place')
+		date = self.request.get('date')
+		time = self.request.get('time')
+		description = self.request.get('description')
+		topic_id = self.request.get('topic_id')
+		group_id = self.request.get('group_id')
+		if title == "":
+			values = {
+				'success': False,
+				'error': 'Title is required',
+			}
+		elif group_id == "":
+			values = {
+				'success': False,
+				'error': 'Group ID is required',
+			}
+		elif topic_id == "":
+			values = {
+				'success': False,
+				'error': 'Topic ID is required',
+			}
+		else:
+			topic = models.Topic.get_from_id(group_id, topic_id)
+			proposal = models.Proposal(
+				title=title,
+				topic=topic,
+				parent=topic,
+				creator=beevote_user,
+			)
+			if where != "":
+				proposal.place = where
+			if date != "":
+				proposal.date = datetime.datetime.strptime(date, "%d-%m-%Y").date()
+			if time != "":
+				proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
+			proposal.description = description
+			proposal.put()
+			values = {
+				'success': True,
+				'group_id': group_id,
+				'topic_id': topic_id,
+				'proposal_id': proposal.key().id(),
+			}
+		self.response.out.write(json.dumps(values))
+
+class RemoveProposalHandler(webapp2.RequestHandler):
+	def post(self, group_id, topic_id, proposal_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group = models.Group.get_from_id(group_id)
+		if not is_user_in_group(beevote_user, group):
+			values = {
+				'success': False,
+				'group_id': group_id,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
+			if proposal.creator.key() == beevote_user.key():
+				proposal.delete()
+				values = {
+					'success': True,
+					'group_id': group_id,
+					'topic_id': topic_id,
+				}
+			else:
+				values = {
+					'success': False,
+					'error': "You are not the creator of the proposal",
+				}
+		self.response.out.write(json.dumps(values))
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
