@@ -385,7 +385,6 @@ class RemoveProposalHandler(BaseHandler):
 		else:
 			self.abort(401, detail="You are not the creator of the proposal and so you cannot remove it.")
 
-
 class ProposalHandler(BaseHandler):
 	def get(self, group_id, topic_id, proposal_id):
 		user = users.get_current_user()
