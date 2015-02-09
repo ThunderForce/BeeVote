@@ -26,9 +26,13 @@
 				checkDisplay("timeButton", "topicTimeInput");
 				checkDisplay("deadLineButton", "topicDeadLineInput");
 
-				resetForm("group-cancel", "group-form");
+				$('#group-cancel').on('click', function() {
+					resetForm("group-form");
+				});
 				/*resetForm("proposal-cancel","proposal-form");*/
-				resetFormTopic("topic-cancel","topic-form",["locationButton","dateButton","timeButton","deadLineButton"],["topicWhereInput","topicDateInput","topicTimeInput","topicDeadLineInput"]);
+				$('#topic-cancel').on('click', function() {
+					resetFormTopic("topic-form",["locationButton","dateButton","timeButton","deadLineButton"],["topicWhereInput","topicDateInput","topicTimeInput","topicDeadLineInput"]);
+				});
 				
 				$('#group-form').ajaxForm({
 					dataType: "json",
@@ -85,6 +89,7 @@
 						if (response.success) {
 							load_group_topics(response.group_id)
 							$('#createTopic').modal('hide');
+							resetFormTopic("topic-form",["locationButton","dateButton","timeButton","deadLineButton"],["topicWhereInput","topicDateInput","topicTimeInput","topicDeadLineInput"]);
 						} else {
 							alert(response.error);
 						}
@@ -159,26 +164,22 @@
 			});
 		};
 
-		function resetForm(cancel_button, form_id) {
-			$('#'+cancel_button).on('click', function() {
-				$('#'+form_id).each(function(){
-					this.reset();
-				});
+		function resetForm(form_id) {
+			$('#'+form_id).each(function(){
+				this.reset();
 			});
 		};
 
-		function resetFormTopic(cancel_button,form_id,buttons_id,fields_id) {
-			$('#'+cancel_button).on('click', function() {
-				$('#'+form_id).each(function() {
-					this.reset();
-					$(buttons_id).each(function(index, value) {
-						$('#'+value).removeClass('selected');
-						$('#'+value).css('background-color', '#2196F3');
-					});
-					$(fields_id).each(function(index, value) {
-						$('#'+value).css('display', 'none');
-					});
-				});
+		function resetFormTopic(form_id,buttons_id,fields_id) {
+			$('#'+form_id).each(function() {
+				this.reset();
+			});
+			$(buttons_id).each(function(index, value) {
+				$('#'+value).removeClass('selected');
+				$('#'+value).css('background-color', '#2196F3');
+			});
+			$(fields_id).each(function(index, value) {
+				$('#'+value).css('display', 'none');
 			});
 		};
 		</script>
