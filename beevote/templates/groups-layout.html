@@ -2,7 +2,7 @@
 <html>
 	<head>
 
-		<title>My Groups - BeeVote</title>
+		<title>BeeVote</title>
 
 		{{ basic_head }}
 
@@ -38,7 +38,9 @@
 				$('#group-cancel').on('click', function() {
 					resetForm("group-form");
 				});
-				/*resetForm("proposal-cancel","proposal-form");*/
+				$('#proposal-cancel').on('click', function() {
+					resetForm("proposal-form");
+				});
 				$('#topic-cancel').on('click', function() {
 					resetFormTopic("topic-form",["locationButton","dateButton","timeButton","deadLineButton"],["topicWhereInput","topicDateInput","topicTimeInput","topicDeadLineInput"]);
 				});
@@ -469,7 +471,7 @@
 
 								<div class="form-group">
 									<div class="modal-footer">
-										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel">Cancel</button>
 										<button type="submit" class="btn btn-success" id="create-proposal">Create</button>
 									</div>
 								</div>
