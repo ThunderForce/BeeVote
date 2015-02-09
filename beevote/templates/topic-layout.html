@@ -55,35 +55,35 @@
 							$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 						}
 					});
-} else
-$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
-});
-$('.vote-checkbox').on('click', function(e) {
+			} else
+				$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+		});
+		$('.vote-checkbox').on('click', function(e) {
 
-	var group_id = {{ topic.parent.key.id }};
-	var topic_id = {{ topic.key.id }};
-	var proposal_id = $(this).data("proposal");
+			var group_id = {{ topic.parent.key.id }};
+			var topic_id = {{ topic.key.id }};
+			var proposal_id = $(this).data("proposal");
 
-	$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
-	success_callback = function(response) {
-		$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
-		$("button.vote-checkbox[data-proposal='" + proposal_id +"']").removeClass("proposal-pending-vote disabled");
-	};
+			$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
+			success_callback = function(response) {
+				$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
+				$("button.vote-checkbox[data-proposal='" + proposal_id +"']").removeClass("proposal-pending-vote disabled");
+			};
 
-	$(this).toggleClass("proposal-voted proposal-not-voted");
-	$(this).addClass("proposal-pending-vote disabled")
-	if ($(this).hasClass("proposal-voted"))
-		add_vote(group_id, topic_id, proposal_id, success_callback);
-	else
-		remove_vote(group_id, topic_id, proposal_id, success_callback);
+			$(this).toggleClass("proposal-voted proposal-not-voted");
+			$(this).addClass("proposal-pending-vote disabled")
+			if ($(this).hasClass("proposal-voted"))
+				add_vote(group_id, topic_id, proposal_id, success_callback);
+			else
+				remove_vote(group_id, topic_id, proposal_id, success_callback);
 
-	if (e.stopPropagation) {
-						e.stopPropagation();   // W3C model
-					} else {
-						e.cancelBubble = true; // IE model
-					}
-				});
-});
+			if (e.stopPropagation) {
+					e.stopPropagation();   // W3C model
+				} else {
+					e.cancelBubble = true; // IE model
+				}
+		});
+	});
 </script>
 
 </head>
