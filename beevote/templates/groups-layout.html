@@ -77,6 +77,7 @@
 					},
 					success: function(response) {
 						if (response.success) {
+							$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
 							$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+response.group_id+'/members');
 						} else {
 							alert(response.error);
@@ -138,7 +139,7 @@
 			var buttons = {
 				create_group:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button id="create-group-button" data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" data-mfb-label="label with long long title" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FF5722;">'+
+						'<button id="create-group-button" data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FF5722;">'+
 							'<i class="mdi-social-group" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>',
@@ -178,13 +179,13 @@
 					$('#creation-buttons').append(buttons.create_topic);
 					$('#creation-buttons').append(buttons.create_group);
 				});
+				$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
 				$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+group_id+'/members');
 				$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
 				$('#groupId').val(group_id);
 			}
 			function load_all_topics() {
 				$('div#right-column').html('<div class="loader"></div>');
-				
 				$('div#right-column').load('html/topics', function() {
 					$('#creation-buttons').html('');
 					$('#creation-buttons').append(buttons.create_group);

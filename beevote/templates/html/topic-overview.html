@@ -44,9 +44,7 @@ $(document).ready(function() {
 	{% endif %}
 	
 	{% if topic.expired %}
-		$('button#create-proposal-button').attr("disabled", true);
-	{% else %}
-		$('button#create-proposal-button').attr("disabled", false);
+		$('button#create-proposal-button').attr("disabled", true).css('background-color', '#888888');
 	{% endif %}
 	
 	$('.vote-checkbox').on('click', function(e) {
