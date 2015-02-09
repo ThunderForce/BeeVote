@@ -141,6 +141,41 @@ class GroupHandler(BaseHandler):
 		}
 		write_template(self.response, 'html/group-overview.html', values)
 
+class TopicsHandler(BaseHandler):
+	def get(self):
+		time.sleep(0.5)
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
+		groups = [g for g in groups if not (not beevote_user.key() in g.members) and (g.members != [])]
+		topics = []
+		for group in groups:
+			for topic in group.get_topics():
+				topics.append(topic)
+		currentdatetime = datetime.datetime.now()
+		for topic in topics:
+			if topic.deadline != None:
+				topic.expired = topic.deadline < currentdatetime
+				time_before_deadline = topic.deadline - currentdatetime
+				topic.seconds_before_deadline = time_before_deadline.total_seconds()
+				topic.time_before_deadline = {
+					'seconds': time_before_deadline.seconds % 60,
+					'minutes': (time_before_deadline.seconds/60) % 60,
+					'hours': time_before_deadline.seconds/3600,
+					'days': time_before_deadline.days,
+				}
+			else:
+				topic.seconds_before_deadline = timedelta.max.total_seconds()
+			if topic.creator.key() == beevote_user.key():
+				topic.is_own = True
+			else:
+				topic.is_own = False
+		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
+		values = {
+			'topics' : topics,
+		}
+		write_template(self.response, 'html/topics.html',values)
+
 class GroupMembersHandler(BaseHandler):
 	def get(self, group_id):
 		user = users.get_current_user()

@@ -130,72 +130,6 @@
 						'</button>'+
 					'</li>'
 			}
-			function get_topic_list(topics,global_topics) {
-				var topic_list = $('<div></div>')
-				if (global_topics)
-					topic_list.addClass('global-topics');
-				topic_list.addClass('list-group');
-				$.each( topics, function( index, topic ) {
-						var div_list_item = $('<div></div>');
-						div_list_item.addClass('list-group-item');
-							var a_href = $('<a href="/group/'+topic.data.group_id+'/topic/'+topic.data.id+'">');
-								var div_well = $('<div></div>');
-								div_well.addClass('well well-lg');
-								div_well.attr('color', 'blue');
-								div_well.css('padding', '0px');
-								div_well.css('padding-top', '10px');
-								div_well.css('padding-left', '26px');
-								div_well.css('padding-bottom', '6px');
-								div_well.css('max-width', '900px');
-									var div_row = $('<div></div>');
-									div_row.addClass('row');
-										var div_picture = $('<div></div>');
-										div_picture.addClass('row-picture');
-											var image_src;
-											if (topic.data.has_image)
-												image_src = "/group/"+topic.data.group_id+"/topic/"+topic.data.id+"/image";
-											else
-												image_src = "/static/images/topic-icon.png";
-										div_picture.append('<img class="circle" src="'+image_src+'" alt="icon">');
-									div_row.append(div_picture);
-										var div_row_content = $('<div></div>');
-										div_row_content.addClass('row-content');
-										div_row_content.append('<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">'+topic.data.title+'</h3>');
-											var tag_h4 = $('<h4></h4>');
-											if (topic.data.place != null)
-												tag_h4.append('<span class="mdi-communication-location-on" style="margin-left:5px;"></span>'+topic.data.place);
-											if (topic.data.date != null)
-												tag_h4.append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>'+topic.data.date);
-											if (topic.data.time != null)
-												tag_h4.append('<span class="mdi-action-query-builder" style="margin-left:5px;"></span>'+topic.data.time);
-										div_row_content.append(tag_h4);
-										if (topic.data.deadline != null) {
-											if (topic.expired)
-												div_row_content.append('<h5 class="list-group-item-text" style="color: red;">This topic has reached its deadline.</h5>');
-											else {
-												var time_left = topic.time_before_deadline;
-													var tag_h5 = $('<h5 class="list-group-item-text" style="margin-left:5px;">Time before deadline: </h5>');
-														var span_red = $('<span style="color: red"></span>')
-														if (time_left.days != 0)
-															span_red.append(time_left.days+' days ');
-														if (time_left.hours != 0)
-															span_red.append(time_left.hours+' hours ');
-														if (time_left.minutes != 0)
-															span_red.append(time_left.minutes+' minutes ');
-														if (time_left.seconds != 0)
-															span_red.append(time_left.seconds+' seconds ');
-													tag_h5.append(span_red);
-												div_row_content.append(tag_h5);
-											}
-										}
-									div_row.append(div_row_content);
-								div_well.append(div_row);
-							a_href.append(div_well);
-						div_list_item.append(a_href);
-					topic_list.append(div_list_item);
-				});
-				return topic_list;
-			}
 			function load_group_topics(group_id) {
 				$('div#right-column').html('<div class="loader"></div>');
 				$('div#right-column').load('html/group/'+group_id, function() {
@@ -209,29 +143,10 @@
 			}
 			function load_all_topics() {
 				$('div#right-column').html('<div class="loader"></div>');
-				$.ajax({
-					url: '/api/groups',
-					method: 'GET',
-					data: {
-						'fetch_topics': true,
-						'evaluate_deadlines': true
-					},
-					success: function(groups) {
-						var topic_column = $('div#right-column');
-						topic_column.html('');
-						topic_column.append('<h2>List of all topics</h2>');
-						topic_column.append('<br>');
-						
-						var topics = [];
-						$.each(groups, function(index, group) {
-							topics = topics.concat(group.topics);
-						})
-						
-						topic_column.append(get_topic_list(topics, true));
-
-						$('#creation-buttons').html('');
-						$('#creation-buttons').append(buttons.create_group);
-					}
+				
+				$('div#right-column').load('html/topics', function() {
+					$('#creation-buttons').html('');
+					$('#creation-buttons').append(buttons.create_group);
 				});
 			}
 

@@ -717,6 +717,7 @@ app = webapp2.WSGIApplication([
 	('/api/groups', api.LoadGroupsHandler),
 	('/api/group/(.*)', api.LoadGroupHandler),
 	('/api/user/(.*)', api.LoadUserHandler),
+	('/html/topics', html_strips.TopicsHandler),
 	('/html/groups', html_strips.GroupsHandler),
 	('/html/group/(.*)/topic/(.*)', html_strips.TopicHandler),
 	('/html/group/(.*)/members', html_strips.GroupMembersHandler),

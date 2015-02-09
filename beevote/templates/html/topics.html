@@ -1,0 +1,83 @@
+<script>
+	
+	$(document).ready(function() {
+		$('div.topic-item').on('click', function() {
+			$('div.group-well').removeClass('group-selected');
+			$('div.group-well[data-group_id="'+$(this).data('group-id')+'"]').addClass('group-selected');
+			$('div#right-column').html('<div class="loader"></div>');
+			$('div#right-column').load('html/group/'+$(this).data('group-id')+'/topic/'+$(this).data('topic-id'), function() {
+				$('#creation-buttons').html('');
+				$('#creation-buttons').append(buttons.create_proposal);
+				$('#creation-buttons').append(buttons.create_topic);
+				$('#creation-buttons').append(buttons.create_group);
+			});
+		});
+	});
+</script>
+<div class="topics-overview">
+	<div class="list-group">
+		<div class="list-group-item">
+			<div class="row">
+				<div class="row-content">
+					<h2>List of all topics</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="list-group global-topics">
+		{% if not topics %}
+		<p>You have no topics yet. Choose a group and create one now!</p>
+		{% endif %}
+		{% for topic in topics %}
+		<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}" data-group-id="{{ topic.group.key.id }}">
+			<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
+				<div class="row">
+					<div class="row-picture">
+						{% if topic.img %}
+						<img class="circle" src="/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+						{% else %}
+						<img class="circle" src="/static/images/topic-icon.png" alt="icon">
+						{% endif %}
+					</div>
+					<div class="row-content">
+						<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
+						<h4>
+							{% if topic.place != "" %}
+							<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
+							{% endif %}
+							{% if topic.date %}
+							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.date }}
+							{% endif %}
+							{% if topic.time %}
+							<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
+							{% endif %}
+						</h4>
+						{% if topic.deadline %}
+							{% if topic.expired %}
+								<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span style="color: red;">This topic has reached its deadline.</span></h5>
+							{% else %}
+								<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span>
+									<span style="color: red">
+										{% if topic.time_before_deadline.days != 0 %}
+											{{ topic.time_before_deadline.days }} days 
+										{% endif %}
+										{% if topic.time_before_deadline.hours != 0 %}
+											{{ topic.time_before_deadline.hours }} hours 
+										{% endif %}
+										{% if topic.time_before_deadline.minutes != 0 %}
+											{{ topic.time_before_deadline.minutes }} minutes 
+										{% endif %}
+										<!-- {% if topic.time_before_deadline.seconds != 0 %}
+											{{ topic.time_before_deadline.seconds }} seconds 
+										{% endif %} -->
+									</span>
+								</h5>
+							{% endif %}
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>
