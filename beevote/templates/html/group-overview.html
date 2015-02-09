@@ -1,15 +1,6 @@
 <script>
-	
-	$(document).ready(function() {
-		$('div.topic-item').on('click', function() {
-			$('div#right-column').html('<div class="loader"></div>');
-			$('div#right-column').load('html/group/{{ group.key.id }}/topic/'+$(this).data('topic-id'), function() {
-				$('#creation-buttons').html('');
-				$('#creation-buttons').append(buttons.create_proposal);
-				$('#creation-buttons').append(buttons.create_topic);
-				$('#creation-buttons').append(buttons.create_group);
-			});
-		});
+	$('div.topic-item').on('click', function() {
+		load_topic({{ group.key.id }}, $(this).data('topic-id'))
 	});
 	
 	$('span#group_name').html("{{ group.name }}");

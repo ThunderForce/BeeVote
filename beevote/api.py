@@ -592,7 +592,7 @@ class CreateProposalHandler(webapp2.RequestHandler):
 			if where != "":
 				proposal.place = where
 			if date != "":
-				proposal.date = datetime.datetime.strptime(date, "%d-%m-%Y").date()
+				proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
 			if time != "":
 				proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 			proposal.description = description

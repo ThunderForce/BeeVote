@@ -1,3 +1,4 @@
+<script src="/static/js/vote-functions.js"></script>
 <script>
 $(document).ready(function() {
 	$('button#delete-topic').on('click', function() {
@@ -18,6 +19,60 @@ $(document).ready(function() {
 				}
 			});
 		}
+	});
+	$('input#proposal_popup_group_id').val("{{ topic.group.key.id }}");
+	$('input#proposal_popup_topic_id').val("{{ topic.key.id }}");
+	$('#creation-buttons').html('');
+	$('#creation-buttons').append(buttons.create_proposal);
+	$('#creation-buttons').append(buttons.create_topic);
+	$('#creation-buttons').append(buttons.create_group);
+	
+	{% if topic.place != "" %}
+		$('div#proposal_place_div').hide();
+	{% else %}
+		$('div#proposal_place_div').show();
+	{% endif %}
+	{% if topic.date %}
+		$('div#proposal_date_div').hide();
+	{% else %}
+		$('div#proposal_date_div').show();
+	{% endif %}
+	{% if topic.time %}
+		$('div#proposal_time_div').hide();
+	{% else %}
+		$('div#proposal_time_div').show();
+	{% endif %}
+	
+	{% if topic.expired %}
+		$('button#create-proposal-button').attr("disabled", true);
+	{% else %}
+		$('button#create-proposal-button').attr("disabled", false);
+	{% endif %}
+	
+	$('.vote-checkbox').on('click', function(e) {
+
+		var group_id = {{ topic.parent.key.id }};
+		var topic_id = {{ topic.key.id }};
+		var proposal_id = $(this).data("proposal");
+
+		$("span.vote-number[data-proposal='" + proposal_id +"']").html("...");
+		success_callback = function(response) {
+			$("span.vote-number[data-proposal='" + proposal_id +"']").html(response.vote_number);
+			$("button.vote-checkbox[data-proposal='" + proposal_id +"']").removeClass("proposal-pending-vote disabled");
+		};
+
+		$(this).toggleClass("proposal-voted proposal-not-voted");
+		$(this).addClass("proposal-pending-vote disabled")
+		if ($(this).hasClass("proposal-voted"))
+			add_vote(group_id, topic_id, proposal_id, success_callback);
+		else
+			remove_vote(group_id, topic_id, proposal_id, success_callback);
+
+		if (e.stopPropagation) {
+				e.stopPropagation();   // W3C model
+			} else {
+				e.cancelBubble = true; // IE model
+			}
 	});
 });
 </script>
@@ -84,11 +139,6 @@ $(document).ready(function() {
 
 	<div class="list-group">
 		<h2>Proposals</h2>
-		{% if not topic.expired %}
-		<button class="btn btn-fab btn-raised btn-material-red" data-toggle="modal" data-target="#myModal" style="background-color:#0F9D58;z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
-		{% else %}
-		<button class="btn btn-fab btn-raised btn-material-grey disabled" style="z-index:10;position:fixed;bottom:10px;right:10px;"><i class="mdi-content-add" style="top: 0px;"></i></button>
-		{% endif %}
 		{% for proposal in topic.proposals %}
 		<div class="list-group-item">
 			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 0px 25px;">

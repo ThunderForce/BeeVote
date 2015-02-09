@@ -9,18 +9,27 @@
 		<script>
 			$(document).ready(function() {
 				
-				$('#inputDate').datetimepicker({
+				$('input#inputDate').datetimepicker({
 					timepicker:false,
 					format:'d/m/Y'
 				});
-				$('#inputTime').datetimepicker({
+				$('input#inputTime').datetimepicker({
 					datepicker:false,
 					format:'H:i'
 				});
-				$('#inputDeadline').datetimepicker({
+				$('input#inputDeadline').datetimepicker({
 					format:'d/m/Y H:i'
 				});
 
+				$('input#proposal_date').datetimepicker({
+					timepicker:false,
+					format:'d/m/Y'
+				});
+				$('input#proposal_time').datetimepicker({
+					datepicker:false,
+					format:'H:i'
+				});
+				
 				checkDisplay("locationButton", "topicWhereInput");
 				checkDisplay("dateButton", "topicDateInput");
 				checkDisplay("timeButton", "topicTimeInput");
@@ -97,44 +106,69 @@
 					}
 				});
 				
-				$('#topic-form').submit(function() {
-					$(this).append('<input type="hidden" name="timezoneOffset" value="'+new Date().getTimezoneOffset()+'" /> ');
-					$('#create-topic').attr("disabled", true);
-					return true;
+				$('form#proposal-form').ajaxForm({
+					dataType: "json",
+					beforeSubmit: function(arr) {
+						arr.push({name: 'timezoneOffset', value: new Date().getTimezoneOffset()})
+						$('button#create-proposal').attr("disabled", true);
+					},
+					clearForm: true,
+					error: function() {
+						alert("Errore inaspettato!");
+						$('button#create-proposal').attr("disabled", false);
+					},
+					success: function(response) {
+						if (response.success) {
+							load_topic(response.group_id, response.topic_id)
+							$('#createProposal').modal('hide');
+							resetForm("proposal-form");
+						} else {
+							alert(response.error);
+						}
+						$('button#create-proposal').attr("disabled", false);
+					}
 				});
 				
-				function load_groups(opened_group) {
-					$('#group-list').html('<div class="loader"></div>');
-					if (opened_group == null)
-						$('#group-list').load('/html/groups');
-					else
-						$('#group-list').load('/html/groups', function() {
-							$('div.group-well[data-group_id="'+opened_group+'"]').click();
-						});
-				}
 				load_groups(null);
 				load_all_topics();
 			});
+			
 			var buttons = {
 				create_group:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" data-mfb-label="label with long long title" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FF5722;">'+
+						'<button id="create-group-button" data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" data-mfb-label="label with long long title" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FF5722;">'+
 							'<i class="mdi-social-group" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>',
 				create_topic:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button data-target="#createTopic" data-toggle="modal" data-mfb-label="Create Topic" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #2196F3;">'+
+						'<button id="create-topic-button" data-target="#createTopic" data-toggle="modal" data-mfb-label="Create Topic" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #2196F3;">'+
 							'<i class="mdi-communication-forum" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>',
 				create_proposal:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button data-mfb-label="Create Proposal" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #0F9D58;">'+
+						'<button id="create-proposal-button" data-target="#createProposal" data-toggle="modal" data-mfb-label="Create Proposal" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #0F9D58;">'+
 							'<i class="mdi-communication-messenger" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>'
 			}
+			
+			function load_topic(group_id, topic_id) {
+				$('div#right-column').html('<div class="loader"></div>');
+				$('div#right-column').load('html/group/'+group_id+'/topic/'+topic_id);
+			}
+			
+			function load_groups(opened_group) {
+				$('#group-list').html('<div class="loader"></div>');
+				if (opened_group == null)
+					$('#group-list').load('/html/groups');
+				else
+					$('#group-list').load('/html/groups', function() {
+						$('div.group-well[data-group_id="'+opened_group+'"]').click();
+					});
+			}
+			
 			function load_group_topics(group_id) {
 				$('div#right-column').html('<div class="loader"></div>');
 				$('div#right-column').load('html/group/'+group_id, function() {
@@ -385,6 +419,67 @@
 			</div>	
 		</div>
 
+		<!-- Popup Create Proposal -->
+		<div id="createProposal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createProposalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h2 align="center"><b>Create a new Proposal</b></h2>
+					</div>
+					<div class="modal-body">
+						<form action="/api/create-proposal" method="post" class="form-horizontal" id="proposal-form">
+							<fieldset>
+								<input type="hidden" id="proposal_popup_group_id" name="group_id" value="{{ topic.parent.key.id }}">
+								<input type="hidden" id="proposal_popup_topic_id" name="topic_id" value="{{ topic.key.id }}">
+								<div class="form-group">
+									<label for="proposal_title" class="col-lg-2 control-label">Title: </label>
+									<div class="col-lg-10">
+										<input class="form-control" id="proposal_title" name="title" placeholder="Title of the Proposal" type="text" maxlength="64" required>
+									</div>
+								</div>
+
+								<div class="form-group" id="proposal_place_div">
+									<label for="proposal_place" class="col-lg-2 control-label">Where: </label>
+									<div class="col-lg-10">
+										<input class="form-control" id="proposal_place" name="place" placeholder="Location for the activities" type="text">
+									</div>
+								</div>
+								
+								<div class="form-group" id="proposal_date_div">
+									<label for="proposal_date" class="col-lg-2 control-label">Date: </label>
+									<div class="col-lg-10">
+										<input class="form-control" id="proposal_date" name="date" placeholder="Date for the activity" autocomplete="off">
+									</div>
+								</div>
+								
+								<div class="form-group" id="proposal_time_div">
+									<label for="proposal_time" class="col-lg-2 control-label">Time: </label>
+									<div class="col-lg-10">
+										<input class="form-control" id="proposal_time" name="time" placeholder="Time for the activity" autocomplete="off">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label for="textArea" class="col-lg-2 control-label">Details</label>
+									<div class="col-lg-10">
+										<textarea class="form-control" rows="3" id="proposal_description" name="description"></textarea>
+										<span class="help-block">Add here details that you want the others will know </span>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<div class="modal-footer">
+										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal">Cancel</button>
+										<button type="submit" class="btn btn-success" id="create-proposal">Create</button>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 		<!-- Buttons -->
 		<ul class="bt mfb-component--br mfb-zoomin" style="bottom:-10px;right:-10px;">
 			<li class="mfb-component__wrap">
@@ -415,7 +510,7 @@
 		</ul>
 
 		<!-- Jumbotron Contenitore -->
-		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px;">
+		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px; max-width: 1100px;">
 			<div class="row">
 				<!-- Colonna sinistra -->
 				<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
