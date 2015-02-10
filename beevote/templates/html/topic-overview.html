@@ -20,6 +20,10 @@ $(document).ready(function() {
 			});
 		}
 	});
+	$("div.proposal-well").on("click", function() {
+		var proposal_id = $(this).data("proposal");
+		$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
+	});
 	$('input#proposal_popup_group_id').val("{{ topic.group.key.id }}");
 	$('input#proposal_popup_topic_id').val("{{ topic.key.id }}");
 	$('#creation-buttons').html('');
@@ -162,8 +166,14 @@ $(document).ready(function() {
 							<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
 							<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 							<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
-								<p></p>
-								<a href="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/proposal/{{ proposal.key.id }}" style="color:red"><button class="btn btn-default btn-raised">View details</button></a>
+								<br>
+								{% if proposal.description %}
+								Additional details:
+								<br>
+								{{ proposal.description }}
+								{% else%}
+								<i>No description available</i>
+								{% endif %}
 							</div>
 						</div>
 						<div class="least-content" style="margin-top: 15px; margin-right: 15px;">
