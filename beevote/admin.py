@@ -17,7 +17,6 @@
 
 import os
 import webapp2
-import datetime
 #import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
@@ -26,7 +25,6 @@ from google.appengine.api import users
 from google.appengine.api import mail
 
 import models
-import api
 
 # Start of handlers
 
@@ -51,29 +49,18 @@ class BasicPageHandler(webapp2.RequestHandler):
 		path = os.path.join(directory, os.path.join('templates/admin', template_name))
 		self.response.out.write(template.render(path, values))
 
-class AllowedUsersPageHandler(BasicPageHandler):
-	def get(self):
-		allowed_users = db.GqlQuery("SELECT * FROM BeeVoteUser")
-		self.write_template('allowed-users.html', {'allowed_users': allowed_users})
-
-class AddUserHandler(webapp2.RequestHandler):
-	def post(self):
-		email = self.request.get("email")
-		beevote_user = models.BeeVoteUser(email = email)
-		beevote_user.put()
-		self.redirect('/admin/allowed-users')
-
 class RemoveUserHandler(webapp2.RequestHandler):
 	def get(self, user_id):
 		beevote_user_key = db.Key.from_path('BeeVoteUser', long(user_id))
 		beevote_user = db.get(beevote_user_key)
 		beevote_user.delete()
-		self.redirect('/admin/allowed-users')
+		self.redirect('/admin/user-manager')
 
-class PendingRegistrationRequestsPageHandler(BasicPageHandler):
+class UserManagerHandler(BasicPageHandler):
 	def get(self):
 		requests = db.GqlQuery("SELECT * FROM RegistrationRequest")
-		self.write_template('pending-requests.html', {'requests': requests})
+		users = db.GqlQuery("SELECT * FROM BeeVoteUser")
+		self.write_template('user-manager.html', {'requests': requests, 'users': users})
 
 class AcceptRegistrationRequestHandler(webapp2.RequestHandler):
 	def get(self, request_id):
@@ -109,7 +96,7 @@ Details of registration request:
 The BeeVote Team
 """.format(request=request, link=self.request.host))
 		
-		self.redirect('/admin/pending-requests')
+		self.redirect('/admin/user-manager')
 
 class NotFoundPageHandler(BasicPageHandler):
 	def get(self):
@@ -119,10 +106,8 @@ class NotFoundPageHandler(BasicPageHandler):
 # End of handlers
 
 app = webapp2.WSGIApplication([
-	('/admin/user/add', AddUserHandler),
-	('/admin/user/remove/(.*)', RemoveUserHandler),
-	('/admin/allowed-users', AllowedUsersPageHandler),
-	('/admin/pending-requests', PendingRegistrationRequestsPageHandler),
+	('/admin/remove-user/(.*)', RemoveUserHandler),
+	('/admin/user-manager', UserManagerHandler),
 	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler),
 	('/.*', NotFoundPageHandler)
 ], debug=True)
