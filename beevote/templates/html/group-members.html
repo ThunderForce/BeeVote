@@ -30,12 +30,14 @@
 		<div class="row-content">
 			<h4 class="list-group-item-heading">{{member.name}} {{member.surname}}</h4>
 			<p>{{member.email}}</p>
+			{% if admin %}
 			<form class="remove-member-form" action="/api/group/{{ group.key.id }}/members/remove" method="POST">
 				<input type="text" id="email" name="email" value="{{ member.email }}" hidden>
 				<div class="least-content">
 					<button id="remove-member-{{member.email}}" type="submit" class="btn btn-danger btn-fab btn-raised mdi-action-delete"></button>
 				</div>
 			</form>
+			{% endif %}
 		</div>
 		<div class="list-group-separator"></div>'
 	</div>

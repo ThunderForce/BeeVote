@@ -18,8 +18,6 @@
 import os
 import webapp2
 from webapp2_extras import sessions
-import datetime
-from datetime import timedelta
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
@@ -144,90 +142,6 @@ class MainHandler(BaseHandler):
 			}
 			write_template(self.response, 'index.html', values)
 
-class RemoveTopicHandler(BaseHandler):
-	def get(self, group_id, topic_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(beevote_user, group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		
-		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-		topic = db.get(topic_key)
-
-		if topic.creator.key() == beevote_user.key():
-			topic.delete()
-			self.redirect("/group/"+group_id)
-		else:
-			self.abort(401, detail="You are not the creator of the topic and so you cannot remove it.")
-
-class TopicSampleHandler(BaseHandler):
-	def get(self, group_id, topic_id):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(beevote_user, group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-		topic = db.get(topic_key)
-		if (not topic):
-			self.abort(404, detail="This topic does not exist.")
-		
-		if topic.creator.key() == beevote_user.key():
-			is_owner = True
-		else:
-			is_owner = False
-		
-		proposals = db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', topic).fetch(1000)
-		
-		# Adding a variable on each proposal containing the NUMBER of votes of the proposal
-		for proposal in proposals:
-			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
-			own_vote = votes.get()
-			if own_vote:
-				proposal.already_voted = True
-			else:
-				proposal.already_voted = False
-			proposal.vote_number = len(proposal.vote_set.fetch(1000))
-		
-		# Sorting the proposal according to vote number
-		proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
-
-		# Evaluation about topic deadline
-		if topic.deadline != None:
-			currentdatetime = datetime.datetime.now()
-			topic.expired = topic.deadline < currentdatetime
-			time_before_deadline = topic.deadline - currentdatetime
-			topic.time_before_deadline = {
-				'seconds': time_before_deadline.seconds % 60,
-				'minutes': (time_before_deadline.seconds/60) % 60,
-				'hours': time_before_deadline.seconds/3600,
-				'days': time_before_deadline.days,
-			}
-
-		values = {
-			'topic': topic,
-			'proposals': proposals,
-			'is_owner': is_owner,
-		}
-		navbar_values = {
-			'breadcumb': {
-				'previous_elements': [
-					{
-						'title': group.name,
-						'href': "/group/"+str(group.key().id()),
-					}
-				],
-				'current_element': {
-					'title': topic.title,
-				}
-			}
-		}
-		write_template(self.response, 'topic-layout.html', values, navbar_values=navbar_values)
-
 class HomeHandler(BaseHandler):
 	def get(self):
 		
@@ -262,188 +176,6 @@ class HomeHandler(BaseHandler):
 			'user' : beevote_user,
 		}
 		write_template(self.response, 'groups-layout.html',values)
-
-class GroupHandler(BaseHandler):
-	def get(self, group_id):
-		user = users.get_current_user()
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if (not group):
-			self.abort(404, detail="This group does not exist.")
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		topics = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(20)
-		currentdatetime = datetime.datetime.now()
-		for topic in topics:
-			if topic.deadline != None:
-				topic.expired = topic.deadline < currentdatetime
-				time_before_deadline = topic.deadline - currentdatetime
-				topic.seconds_before_deadline = time_before_deadline.total_seconds()
-				topic.time_before_deadline = {
-					'seconds': time_before_deadline.seconds % 60,
-					'minutes': (time_before_deadline.seconds/60) % 60,
-					'hours': time_before_deadline.seconds/3600,
-					'days': time_before_deadline.days,
-				}
-			else:
-				topic.seconds_before_deadline = timedelta.max.total_seconds()
-		
-		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
-		
-		values = {
-			'group': group,
-			'topics': topics,
-		}
-		navbar_values = {
-			'breadcumb': {
-				'previous_elements': [],
-				'current_element': {
-					'title': group.name,
-				}
-			}
-		}
-		write_template(self.response, 'topics-layout.html', values, navbar_values=navbar_values)
-
-class GroupMembersHandler(BaseHandler):
-	def get(self, group_id):
-		user = users.get_current_user()
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		group.members_data = db.get(group.members)
-		values = {
-			'group': group,
-			'unknown_email': self.session().get_flashes('unknown_email'),
-		}
-		navbar_values = {
-			'breadcumb': {
-				'previous_elements': [
-					{
-						'title': group.name,
-						'href': "/group/"+str(group.key().id()),
-					}
-				],
-				'current_element': {
-					'title': 'Members',
-				}
-			}
-		}
-		write_template(self.response, 'group-members-layout.html', values, navbar_values=navbar_values)
-
-class AddGroupMemberHandler(BaseHandler):
-	def post(self, group_id):
-		user = users.get_current_user()
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		email = self.request.get("email")
-		beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
-		if beevote_user:
-			group.members.append(beevote_user.key())
-			group.put()
-		else:
-			sess = self.session()
-			sess.add_flash(email, key="unknown_email")
-		# TODO : MUST BE ABLE TO PASS THE EMAIL AS unknown_email
-		self.redirect(self.request.referer)
-		#self.redirect("/group/"+group_id+"/members")
-
-class RemoveGroupMemberHandler(BaseHandler):
-	def post(self, group_id):
-		user = users.get_current_user()
-		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(current_beevote_user, group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		email = self.request.get("email")
-		deleted_beevote_user = db.GqlQuery('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)		
-		group.members.remove(deleted_beevote_user.key())
-		group.put()
-		self.redirect("/group/"+group_id+"/members")
-
-class RemoveProposalHandler(BaseHandler):
-	def get(self, group_id, topic_id, proposal_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(beevote_user, group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		
-		if proposal.creator.key() == beevote_user.key():
-			proposal.delete()
-			self.redirect("/group/"+group_id+"/topic/"+topic_id)
-		else:
-			self.abort(401, detail="You are not the creator of the proposal and so you cannot remove it.")
-
-class ProposalHandler(BaseHandler):
-	def get(self, group_id, topic_id, proposal_id):
-		user = users.get_current_user()
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
-			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-
-		if (not proposal):
-			self.abort(404, detail="This proposal does not exist.")
-		
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", proposal)
-		vote_number = votes.count()
-		
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		
-		if proposal.creator.key() == beevote_user.key():
-			is_owner = True
-		else:
-			is_owner = False
-		
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
-		own_vote = votes.get()
-		if own_vote:
-			already_voted = True
-		else:
-			already_voted = False
-		if proposal.parent().deadline != None:
-			currentdatetime = datetime.datetime.now()
-			proposal.parent().expired = proposal.parent().deadline < currentdatetime
-		values = {
-			'proposal': proposal,
-			'vote_number': vote_number,
-			'already_voted': already_voted,
-			'is_owner': is_owner,
-		}
-		navbar_values = {
-			'breadcumb': {
-				'previous_elements': [
-					{
-						'title': group.name,
-						'href': "/group/"+str(group.key().id()),
-					},{
-						'title': proposal.parent().title,
-						'href': "/group/"+str(group.key().id())+"/topic/"+str(proposal.parent().key().id()),
-					}
-				],
-				'current_element': {
-					'title': proposal.title,
-				}
-			}
-		}
-		write_template(self.response, 'proposal-layout.html', values, navbar_values=navbar_values)
-
 
 class ProfileHandler(BaseHandler):
 	def get(self, user_id):
@@ -484,90 +216,6 @@ class TopicImageHandler(webapp2.RequestHandler):
 			else:
 				self.error(404)
 				self.response.out.write("Topic "+topic_id+" does not have an image")
-
-class CreateTopicHandler(BaseHandler):
-	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		group_id = self.request.get('groupId')
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-
-		title = self.request.get('inputTopicName')
-		where= self.request.get('inputWhere')
-		date = self.request.get('inputDate')
-		time = self.request.get('inputTime')
-		deadline = self.request.get('inputDeadline')
-		description = self.request.get('inputDescription')
-		img = self.request.get('inputImg')
-		tzoffset = self.request.get('timezoneOffset')
-		topic = models.Topic(
-			title=title,
-			group=group,
-			parent=group,
-			creator=beevote_user,
-			  )
-		topic.place = where
-		if date != "":
-			topic.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
-		if time != "":
-			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
-		if deadline !="":
-			topic.deadline = datetime.datetime.strptime(deadline, "%d/%m/%Y %H:%M")
-		topic.description = description
-		if img != "":
-			topic.img = db.Blob(img)
-		topic.put()
-		self.redirect('/group/'+group_id)
-
-class CreateProposalHandler(BaseHandler):
-	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		title = self.request.get('inputProposalName')
-		where = self.request.get('inputWhere')
-		date = self.request.get('inputDate')
-		time = self.request.get('inputTime')
-		description = self.request.get('inputDescription')
-		topic_id = self.request.get('topicId')
-		group_id = self.request.get('groupId')
-		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-		topic = db.get(topic_key)
-		proposal = models.Proposal(
-			title=title,
-			topic=topic,
-			parent=topic,
-			creator=beevote_user,
-		)
-		if where != "":
-			proposal.place = where
-		if date != "":
-			proposal.date = datetime.datetime.strptime(date, "%d-%m-%Y").date()
-		if time != "":
-			proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
-		proposal.description = description
-		proposal.put()
-		self.redirect('/group/'+group_id+'/topic/'+topic_id)
-
-class CreateGroupHandler(BaseHandler):
-	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		name = self.request.get('inputGroupName')
-		description = self.request.get('inputDescription')
-		img = self.request.get('inputImg')
-		group = models.Group(
-				name = name,
-				creator = beevote_user,
-			)
-		group.description = description
-		if img != "":
-			group.img = db.Blob(img)
-		group.members.append(beevote_user.key())
-		group.admins.append(beevote_user.key())
-		group.put()
-		group_id = group.key().id() 
-		self.redirect('/group/'+str(group_id))
 
 class RegistrationHandler(BaseHandler):
 	def get(self):
@@ -684,23 +332,21 @@ config['webapp2_extras.sessions'] = {
     'secret_key': '20beeVote15',
 }
 
+server =  os.environ.get("SERVER_SOFTWARE")
+
+
+if server is None:
+	debug = False  # Unexpected, disable DEBUG.
+else:
+	software, version = server.split("/", 1)
+	debug = software == "Development"
+
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
-	('/group/(.*)/members/remove', RemoveGroupMemberHandler),
-	('/group/(.*)/members/add', AddGroupMemberHandler),
-	('/group/(.*)/members', GroupMembersHandler),
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
 	('/group/(.*)/image', GroupImageHandler),
-	('/group/(.*)/topic/(.*)/proposal/(.*)/remove', RemoveProposalHandler),
-	('/group/(.*)/topic/(.*)/proposal/(.*)', ProposalHandler),
-	('/group/(.*)/topic/(.*)/remove', RemoveTopicHandler),
-	('/group/(.*)/topic/(.*)', TopicSampleHandler), #topic-layout
 	('/home', HomeHandler),
-	('/group/(.*)', GroupHandler),			#topics-layout.html
 	('/profile/(.*)', ProfileHandler),
-	('/create-topic', CreateTopicHandler),
-	('/create-proposal', CreateProposalHandler),
-	('/create-group', CreateGroupHandler),
 	('/api/group/(.*)/topic/(.*)/proposal/(.*)/remove', api.RemoveProposalHandler),
 	('/api/group/(.*)/members/remove', api.RemoveGroupMemberHandler),
 	('/api/group/(.*)/members/add', api.AddGroupMemberHandler),
@@ -726,7 +372,7 @@ app = webapp2.WSGIApplication([
 	('/request-registration',RequestRegistrationHandler),
 	('/registration-pending',RegistrationPendingHandler),
 	('/logout', LogoutHandler)
-], debug=True, config=config)
+], debug=debug, config=config)
 
 app.error_handlers[401] = handle_401
 app.error_handlers[404] = handle_404

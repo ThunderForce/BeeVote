@@ -24,10 +24,7 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 
-from google.appengine.api import mail
-
 import models
-import api
 import time
 
 # Start of handlers
@@ -187,8 +184,13 @@ class GroupMembersHandler(BaseHandler):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		group.member_list = db.get(group.members)
 		
+		if group.admins == [] or beevote_user.key() in group.admins:
+			admin = True
+		else:
+			admin = False
 		values = {
 			'group': group,
+			'admin': admin,
 		}
 		write_template(self.response, 'html/group-members.html', values)
 
