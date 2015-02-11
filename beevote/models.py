@@ -139,7 +139,11 @@ class Proposal(db.Model):
 class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
-	
+
+class FeatureChange(db.Model):
+	description = db.StringProperty(required=True)
+	creation = db.DateTimeProperty(auto_now_add=True)
+
 # End of Data Model
 
 # Start of functions

@@ -3,6 +3,7 @@
 		$('form.remove-member-form').ajaxForm({
 			dataType: "json",
 			beforeSubmit: function() {
+				return confirm("Are you sure you want to remove this user from the group?");
 				//$('button#add-member-button').attr("disabled", true);
 			},
 			error: function() {
@@ -30,7 +31,7 @@
 		<div class="row-content">
 			<h4 class="list-group-item-heading">{{member.name}} {{member.surname}}</h4>
 			<p>{{member.email}}</p>
-			{% if admin %}
+			{% if admin or user.key.id == member.key.id %}
 			<form class="remove-member-form" action="/api/group/{{ group.key.id }}/members/remove" method="POST">
 				<input type="text" id="email" name="email" value="{{ member.email }}" hidden>
 				<div class="least-content">

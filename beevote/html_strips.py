@@ -189,6 +189,7 @@ class GroupMembersHandler(BaseHandler):
 		else:
 			admin = False
 		values = {
+			'user': beevote_user,
 			'group': group,
 			'admin': admin,
 		}
