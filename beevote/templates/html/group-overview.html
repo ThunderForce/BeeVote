@@ -1,20 +1,21 @@
 <script>
-	$('div.topic-item').on('click', function() {
-		load_topic({{ group.key.id }}, $(this).data('topic-id'))
-	});
-	
-	$('span#group_name').html("{{ group.name }}");
-	$('input#groupId').val("{{ group.key.id }}");
+$('div.topic-item').on('click', function() {
+	load_topic({{ group.key.id }}, $(this).data('topic-id'))
+});
+
+$('span#group_name').html("{{ group.name }}");
+$('input#groupId').val("{{ group.key.id }}");
 </script>
-<div class="group-overview">
+
+<!--<div class="group-overview">
 	<div class="jumbotron" color="orange_g" style="max-width: 900px;">
 		<h1 style="margin-top:-15px;color:#000000">{{group.name}}</h1>
 		<div class="row">
 			<div class="col-lg-5">
 				{% if group.img %}
-					<img src="/group/{{group.key.id}}/image" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
+				<img src="/group/{{group.key.id}}/image" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
 				{% else %}
-					<i>No image available</i>
+				<i>No image available</i>
 				{% endif %}
 			</div>
 			<div class="col-lg-5">
@@ -24,75 +25,111 @@
 				<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
 			</div>
 		</div>
-	</div>
-	<div class="list-group">
+	</div> -->
+
+	<div class="list-group" >
 		<div class="list-group-item">
-			<div class="row">
-				<div class="row-content">
-					<h2>Topics</h2>
+			<div data-proposal="{{ group.key.id }}" class="well well-lg proposal-well" color="orange_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+				<div class="row">
+					<!-- interno proposta -->
+					<div class="row-picture" style="width: 200px;height: 100%;margin-bottom: 10px;">
+						{% if group.img %}
+						<img src="/group/{{group.key.id}}/image" alt="icon" style="width: 200px;height: 100%;">
+						{% else %}
+						<i>No image available</i>
+						{% endif %}
+					</div>
+					<div class="row-content" style="width: 66%;margin-top: 10px;">
+						<div class="col-lg-11">
+							<h2 style="word-wrap:break-word;font-size:30px;padding-bottom:5px;margin:0px;">
+								{{ group.name }}
+							</h2>
+							<div>
+								<h5 style="word-wrap:break-word; margin-left:10px"><span class="mdi-editor-format-align-left"></span> 
+									{{ group.description }}</h5>
+								</div>
+							</div>
+
+						</div>
+						<div style="float:right;margin-right:24px;margin-bottom:8px">
+						<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
+					</div>
+					</div>
+
+					
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="list-group global-topics">
-		{% if not group.topics %}
-		<p>There are no topics in this group yet. Create one now!</p>
-		{% endif %}
-		{% for topic in group.topics %}
-		<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}">
-			<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
+
+
+		<div class="list-group">
+			<div class="list-group-item">
 				<div class="row">
-					<div class="row-picture">
-						{% if topic.img %}
-						<img class="circle" src="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
-						{% else %}
-						<img class="circle" src="/static/images/topic-icon.png" alt="icon">
-						{% endif %}
-					</div>
 					<div class="row-content">
-						<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
-						<h4>
-							{% if topic.place != "" %}
-							<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
-							{% endif %}
-							{% if topic.date %}
-							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.date }}
-							{% endif %}
-							{% if topic.time %}
-							<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
-							{% endif %}
-						</h4>
-						{% if topic.deadline %}
-							{% if topic.expired %}
-								<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span style="color: red;">This topic has reached its deadline.</span></h5>
+						<h2>Topics</h2>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="list-group global-topics">
+			{% if not group.topics %}
+			<p>There are no topics in this group yet. Create one now!</p>
+			{% endif %}
+			{% for topic in group.topics %}
+			<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}">
+				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
+					<div class="row">
+						<div class="row-picture">
+							{% if topic.img %}
+							<img class="circle" src="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
 							{% else %}
-								<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span>
-									<span style="color: red">
-										{% if topic.time_before_deadline.days != 0 %}
-											{{ topic.time_before_deadline.days }} days 
-										{% endif %}
-										{% if topic.time_before_deadline.hours != 0 %}
-											{{ topic.time_before_deadline.hours }} hours 
-										{% endif %}
-										{% if topic.time_before_deadline.minutes != 0 %}
-											{{ topic.time_before_deadline.minutes }} minutes 
-										{% endif %}
+							<img class="circle" src="/static/images/topic-icon.png" alt="icon">
+							{% endif %}
+						</div>
+						<div class="row-content">
+							<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
+							<h4>
+								{% if topic.place != "" %}
+								<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
+								{% endif %}
+								{% if topic.date %}
+								<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.date }}
+								{% endif %}
+								{% if topic.time %}
+								<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
+								{% endif %}
+							</h4>
+							{% if topic.deadline %}
+							{% if topic.expired %}
+							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span style="color: red;">This topic has reached its deadline.</span></h5>
+							{% else %}
+							<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span>
+								<span style="color: red">
+									{% if topic.time_before_deadline.days != 0 %}
+									{{ topic.time_before_deadline.days }} days 
+									{% endif %}
+									{% if topic.time_before_deadline.hours != 0 %}
+									{{ topic.time_before_deadline.hours }} hours 
+									{% endif %}
+									{% if topic.time_before_deadline.minutes != 0 %}
+									{{ topic.time_before_deadline.minutes }} minutes 
+									{% endif %}
 										<!-- {% if topic.time_before_deadline.seconds != 0 %}
 											{{ topic.time_before_deadline.seconds }} seconds 
-										{% endif %} -->
-									</span>
-								</h5>
-							{% endif %}
-						{% endif %}
+											{% endif %} -->
+										</span>
+									</h5>
+									{% endif %}
+									{% endif %}
 						<!-- {% if topic.is_own %}
 							<div style="float:right;">
 								<button id="delete-topic" title="Delete this topic" href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></button>
 							</div>
-						{% endif %} -->
+							{% endif %} -->
+						</div>
 					</div>
 				</div>
 			</div>
+			{% endfor %}
 		</div>
-		{% endfor %}
 	</div>
-</div>
