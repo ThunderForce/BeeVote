@@ -29,14 +29,13 @@ $('input#groupId').val("{{ group.key.id }}");
 
 	<div class="list-group" >
 		<div class="list-group-item">
-			<div data-proposal="{{ group.key.id }}" class="well well-lg proposal-well" color="orange_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+			<div class="well well-lg proposal-well" color="green_g" style="padding: 10px 0px 0px 25px;">
 				<div class="row">
-					<!-- interno proposta -->
 					<div class="row-picture" style="width: 200px;height: 100%;margin-bottom: 10px;">
 						{% if group.img %}
-						<img src="/group/{{group.key.id}}/image" alt="icon" style="width: 200px;height: 100%;">
+						<img src="/group/{{group.key.id}}/image" style="width: 200px;height: 100%;">
 						{% else %}
-						<i>No image available</i>
+						<img src="/static/images/group-default.jpg" style="width: 200px;height: 100%;">
 						{% endif %}
 					</div>
 					<div class="row-content" style="width: 66%;margin-top: 10px;">
@@ -44,36 +43,35 @@ $('input#groupId').val("{{ group.key.id }}");
 							<h2 style="word-wrap:break-word;font-size:30px;padding-bottom:5px;margin:0px;">
 								{{ group.name }}
 							</h2>
-							<div>
-								<h5 style="word-wrap:break-word; margin-left:10px"><span class="mdi-editor-format-align-left"></span> 
-									{{ group.description }}</h5>
-								</div>
-							</div>
-
+							
+								{% if group.description %}
+								<h5 style="word-wrap:break-word; margin-left:10px"><span class="mdi-editor-format-align-left"></span> {{ group.description }}
+								</h5>
+								{% endif %}
+							
 						</div>
-						<div style="float:right;margin-right:24px;margin-bottom:8px">
-						<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
+					</div>	
+					<div style="float:right;margin-right:25px;">
+						<button type="submit" class="btn btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);"></button>
 					</div>
-					</div>
-
-					
 				</div>
 			</div>
 		</div>
+	</div>
 
 
 		<div class="list-group">
 			<div class="list-group-item">
 				<div class="row">
-					<div class="row-content">
-						<h2>Topics</h2>
+					<div style="margin-left:20px;">
+						<h2 style="margin:0;">Topics</h2>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="list-group global-topics">
 			{% if not group.topics %}
-			<p>There are no topics in this group yet. Create one now!</p>
+			<p style="margin-left:20px;">There are no topics in this group yet. Create one now!</p>
 			{% endif %}
 			{% for topic in group.topics %}
 			<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}">
@@ -88,7 +86,7 @@ $('input#groupId').val("{{ group.key.id }}");
 						</div>
 						<div class="row-content">
 							<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
-							<h4>
+							<h5>
 								{% if topic.place != "" %}
 								<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
 								{% endif %}
@@ -98,13 +96,13 @@ $('input#groupId').val("{{ group.key.id }}");
 								{% if topic.time %}
 								<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
 								{% endif %}
-							</h4>
+							</h5>
 							{% if topic.deadline %}
 							{% if topic.expired %}
-							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span style="color: red;">This topic has reached its deadline.</span></h5>
+							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span>This topic has reached its deadline.</span></h5>
 							{% else %}
-							<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span>
-								<span style="color: red">
+							<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy"></span>
+								<span>
 									{% if topic.time_before_deadline.days != 0 %}
 									{{ topic.time_before_deadline.days }} days 
 									{% endif %}

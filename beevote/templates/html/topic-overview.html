@@ -142,7 +142,7 @@ $(document).ready(function() {
 
 <div class="list-group">
 	<div class="list-group-item">
-		<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
+		<div class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
 			<div class="row">
 				<div class="row-picture" style="width:200px;height:100%;margin-bottom:10px;">
 					{% if topic.img != None %}
@@ -168,11 +168,13 @@ $(document).ready(function() {
 						<p style="font-size:15px;margin:0;"><span class="mdi-action-query-builder" style="margin-left:10px;"></span>&nbsp;{{ topic.time }}</p>
 						{% endif %}
 						{% if topic.expired %}
-						<p style="color:red;font-size:15px;margin:0;"><b>This topic has reached its deadline: you cannot vote its proposals anymore.</b></p>
+						<br>
+						<p style="font-size:15px;margin:0;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
 						{% else %}
 						{% if topic.time_before_deadline %}
 						<p style="font-size:15px;margin:0;">
-							<span class="mdi-notification-event-busy" style="margin-left:10px;"></span>&nbsp;<span style="color: red">
+							<span class="mdi-notification-event-busy" style="margin-left:10px;"></span>&nbsp;
+							<span>
 								{% if topic.time_before_deadline.days != 0 %}
 								{{ topic.time_before_deadline.days }} days
 								{% endif %}
@@ -189,18 +191,21 @@ $(document).ready(function() {
 					</div>
 				</div>
 				{% if topic.is_own %}
-						<div style="float:right;margin-right:25px;"><button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
-				{% endif %}</div>
+						<div style="float:right;margin-right:25px;"><button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button></div>
+				{% endif %}
 			</div>
 		</div>
 	</div>
 </div>
 
 	<div class="list-group">
-		<h2>Proposals</h2>
+		<h2 style="margin-left:20px;">Proposals</h2>
+		{% if not topic.proposals %}
+			<p style="margin-left:20px;">This topic has no proposals yet.</p>
+		{% endif %}
 		{% for proposal in topic.proposals %}
 		<div class="list-group-item">
-			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="green" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+			<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
 				<div class="row">
 					<!-- interno proposta -->
 					<div class="row-picture">

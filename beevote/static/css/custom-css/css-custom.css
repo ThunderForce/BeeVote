@@ -108,7 +108,7 @@ button.btn.btn-fab.btn-raised.btn-shadow {
 }
 
 div.well.well-lg.group-selected {
-	background-color: #FF9100
+	background-color: rgb(64, 255, 64);
 }
 
 div.loader
