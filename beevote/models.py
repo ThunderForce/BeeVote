@@ -63,6 +63,12 @@ class Group(db.Model):
 	
 	def get_members(self):
 		return db.get(self.members)
+	
+	def delete(self):
+		topics = self.get_topics()
+		for topic in topics:
+			topic.delete()
+		db.Model.delete(self)
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
@@ -102,14 +108,14 @@ class Topic(db.Model):
 			topic.img = db.Blob(img)
 		return topic
 	
+	def get_proposals(self):
+		return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', self).fetch(1000)
+	
 	def delete(self):
-		proposals = db.GqlQuery("SELECT * FROM Proposal WHERE topic = :1", self)
+		proposals = self.get_proposals()
 		for proposal in proposals:
 			proposal.delete()
 		db.Model.delete(self)
-	
-	def get_proposals(self):
-		return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', self).fetch(1000)
 
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)
@@ -127,14 +133,14 @@ class Proposal(db.Model):
 		proposal = db.get(proposal_key)
 		return proposal
 	
+	def get_votes(self):
+		return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', self).fetch(1000)
+	
 	def delete(self):
-		votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1", self)
+		votes = self.get_votes()
 		for vote in votes:
 			vote.delete()
 		db.Model.delete(self)
-	
-	def get_votes(self):
-		return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', self).fetch(1000)
 	
 class Vote(db.Model):
 	proposal = db.ReferenceProperty(Proposal, required=True)
