@@ -51,7 +51,11 @@ img.image-circle {
 }
 
 [color="yellow_g"].well {
-	background-color: #FDD835;
+	background-color: #FFD13D;
+}
+
+[color="green_g"].well {
+	background-color: #00A65E;
 }
 
 [color="orange_g"].well {
@@ -71,7 +75,11 @@ img.image-circle {
 }
 
 [color="yellow_g"].jumbotron {
-	background-color: #FDD835;
+	background-color: #FFD13D;
+}
+
+[color="green_g"].jumbotron {
+	background-color: #00A65E;
 }
 
 [color="orange_g"].jumbotron {

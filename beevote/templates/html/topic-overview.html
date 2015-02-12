@@ -78,14 +78,17 @@ $(document).ready(function() {
 	});
 });
 </script>
+
+<!--
 <div class="topic-overview">
 	<div class="jumbotron" style="max-width:900px; background-color:#2196F3;padding:0px;padding-left:18px;">
-		<h1 style="word-wrap:break-word;padding-top:5px;">{{ topic.title }}</h1>
+		<h2 style="word-wrap:break-word;padding-top:5px;margin-bottom:5px;font-size:40px;">{{ topic.title }}</h2>
+		<div class="list-group-separator" style="border-bottom: 1px solid #FFFFFF;margin-right:18px;"></div>
 		{% if topic.expired %}
 		<p style="color: red;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
 		{% else %}
 		{% if topic.time_before_deadline %}
-		<p>Deadline: {{ topic.deadline }}</p>
+		<p style="margin-top:10px;margin-bottom:0px;">Deadline: {{ topic.deadline }}</p>
 		<p>Time before deadline: 
 			<span style="color: red">
 				{% if topic.time_before_deadline.days != 0 %}
@@ -97,14 +100,11 @@ $(document).ready(function() {
 				{% if topic.time_before_deadline.minutes != 0 %}
 				{{ topic.time_before_deadline.minutes }} minutes
 				{% endif %}
-				{% if topic.time_before_deadline.seconds != 0 %}
-				{{ topic.time_before_deadline.seconds }} seconds
-				{% endif %}
 			</span>
 		</p>
 		{% endif %}
 		{% endif %}
-		<div class="row">
+		<div class="row" style="margin-top:10px;">
 			<div class="col-lg-5">
 				{% if topic.img != None %}
 				<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style=" display: inline-block; max-height: 175px; max-width: 100%;">
@@ -115,29 +115,86 @@ $(document).ready(function() {
 				<br><br>
 				{% endif %}
 			</div>
-			<div class="col-lg-3"><p style="word-wrap:break-word;">{{ topic.description }}</p></div>
+			
 			<div class="col-lg-4">
-				<p><span class="mdi-action-account-box"></span> {{ topic.creator.name }} {{ topic.creator.surname }}</p>
+				<p style="font-size:15px;"><span class="mdi-action-account-box"></span> <b>{{ topic.creator.name }} {{ topic.creator.surname }}</b> </p>
 				{% if topic.place != "" %}
-				<p><span class="mdi-communication-location-on"></span> {{ topic.place }}</p>
+				<p style="font-size:15px;"><span class="mdi-communication-location-on"></span> <b>{{ topic.place }}</b> </p>
 				{% endif %}
 				{% if topic.date %}
-				<p><span class="mdi-editor-insert-invitation"></span> {{ topic.date }}</p>
+				<p style="font-size:15px;"><span class="mdi-editor-insert-invitation"></span> <b>{{ topic.date }}</b> </p>
 				{% endif %}
 				{% if topic.time %}
-				<p><span class="mdi-action-query-builder"></span> {{ topic.time }}</p>
+				<p style="font-size:15px;"><span class="mdi-action-query-builder"></span> <b>{{ topic.time }}</b> </p>
 				{% endif %}
 			</div>
 		</div>
 		{% if topic.is_own %}
 		<div class="row">
-			<div class="col-lg-10"></div>
+			<div class="col-lg-10"><p style="word-wrap:break-word;">{{ topic.description }}</p></div>
 			<div class="col-lg-2" style="padding:0px;">
 				<button id="delete-topic" title="Delete this topic" class="btn btn-danger mdi-action-delete" style="margin-left:5px;"></button>
 			</div>
 		</div>
 		{% endif %}
 	</div>
+-->
+
+<div class="list-group">
+	<div class="list-group-item">
+		<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
+			<div class="row">
+				<div class="row-picture" style="width:200px;height:100%;margin-bottom:10px;">
+					{% if topic.img != None %}
+					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;">
+					{% else %}
+					<img src="/static/images/topic-icon.png" style="width:200px;height:100%;">
+					{% endif %}
+				</div>
+				<div class="row-content" style="width:66%;margin-top:10px;">
+					<div class="col-lg-11">
+						<h2 style="word-wrap:break-word;font-size:25px;padding-bottom:5px;margin:0px;">
+							{{ topic.title }}
+						</h2>
+						<p style="word-wrap:break-word;font-size:15px;margin-left:10px;">{{ topic.description }}</p>
+						<p style="font-size:15px;margin:0;"><span class="mdi-action-account-box" style="margin-left:10px;"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}</p>
+						{% if topic.place != "" %}
+						<p style="font-size:15px;margin:0;"><span class="mdi-communication-location-on" style="margin-left:10px;"></span>&nbsp;{{ topic.place }}</p>
+						{% endif %}
+						{% if topic.date %}
+						<p style="font-size:15px;margin:0;"><span class="mdi-editor-insert-invitation" style="margin-left:10px;"></span>&nbsp;{{ topic.date }}</p>
+						{% endif %}
+						{% if topic.time %}
+						<p style="font-size:15px;margin:0;"><span class="mdi-action-query-builder" style="margin-left:10px;"></span>&nbsp;{{ topic.time }}</p>
+						{% endif %}
+						{% if topic.expired %}
+						<p style="color:red;font-size:15px;margin:0;"><b>This topic has reached its deadline: you cannot vote its proposals anymore.</b></p>
+						{% else %}
+						{% if topic.time_before_deadline %}
+						<p style="font-size:15px;margin:0;">
+							<span class="mdi-notification-event-busy" style="margin-left:10px;"></span>&nbsp;<span style="color: red">
+								{% if topic.time_before_deadline.days != 0 %}
+								{{ topic.time_before_deadline.days }} days
+								{% endif %}
+								{% if topic.time_before_deadline.hours != 0 %}
+								{{ topic.time_before_deadline.hours }} hours
+								{% endif %}
+								{% if topic.time_before_deadline.minutes != 0 %}
+								{{ topic.time_before_deadline.minutes }} minutes
+								{% endif %}
+							</span>
+						</p>
+						{% endif %}
+						{% endif %}
+					</div>
+				</div>
+				{% if topic.is_own %}
+						<div style="float:right;margin-right:25px;"><button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
+				{% endif %}</div>
+			</div>
+		</div>
+	</div>
+</div>
 
 	<div class="list-group">
 		<h2>Proposals</h2>
@@ -166,13 +223,12 @@ $(document).ready(function() {
 							<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
 							<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 							<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
-								<br>
 								{% if proposal.description %}
-								Additional details:
 								<br>
-								{{ proposal.description }}
+								<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span> {{ proposal.description }}
 								{% else%}
-								<i>No description available</i>
+								<br>
+								<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>No description available
 								{% endif %}
 							</div>
 						</div>
