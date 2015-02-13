@@ -62,6 +62,21 @@ class UserManagerHandler(BasicPageHandler):
 		users = db.GqlQuery("SELECT * FROM BeeVoteUser")
 		self.write_template('user-manager.html', {'requests': requests, 'users': users})
 
+class FeatureChangesHandler(BasicPageHandler):
+	def get(self):
+		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange").fetch(1000)
+		feature_changes = sorted(feature_changes, key=lambda feature: feature.creation, reverse=True)
+		self.write_template('feature-changes.html', {'feature_changes': feature_changes})
+
+class AddFeatureChangeHandler(BasicPageHandler):
+	def post(self):
+		description = self.request.get('description')
+		feature = models.FeatureChange(
+			description=description,
+		)
+		feature.put()
+		self.redirect('/admin/feature-changes')
+
 class AcceptRegistrationRequestHandler(webapp2.RequestHandler):
 	def get(self, request_id):
 		request_key = db.Key.from_path('RegistrationRequest', long(request_id))
@@ -98,16 +113,12 @@ The BeeVote Team
 		
 		self.redirect('/admin/user-manager')
 
-class NotFoundPageHandler(BasicPageHandler):
-	def get(self):
-		self.error(404)
-		self.write_template('not_found.html', {'url': self.request.path})
-
 # End of handlers
 
 app = webapp2.WSGIApplication([
 	('/admin/remove-user/(.*)', RemoveUserHandler),
 	('/admin/user-manager', UserManagerHandler),
-	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler),
-	('/.*', NotFoundPageHandler)
+	('/admin/feature-changes', FeatureChangesHandler),
+	('/admin/add-feature-change', AddFeatureChangeHandler),
+	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler)
 ], debug=True)
