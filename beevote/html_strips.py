@@ -130,6 +130,11 @@ class GroupHandler(BaseHandler):
 			else:
 				topic.is_own = False
 		
+		if beevote_user.key() in group.admins:
+			group.is_own = True
+		else:
+			group.is_own = False
+
 		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
 		group.topics = topics
 		

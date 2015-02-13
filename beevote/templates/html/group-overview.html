@@ -5,6 +5,29 @@ $('div.topic-item').on('click', function() {
 
 $('span#group_name').html("{{ group.name }}");
 $('input#groupId').val("{{ group.key.id }}");
+
+$(document).ready(function() {
+	$('button#delete-group').on('click', function() {
+		if (confirm("Are you sure to delete this group?")) {
+			$.ajax({
+				url: '/api/group/{{ group.key.id }}/remove',
+				method: 'POST',
+				dataType: 'json',
+				error: function() {
+					alert("Errore inaspettato!");
+				},
+				success: function(response) {
+					if (response.success) {
+						load_all_topics();
+						load_groups();
+					} else {
+						alert(response.error);
+					}
+				}
+			});
+		}
+	});
+});
 </script>
 
 <!--<div class="group-overview">
@@ -54,6 +77,11 @@ $('input#groupId').val("{{ group.key.id }}");
 					<div style="float:right;margin-right:25px;margin-bottom:10px;">
 						<button type="submit" class="btn btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);"></button>
 					</div>
+					<!-- Aggiungere il controllo che l'utente sia un amministratore-->
+					{% if group.is_own %}
+					<div style="float:right;margin-right:25px;"><button id="delete-group" title="Delete this group" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button></div>
+					{% endif %}
+
 				</div>
 			</div>
 		</div>

@@ -486,6 +486,34 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
+class RemoveGroupHandler(webapp2.RequestHandler):
+	def post(self, group_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group_key = db.Key.from_path('Group', long(group_id))
+		group = db.get(group_key)
+		if not is_user_in_group(beevote_user, group):
+			values = {
+				'success': False,
+				'group_id': group_id,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			if beevote_user.key() in group.admins:
+				group.delete()
+				values = {
+					'success': True,
+				}
+			else:
+				values = {
+					'success': False,
+					'group_id': group_id,
+					'error': "You are not an admin of the group",
+				}
+		self.response.out.write(json.dumps(values))
+
+
 class AddGroupMemberHandler(webapp2.RequestHandler):
 	def post(self, group_id):
 		user = users.get_current_user()

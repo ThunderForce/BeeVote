@@ -63,6 +63,9 @@ class Group(db.Model):
 	
 	def get_members(self):
 		return db.get(self.members)
+
+	def get_admins(self):
+		return db.get(self.admins)
 	
 	def delete(self):
 		topics = self.get_topics()
