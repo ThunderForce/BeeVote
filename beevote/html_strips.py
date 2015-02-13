@@ -156,6 +156,8 @@ class TopicsHandler(BaseHandler):
 				topics.append(topic)
 		currentdatetime = datetime.datetime.now()
 		for topic in topics:
+			if(topic.date != None):
+				topic.formatted_date = topic.date.strftime("%A   %d %B %Y")
 			if topic.deadline != None:
 				topic.expired = topic.deadline < currentdatetime
 				time_before_deadline = topic.deadline - currentdatetime
@@ -210,7 +212,8 @@ class TopicHandler(BaseHandler):
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		if (not topic):
 			self.abort(404, detail="This topic does not exist.")
-		
+		if(topic.date != None):
+			topic.formatted_date = topic.date.strftime("%A   %d %B %Y")
 		if topic.creator.key() == beevote_user.key():
 			topic.is_own = True
 		else:
@@ -227,6 +230,9 @@ class TopicHandler(BaseHandler):
 			else:
 				proposal.already_voted = False
 			proposal.vote_number = len(proposal.vote_set.fetch(1000))
+			if(proposal.date != None):
+				proposal.formatted_date = proposal.date.strftime("%A   %d %B %Y")
+
 		
 		# Sorting the proposal according to vote number
 		topic.proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)

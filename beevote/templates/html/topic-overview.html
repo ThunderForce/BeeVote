@@ -161,8 +161,8 @@ $(document).ready(function() {
 						{% if topic.place != "" %}
 						<p style="font-size:15px;margin:0;"><span class="mdi-communication-location-on" style="margin-left:10px;"></span>&nbsp;{{ topic.place }}</p>
 						{% endif %}
-						{% if topic.date %}
-						<p style="font-size:15px;margin:0;"><span class="mdi-editor-insert-invitation" style="margin-left:10px;"></span>&nbsp;{{ topic.date }}</p>
+						{% if topic.formatted_date %}
+						<p style="font-size:15px;margin:0;"><span class="mdi-editor-insert-invitation" style="margin-left:10px;"></span>&nbsp;{{ topic.formatted_date }}</p>
 						{% endif %}
 						{% if topic.time %}
 						<p style="font-size:15px;margin:0;"><span class="mdi-action-query-builder" style="margin-left:10px;"></span>&nbsp;{{ topic.time }}</p>
@@ -219,8 +219,8 @@ $(document).ready(function() {
 							{% if proposal.place %}
 							<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
 							{% endif %}
-							{% if proposal.date %}
-							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.date }}
+							{% if proposal.formatted_date %}
+							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.formatted_date }}
 							{% endif %}
 							{% if proposal.time %}
 							<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}

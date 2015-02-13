@@ -364,6 +364,7 @@ app = webapp2.WSGIApplication([
 	('/api/group/(.*)/topic/(.*)/remove', api.RemoveTopicHandler),
 	('/api/group/(.*)/remove', api.RemoveGroupHandler),
 	('/api/create-group', api.CreateGroupHandler),
+	('/api/group/(.*)/update', api.UpdateGroupHandler),
 	('/api/create-topic', api.CreateTopicHandler),
 	('/api/create-proposal', api.CreateProposalHandler),
 	('/api/create-vote', api.CreateVoteHandler),

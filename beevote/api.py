@@ -408,6 +408,35 @@ class CreateGroupHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
+class UpdateGroupHandler(webapp2.RequestHandler):
+	def post(self, group_id):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		name = self.request.get('name', None)
+		description = self.request.get('description', None)
+		img = self.request.get('img', None)
+		if name and name == "":
+			values = {
+				'success': False,
+				'error': 'Name is required',
+			}
+		else:
+			group_key = db.Key.from_path('Group', long(group_id))
+			group = db.get(group_key)
+			if name:
+				group.name = name
+			if description:
+				group.description = description
+			if img:
+				group.img = img
+			group.put()
+			group_id = group.key().id()
+			values = {
+				'success': True,
+				'group_id': group_id,
+			}
+		self.response.out.write(json.dumps(values))
+
 class CreateTopicHandler(webapp2.RequestHandler):
 	def post(self):
 		user = users.get_current_user()

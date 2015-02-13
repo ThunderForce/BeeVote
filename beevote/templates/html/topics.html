@@ -39,8 +39,8 @@
 							{% if topic.place != "" %}
 							<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
 							{% endif %}
-							{% if topic.date %}
-							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.date }}
+							{% if topic.formatted_date %}
+							<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.formatted_date }}
 							{% endif %}
 							{% if topic.time %}
 							<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
