@@ -24,6 +24,8 @@ from google.appengine.api import users
 
 from google.appengine.api import mail
 
+import datetime
+
 import models
 import api
 import html_strips
@@ -170,10 +172,19 @@ class HomeHandler(BaseHandler):
 			topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
 			topics.extend(topics_group)
 		
+		last_access = beevote_user.last_access if hasattr(beevote_user, 'last_access') else None
+		beevote_user.last_access = datetime.datetime.now()
+		beevote_user.put()
+		
+		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange").fetch(1000)
+		
+		feature_changes = [f for f in feature_changes if ((not last_access) or f.creation > last_access)]
+		
 		values = {
 			'groups' : groups,
 			'topics' : topics,
 			'user' : beevote_user,
+			'feature_changes': feature_changes,
 		}
 		write_template(self.response, 'groups-layout.html',values)
 

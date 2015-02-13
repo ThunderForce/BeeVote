@@ -11,6 +11,7 @@ class BeeVoteUser(db.Model):
 	email = db.StringProperty(required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
 	img = db.BlobProperty()
+	last_access = db.DateTimeProperty()
 	
 	@staticmethod
 	def get_from_id(beevote_user_id):

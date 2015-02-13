@@ -134,6 +134,16 @@
 				
 				load_groups(null);
 				load_all_topics();
+				
+				{% if feature_changes %}
+				var str = "Hi {{ user.name }}! There have been a few changes since your last access:\n\n"+
+				{% for feature in feature_changes %}
+					"{{ feature.creation }}: {{ feature.description }}\n"+
+				{% endfor %}
+				"";
+				
+				alert(str);
+				{% endif %}
 			});
 			
 			var buttons = {
