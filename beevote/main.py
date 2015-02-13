@@ -132,8 +132,7 @@ class MainHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
 		if user:
-			beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-			if not beevote_user:
+			if not self.beevote_user:
 				self.redirect("/register")
 				return
 			else:
@@ -147,14 +146,11 @@ class MainHandler(BaseHandler):
 class HomeHandler(BaseHandler):
 	def get(self):
 		
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		
 		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
 		
 		topics=[]
 		
-		groups = [g for g in groups if not (not beevote_user.key() in g.members) and (g.members != [])]
+		groups = [g for g in groups if not (not self.beevote_user.key() in g.members) and (g.members != [])]
 		
 		for group in groups:
 			
@@ -172,9 +168,9 @@ class HomeHandler(BaseHandler):
 			topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
 			topics.extend(topics_group)
 		
-		last_access = beevote_user.last_access if hasattr(beevote_user, 'last_access') else None
-		beevote_user.last_access = datetime.datetime.now()
-		beevote_user.put()
+		last_access = self.beevote_user.last_access if hasattr(self.beevote_user, 'last_access') else None
+		self.beevote_user.last_access = datetime.datetime.now()
+		self.beevote_user.put()
 		
 		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange").fetch(1000)
 		
@@ -183,7 +179,7 @@ class HomeHandler(BaseHandler):
 		values = {
 			'groups' : groups,
 			'topics' : topics,
-			'user' : beevote_user,
+			'user' : self.beevote_user,
 			'feature_changes': feature_changes,
 		}
 		write_template(self.response, 'groups-layout.html',values)
@@ -230,7 +226,7 @@ class TopicImageHandler(webapp2.RequestHandler):
 
 class RegistrationHandler(BaseHandler):
 	def get(self):
-		if models.get_beevote_user_from_google_id(users.get_current_user().user_id()):
+		if self.beevote_user:
 			self.redirect("/")
 			return
 		if models.get_registration_request_from_google_id(users.get_current_user().user_id()):
@@ -248,7 +244,7 @@ class RequestRegistrationHandler(BaseHandler):
 	def post(self):
 		user = users.get_current_user()
 		redirect_url = '/'
-		if models.get_beevote_user_from_google_id(user.user_id()) == None:
+		if self.beevote_user == None:
 			name = self.request.get('name')
 			surname = self.request.get('surname')
 			if not users.is_current_user_admin():
@@ -276,7 +272,7 @@ Follow this link to see all requests:
 {link}
 
 The BeeVote Team
-        """.format(request=request, link=self.request.host+"/admin/pending-requests"))
+        """.format(request=request, link=self.request.host+"/admin/user-manager"))
 				
 				mail.send_mail(
 					sender='BeeVote Registration Notifier <registration-pending@beevote.appspotmail.com>',
@@ -304,6 +300,7 @@ The BeeVote Team
 					name = name,
 					surname = surname,
 				)
+				beevote_user.last_access = datetime.datetime.now()
 				beevote_user.put()
 				redirect_url = '/'	
 		time.sleep(1.00)
@@ -312,7 +309,7 @@ The BeeVote Team
 class RegistrationPendingHandler(BaseHandler):
 	def get(self):
 		user_id = users.get_current_user().user_id()
-		if models.get_beevote_user_from_google_id(user_id):
+		if self.beevote_user:
 			self.redirect("/")
 			return
 		request = models.get_registration_request_from_google_id(user_id)

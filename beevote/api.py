@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-import os
 import webapp2
 import datetime
 import json
@@ -206,7 +205,6 @@ class LoadGroupsHandler(BaseApiHandler):
 
 class LoadGroupHandler(BaseApiHandler):
 	def get(self, group_id):
-		user = users.get_current_user()
 		group = models.Group.get_from_id(group_id)
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
@@ -227,7 +225,6 @@ class LoadGroupHandler(BaseApiHandler):
 
 class LoadTopicHandler(BaseApiHandler):
 	def get(self, group_id, topic_id):
-		user = users.get_current_user()
 		group = models.Group.get_from_id(group_id)
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
@@ -324,8 +321,6 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 
 class LoadVotesHandler(webapp2.RequestHandler):
 	def get(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -347,7 +342,6 @@ class LoadVotesHandler(webapp2.RequestHandler):
 
 class LoadProposalHandler(webapp2.RequestHandler):
 	def get(self):
-		user = users.get_current_user()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -410,8 +404,6 @@ class CreateGroupHandler(webapp2.RequestHandler):
 
 class UpdateGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('name', None)
 		description = self.request.get('description', None)
 		img = self.request.get('img', None)

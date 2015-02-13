@@ -26,6 +26,8 @@ from google.appengine.api import mail
 
 import models
 
+import datetime
+
 # Start of handlers
 
 class BasicPageHandler(webapp2.RequestHandler):
@@ -33,12 +35,6 @@ class BasicPageHandler(webapp2.RequestHandler):
 		
 		directory = os.path.dirname(__file__)
 		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-
-		user = users.get_current_user()
-
-		val_user = {
-			'user': user,
-		}
 
 		values = {
 			'basic_head': template.render(basic_head_path, {}),
@@ -87,6 +83,9 @@ class AcceptRegistrationRequestHandler(webapp2.RequestHandler):
 			name = request.name,
 			surname = request.surname
 		)
+		
+		beevote_user.last_access = datetime.datetime.now()
+		
 		beevote_user.put()
 		request.delete()
 		
