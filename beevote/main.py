@@ -144,12 +144,19 @@ class MainHandler(BaseHandler):
 				self.redirect('/home')
 		else:
 			values = {
-				'login_url': users.create_login_url('/'),
+				'login_url': users.create_login_url('/home'),
 			}
 			write_template(self.response, 'index.html', values)
 
 class HomeHandler(BaseHandler):
 	def get(self):
+		
+		if not self.beevote_user:
+			self.redirect("/register")
+			return
+		if models.get_registration_request_from_google_id(users.get_current_user().user_id()):
+			self.redirect("/registration-pending")
+			return
 		
 		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
 		
