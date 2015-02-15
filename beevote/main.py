@@ -96,6 +96,7 @@ public_urls = ["/", "/logout", "/register", "/request-registration", "/registrat
 class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
 		self.initialize(request, response)
+		self.beevote_user = None
 		if not self.request.path in public_urls:
 			user = users.get_current_user()
 			if not user:
@@ -108,9 +109,13 @@ class BaseHandler(webapp2.RequestHandler):
 			if not self.beevote_user:
 				registration_request = models.get_registration_request_from_google_id(user.user_id())
 				if not registration_request:
-					self.redirect("/register")
+					self.abort(401, detail="You are not yet registered in the application")
+					#self.redirect("/register")
+					return
 				else:
-					self.redirect("/registration-pending")
+					self.abort(401, detail="Your registration request has not been accepted yet")
+					#self.redirect("/registration-pending")
+					return
 
 	def dispatch(self):
 		# Get a session store for this request.
