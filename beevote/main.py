@@ -80,7 +80,7 @@ def get_template(template_name, template_values={}, navbar_values={}):
 
 def write_template(response, template_name, template_values={}, navbar_values={}):
 	response.headers["Pragma"]="no-cache"
-	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
+	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, max-age=0, pre-check=0, post-check=0"
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 	response.out.write(get_template(template_name, template_values, navbar_values))
 
@@ -349,6 +349,7 @@ app = webapp2.WSGIApplication([
 	('/api/group/(.*)/topic/(.*)/remove', api.RemoveTopicHandler),
 	('/api/group/(.*)/remove', api.RemoveGroupHandler),
 	('/api/create-group', api.CreateGroupHandler),
+	('/api/group/(.*)/topic/(.*)/update', api.UpdateTopicHandler),
 	('/api/group/(.*)/update', api.UpdateGroupHandler),
 	('/api/create-topic', api.CreateTopicHandler),
 	('/api/create-proposal', api.CreateProposalHandler),

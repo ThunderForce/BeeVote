@@ -147,7 +147,7 @@ function resetForm(form_id) {
 						<form action="/api/group/{{ group.key.id }}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateImage-form">
 							<fieldset>
 								<div class="form-group" >
-									<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
+									<label for="inputImg" class="col-lg-2 control-label">Photo: maximum image size is 1 MB</label>
 									<div class="col-lg-10">
 										<input id="inputImg" type="file" name="img"/>
 									</div>

@@ -507,6 +507,23 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
+
+class UpdateTopicHandler(webapp2.RequestHandler):
+	def post(self, group_id, topic_id):
+		
+		img = self.request.get('img', None)
+		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
+		if img:
+			topic.img = img
+		topic.put()
+		topic_id = topic.key().id()
+		values = {
+			'success': True,
+			'group_id': topic.group.key().id(),
+			'topic_id': topic_id,
+		}
+		self.response.out.write(json.dumps(values))
+
 class RemoveGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
 		user = users.get_current_user()

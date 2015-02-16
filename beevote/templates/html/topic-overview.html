@@ -78,6 +78,33 @@ $(document).ready(function() {
 			}
 	});
 });
+
+$('#updateImage-form').ajaxForm({
+					dataType: "json",
+					beforeSubmit: function() {
+						$('#edit-image').attr("disabled", true);
+					},
+					clearForm: true,
+					error: function() {
+						alert("Unexpected error!");
+					},
+					success: function(response) {
+						if (response.success) {
+							load_topic(response.group_id, response.topic_id);
+							$('#updateImage').modal('hide');
+						} else {
+							alert(response.error);
+						}
+						$('#edit-image').attr("disabled", false);
+					}
+	});
+
+$('#edit-cancel').on('click', function() {
+					resetForm("updateImage-form");
+				});
+
+
+
 </script>
 
 <!--
@@ -151,6 +178,9 @@ $(document).ready(function() {
 					{% else %}
 					<img src="/static/images/topic-icon.png" style="width:200px;height:100%;">
 					{% endif %}
+					{% if topic.is_own %}
+							<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" style="padding:7px;"></button></div>
+						{% endif %}
 				</div>
 				<div class="row-content" style="width:66%;margin-top:10px;">
 					<div class="col-lg-11">
@@ -232,9 +262,6 @@ $(document).ready(function() {
 								{% if proposal.description %}
 								<br>
 								<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span> {{ proposal.description }}
-								{% else%}
-								<br>
-								<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>No description available
 								{% endif %}
 							</div>
 						</div>
@@ -250,4 +277,31 @@ $(document).ready(function() {
 		</div>
 		{% endfor %}
 	</div>
+
+	<!-- Form-update-image -->
+	<div id="updateImage" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-body" style="padding:15px 15px 0px 15px;">
+						<form action="/api/group/{{topic.parent.key.id }}/topic/{{topic.key.id}}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateImage-form">
+							<fieldset>
+								<div class="form-group" >
+									<label for="inputImg" class="col-lg-2 control-label">Photo: maximum image size is 1 MB</label>
+									<div class="col-lg-10">
+										<input id="inputImg" type="file" name="img"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<div class="modal-footer" style="padding:0px 25px 0px 0px">
+										<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage">Cancel</button>
+										<button type="submit" class="btn" id="edit-image" style="background-color:#00A65E;">Edit</button>
+									</div>
+								</div>
+							</fieldset>
+						</form>
+					</div>
+				</div>
+			</div>
+	</div>
+
 </div>
