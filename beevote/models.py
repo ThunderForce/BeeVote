@@ -94,6 +94,7 @@ class Topic(db.Model):
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	img = db.BlobProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
+	non_participant_users = db.ListProperty(db.Key) # BeeVoteUser Key
 	
 	@staticmethod
 	def get_from_id(group_id, topic_id):
@@ -129,6 +130,15 @@ class Topic(db.Model):
 		for proposal in proposals:
 			proposal.delete()
 		db.Model.delete(self)
+
+	def add_non_participant_user(self, beevote_user_key):
+		self.non_participant_users.append(beevote_user_key)
+	
+	def remove_non_participant_user(self, beevote_user_key):
+		self.non_participant_users.remove(beevote_user_key)
+
+	def is_user_participant(self, beevote_user):
+		return beevote_user.key() not in self.not_participating_users
 
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)

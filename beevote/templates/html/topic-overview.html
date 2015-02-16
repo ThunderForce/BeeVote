@@ -77,6 +77,37 @@ $(document).ready(function() {
 				e.cancelBubble = true; // IE model
 			}
 	});
+	$('input#topic-participation').on('click', function() {
+		var checked = $(this).is(':checked');
+		$(this).attr('disabled', true)
+		if (checked) {
+			$.ajax({
+				url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/add-participation',
+				method: 'POST',
+				dataType: 'json',
+				success: function(response) {
+					if (response.success) {
+						load_topic(response.group_id, response.topic_id);
+					} else {
+						alert("Error");
+					}
+				}
+			})
+		} else {
+			$.ajax({
+				url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/remove-participation',
+				method: 'POST',
+				dataType: 'json',
+				success: function(response) {
+					if (response.success) {
+						load_topic(response.group_id, response.topic_id);
+					} else {
+						alert("Error");
+					}
+				}
+			})
+		}
+	});
 });
 
 $('#updateImage-form').ajaxForm({
@@ -225,6 +256,7 @@ $('#edit-cancel').on('click', function() {
 						<div style="float:right;margin-right:25px;"><button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button></div>
 				{% endif %}
 			</div>
+			<input type="checkbox" id="topic-participation"{% if topic.participation %} checked{% endif %}>I participate
 		</div>
 	</div>
 </div>
@@ -267,9 +299,7 @@ $('#edit-cancel').on('click', function() {
 						</div>
 						<div class="least-content" style="top:5px;right:20px;">
 							<b>Votes: </b><span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }}</span>&nbsp;
-							{% if not topic.expired %}
-							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;"></button>
-							{% endif %}
+							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
 						</div>
 					</div>
 				</div>

@@ -20,7 +20,6 @@ import webapp2
 #import json
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
-from google.appengine.api import users
 
 from google.appengine.api import mail
 
