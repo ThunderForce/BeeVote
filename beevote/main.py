@@ -158,28 +158,6 @@ class HomeHandler(BaseHandler):
 			self.redirect("/registration-pending")
 			return
 		
-		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
-		
-		topics=[]
-		
-		groups = [g for g in groups if not (not self.beevote_user.key() in g.members) and (g.members != [])]
-		
-		for group in groups:
-			
-			'''
-			if (not beevote_user.key() in group.members) and (group.members != []):
-				groups.remove(group)
-			else: 
-				topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
-				topics.extend(topics_group)
-			'''
-			
-			if len(group.name) > 20:
-				group.name_short = group.name[:16]
-			
-			topics_group = db.GqlQuery('SELECT * FROM Topic WHERE group = :1', group).fetch(1000)
-			topics.extend(topics_group)
-		
 		last_access = self.beevote_user.last_access if hasattr(self.beevote_user, 'last_access') else None
 		self.beevote_user.last_access = datetime.datetime.now()
 		self.beevote_user.put()
@@ -189,8 +167,6 @@ class HomeHandler(BaseHandler):
 		feature_changes = [f for f in feature_changes if ((not last_access) or f.creation > last_access)]
 		
 		values = {
-			'groups' : groups,
-			'topics' : topics,
 			'user' : self.beevote_user,
 			'feature_changes': feature_changes,
 		}

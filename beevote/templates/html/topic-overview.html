@@ -1,6 +1,7 @@
 <script src="/static/js/vote-functions.js"></script>
 <script>
 $(document).ready(function() {
+	$('input#groupId').val("{{ topic.group.key.id }}");
 	$('button#delete-topic').on('click', function() {
 		if (confirm("Are you sure to delete this topic?")) {
 			$.ajax({

@@ -23,6 +23,15 @@ class BeeVoteUser(db.Model):
 		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
 		groups = [g for g in groups if not (not self.key() in g.members) and (g.members != [])]
 		return groups
+	
+	def get_topics_by_group_membership(self):
+		groups = self.get_groups_by_membership()
+		topics = []
+		for group in groups:
+			group_topics = group.get_topics()
+			for topic in group_topics:
+				topics.append(topic)
+		return topics
 
 class RegistrationRequest(db.Model):
 	user_id = db.StringProperty()

@@ -139,12 +139,9 @@ class GroupHandler(BaseHandler):
 class TopicsHandler(BaseHandler):
 	def get(self):
 		time.sleep(0.5)
-		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
-		groups = [g for g in groups if not (not self.beevote_user.key() in g.members) and (g.members != [])]
-		topics = []
-		for group in groups:
-			for topic in group.get_topics():
-				topics.append(topic)
+		
+		topics = self.beevote_user.get_topics_by_group_membership()
+
 		currentdatetime = datetime.datetime.now()
 		for topic in topics:
 			if(topic.date != None):
