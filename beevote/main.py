@@ -137,7 +137,7 @@ class MainHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
 		if user:
-			if not self.beevote_user:
+			if not self.beevote_user and not models.get_beevote_user_from_google_id(user.user_id()):
 				self.redirect("/register")
 				return
 			else:
