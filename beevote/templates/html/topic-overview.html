@@ -118,9 +118,16 @@ $('#voteList').modal('show');
 $('#member-vote-list').html('Loading...');
 var success_callback = function(response) {
 	$('#member-vote-list').html('');
+	if(response.votes.length == 0){
+		$('#message').html('<h3> No one hasn\'t voted this proposal yet...</h3>');
+	} 
+	else{
+		$('#message').html('<h3> These members voted this proposal </h3>');
+
 	$.each(response.votes, function(index, vote) {
 		$('#member-vote-list').append('<div class="list-group-item"><div class="row-picture"><img class="circle" src="/static/images/user-default.jpg" alt="icon"></div><div class="row-content"><h3 class="list-group-item-heading">'+vote.name+' '+vote.surname+'</h3></div></div><div class="list-group-separator"></div>');
 	});
+}
 }
 load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
 }
@@ -392,8 +399,8 @@ $('#edit-cancel').on('click', function() {
 					<div class="least-content" style="top:5px;right:20px;">
 						<b>Votes: </b>
 						
-						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;" {% if proposal.vote_number == 0 %} disabled {% endif %}>
-							
+						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;">
+
 							<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
 						</button>
 						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
@@ -443,7 +450,8 @@ $('#edit-cancel').on('click', function() {
 						<div id="proposalPopup"></div>
 					</div> 
 				</div>
-				<h3>Members that voted this proposal</h3>
+				<div id="message"></div>
+				<br>
 				<div class="list-group" id="member-vote-list"></div>
 			</div>
 		</div>
