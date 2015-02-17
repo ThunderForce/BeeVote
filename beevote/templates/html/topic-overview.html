@@ -109,68 +109,70 @@ $(document).ready(function() {
 				if(response.proposal.time != "None"){
 					$("#proposalPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> '+response.proposal.time+' </span>');
 				};
-
-
-
+				$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+response.proposal.creator.name+' '+response.proposal.creator.surname+' </span>');
+				
 				/*"<li>"+response.proposal.place+"</li>"+"<li>"+response.proposal.date+"</li>"+"<li>"+response.proposal.time+"</li>");*/
 
-$('#voteList').modal('show');
-$('#member-vote-list').html('Loading...');
-var success_callback = function(response) {
-	$('#member-vote-list').html('');
-	if(response.votes.length == 0){
-		$('#message').html('<h3> No one hasn\'t voted this proposal yet...</h3>');
-	} 
-	else{
-		$('#message').html('<h3> These members voted this proposal </h3>');
-
-	$.each(response.votes, function(index, vote) {
-		$('#member-vote-list').append('<div class="list-group-item"><div class="row-picture"><img class="circle" src="/static/images/user-default.jpg" alt="icon"></div><div class="row-content"><h3 class="list-group-item-heading">'+vote.name+' '+vote.surname+'</h3></div></div><div class="list-group-separator"></div>');
-	});
-}
-}
-load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
-}
-});
-
-if (e.stopPropagation) {
+				$('#voteList').modal('show');
+				$('#member-vote-list').html('Loading...');
+				var success_callback = function(response) {
+					$('#member-vote-list').html('');
+					if (response.votes.length == 0){
+						$('#message').html('<h3> No one has voted this proposal yet...</h3>');
+					} else {
+						$('#message').html('<h3> These members voted this proposal </h3>');
+				
+						$.each(response.votes, function(index, vote) {
+							$('#member-vote-list').append('<div class="list-group-item"><div class="row-picture"><img class="circle" src="/static/images/user-default.jpg" alt="icon"></div><div class="row-content"><h3 class="list-group-item-heading">'+vote.name+' '+vote.surname+'</h3></div></div><div class="list-group-separator"></div>');
+						});
+					}
+				}
+				load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
+			}
+		});
+	
+		if (e.stopPropagation) {
 			e.stopPropagation();   // W3C model
 		} else {
 			e.cancelBubble = true; // IE model
 		}
 	});
-
-$('input#topic-participation').on('click', function() {
-	var checked = $(this).is(':checked');
-	$(this).attr('disabled', true)
-	if (checked) {
-		$.ajax({
-			url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/add-participation',
-			method: 'POST',
-			dataType: 'json',
-			success: function(response) {
-				if (response.success) {
-					load_topic(response.group_id, response.topic_id);
-				} else {
-					alert("Error");
+	
+	$('#topic-participation').on('click', function() {
+		$(this).toggleClass('btn-success btn-warning mdi-toggle-check-box mdi-toggle-check-box-outline-blank');
+		$(this).addClass('disabled')
+		$('span#participation-text').html('Changing...');
+		var checked = $(this).hasClass('btn-success');
+		$(this).attr('disabled', true)
+		if (checked) {
+			$.ajax({
+				url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/add-participation',
+				method: 'POST',
+				dataType: 'json',
+				success: function(response) {
+					if (response.success) {
+						load_topic(response.group_id, response.topic_id);
+					} else {
+						alert("Error");
+					}
 				}
-			}
-		})
-	} else {
-		$.ajax({
-			url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/remove-participation',
-			method: 'POST',
-			dataType: 'json',
-			success: function(response) {
-				if (response.success) {
-					load_topic(response.group_id, response.topic_id);
-				} else {
-					alert("Error");
+			})
+		} else {
+			$.ajax({
+				url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/remove-participation',
+				method: 'POST',
+				dataType: 'json',
+				success: function(response) {
+					if (response.success) {
+						load_topic(response.group_id, response.topic_id);
+					} else {
+						alert("Error");
+					}
 				}
-			}
-		})
-	}
-});
+			})
+		}
+	});
+	$.material.init();
 });
 
 $('#updateImage-form').ajaxForm({
@@ -201,7 +203,7 @@ $('#edit-cancel').on('click', function() {
 
 </script>
 
- <!--
+<!--
 -			$(document).ready(function() {
 -				if ($('#delete-proposal').length > 0)
 -					$('#delete-proposal').on('click', function () {
@@ -348,11 +350,13 @@ $('#edit-cancel').on('click', function() {
 						{% endif %}
 					</div>
 				</div>
+				<div style="float:right;margin-right:25px;">
 				{% if topic.is_own %}
-				<div style="float:right;margin-right:25px;"><button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button></div>
+					<button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
+				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
+				</div>
 			</div>
-			<input type="checkbox" id="topic-participation"{% if topic.participation %} checked{% endif %}>I participate
 		</div>
 	</div>
 </div>
@@ -403,7 +407,7 @@ $('#edit-cancel').on('click', function() {
 
 							<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
 						</button>
-						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
+						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 40px; height: 40px;  padding: 8px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
 					</div>
 				</div>
 			</div>
