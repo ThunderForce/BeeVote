@@ -202,6 +202,10 @@ class TopicHandler(BaseHandler):
 			topic.is_own = True
 		else:
 			topic.is_own = False
+		if self.beevote_user.key() not in topic.non_participant_users:
+			topic.participation = True
+		else:
+			topic.participation = False
 		
 		proposals = topic.get_proposals()
 		

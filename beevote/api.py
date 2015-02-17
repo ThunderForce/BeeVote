@@ -699,6 +699,59 @@ class RemoveProposalHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
+class RemoveParticipationHandler(webapp2.RequestHandler):
+	def post(self, group_id, topic_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
+		if not is_user_in_group(beevote_user, topic.group):
+			values = {
+				'success': False,
+				'group_id': group_id,
+				'topic_id': topic_id,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			topic.non_participant_users.append(beevote_user.key())
+			topic.put()
+			proposals = topic.get_proposals()
+			for proposal in proposals:
+				votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
+				for vote in votes:
+					vote.delete()
+			time.sleep(0.25)
+			values = {
+				'success': True,
+				'group_id': group_id,
+				'topic_id': topic_id,
+			}
+		self.response.out.write(json.dumps(values))
+
+class AddParticipationHandler(webapp2.RequestHandler):
+	def post(self, group_id, topic_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
+		if not is_user_in_group(beevote_user, topic.group):
+			values = {
+				'success': False,
+				'group_id': group_id,
+				'topic_id': topic_id,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			topic.non_participant_users.remove(beevote_user.key())
+			topic.put()
+			time.sleep(0.25)
+			values = {
+				'success': True,
+				'group_id': group_id,
+				'topic_id': topic_id,
+			}
+		self.response.out.write(json.dumps(values))
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))

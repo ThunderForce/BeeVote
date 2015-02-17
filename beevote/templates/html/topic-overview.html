@@ -72,12 +72,11 @@ $(document).ready(function() {
 			remove_vote(group_id, topic_id, proposal_id, success_callback);
 
 		if (e.stopPropagation) {
-				e.stopPropagation();   // W3C model
-			} else {
-				e.cancelBubble = true; // IE model
-			}
-		});
-
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
+	});
 
 	/* Prova per non propagare il clik quando clisso sul voto*/
 	$('button#vote-button').on('click', function(e) {
@@ -115,27 +114,56 @@ $(document).ready(function() {
 
 				/*"<li>"+response.proposal.place+"</li>"+"<li>"+response.proposal.date+"</li>"+"<li>"+response.proposal.time+"</li>");*/
 
-		$('#voteList').modal('show');
-		$('#member-vote-list').html('Loading...');
-		var success_callback = function(response) {
-			$('#member-vote-list').html('');
-			$.each(response.votes, function(index, vote) {
-				$('#member-vote-list').append('<div class="list-group-item"><div class="row-picture"><img class="circle" src="/static/images/user-default.jpg" alt="icon"></div><div class="row-content"><h3 class="list-group-item-heading">'+vote.name+' '+vote.surname+'</h3></div></div><div class="list-group-separator"></div>');
-			});
-		}
-		load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
-	}
+$('#voteList').modal('show');
+$('#member-vote-list').html('Loading...');
+var success_callback = function(response) {
+	$('#member-vote-list').html('');
+	$.each(response.votes, function(index, vote) {
+		$('#member-vote-list').append('<div class="list-group-item"><div class="row-picture"><img class="circle" src="/static/images/user-default.jpg" alt="icon"></div><div class="row-content"><h3 class="list-group-item-heading">'+vote.name+' '+vote.surname+'</h3></div></div><div class="list-group-separator"></div>');
+	});
+}
+load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
+}
 });
 
 if (e.stopPropagation) {
-				e.stopPropagation();   // W3C model
-			} else {
-				e.cancelBubble = true; // IE model
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
+	});
+
+$('input#topic-participation').on('click', function() {
+	var checked = $(this).is(':checked');
+	$(this).attr('disabled', true)
+	if (checked) {
+		$.ajax({
+			url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/add-participation',
+			method: 'POST',
+			dataType: 'json',
+			success: function(response) {
+				if (response.success) {
+					load_topic(response.group_id, response.topic_id);
+				} else {
+					alert("Error");
+				}
 			}
-		});
-
-
-
+		})
+	} else {
+		$.ajax({
+			url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/remove-participation',
+			method: 'POST',
+			dataType: 'json',
+			success: function(response) {
+				if (response.success) {
+					load_topic(response.group_id, response.topic_id);
+				} else {
+					alert("Error");
+				}
+			}
+		})
+	}
+});
 });
 
 $('#updateImage-form').ajaxForm({
@@ -317,6 +345,7 @@ $('#edit-cancel').on('click', function() {
 				<div style="float:right;margin-right:25px;"><button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button></div>
 				{% endif %}
 			</div>
+			<input type="checkbox" id="topic-participation"{% if topic.participation %} checked{% endif %}>I participate
 		</div>
 	</div>
 </div>
@@ -362,64 +391,60 @@ $('#edit-cancel').on('click', function() {
 					</div>
 					<div class="least-content" style="top:5px;right:20px;">
 						<b>Votes: </b>
-						{% if proposal.vote_number == 0 %}
-							<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;" disabled>
-						{% else %}
-							<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;">
-						{% endif %}
+						
+						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;" {% if proposal.vote_number == 0 %} disabled {% endif %}>
+							
 							<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
-							</button>
-							{% if not topic.expired %}
-							<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;"></button>
-							{% endif %}
+						</button>
+						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %}" style="width: 40px; height: 40px;  padding: 8px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+</div>
+
+<!-- Form-update-image -->
+<div id="updateImage" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body" style="padding:15px 15px 0px 15px;">
+				<form action="/api/group/{{topic.parent.key.id }}/topic/{{topic.key.id}}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateImage-form">
+					<fieldset>
+						<div class="form-group" >
+							<label for="inputImg" class="col-lg-2 control-label">Photo: maximum image size is 1 MB</label>
+							<div class="col-lg-10">
+								<input id="inputImg" type="file" name="img"/>
+							</div>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		{% endfor %}
-	</div>
-
-	<!-- Form-update-image -->
-	<div id="updateImage" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body" style="padding:15px 15px 0px 15px;">
-					<form action="/api/group/{{topic.parent.key.id }}/topic/{{topic.key.id}}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateImage-form">
-						<fieldset>
-							<div class="form-group" >
-								<label for="inputImg" class="col-lg-2 control-label">Photo: maximum image size is 1 MB</label>
-								<div class="col-lg-10">
-									<input id="inputImg" type="file" name="img"/>
-								</div>
+						<div class="form-group">
+							<div class="modal-footer" style="padding:0px 25px 0px 0px">
+								<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage">Cancel</button>
+								<button type="submit" class="btn" id="edit-image" style="background-color:#00A65E;">Edit</button>
 							</div>
-							<div class="form-group">
-								<div class="modal-footer" style="padding:0px 25px 0px 0px">
-									<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage">Cancel</button>
-									<button type="submit" class="btn" id="edit-image" style="background-color:#00A65E;">Edit</button>
-								</div>
-							</div>
-						</fieldset>
-					</form>
-				</div>
+						</div>
+					</fieldset>
+				</form>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<!-- Popup per la lista dei voti -->
-	<div id="voteList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
+<!-- Popup per la lista dei voti -->
+<div id="voteList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
 
-					<div class="list-group" >
-						<div class="well well-lg proposal-well" color="yellow_g" style="padding: 1px 5px 23px 25px;"> 
-							<h2 id="prosalPopupTitle"></h2>
-							<div id="proposalPopup"></div>
-						</div> 
-					</div>
-					<h3>Members that voted this proposal</h3>
-					<div class="list-group" id="member-vote-list"></div>
+				<div class="list-group" >
+					<div class="well well-lg proposal-well" color="yellow_g" style="padding: 1px 5px 23px 25px;"> 
+						<h2 id="prosalPopupTitle"></h2>
+						<div id="proposalPopup"></div>
+					</div> 
+				</div>
+				<h3>Members that voted this proposal</h3>
+				<div class="list-group" id="member-vote-list"></div>
 			</div>
 		</div>
 	</div>
