@@ -91,7 +91,8 @@ def is_user_in_group(beevote_user, group):
 		return False
 
 # List or URLs that you can access without being "registered" in the app
-public_urls = ["/", "/logout", "/register", "/request-registration", "/registration-pending"]
+public_urls = ["/", "/logout"]
+google_user_urls = ["/", "/logout", "/register", "/request-registration", "/registration-pending"]
 
 class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
@@ -103,19 +104,23 @@ class BaseHandler(webapp2.RequestHandler):
 				url = request.url
 				if request.query_string != "":
 					url += '?' + request.query_string
-				self.redirect(users.create_login_url(url))
-				return
-			self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-			if not self.beevote_user:
-				registration_request = models.get_registration_request_from_google_id(user.user_id())
-				if not registration_request:
-					self.abort(401, detail="You are not yet registered in the application")
-					#self.redirect("/register")
-					return
-				else:
-					self.abort(401, detail="Your registration request has not been accepted yet")
-					#self.redirect("/registration-pending")
-					return
+				self.abort(401, headers={'Location': users.create_login_url(url)})
+				#self.redirect(users.create_login_url(url))
+				#return
+			if not self.request.path in google_user_urls:
+				self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+				if not self.beevote_user:
+					registration_request = models.get_registration_request_from_google_id(user.user_id())
+					if not registration_request:
+						self.abort(401, headers={'Location': '/register'})
+						#self.abort(401, detail="You are not yet registered in the application")
+						#self.redirect("/register")
+						return
+					else:
+						self.abort(401, headers={'Location': '/registration-pending'})
+						#self.abort(401, detail="Your registration request has not been accepted yet")
+						#self.redirect("/registration-pending")
+						return
 
 	def dispatch(self):
 		# Get a session store for this request.
@@ -316,6 +321,10 @@ class LogoutHandler(webapp2.RequestHandler):
 # End of handlers
 
 def handle_401(request, response, exception):
+	if 'Location' in exception.headers and exception.headers['Location']:
+		response.set_status(302)
+		response.headers['Location'] = exception.headers['Location']
+		return
 	response.set_status(401)
 	write_template(response, 'errors/401.html', {'detail': exception.detail})
 
