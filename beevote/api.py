@@ -457,23 +457,29 @@ class CreateTopicHandler(webapp2.RequestHandler):
 				'error': 'Group ID is required',
 			}
 		else:
-			topic = models.Topic.create(
-				title=title,
-				group=group,
-				creator=beevote_user,
-				place=place,
-				date=date,
-				time=time,
-				deadline=deadline,
-				description=description,
-				img=img
-			)
-			topic.put()
-			values = {
-				'success': True,
-				'group_id': group_id,
-				'topic_id': topic.key().id(),
-			}
+			try:
+				topic = models.Topic.create(
+					title=title,
+					group=group,
+					creator=beevote_user,
+					place=place,
+					date=date,
+					time=time,
+					deadline=deadline,
+					description=description,
+					img=img
+				)
+				topic.put()
+				values = {
+					'success': True,
+					'group_id': group_id,
+					'topic_id': topic.key().id(),
+				}
+			except Exception as exc:
+				values = {
+					'success': False,
+					'error': exc.args[0]
+				}
 		self.response.out.write(json.dumps(values))
 
 class RemoveTopicHandler(webapp2.RequestHandler):
@@ -648,27 +654,35 @@ class CreateProposalHandler(webapp2.RequestHandler):
 				'error': 'Topic ID is required',
 			}
 		else:
-			topic = models.Topic.get_from_id(group_id, topic_id)
-			proposal = models.Proposal(
-				title=title,
-				topic=topic,
-				parent=topic,
-				creator=beevote_user,
-			)
-			if where != "":
-				proposal.place = where
-			if date != "":
-				proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
-			if time != "":
-				proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
-			proposal.description = description
-			proposal.put()
-			values = {
-				'success': True,
-				'group_id': group_id,
-				'topic_id': topic_id,
-				'proposal_id': proposal.key().id(),
-			}
+			try:
+				topic = models.Topic.get_from_id(group_id, topic_id)
+				proposal = models.Proposal(
+					title=title,
+					topic=topic,
+					parent=topic,
+					creator=beevote_user,
+				)
+				if where != "":
+					proposal.place = where
+				if date != "":
+					proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
+					if topic.date.year <= 1900:
+						raise Exception('Year cannot be before 1900')
+				if time != "":
+					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
+				proposal.description = description
+				proposal.put()
+				values = {
+					'success': True,
+					'group_id': group_id,
+					'topic_id': topic_id,
+					'proposal_id': proposal.key().id(),
+				}
+			except Exception as exc:
+				values = {
+					'success': False,
+					'error': exc.args[0]
+				}
 		self.response.out.write(json.dumps(values))
 
 class RemoveProposalHandler(webapp2.RequestHandler):

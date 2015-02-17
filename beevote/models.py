@@ -113,6 +113,8 @@ class Topic(db.Model):
 		topic.place = place
 		if date != "":
 			topic.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
+			if topic.date.year <= 1900:
+				raise Exception('Year cannot be before 1900')
 		if time != "":
 			topic.time = datetime.datetime.strptime(time, '%H:%M').time()
 		if deadline !="":
