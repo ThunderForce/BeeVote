@@ -526,7 +526,22 @@
 		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px; max-width: 1100px;">
 			<div class="row">
 				<!-- Colonna sinistra -->
+				<style type="text/css">
+					@media screen and (min-width:768px) {
+						#dummy-nav {
+							display: none;
+						}
+					}
+				</style>
+				<div class="navbar" style="width:105px;background-color:#EEEEEE;margin-bottom:0px;" id="dummy-nav">
+				<button type="button" class="btn btn-raised navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse#left" style="background-color:#2196F3;">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				</div>
 				<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
+					<div class="navbar-collapse collapse navbar-responsive-collapse" id="left">
 					<!-- Jumbotron con immagine profilo -->
 					<div class="jumbotron" style="background-color: #2196F3; max-width: 900px;">
 						<div class="row">
@@ -549,6 +564,8 @@
 					<br>
 					<div id="group-list"></div>
 				</div> <!-- /col-lg-4 -->
+				</div>
+
 
 				<!-- Colonna destra -->
 				<div class="col-lg-7" id="right-column" style="padding-left:20px;padding-right:20px;">
