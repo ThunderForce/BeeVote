@@ -666,7 +666,7 @@ class CreateProposalHandler(webapp2.RequestHandler):
 					proposal.place = where
 				if date != "":
 					proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
-					if topic.date.year <= 1900:
+					if proposal.date.year <= 1900:
 						raise Exception('Year cannot be before 1900')
 				if time != "":
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
