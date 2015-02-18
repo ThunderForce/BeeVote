@@ -78,7 +78,7 @@
 					success: function(response) {
 						if (response.success) {
 							$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
-							$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+response.group_id+'/members');
+							$('div#member_list:not(div.group-overview div#member-list)').load('/html/group/'+response.group_id+'/members');
 						} else {
 							alert(response.error);
 						}
@@ -132,8 +132,12 @@
 					}
 				});
 				
+				{% if group_id %}
+				load_groups({{ group_id }});
+				{% else %}
 				load_groups(null);
 				load_all_topics();
+				{% endif %}
 				
 				{% if feature_changes %}
 				var str = "Hi {{ user.name }}! There have been a few changes since your last access:\n\n"+
@@ -169,7 +173,7 @@
 			
 			function load_topic(group_id, topic_id) {
 				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('html/group/'+group_id+'/topic/'+topic_id);
+				$('div#right-column').load('/html/group/'+group_id+'/topic/'+topic_id);
 			}
 			
 			function load_groups(opened_group) {
@@ -184,19 +188,19 @@
 			
 			function load_group_topics(group_id) {
 				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('html/group/'+group_id, function() {
+				$('div#right-column').load('/html/group/'+group_id, function() {
 					$('#creation-buttons').html('');
 					$('#creation-buttons').append(buttons.create_topic);
 					$('#creation-buttons').append(buttons.create_group);
 				});
 				$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
-				$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+group_id+'/members');
+				$('div#member_list:not(div.group-overview div#member-list)').load('/html/group/'+group_id+'/members');
 				$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
 				$('#groupId').val(group_id);
 			}
 			function load_all_topics() {
 				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('html/topics', function() {
+				$('div#right-column').load('/html/topics', function() {
 					$('#creation-buttons').html('');
 					$('#creation-buttons').append(buttons.create_group);
 				});

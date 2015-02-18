@@ -13,7 +13,7 @@
 			success: function(response) {
 				if (response.success) {
 					$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
-					$('div#member_list:not(div.group-overview div#member-list)').load('html/group/'+response.group_id+'/members');
+					$('div#member_list:not(div.group-overview div#member-list)').load('/html/group/'+response.group_id+'/members');
 				} else {
 					alert(response.error);
 				}

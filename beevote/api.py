@@ -620,6 +620,8 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 				}
 			else:
 				group.members.remove(deleted_user_key)
+				if deleted_user_key in group.admins:
+					group.admins.remove(deleted_user_key)
 				group.put()
 				values = {
 					'success': True,

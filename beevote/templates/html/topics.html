@@ -4,7 +4,7 @@
 			$('div.group-well').removeClass('group-selected');
 			$('div.group-well[data-group_id="'+$(this).data('group-id')+'"]').addClass('group-selected');
 			$('div#right-column').html('<div class="loader"></div>');
-			$('div#right-column').load('html/group/'+$(this).data('group-id')+'/topic/'+$(this).data('topic-id'));
+			$('div#right-column').load('/html/group/'+$(this).data('group-id')+'/topic/'+$(this).data('topic-id'));
 		});
 	});
 </script>

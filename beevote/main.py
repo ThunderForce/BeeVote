@@ -154,7 +154,7 @@ class MainHandler(BaseHandler):
 			write_template(self.response, 'index.html', values)
 
 class HomeHandler(BaseHandler):
-	def get(self):
+	def get(self, group_id):
 		
 		if not self.beevote_user:
 			self.redirect("/register")
@@ -174,6 +174,7 @@ class HomeHandler(BaseHandler):
 		values = {
 			'user' : self.beevote_user,
 			'feature_changes': feature_changes,
+			'group_id': group_id,
 		}
 		write_template(self.response, 'groups-layout.html',values)
 
@@ -350,7 +351,9 @@ app = webapp2.WSGIApplication([
 	('/', MainHandler),
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
 	('/group/(.*)/image', GroupImageHandler),
-	('/home', HomeHandler),
+	webapp2.Route('/group/<group_id>', handler=HomeHandler),
+	webapp2.Route('/home', handler=HomeHandler, defaults={'group_id': None}),
+	#('/home', HomeHandler),
 	('/profile/(.*)', ProfileHandler),
 	('/api/group/(.*)/topic/(.*)/proposal/(.*)/remove', api.RemoveProposalHandler),
 	('/api/group/(.*)/members/remove', api.RemoveGroupMemberHandler),
