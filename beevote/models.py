@@ -60,8 +60,11 @@ class Group(db.Model):
 	
 	@staticmethod
 	def get_from_id(group_id):
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
+		group = memcache.get('group_by_id_%s' % group_id)  # @UndefinedVariable
+		if group is None:
+			group_key = db.Key.from_path('Group', long(group_id))
+			group = db.get(group_key)
+			memcache.add('group_by_id_%s' % group_id, group, time=600)  # @UndefinedVariable
 		return group
 	
 	@staticmethod
@@ -90,7 +93,12 @@ class Group(db.Model):
 		topics = self.get_topics()
 		for topic in topics:
 			topic.delete()
+		memcache.delete('group_by_id_%s' % self.key().id())  # @UndefinedVariable
 		db.Model.delete(self)
+
+	def put(self):
+		db.Model.put(self)
+		memcache.add('group_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
@@ -107,8 +115,11 @@ class Topic(db.Model):
 	
 	@staticmethod
 	def get_from_id(group_id, topic_id):
-		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-		topic = db.get(topic_key)
+		topic = memcache.get('topic_by_path_%s_%s' % (group_id, topic_id))  # @UndefinedVariable
+		if topic is None:
+			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
+			topic = db.get(topic_key)
+			memcache.add('topic_by_path_%s_%s' % (group_id, topic_id), group, time=600)  # @UndefinedVariable
 		return topic
 	
 	@staticmethod
@@ -140,7 +151,12 @@ class Topic(db.Model):
 		proposals = self.get_proposals()
 		for proposal in proposals:
 			proposal.delete()
+		memcache.delete('topic_by_path_%s_%s' % (self.group.key().id(), self.key().id()))  # @UndefinedVariable
 		db.Model.delete(self)
+
+	def put(self):
+		db.Model.put(self)
+		memcache.add('topic_by_path_%s_%s' % (self.group.key().id(), self.key().id()), self, time=600)  # @UndefinedVariable
 
 	def add_non_participant_user(self, beevote_user_key):
 		self.non_participant_users.append(beevote_user_key)
