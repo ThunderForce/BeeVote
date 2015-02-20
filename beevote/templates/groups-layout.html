@@ -62,6 +62,7 @@
 					success: function(response) {
 						if (response.success) {
 							load_groups(response.group_id);
+							load_group_topics(response.group_id)
 							$('#createGroup').modal('hide');
 						} else {
 							alert(response.error);
@@ -139,8 +140,9 @@
 				
 				{% if group_id %}
 				load_groups({{ group_id }});
+				load_group_topics({{ group_id }});
 				{% else %}
-				load_groups(null);
+				load_groups();
 				load_all_topics();
 				{% endif %}
 				

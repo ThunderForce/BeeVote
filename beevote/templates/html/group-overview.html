@@ -44,6 +44,7 @@ $(document).ready(function() {
 					success: function(response) {
 						if (response.success) {
 							load_groups(response.group_id);
+							load_group_topics(response.group_id);
 							$('#updateImage').modal('hide');
 						} else {
 							alert(response.error);
@@ -64,6 +65,7 @@ $(document).ready(function() {
 					success: function(response) {
 						if (response.success) {
 							load_groups(response.group_id);
+							load_group_topics(response.group_id)
 							$('#updateInfo').modal('hide');
 						} else {
 							alert(response.error);

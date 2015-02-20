@@ -1,21 +1,16 @@
 <script>
 	$(document).ready(function() {
 		$('div.group-well').on('click', function() {
-			var data = null;
 			if($(window).width()<768) {
 				$('#collapse-button').click();
 			}
 			if ($(this).hasClass("group-selected")) {
 				$('div.group-well').removeClass('group-selected');
-				// better use pushState
-				window.history.replaceState(data, "Home", "/home");
 				load_all_topics();
 			}
 			else {
 				$('div.group-well').removeClass('group-selected');
 				$(this).addClass('group-selected');
-				// better use pushState
-				window.history.replaceState(data, "Group", "/group/"+$(this).data('group_id'));
 				load_group_topics($(this).data('group_id'));
 			}
 		});
