@@ -200,7 +200,39 @@ $('#edit-cancel').on('click', function() {
 });
 
 
+var geocoder = new google.maps.Geocoder();
+var address = '{{topic.place}}';
 
+    geocoder.geocode( { 'address': address}, function(results, status) {
+
+      if (status == google.maps.GeocoderStatus.OK) {
+        var latitude = results[0].geometry.location.lat();
+        var longitude = results[0].geometry.location.lng();
+
+
+        initialize(latitude,longitude);
+
+                } 
+
+        }); 
+
+function initialize(latitude,longitude) {
+        var latlng = new google.maps.LatLng(latitude,longitude);
+
+        var myOptions = {
+          zoom: 14,
+          center: latlng,
+          mapTypeId: google.maps.MapTypeId.ROADMAP,
+          mapTypeControl: false
+        };
+        var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+
+        var marker = new google.maps.Marker({
+          position: latlng, 
+          map: map, 
+            title:"Rome"
+        }); 
+      }
 </script>
 
 <!--
@@ -355,12 +387,17 @@ $('#edit-cancel').on('click', function() {
 					<button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
 				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
+
+				<button type="button" class="btn btn-info btn-raised mdi-maps-pin-drop" data-toggle="modal" data-target="#showMap" style="padding:7px;"></button>
+
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div id="map_canvas" style="width:710px; height:300px"></div> 
+  
 <div class="list-group">
 	<h2 style="margin-left:20px;">Proposals</h2>
 	{% if not topic.proposals %}
@@ -461,3 +498,7 @@ $('#edit-cancel').on('click', function() {
 		</div>
 	</div>
 </div>
+		
+
+
+
