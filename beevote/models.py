@@ -1,4 +1,5 @@
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 import datetime
 
@@ -15,8 +16,11 @@ class BeeVoteUser(db.Model):
 	
 	@staticmethod
 	def get_from_id(beevote_user_id):
-		beevote_user_key = db.Key.from_path('BeeVoteUser', long(beevote_user_id))
-		beevote_user = db.get(beevote_user_key)
+		beevote_user = memcache.get('beevoteuser_by_id_%s' % beevote_user_id)  # @UndefinedVariable
+		if beevote_user is None:
+			beevote_user_key = db.Key.from_path('BeeVoteUser', long(beevote_user_id))
+			beevote_user = db.get(beevote_user_key)
+			memcache.add('beevoteuser_by_id_%s' % beevote_user_id, beevote_user, time=600)  # @UndefinedVariable
 		return beevote_user
 	
 	def get_groups_by_membership(self):
@@ -32,6 +36,11 @@ class BeeVoteUser(db.Model):
 			for topic in group_topics:
 				topics.append(topic)
 		return topics
+	
+	def put(self):
+		db.Model.put(self)
+		memcache.add('beevoteuser_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
+		memcache.add('beevoteuser_by_user_id_%s' % self.user_id, self, time=600)  # @UndefinedVariable
 
 class RegistrationRequest(db.Model):
 	user_id = db.StringProperty()
@@ -180,7 +189,11 @@ class FeatureChange(db.Model):
 # Start of functions
 
 def get_beevote_user_from_google_id(user_id):
-	return db.GqlQuery('SELECT * FROM BeeVoteUser WHERE user_id = :1', user_id).get()
+	beevote_user = memcache.get('beevoteuser_by_user_id_%s' % user_id)  # @UndefinedVariable
+	if beevote_user is None:
+		beevote_user =  db.GqlQuery('SELECT * FROM BeeVoteUser WHERE user_id = :1', user_id).get()
+		memcache.add('beevoteuser_by_user_id_%s' % user_id, beevote_user, time=600)  # @UndefinedVariable
+	return beevote_user
 
 def get_registration_request_from_google_id(user_id):
 	return db.GqlQuery('SELECT * FROM RegistrationRequest WHERE user_id = :1', user_id).get()

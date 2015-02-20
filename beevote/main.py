@@ -22,8 +22,6 @@ from google.appengine.ext import db
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 
-from google.appengine.api import memcache
-
 from google.appengine.api import mail
 
 import datetime
@@ -111,10 +109,7 @@ class BaseHandler(webapp2.RequestHandler):
 				#return
 			if not self.request.path in google_user_urls:
 				
-				self.beevote_user = memcache.get('beevoteuser_%s' % user.user_id())  # @UndefinedVariable
-				if self.beevote_user is None:
-					self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-					memcache.add('beevoteuser_%s' % user.user_id(), self.beevote_user, time=600)  # @UndefinedVariable
+				self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 				
 				if not self.beevote_user:
 					registration_request = models.get_registration_request_from_google_id(user.user_id())
