@@ -8,6 +8,9 @@
 
 		<script>
 			$(document).ready(function() {
+
+				//Function to suggestion of Google Maps on places
+				initialize();
 				
 				$('input#inputDate').datetimepicker({
 					timepicker:false,
@@ -233,6 +236,16 @@
 				$('#'+value).css('display', 'none');
 			});
 		};
+
+		var autocomplete_topic_place, autocomplete_proposal_place;
+		function initialize() {
+		  autocomplete_topic_place = new google.maps.places.Autocomplete(
+		    (document.getElementById('inputWhere')),
+		    { types: ['geocode'] });
+		  autocomplete_proposal_place = new google.maps.places.Autocomplete(
+		  	(document.getElementById('proposal_place')),
+		  	{ types: ['geocode'] });
+		}
 		</script>
 		
 	</head>
@@ -258,7 +271,7 @@
 								<div class="form-group">
 									<label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="inputGroupName" name="name" placeholder="Name of the group" type="text" maxlength="32" required>
+										<input class="form-control" id="inputGroupName" name="name" placeholder="Name of the group" type="text" maxlength="32" autocomplete="off" required>
 									</div>
 								</div>
 								<div class="form-group">
@@ -343,7 +356,7 @@
 								<div class="list-group">
 									<div class="form-group">
 										<div class="col-lg-10" style="margin-left:45px;">
-											<input class="form-control" id="inputTopicName" name="title" placeholder="Title of the Topic" type="text" maxlength="64" required>
+											<input class="form-control" id="inputTopicName" name="title" placeholder="Title of the Topic" type="text" maxlength="64" autocomplete="off" required>
 										</div>
 									</div>
 									<!-- NEW INPUT FILE-->
@@ -383,8 +396,8 @@
 											<div class="form-group" id="topicWhereInput" style="display:none;">
 												<label for="inputWhere" class="col-lg-2 control-label" style="margin-top:10px;">Place: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputWhere" name="place" placeholder="Location for the activities " type="text">
-												</div>
+													<input class="form-control" id="inputWhere" name="place" placeholder="Location for the activity" type="text"></input>
+		    										</div>
 											</div>
 											<div class="form-group" id="topicDateInput" style="display:none;">
 												<label for="inputDate" class="col-lg-2 control-label" style="margin-top:10px;">Date: </label>
@@ -418,8 +431,7 @@
 													<textarea class="form-control" rows="3" id="inputDescription" name="description"></textarea>
 													<span class="help-block">Add here details that you want the others will know </span>
 												</div>
-											</div>
-										
+											</div>										
 									</div>
 									<!-- NEW BUTTON -->
 									<div class="form-group">
@@ -451,12 +463,12 @@
 								<div class="form-group">
 									<label for="proposal_title" class="col-lg-2 control-label">Title: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="proposal_title" name="title" placeholder="Title of the Proposal" type="text" maxlength="64" required>
+										<input class="form-control" id="proposal_title" name="title" placeholder="Title of the Proposal" type="text" maxlength="64" autocomplete="off" required>
 									</div>
 								</div>
 
 								<div class="form-group" id="proposal_place_div">
-									<label for="proposal_place" class="col-lg-2 control-label">Where: </label>
+									<label for="proposal_place" class="col-lg-2 control-label">Place: </label>
 									<div class="col-lg-10">
 										<input class="form-control" id="proposal_place" name="place" placeholder="Location for the activities" type="text">
 									</div>
@@ -505,23 +517,6 @@
 					<i class="mfb-component__main-icon--active"></i>
 				</a>
 				<ul id="creation-buttons" class="mfb-component__list" style="padding: 8px; margin-bottom: -20px;">
-					<!--
-					<li style="padding-top:20px;padding-bottom:20px;">
-						<a href="#" data-mfb-label="Create Proposal" class="btn btn-fab btn-raised" style="height: 40px;width: 40px; background-color: #0F9D58;">
-							<i class="mdi-communication-messenger" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>
-						</a>
-					</li>
-					<li style="padding-top:20px;padding-bottom:20px;">
-						<a href="#" data-mfb-label="Create Topic" class="btn btn-fab btn-raised" style="height: 40px;width: 40px; background-color: #2196F3;">
-							<i class="mdi-communication-forum" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>
-						</a>
-					</li>
-					<li style="padding-top:20px;padding-bottom:20px;">
-						<a href="#" data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" data-mfb-label="label with long long title" class="btn btn-fab btn-raised" style="height: 40px;width: 40px; background-color: #FF5722;">
-							<i class="mdi-social-group" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>
-						</a>
-					</li>
-					-->
 				</ul>        
 			</li>
 		</ul>

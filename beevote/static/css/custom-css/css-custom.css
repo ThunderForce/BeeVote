@@ -140,3 +140,7 @@ body .jumbotron,
   border: 110;
 }
 */
+
+.pac-container {
+      	z-index: 999999;
+}
