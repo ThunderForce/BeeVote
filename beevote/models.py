@@ -119,7 +119,7 @@ class Topic(db.Model):
 		if topic is None:
 			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 			topic = db.get(topic_key)
-			memcache.add('topic_by_path_%s_%s' % (group_id, topic_id), group, time=600)  # @UndefinedVariable
+			memcache.add('topic_by_path_%s_%s' % (group_id, topic_id), topic, time=600)  # @UndefinedVariable
 		return topic
 	
 	@staticmethod

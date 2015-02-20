@@ -6,6 +6,8 @@
 
 		{{ basic_head }}
 
+		<script type="text/javascript" src="/static/js/html-loader.js"></script>
+
 		<script>
 			$(document).ready(function() {
 
@@ -172,41 +174,6 @@
 							'<i class="mdi-communication-messenger" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>'
-			}
-			
-			function load_topic(group_id, topic_id) {
-				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('/html/group/'+group_id+'/topic/'+topic_id);
-			}
-			
-			function load_groups(opened_group) {
-				$('#group-list').html('<div class="loader"></div>');
-				if (opened_group == null)
-					$('#group-list').load('/html/groups');
-				else
-					$('#group-list').load('/html/groups', function() {
-						$('div.group-well[data-group_id="'+opened_group+'"]').click();
-					});
-			}
-			
-			function load_group_topics(group_id) {
-				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('/html/group/'+group_id, function() {
-					$('#creation-buttons').html('');
-					$('#creation-buttons').append(buttons.create_topic);
-					$('#creation-buttons').append(buttons.create_group);
-				});
-				$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
-				$('div#member_list:not(div.group-overview div#member-list)').load('/html/group/'+group_id+'/members');
-				$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
-				$('#groupId').val(group_id);
-			}
-			function load_all_topics() {
-				$('div#right-column').html('<div class="loader"></div>');
-				$('div#right-column').load('/html/topics', function() {
-					$('#creation-buttons').html('');
-					$('#creation-buttons').append(buttons.create_group);
-				});
 			}
 
 		function checkDisplay(button, field) {
