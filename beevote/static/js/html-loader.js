@@ -56,7 +56,7 @@ function load_group_topics(group_id) {
 
 function load_topic(group_id, topic_id) {
 	// better use pushState
-	window.history.replaceState(null, "Group", "/group/"+group_id);
+	window.history.replaceState(null, "Group", "/group/"+group_id+"/topic/"+topic_id);
 	$('div#right-column').html('<div class="loader"></div>');
 	_load_right_column('/html/group/'+group_id+'/topic/'+topic_id);
 	$('div.group-well').removeClass('group-selected');

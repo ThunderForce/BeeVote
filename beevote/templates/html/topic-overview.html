@@ -335,9 +335,9 @@ function initialize(latitude,longitude) {
 			<div class="row">
 				<div class="row-picture" style="width:200px;height:100%;margin-bottom:10px;">
 					{% if topic.img != None %}
-					<img src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;max-height:100%">
+					<img id="topic_image" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;max-height:100%">
 					{% else %}
-					<img src="/static/images/topic-icon.png" style="width:200px;height:100%;max-height:100%">
+					<img id="topic_image" src="/static/images/topic-icon.png" style="width:200px;height:100%;max-height:100%">
 					{% endif %}
 					{% if topic.is_own %}
 					<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" style="padding:7px;"></button></div>

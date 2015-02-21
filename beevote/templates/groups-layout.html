@@ -139,11 +139,15 @@
 				});
 				
 				{% if group_id %}
-				load_groups({{ group_id }});
-				load_group_topics({{ group_id }});
+					load_groups({{ group_id }});
+					{% if topic_id %}
+						load_topic({{ group_id }}, {{ topic_id }})
+					{% else %}
+						load_group_topics({{ group_id }});
+					{% endif %}
 				{% else %}
-				load_groups();
-				load_all_topics();
+					load_groups();
+					load_all_topics();
 				{% endif %}
 				
 				{% if feature_changes %}
