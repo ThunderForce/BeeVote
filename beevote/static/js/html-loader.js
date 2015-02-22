@@ -30,6 +30,10 @@ function load_groups(opened_group) {
 // Start of left columns loadings
 
 function load_all_topics() {
+	if (window.history.replaceState == null) {
+		window.location.href = "/home";
+		return
+	}
 	// better use pushState
 	window.history.replaceState(null, "Home", "/home");
 	$('div#right-column').html('<div class="loader"></div>');
@@ -40,6 +44,10 @@ function load_all_topics() {
 }
 
 function load_group_topics(group_id) {
+	if (window.history.replaceState == null) {
+		window.location.href = "/group/"+group_id;
+		return
+	}
 	// better use pushState
 	window.history.replaceState(null, "Group", "/group/"+group_id);
 	$('div#right-column').html('<div class="loader"></div>');
@@ -55,6 +63,10 @@ function load_group_topics(group_id) {
 }
 
 function load_topic(group_id, topic_id) {
+	if (window.history.replaceState == null) {
+		window.location.href = "/group/"+group_id+"/topic/"+topic_id;
+		return
+	}
 	// better use pushState
 	window.history.replaceState(null, "Group", "/group/"+group_id+"/topic/"+topic_id);
 	$('div#right-column').html('<div class="loader"></div>');
