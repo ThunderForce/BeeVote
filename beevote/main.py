@@ -31,6 +31,8 @@ import api
 import html_strips
 import time
 
+import language
+
 # Start of handlers
 
 def get_template(template_name, template_values={}, navbar_values={}):
@@ -71,6 +73,7 @@ def get_template(template_name, template_values={}, navbar_values={}):
 	values = {
 		'basic_head': template.render(basic_head_path, {}),
 		'navbar': template.render(navbar_path, def_navbar_values),
+		'lang': language.en,
 	}
 	
 	values.update(template_values)

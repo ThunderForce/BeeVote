@@ -361,20 +361,20 @@ function initialize(latitude,longitude) {
 						{% endif %}
 						{% if topic.expired %}
 						<br>
-						<p style="font-size:15px;margin:0;">This topic has reached its deadline: you cannot vote its proposals anymore.</p>
+						<p style="font-size:15px;margin:0;">{{lang.topic_overview.deadline_reach}}</p>
 						{% else %}
 						{% if topic.time_before_deadline %}
 						<p style="font-size:15px;margin:0;">
 							<span class="mdi-notification-event-busy" style="margin-left:10px;"></span>&nbsp;
 							<span>
 								{% if topic.time_before_deadline.days != 0 %}
-								{{ topic.time_before_deadline.days }} days
+								{{ topic.time_before_deadline.days }} {{lang.days}}
 								{% endif %}
 								{% if topic.time_before_deadline.hours != 0 %}
-								{{ topic.time_before_deadline.hours }} hours
+								{{ topic.time_before_deadline.hours }} {{lang.hours}}
 								{% endif %}
 								{% if topic.time_before_deadline.minutes != 0 %}
-								{{ topic.time_before_deadline.minutes }} minutes
+								{{ topic.time_before_deadline.minutes }} {{lang.minutes}}
 								{% endif %}
 							</span>
 						</p>
@@ -386,7 +386,13 @@ function initialize(latitude,longitude) {
 				{% if topic.is_own %}
 					<button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
-				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
+				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">
+					{% if not topic.participation %}
+					{{lang.topic_overview.not_partecipating}}
+					{%else%}
+					{{lang.topic_overview.partecipating}}
+					{% endif %}
+				</span></button>
 
 				<button type="button" class="btn btn-info btn-raised mdi-maps-pin-drop" data-toggle="modal" data-target="#showMap" style="padding:7px;"></button>
 
@@ -399,9 +405,9 @@ function initialize(latitude,longitude) {
 <div id="map_canvas" style="width:710px; height:300px"></div> 
   
 <div class="list-group">
-	<h2 style="margin-left:20px;">Proposals</h2>
+	<h2 style="margin-left:20px;">{{ lang.proposals }}</h2>
 	{% if not topic.proposals %}
-	<p style="margin-left:20px;">This topic has no proposals yet.</p>
+	<p style="margin-left:20px;">{{lang.no_proposals}}</p>
 	{% endif %}
 	{% for proposal in topic.proposals %}
 	<div class="list-group-item">
@@ -433,12 +439,12 @@ function initialize(latitude,longitude) {
 							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span> {{ proposal.description }}
 							{% else%}
 							<br>
-							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>No description available
+							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>{{lang.no_description}}
 							{% endif %}
 						</div>
 					</div>
 					<div class="least-content" style="top:5px;right:20px;">
-						<b>Votes: </b>
+						<b>{{lang.votes}} </b>
 						
 						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;">
 
@@ -461,15 +467,15 @@ function initialize(latitude,longitude) {
 				<form action="/api/group/{{topic.parent.key.id }}/topic/{{topic.key.id}}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateImage-form">
 					<fieldset>
 						<div class="form-group" >
-							<label for="inputImg" class="col-lg-2 control-label">Photo: maximum image size is 1 MB</label>
+							<label for="inputImg" class="col-lg-2 control-label">{{lang.warning_photo}}</label>
 							<div class="col-lg-10">
 								<input id="inputImg" type="file" name="img"/>
 							</div>
 						</div>
 						<div class="form-group">
 							<div class="modal-footer" style="padding:0px 25px 0px 0px">
-								<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage" style="background-color:#bdbdbd;">Cancel</button>
-								<button type="submit" class="btn" id="edit-image" style="background-color:#2196F3;">Edit</button>
+								<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+								<button type="submit" class="btn" id="edit-image" style="background-color:#2196F3;">{{lang.edit}}</button>
 							</div>
 						</div>
 					</fieldset>

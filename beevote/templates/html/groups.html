@@ -18,7 +18,7 @@
 </script>
 <div class="list-group">
 	{% if not groups %}
-	<p>You have no groups yet. Create one now!</p>
+	<p>{{lang.groups.no_groups}}</p>
 	{% endif %}
 	{% for group in groups%}
 	<div class="list-group-item">

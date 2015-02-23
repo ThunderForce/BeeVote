@@ -8,13 +8,13 @@ $('input#groupId').val("{{ group.key.id }}");
 
 $(document).ready(function() {
 	$('button#delete-group').on('click', function() {
-		if (confirm("Are you sure to delete this group?")) {
+		if (confirm('{{lang.group_overview.warning_delete_group}}')) {
 			$.ajax({
 				url: '/api/group/{{ group.key.id }}/remove',
 				method: 'POST',
 				dataType: 'json',
 				error: function() {
-					alert("Errore inaspettato!");
+					alert('lang.general_error');
 				},
 				success: function(response) {
 					if (response.success) {
@@ -39,7 +39,7 @@ $(document).ready(function() {
 		},
 		clearForm: true,
 		error: function() {
-			alert("Errore inaspettato!");
+			alert('{{lang.general_error}}');
 		},
 		success: function(response) {
 			if (response.success) {
@@ -60,7 +60,7 @@ $(document).ready(function() {
 		},
 		clearForm: true,
 		error: function() {
-			alert("Errore inaspettato!");
+			alert('{{lang.general_error}}');
 		},
 		success: function(response) {
 			if (response.success) {
@@ -86,25 +86,6 @@ function resetForm(form_id) {
 
 </script>
 
-<!--<div class="group-overview">
-	<div class="jumbotron" color="orange_g" style="max-width: 900px;">
-		<h1 style="margin-top:-15px;color:#000000">{{group.name}}</h1>
-		<div class="row">
-			<div class="col-lg-5">
-				{% if group.img %}
-				<img src="/group/{{group.key.id}}/image" alt="icon" style="max-width:100%;max-height:175px;margin-top:5px;">
-				{% else %}
-				<i>No image available</i>
-				{% endif %}
-			</div>
-			<div class="col-lg-5">
-				<h2><small style="color:#000">{{group.description}}</small></h2>
-			</div>
-			<div class="col-lg-1">
-				<button type="submit" class="btn btn-info btn-fab btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers"></button>
-			</div>
-		</div>
-	</div> -->
 
 	<div class="list-group" >
 		<div class="list-group-item">
@@ -152,15 +133,15 @@ function resetForm(form_id) {
 						<form action="/api/group/{{ group.key.id }}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateImage-form">
 							<fieldset>
 								<div class="form-group" >
-									<label for="inputImg" class="col-lg-2 control-label">Photo: maximum image size is 1 MB</label>
+									<label for="inputImg" class="col-lg-2 control-label">{{lang.warning_photo}}</label>
 									<div class="col-lg-10">
 										<input id="inputImg" type="file" name="img"/>
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="modal-footer" style="padding:0px 25px 0px 0px">
-										<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage" style="background-color:#bdbdbd;">Cancel</button>
-										<button type="submit" class="btn" id="edit-image" style="background-color:#00A65E;">Edit</button>
+										<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+										<button type="submit" class="btn" id="edit-image" style="background-color:#00A65E;">{{lang.edit}}</button>
 									</div>
 								</div>
 							</fieldset>
@@ -178,23 +159,23 @@ function resetForm(form_id) {
 						<form action="/api/group/{{ group.key.id }}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateInfo-form">
 							<fieldset>
 								<div class="form-group">
-									<label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
+									<label for="inputGroupName" class="col-lg-2 control-label">{{lang.name}} </label>
 									<div class="col-lg-10">
 										<input class="form-control" id="inputGroupName" name="name" placeholder="Name of the group" type="text" maxlength="32" required value="{{ group.name }}">
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="textArea" class="col-lg-2 control-label">Description</label>
+									<label for="textArea" class="col-lg-2 control-label">{{lang.description}}</label>
 									<div class="col-lg-10">
 										<textarea class="form-control" rows="3" id="inputDescription" name="description">{{ group.description }}
 										</textarea>
-										<span class="help-block">Add here a description of the group</span>
+										<span class="help-block">{{lang.description_message}}</span>
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="modal-footer" style="padding:0px 25px 0px 0px">
-										<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateInfo" style="background-color:#bdbdbd;">Cancel</button>
-										<button type="submit" class="btn" id="edit-info" style="background-color:#00A65E;">Edit</button>
+										<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateInfo" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+										<button type="submit" class="btn" id="edit-info" style="background-color:#00A65E;">{{lang.edit}}</button>
 									</div>
 								</div>
 							</fieldset>
@@ -208,14 +189,14 @@ function resetForm(form_id) {
 			<div class="list-group-item">
 				<div class="row">
 					<div style="margin-left:20px;">
-						<h2 style="margin:0;">Topics</h2>
+						<h2 style="margin:0;">{{lang.group_overview.topics}}</h2>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="list-group global-topics">
 			{% if not group.topics %}
-			<p style="margin-left:20px;">There are no topics in this group yet. Create one now!</p>
+			<p style="margin-left:20px;">{{lang.groups_overview.no_topics}}</p>
 			{% endif %}
 			{% for topic in group.topics %}
 			<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}">
@@ -243,18 +224,18 @@ function resetForm(form_id) {
 							</h5>
 							{% if topic.deadline %}
 							{% if topic.expired %}
-							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span>This topic has reached its deadline.</span></h5>
+							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span>{{lang.topic_overview.deadline_reach}}</span></h5>
 							{% else %}
 							<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy"></span>
 								<span>
 									{% if topic.time_before_deadline.days != 0 %}
-									{{ topic.time_before_deadline.days }} days 
+									{{ topic.time_before_deadline.days }} {{lang.days}} 
 									{% endif %}
 									{% if topic.time_before_deadline.hours != 0 %}
-									{{ topic.time_before_deadline.hours }} hours 
+									{{ topic.time_before_deadline.hours }} {{lang.hours}} 
 									{% endif %}
 									{% if topic.time_before_deadline.minutes != 0 %}
-									{{ topic.time_before_deadline.minutes }} minutes 
+									{{ topic.time_before_deadline.minutes }} {{lang.minutes}} 
 									{% endif %}
 										<!-- {% if topic.time_before_deadline.seconds != 0 %}
 											{{ topic.time_before_deadline.seconds }} seconds 

@@ -39,8 +39,10 @@ class BeeVoteUser(db.Model):
 	
 	def put(self):
 		db.Model.put(self)
-		memcache.add('beevoteuser_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
-		memcache.add('beevoteuser_by_user_id_%s' % self.user_id, self, time=600)  # @UndefinedVariable
+		if not memcache.replace('beevoteuser_by_id_%s' % self.key().id(), self, time=600):  # @UndefinedVariable
+			memcache.add('beevoteuser_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
+		if not memcache.replace('beevoteuser_by_user_id_%s' % self.user_id, self, time=600):  # @UndefinedVariable
+			memcache.add('beevoteuser_by_user_id_%s' % self.user_id, self, time=600)  # @UndefinedVariable
 
 class RegistrationRequest(db.Model):
 	user_id = db.StringProperty()
@@ -98,7 +100,8 @@ class Group(db.Model):
 
 	def put(self):
 		db.Model.put(self)
-		memcache.add('group_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
+		if not memcache.replace('group_by_id_%s' % self.key().id(), self, time=600):  # @UndefinedVariable
+			memcache.add('group_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
 
 class Topic(db.Model):
 	title = db.StringProperty(required=True)
@@ -156,7 +159,8 @@ class Topic(db.Model):
 
 	def put(self):
 		db.Model.put(self)
-		memcache.add('topic_by_path_%s_%s' % (self.group.key().id(), self.key().id()), self, time=600)  # @UndefinedVariable
+		if not memcache.replace('topic_by_path_%s_%s' % (self.group.key().id(), self.key().id()), self, time=600):  # @UndefinedVariable
+			memcache.add('topic_by_path_%s_%s' % (self.group.key().id(), self.key().id()), self, time=600)  # @UndefinedVariable
 
 	def add_non_participant_user(self, beevote_user_key):
 		self.non_participant_users.append(beevote_user_key)

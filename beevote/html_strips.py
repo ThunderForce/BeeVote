@@ -27,11 +27,14 @@ from google.appengine.api import users
 import models
 import time
 
+import language
+
 # Start of handlers
 
 def write_template(response, template_name, template_values={}):
 	directory = os.path.dirname(__file__)
 	path = os.path.join(directory, os.path.join('templates', template_name))
+	template_values.update({'lang': language.en})
 	rendered_template = template.render(path, template_values)
 	response.headers["Pragma"]="no-cache"
 	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"

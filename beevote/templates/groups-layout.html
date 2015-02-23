@@ -123,7 +123,7 @@
 					},
 					clearForm: true,
 					error: function() {
-						alert("Errore inaspettato!");
+						alert('{{lang.general_error}}');
 						$('button#create-proposal').attr("disabled", false);
 					},
 					success: function(response) {
@@ -151,7 +151,7 @@
 				{% endif %}
 				
 				{% if feature_changes %}
-				var str = "Hi {{ user.name }}! There have been a few changes since your last access:\n\n"+
+				var str = "{{lang.hi}} {{ user.name }}{{lang.groups_layout.changelog_message}}\n\n"+
 				{% for feature in feature_changes %}
 					"{{ feature.creation }}: {{ feature.description }}\n"+
 				{% endfor %}
@@ -164,19 +164,19 @@
 			var buttons = {
 				create_group:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button id="create-group-button" data-target="#createGroup" data-toggle="modal" data-mfb-label="Create Group" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #00A65D;">'+
+						'<button id="create-group-button" data-target="#createGroup" data-toggle="modal" data-mfb-label="{{lang.buttons.create_group}}" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #00A65D;">'+
 							'<i class="mdi-social-group" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>',
 				create_topic:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button id="create-topic-button" data-target="#createTopic" data-toggle="modal" data-mfb-label="Create Topic" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #2196F3;">'+
+						'<button id="create-topic-button" data-target="#createTopic" data-toggle="modal" data-mfb-label="{{lang.buttons.create_topic}}" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #2196F3;">'+
 							'<i class="mdi-communication-forum" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>',
 				create_proposal:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
-						'<button id="create-proposal-button" data-target="#createProposal" data-toggle="modal" data-mfb-label="Create Proposal" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FFA000;">'+
+						'<button id="create-proposal-button" data-target="#createProposal" data-toggle="modal" data-mfb-label="{{lang.buttons.create_proposal}}" class="btn btn-fab btn-raised btn-shadow" style="height: 40px;width: 40px; background-color: #FFA000;">'+
 							'<i class="mdi-communication-messenger" style="line-height: 43px;top: -16px;left: -5px;font-size:20px;"></i>'+
 						'</button>'+
 					'</li>'
@@ -235,28 +235,28 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<h2 align="center">
-							<b>Create a new Group</b>
+							<b>{{lang.create_group_form.create_group}}</b>
 						</h2>
 					</div>
 					<div class="modal-body">
 						<form action="/api/create-group" method="post" class="form-horizontal" enctype="multipart/form-data" id="group-form">
 							<fieldset>
 								<div class="form-group">
-									<label for="inputGroupName" class="col-lg-2 control-label">Name: </label>
+									<label for="inputGroupName" class="col-lg-2 control-label">{{lang.name}} </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="inputGroupName" name="name" placeholder="Name of the group" type="text" maxlength="32" autocomplete="off" required>
+										<input class="form-control" id="inputGroupName" name="name" placeholder="{{lang.create_group_form.name_placeholder}}" type="text" maxlength="32" autocomplete="off" required>
 									</div>
 								</div>
 								<div class="form-group">
-									<label for="textArea" class="col-lg-2 control-label">Description</label>
+									<label for="textArea" class="col-lg-2 control-label">{{lang.description}}</label>
 									<div class="col-lg-10">
 										<textarea class="form-control" rows="3" id="inputDescription" name="description"></textarea>
-										<span class="help-block">Add here a description of the group</span>
+										<span class="help-block">{{lang.description_message}}</span>
 									</div>
 								</div>
 
 								<div class="form-group" >
-									<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
+									<label for="inputImg" class="col-lg-2 control-label">{{lang.photo}}</label>
 									<div class="col-lg-10">
 										<input id="inputImg" type="file" name="img"/>
 									</div>
@@ -265,8 +265,8 @@
 								<!-- NEW BUTTON -->
 								<div class="form-group">
 									<div class="modal-footer">
-										<button type="button" id="group-cancel" class="btn btn-default" data-dismiss="modal" data-target="#createGroup" style="background-color:#bdbdbd;">Cancel</button>
-										<button type="submit" class="btn" id="create-group" style="background-color:#00A65E;">Create</button>
+										<button type="button" id="group-cancel" class="btn btn-default" data-dismiss="modal" data-target="#createGroup" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+										<button type="submit" class="btn" id="create-group" style="background-color:#00A65E;">{{lang.create}}</button>
 									</div>
 								</div>
 							</fieldset>
@@ -284,12 +284,12 @@
 					<div class="modal-body">
 						
 							<div class="list-group">
-								<h2 align="center">Members of "<span id="group_name"></span>"</h2>
+								<h2 align="center">{{lang.add_members_form.title_members}}<span id="group_name"></span>"</h2>
 								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
 									<form id="add-member-form" class="form-horizontal" method="POST">
 										<fieldset>
 											<div class="form-group" style="padding:19px;">
-												<legend>Add member</legend>
+												<legend>{{lang.add_members_form.add_member}}</legend>
 												<div class="input-group">
 													<input type="email" class="form-control" id="email" name="email" placeholder="Email">
 													<span class="input-group-btn">
@@ -302,7 +302,7 @@
 									{% if unknown_email %}
 									<div class="alert alert-dismissable alert-warning" style="max-width: 900px; margin-left: auto; margin-right: auto; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
 										<button type="button" class="close" data-dismiss="alert">X</button>
-										<h3 style="margin-top: 0px;">{{ unknown_email.0.0 }} is not associated to any BeeVote account.</h3>
+										<h3 style="margin-top: 0px;">{{ unknown_email.0.0 }} {{lang.add_members_form.email_error}}</h3>
 									</div>
 									{% endif %}
 								</div>
@@ -319,98 +319,98 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header" style="padding:1px;">
-						<h2 align="center"><b>Create a new Topic</b></h2>
+						<h2 align="center"><b>{{lang.topic_form.create_new_topic}}</b></h2>
 					</div>
 					<div class="modal-body" style="padding:1px;padding-left:45px;padding-right:45px;">
 						<form action="/api/create-topic" method="post" class="form-horizontal" enctype="multipart/form-data" id="topic-form">
 							<fieldset>
 								<input id="groupId" type="hidden" name="group_id">
-								<div><h4 style="text-align:center;">Title</h4></div>
+								<div><h4 style="text-align:center;">{{lang.title}}</h4></div>
 								<div class="list-group">
 									<div class="form-group">
 										<div class="col-lg-10" style="margin-left:45px;">
-											<input class="form-control" id="inputTopicName" name="title" placeholder="Title of the Topic" type="text" maxlength="64" autocomplete="off" required>
+											<input class="form-control" id="inputTopicName" name="title" placeholder="{{lang.topic_form.name_placeholder}}" type="text" maxlength="64" autocomplete="off" required>
 										</div>
 									</div>
 									<!-- NEW INPUT FILE-->
 									<div class="list-group-separator" style="border-bottom: 3px solid #2196F3"></div>
 									<div>
 										<h4 style="text-align:center;">
-											Details
+											{{lang.detail}}
 										</h4>
 									</div>
 									<div class="list-group">
 										<div class="row">
 											<div class="col-lg-3">
 												<div class="list-group-item">
-													<h4> Place </h4>
+													<h4> {{lang.place}} </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised  mdi-communication-location-on" id="locationButton"></button>
 												</div>
 											</div>
 											<div class="col-lg-3">
 												<div class="list-group-item">
-													<h4> Date </h4>
+													<h4> {{lang.date}} </h4>
 													<button  type="button" class="btn btn-info btn-fab btn-raised mdi-editor-insert-invitation" id="dateButton"></button>
 												</div>
 											</div>
 											<div class="col-lg-3">
 												<div class="list-group-item">
-													<h4> Time </h4>
+													<h4> {{lang.time}} </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised mdi-action-query-builder" id="timeButton"></button>
 												</div>
 											</div>
 											<div class="col-lg-3">
 												<div class="list-group-item">
-													<h4> Deadline </h4>
+													<h4> {{lang.deadline}} </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised mdi-notification-event-busy" id="deadLineButton"></button>
 												</div>
 											</div>
 										</div>
 											<div class="form-group" id="topicWhereInput" style="display:none;">
-												<label for="inputWhere" class="col-lg-2 control-label" style="margin-top:10px;">Place: </label>
+												<label for="inputWhere" class="col-lg-2 control-label" style="margin-top:10px;">{{lang.place}}: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputWhere" name="place" placeholder="Location for the activity" type="text"></input>
+													<input class="form-control" id="inputWhere" name="place" placeholder="{{lang.topic_form.place_placeholder}}" type="text"></input>
 		    										</div>
 											</div>
 											<div class="form-group" id="topicDateInput" style="display:none;">
-												<label for="inputDate" class="col-lg-2 control-label" style="margin-top:10px;">Date: </label>
+												<label for="inputDate" class="col-lg-2 control-label" style="margin-top:10px;">{{lang.date}}: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputDate" name="date" placeholder=" Which date " autocomplete="off">
+													<input class="form-control" id="inputDate" name="date" placeholder=" {{lang.topic_form.date_placeholder}} " autocomplete="off">
 												</div>
 											</div>
 											<div class="form-group" id="topicTimeInput" style="display:none;">
-												<label for="inputTime" class="col-lg-2 control-label" style="margin-top:10px;">Time: </label>
+												<label for="inputTime" class="col-lg-2 control-label" style="margin-top:10px;">{{lang.time}}: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputTime" name="time" placeholder="At what time " autocomplete="off">
+													<input class="form-control" id="inputTime" name="time" placeholder="{{lang.topic_form.time_placeholder}} " autocomplete="off">
 												</div>
 											</div>
 											<div class="form-group" id="topicDeadLineInput" style="display:none;">
-												<label for="inputDeadline" class="col-lg-2 control-label" style="margin-top:10px;">Deadline: </label>
+												<label for="inputDeadline" class="col-lg-2 control-label" style="margin-top:10px;">{{lang.deadline}}: </label>
 												<div class="col-lg-10" style="margin-top:10px;">
-													<input class="form-control" id="inputDeadline" name="deadline" autocomplete="off" placeholder="Fill this field if you want to set an expire time for the topic">
+													<input class="form-control" id="inputDeadline" name="deadline" autocomplete="off" placeholder="{{lang.deadline_explain}}">
 												</div>
 											</div>
 											<div class="list-group-separator" style="border-bottom: 3px solid #2196F3;padding-top:20px;"></div>
 											<br>
 											<div class="form-group" >
-												<label for="inputImg" class="col-lg-2 control-label">Photo:</label>
+												<label for="inputImg" class="col-lg-2 control-label">{{lang.photo}}:</label>
 												<div class="col-lg-10">
 													<input id="inputImg" type="file" name="img"/>
 												</div>
 											</div>
 											<div class="form-group">
-												<label for="textArea" class="col-lg-2 control-label">Other details: </label>
+												<label for="textArea" class="col-lg-2 control-label">{{lang.other_details}}: </label>
 												<div class="col-lg-10">
 													<textarea class="form-control" rows="3" id="inputDescription" name="description"></textarea>
-													<span class="help-block">Add here details that you want the others will know </span>
+													<span class="help-block">{{lang.details_message}}</span>
 												</div>
 											</div>										
 									</div>
 									<!-- NEW BUTTON -->
 									<div class="form-group">
 										<div class="modal-footer" style="padding:1px;">
-											<button type="button" id="topic-cancel" class="btn btn-default" data-dismiss="modal" data-target="#createGroup" style="background-color:#bdbdbd;">Cancel</button>
-											<button type="submit" class="btn btn-info" id="create-topic">Create</button>
+											<button type="button" id="topic-cancel" class="btn btn-default" data-dismiss="modal" data-target="#createGroup" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+											<button type="submit" class="btn btn-info" id="create-topic">{{lang.create}}</button>
 										</div>
 									</div>
 								</fieldset>
@@ -426,7 +426,7 @@
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h2 align="center"><b>Create a new Proposal</b></h2>
+						<h2 align="center"><b>{{lang.proposal_form.proposal_title}}</b></h2>
 					</div>
 					<div class="modal-body">
 						<form action="/api/create-proposal" method="post" class="form-horizontal" id="proposal-form">
@@ -434,45 +434,45 @@
 								<input type="hidden" id="proposal_popup_group_id" name="group_id" value="{{ topic.parent.key.id }}">
 								<input type="hidden" id="proposal_popup_topic_id" name="topic_id" value="{{ topic.key.id }}">
 								<div class="form-group">
-									<label for="proposal_title" class="col-lg-2 control-label">Title: </label>
+									<label for="proposal_title" class="col-lg-2 control-label">{{lang.title}}: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="proposal_title" name="title" placeholder="Title of the Proposal" type="text" maxlength="64" autocomplete="off" required>
+										<input class="form-control" id="proposal_title" name="title" placeholder="{{lang.proposal_form.title_placeholder}}" type="text" maxlength="64" autocomplete="off" required>
 									</div>
 								</div>
 
 								<div class="form-group" id="proposal_place_div">
-									<label for="proposal_place" class="col-lg-2 control-label">Place: </label>
+									<label for="proposal_place" class="col-lg-2 control-label">{{lang.place}}: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="proposal_place" name="place" placeholder="Location for the activities" type="text">
+										<input class="form-control" id="proposal_place" name="place" placeholder="{{lang.proposal_form.place_placeholder}}" type="text">
 									</div>
 								</div>
 								
 								<div class="form-group" id="proposal_date_div">
-									<label for="proposal_date" class="col-lg-2 control-label">Date: </label>
+									<label for="proposal_date" class="col-lg-2 control-label">{{lang.date}}: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="proposal_date" name="date" placeholder="Date for the activity" autocomplete="off">
+										<input class="form-control" id="proposal_date" name="date" placeholder="{{lang.proposal_form.date_placeholder}}" autocomplete="off">
 									</div>
 								</div>
 								
 								<div class="form-group" id="proposal_time_div">
-									<label for="proposal_time" class="col-lg-2 control-label">Time: </label>
+									<label for="proposal_time" class="col-lg-2 control-label">{{lang.time}}: </label>
 									<div class="col-lg-10">
-										<input class="form-control" id="proposal_time" name="time" placeholder="Time for the activity" autocomplete="off">
+										<input class="form-control" id="proposal_time" name="time" placeholder="{{lang.proposal_form.time_placeholder}}" autocomplete="off">
 									</div>
 								</div>
 								
 								<div class="form-group">
-									<label for="textArea" class="col-lg-2 control-label">Details</label>
+									<label for="textArea" class="col-lg-2 control-label">{{lang.description}}</label>
 									<div class="col-lg-10">
 										<textarea class="form-control" rows="3" id="proposal_description" name="description"></textarea>
-										<span class="help-block">Add here details that you want the others will know </span>
+										<span class="help-block">{{lang.detail_message}} </span>
 									</div>
 								</div>
 
 								<div class="form-group">
 									<div class="modal-footer">
-										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">Cancel</button>
-										<button type="submit" class="btn btn-success" id="create-proposal" style="background-color:#FFA000">Create</button>
+										<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+										<button type="submit" class="btn btn-success" id="create-proposal" style="background-color:#FFA000">{{lang.create}}</button>
 									</div>
 								</div>
 							</fieldset>
@@ -531,7 +531,7 @@
 
 					<!-- Jumbotron Lista Gruppi -->
 					<div>
-						<h2>Your Groups</h2>
+						<h2>{{lang.groups_layout.your_groups}}</h2>
 					</div>
 					<br>
 					<div id="group-list"></div>

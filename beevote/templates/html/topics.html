@@ -12,14 +12,14 @@
 		<div class="list-group-item">
 			<div class="row">
 				<div class="row-content">
-					<h2>List of all topics</h2>
+					<h2>{{lang.topics.topic_list}}</h2>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="list-group global-topics">
 		{% if not topics %}
-		<p>You have no topics yet. Choose a group and create one now!</p>
+		<p>{{lang.topics.no_topics}}</p>
 		{% endif %}
 		{% for topic in topics %}
 		<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}" data-group-id="{{ topic.group.key.id }}">
@@ -47,18 +47,18 @@
 						</h5>
 						{% if topic.deadline %}
 							{% if topic.expired %}
-								<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span>This topic has reached its deadline.</span></h5>
+								<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span>{{lang.topic_overview.deadline_reach}}</span></h5>
 							{% else %}
 								<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy"></span>
 									<span>
 										{% if topic.time_before_deadline.days != 0 %}
-											{{ topic.time_before_deadline.days }} days 
+											{{ topic.time_before_deadline.days }} {{lang.days}} 
 										{% endif %}
 										{% if topic.time_before_deadline.hours != 0 %}
-											{{ topic.time_before_deadline.hours }} hours 
+											{{ topic.time_before_deadline.hours }} {{lang.hours}} 
 										{% endif %}
 										{% if topic.time_before_deadline.minutes != 0 %}
-											{{ topic.time_before_deadline.minutes }} minutes 
+											{{ topic.time_before_deadline.minutes }} {{lang.minutes}} 
 										{% endif %}
 								</h5>
 							{% endif %}

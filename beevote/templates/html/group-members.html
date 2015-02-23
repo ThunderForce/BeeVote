@@ -3,11 +3,11 @@
 		$('form.remove-member-form').ajaxForm({
 			dataType: "json",
 			beforeSubmit: function() {
-				return confirm("Are you sure you want to remove this user from the group?");
+				return confirm('{{lang.group_members.warning_delete}}'); 
 				//$('button#add-member-button').attr("disabled", true);
 			},
 			error: function() {
-				alert("Errore inaspettato!");
+				alert("{{lang.general_error}}");
 				//$('button#add-member-button').attr("disabled", false);
 			},
 			success: function(response) {
