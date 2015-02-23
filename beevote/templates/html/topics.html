@@ -3,6 +3,8 @@
 		$('div.topic-item').on('click', function() {
 			load_topic($(this).data('group-id'), $(this).data('topic-id'))
 		});
+		$('#creation-buttons').html('');
+		$('#creation-buttons').append(buttons.create_group);
 	});
 </script>
 <div class="topics-overview">

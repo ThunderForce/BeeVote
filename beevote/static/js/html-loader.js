@@ -10,7 +10,8 @@ function _load_right_column(url, additional_callback) {
 		method: "GET",
 		success: function(response) {
 			$('div#right-column').html(response);
-			additional_callback();
+			if (typeof additional_callback == "function")
+				additional_callback();
 		}
 	});
 }
@@ -37,10 +38,7 @@ function load_all_topics() {
 	// better use pushState
 	window.history.replaceState(null, "Home", "/home");
 	$('div#right-column').html('<div class="loader"></div>');
-	_load_right_column('/html/topics', function() {
-		$('#creation-buttons').html('');
-		$('#creation-buttons').append(buttons.create_group);
-	});
+	_load_right_column('/html/topics');
 }
 
 function load_group_topics(group_id) {
@@ -51,11 +49,7 @@ function load_group_topics(group_id) {
 	// better use pushState
 	window.history.replaceState(null, "Group", "/group/"+group_id);
 	$('div#right-column').html('<div class="loader"></div>');
-	_load_right_column('/html/group/'+group_id, function() {
-		$('#creation-buttons').html('');
-		$('#creation-buttons').append(buttons.create_topic);
-		$('#creation-buttons').append(buttons.create_group);
-	});
+	_load_right_column('/html/group/'+group_id);
 	$('div#member_list:not(div.group-overview div#member-list)').html('<div class="loader"></div>');
 	$('div#member_list:not(div.group-overview div#member-list)').load('/html/group/'+group_id+'/members');
 	$('form#add-member-form').attr('action', '/api/group/'+group_id+'/members/add');
@@ -70,7 +64,11 @@ function load_topic(group_id, topic_id) {
 	// better use pushState
 	window.history.replaceState(null, "Group", "/group/"+group_id+"/topic/"+topic_id);
 	$('div#right-column').html('<div class="loader"></div>');
-	_load_right_column('/html/group/'+group_id+'/topic/'+topic_id);
+	_load_right_column('/html/group/'+group_id+'/topic/'+topic_id, function() {
+		// I don't know why we need this
+		$('#topic_image').css("height", "99%");
+		$('#topic_image').css("height", "100%");
+	});
 	$('div.group-well').removeClass('group-selected');
 	$('div.group-well[data-group_id="'+group_id+'"]').addClass('group-selected');
 }

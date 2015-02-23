@@ -29,50 +29,53 @@ $(document).ready(function() {
 	});
 
 	$('#edit-cancel').on('click', function() {
-					resetForm("updateImage-form");
-				});
+		resetForm("updateImage-form");
+	});
 
 	$('#updateImage-form').ajaxForm({
-					dataType: "json",
-					beforeSubmit: function() {
-						$('#edit-image').attr("disabled", true);
-					},
-					clearForm: true,
-					error: function() {
-						alert("Errore inaspettato!");
-					},
-					success: function(response) {
-						if (response.success) {
-							load_groups(response.group_id);
-							load_group_topics(response.group_id);
-							$('#updateImage').modal('hide');
-						} else {
-							alert(response.error);
-						}
-						$('#edit-image').attr("disabled", false);
-					}
+		dataType: "json",
+		beforeSubmit: function() {
+			$('#edit-image').attr("disabled", true);
+		},
+		clearForm: true,
+		error: function() {
+			alert("Errore inaspettato!");
+		},
+		success: function(response) {
+			if (response.success) {
+				load_groups(response.group_id);
+				load_group_topics(response.group_id);
+				$('#updateImage').modal('hide');
+			} else {
+				alert(response.error);
+			}
+			$('#edit-image').attr("disabled", false);
+		}
 	});
 
-		$('#updateInfo-form').ajaxForm({
-					dataType: "json",
-					beforeSubmit: function() {
-						$('#edit-info').attr("disabled", true);
-					},
-					clearForm: true,
-					error: function() {
-						alert("Errore inaspettato!");
-					},
-					success: function(response) {
-						if (response.success) {
-							load_groups(response.group_id);
-							load_group_topics(response.group_id)
-							$('#updateInfo').modal('hide');
-						} else {
-							alert(response.error);
-						}
-						$('#edit-info').attr("disabled", false);
-					}
+	$('#updateInfo-form').ajaxForm({
+		dataType: "json",
+		beforeSubmit: function() {
+			$('#edit-info').attr("disabled", true);
+		},
+		clearForm: true,
+		error: function() {
+			alert("Errore inaspettato!");
+		},
+		success: function(response) {
+			if (response.success) {
+				load_groups(response.group_id);
+				load_group_topics(response.group_id)
+				$('#updateInfo').modal('hide');
+			} else {
+				alert(response.error);
+			}
+			$('#edit-info').attr("disabled", false);
+		}
 	});
+	$('#creation-buttons').html('');
+	$('#creation-buttons').append(buttons.create_topic);
+	$('#creation-buttons').append(buttons.create_group);
 });
 
 function resetForm(form_id) {
