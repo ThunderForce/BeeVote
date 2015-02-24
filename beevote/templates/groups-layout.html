@@ -141,7 +141,7 @@
 				{% if group_id %}
 					load_groups({{ group_id }});
 					{% if topic_id %}
-						load_topic({{ group_id }}, {{ topic_id }})
+						load_topic({{ group_id }}, {{ topic_id }});
 					{% else %}
 						load_group_topics({{ group_id }});
 					{% endif %}

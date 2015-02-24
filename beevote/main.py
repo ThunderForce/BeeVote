@@ -368,6 +368,7 @@ app = webapp2.WSGIApplication([
 	('/api/group/(.*)/topic/(.*)/remove-participation', api.RemoveParticipationHandler),
 	('/api/group/(.*)/topic/(.*)/add-participation', api.AddParticipationHandler),
 	('/api/group/(.*)/topic/(.*)/remove', api.RemoveTopicHandler),
+	('/api/group/(.*)/notifications', api.GroupNotificationsHandler),
 	('/api/group/(.*)/remove', api.RemoveGroupHandler),
 	('/api/create-group', api.CreateGroupHandler),
 	('/api/group/(.*)/topic/(.*)/update', api.UpdateTopicHandler),
