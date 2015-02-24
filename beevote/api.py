@@ -470,6 +470,8 @@ class CreateTopicHandler(webapp2.RequestHandler):
 					img=img
 				)
 				topic.put()
+				models.GroupNotification.create(models.GroupNotification.TOPIC_CREATION, group)
+				group.put()
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -530,6 +532,38 @@ class UpdateTopicHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
+class GroupNotificationsHandler(webapp2.RequestHandler):
+	def post(self, group_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group = models.Group.get_from_id(group_id)
+		if not is_user_in_group(beevote_user, group):
+			values = {
+				'success': False,
+				'group_id': group_id,
+				'error': "You are not authorized to interact with this group",
+			}
+		else:
+			timestamp_str = self.request.get('timestamp');
+			timestamp = datetime.datetime.strptime(timestamp_str, "%d/%m/%Y %H:%M")
+			notifications = models.GroupNotification.get_from_timestamp(timestamp, group=group, beevote_user=beevote_user)
+			values = {
+				'success': True,
+				'group_id': group_id,
+				'group_invitations': 0,
+				'topic_creations': 0,
+				'topic_expirations': 0,
+			}
+			for notification in notifications:
+				if notification.notification_code == models.GroupNotification.GROUP_INVITATION:
+					values['group_invitations'] += 1
+				elif notification.notification_code == models.GroupNotification.TOPIC_CREATION:
+					values['topic_creations'] += 1
+				elif notification.notification_code == models.GroupNotification.TOPIC_EXPIRATION:
+					values['topic_expirations'] += 1
+		self.response.out.write(json.dumps(values))
+
 class RemoveGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
@@ -556,7 +590,6 @@ class RemoveGroupHandler(webapp2.RequestHandler):
 					'error': "You are not an admin of the group",
 				}
 		self.response.out.write(json.dumps(values))
-
 
 class AddGroupMemberHandler(webapp2.RequestHandler):
 	def post(self, group_id):

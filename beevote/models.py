@@ -57,6 +57,7 @@ class Group(db.Model):
 	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 	img = db.BlobProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
+	last_change = db.DateTimeProperty(auto_now=True)
 	
 	@staticmethod
 	def get_from_id(group_id):
@@ -129,7 +130,7 @@ class Topic(db.Model):
 			group=group,
 			parent=group,
 			creator=creator,
-			  )
+		)
 		topic.place = place
 		if date != "":
 			topic.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
@@ -199,6 +200,40 @@ class Vote(db.Model):
 class FeatureChange(db.Model):
 	description = db.StringProperty(required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
+
+class GroupNotification(db.Model):
+	GROUP_INVITATION = 0
+	GROUP_NAME_CHANGE = 1
+	GROUP_DESCRIPTION_CHANGE = 2
+	TOPIC_CREATION = 3
+	TOPIC_EXPIRATION = 4
+	group = db.ReferenceProperty(Group, required=True)
+	notification_code = db.IntegerProperty(required=True)
+	beevote_user = db.ReferenceProperty(BeeVoteUser, required=False)
+	timestamp = db.DateTimeProperty(auto_now_add=True)
+	
+	@staticmethod
+	def get_from_timestamp(timestamp, group=None, beevote_user=None):
+		# TODO order results
+		if group:
+			notifications = db.GqlQuery("SELECT * FROM GroupNotification WHERE timestamp > :1 AND group = :2", timestamp, group).fetch(1000)
+		else:
+			notifications = db.GqlQuery("SELECT * FROM GroupNotification WHERE timestamp > :1", timestamp).fetch(1000)
+		if beevote_user:
+			ret = [n for n in notifications if beevote_user.key() == n.beevote_user or not n.beevote_user]
+			return ret
+		else:
+			return notifications
+	
+	@staticmethod
+	def create(notification_code, group, beevote_user=None):
+		notification = GroupNotification(
+			notification_code=notification_code,
+			group=group,
+			beevote_user=beevote_user
+		)
+		notification.put()
+		
 
 # End of Data Model
 
