@@ -65,6 +65,9 @@ function load_topic(group_id, topic_id) {
 	window.history.replaceState(null, "Group", "/group/"+group_id+"/topic/"+topic_id);
 	$('div#right-column').html('<div class="loader"></div>');
 	_load_right_column('/html/group/'+group_id+'/topic/'+topic_id, function() {
+		// I don't know why we need this
+		$('#topic_image').css("height", "99%");
+		$('#topic_image').css("height", "100%");
 	});
 	$('div.group-well').removeClass('group-selected');
 	$('div.group-well[data-group_id="'+group_id+'"]').addClass('group-selected');

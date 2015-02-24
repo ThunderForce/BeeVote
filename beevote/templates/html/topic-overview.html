@@ -1,40 +1,5 @@
 <script src="/static/js/vote-functions.js"></script>
 <script>
-window.fanculo = ['lol'];
-function initialize_proposal_map(id, place) {
-	var geocoder = new google.maps.Geocoder();
-	var address_proposal = place;
-
-	geocoder.geocode( { 'address': address_proposal}, function(results, status) {
-
-		if (status == google.maps.GeocoderStatus.OK) {
-			var latitude = results[0].geometry.location.lat();
-			var longitude = results[0].geometry.location.lng();
-
-
-			var latlng = new google.maps.LatLng(latitude,longitude);
-
-			var myOptions = {
-				zoom: 14,
-				center: latlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				mapTypeControl: false
-			};
-			var map = new google.maps.Map($('#map_canvas_proposal[data-proposal="'+id+'"]')[0],myOptions);
-
-			var marker = new google.maps.Marker({
-				position: latlng, 
-				map: map, 
-				title: place
-			});
-			window.setTimeout(function() {
-				google.maps.event.trigger(map, 'resize');
-				map.panTo(marker.getPosition());
-			}, 250
-			);
-		}
-	});
-};
 $(document).ready(function() {
 	$('input#groupId').val("{{ topic.group.key.id }}");
 	$('button#delete-topic').on('click', function() {
@@ -59,7 +24,6 @@ $(document).ready(function() {
 	$("div.proposal-well").on("click", function() {
 		var proposal_id = $(this).data("proposal");
 		$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
-		initialize_proposal_map(proposal_id, $(this).data("place"));
 	});
 	$('input#proposal_popup_group_id').val("{{ topic.group.key.id }}");
 	$('input#proposal_popup_topic_id').val("{{ topic.key.id }}");
@@ -208,13 +172,6 @@ $(document).ready(function() {
 			})
 		}
 	});
-	$('.proposal-map').on('click', function(e) {
-	    if (e.stopPropagation) {
-			e.stopPropagation();
-		} else {
-			e.cancelBubble = true;
-		}
-	});
 	$.material.init();
 });
 
@@ -244,22 +201,22 @@ $('#edit-cancel').on('click', function() {
 
 
 var geocoder = new google.maps.Geocoder();
-var address_topic = '{{ topic.place }}';
+var address = '{{topic.place}}';
 
-    geocoder.geocode( { 'address': address_topic}, function(results, status) {
+    geocoder.geocode( { 'address': address}, function(results, status) {
 
       if (status == google.maps.GeocoderStatus.OK) {
         var latitude = results[0].geometry.location.lat();
         var longitude = results[0].geometry.location.lng();
 
 
-        initialize_topic_place(latitude,longitude);
+        initialize(latitude,longitude);
 
                 } 
 
         }); 
 
-function initialize_topic_place(latitude,longitude) {
+function initialize(latitude,longitude) {
         var latlng = new google.maps.LatLng(latitude,longitude);
 
         var myOptions = {
@@ -268,14 +225,14 @@ function initialize_topic_place(latitude,longitude) {
           mapTypeId: google.maps.MapTypeId.ROADMAP,
           mapTypeControl: false
         };
-        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
+        var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
 
         var marker = new google.maps.Marker({
           position: latlng, 
           map: map, 
-            title:"{{ topic.place }}"
+            title:"Rome"
         }); 
-}
+      }
 </script>
 
 <!--
@@ -376,11 +333,11 @@ function initialize_topic_place(latitude,longitude) {
 	<div class="list-group-item">
 		<div class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
 			<div class="row">
-				<div class="row-picture" style="width:200px;margin-bottom:10px;">
+				<div class="row-picture" style="width:200px;height:100%;margin-bottom:10px;">
 					{% if topic.img != None %}
-					<img id="topic_image" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;">
+					<img id="topic_image" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;max-height:100%">
 					{% else %}
-					<img id="topic_image" src="/static/images/topic-icon.png" style="width:200px;height:100%;">
+					<img id="topic_image" src="/static/images/topic-icon.png" style="width:200px;height:100%;max-height:100%">
 					{% endif %}
 					{% if topic.is_own %}
 					<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" style="padding:7px;"></button></div>
@@ -423,16 +380,12 @@ function initialize_topic_place(latitude,longitude) {
 						</p>
 						{% endif %}
 						{% endif %}
-						{% if topic.place %}
-						<div id="map_canvas_topic" style="width:107%; height:200px; margin-top:10px;"></div>
-						{% endif %}
 					</div>
 				</div>
 				<div style="float:right;margin-right:25px;">
 				{% if topic.is_own %}
 					<button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
-<<<<<<< HEAD
 				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">
 					{% if not topic.participation %}
 					{{lang.topic_overview.not_partecipating}}
@@ -443,21 +396,13 @@ function initialize_topic_place(latitude,longitude) {
 
 				<button type="button" class="btn btn-info btn-raised mdi-maps-pin-drop" data-toggle="modal" data-target="#showMap" style="padding:7px;"></button>
 
-||||||| merged common ancestors
-				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
-
-				<button type="button" class="btn btn-info btn-raised mdi-maps-pin-drop" data-toggle="modal" data-target="#showMap" style="padding:7px;"></button>
-
-=======
-				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
->>>>>>> origin/master
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
-
+<div id="map_canvas" style="width:710px; height:300px"></div> 
   
 <div class="list-group">
 	<h2 style="margin-left:20px;">{{ lang.proposals }}</h2>
@@ -466,7 +411,7 @@ function initialize_topic_place(latitude,longitude) {
 	{% endif %}
 	{% for proposal in topic.proposals %}
 	<div class="list-group-item">
-		<div data-proposal="{{ proposal.key.id }}" data-place="{{ proposal.place }}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+		<div data-proposal="{{ proposal.key.id }}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
 			<div class="row">
 				<!-- interno proposta -->
 				<div class="row-picture">
@@ -495,9 +440,6 @@ function initialize_topic_place(latitude,longitude) {
 							{% else%}
 							<br>
 							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>{{lang.no_description}}
-							{% endif %}
-							{% if proposal.place %}
-							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:145%; height:200px; margin-top:10px;"></div>
 							{% endif %}
 						</div>
 					</div>
