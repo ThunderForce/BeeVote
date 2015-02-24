@@ -1,6 +1,5 @@
 <script src="/static/js/vote-functions.js"></script>
 <script>
-window.fanculo = ['lol'];
 function initialize_proposal_map(id, place) {
 	var geocoder = new google.maps.Geocoder();
 	var address_proposal = place;
@@ -432,7 +431,7 @@ function initialize_topic_place(latitude,longitude) {
 				{% if topic.is_own %}
 					<button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
-<<<<<<< HEAD
+
 				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">
 					{% if not topic.participation %}
 					{{lang.topic_overview.not_partecipating}}
@@ -440,17 +439,6 @@ function initialize_topic_place(latitude,longitude) {
 					{{lang.topic_overview.partecipating}}
 					{% endif %}
 				</span></button>
-
-				<button type="button" class="btn btn-info btn-raised mdi-maps-pin-drop" data-toggle="modal" data-target="#showMap" style="padding:7px;"></button>
-
-||||||| merged common ancestors
-				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
-
-				<button type="button" class="btn btn-info btn-raised mdi-maps-pin-drop" data-toggle="modal" data-target="#showMap" style="padding:7px;"></button>
-
-=======
-				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">You are{% if not topic.participation %}n't{% endif %} participating</span></button>
->>>>>>> origin/master
 				</div>
 			</div>
 		</div>
