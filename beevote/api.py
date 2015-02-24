@@ -363,6 +363,44 @@ class LoadProposalHandler(webapp2.RequestHandler):
 			}
 		}
 		self.response.out.write(json.dumps(values))
+class UpdateUser(webapp2.RequestHandler):
+	def post(self):
+		name = self.request.get('edit_name', None)
+		surname = self.request.get('edit_surname', None)
+		language = self.request.get('edit_language', None)
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		if name and name == "":
+			values = {
+				'success': False,
+				'error': 'Name is required',
+			}
+		elif  surname and surname == "":
+			values = {
+				'success': False,
+				'error': 'Surname is required',
+			}
+		elif  language and language == "":
+			values = {
+				'success': False,
+				'error': 'Language is required',
+			}
+		else:
+			
+			if name:
+				beevote_user.name = name
+			if surname:
+				beevote_user.surname = surname
+			if language:
+				beevote_user.language = language
+			beevote_user.put()
+			user_id = user.user_id()
+			values = {
+				'success': True,
+				'user_id': user_id,
+			}
+		self.response.out.write(json.dumps(values))
+		self.redirect('/home')
 
 class LoadGroupMembersHandler(webapp2.RequestHandler):
 	def get(self):

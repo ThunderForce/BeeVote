@@ -13,6 +13,7 @@ class BeeVoteUser(db.Model):
 	creation = db.DateTimeProperty(auto_now_add=True)
 	img = db.BlobProperty()
 	last_access = db.DateTimeProperty()
+	language = db.StringProperty()
 	
 	@staticmethod
 	def get_from_id(beevote_user_id):

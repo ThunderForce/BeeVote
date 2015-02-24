@@ -45,11 +45,18 @@ def get_template(template_name, template_values={}, navbar_values={}):
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 	else:
 		beevote_user = None
+
+
+	if not beevote_user or not beevote_user.language:
+		lang_package= 'en'
+	else:
+		lang_package=beevote_user.language
 	
 	def_navbar_values = {
 		'user': beevote_user,
 		'breadcumb': None,
 		'feedback_url': 'https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform',
+		'lang': language.lang[lang_package],
 	}
 	def_navbar_values.update(navbar_values)
 	
@@ -73,7 +80,7 @@ def get_template(template_name, template_values={}, navbar_values={}):
 	values = {
 		'basic_head': template.render(basic_head_path, {}),
 		'navbar': template.render(navbar_path, def_navbar_values),
-		'lang': language.en,
+		'lang': language.lang[lang_package],
 	}
 	
 	values.update(template_values)
@@ -183,7 +190,14 @@ class HomeHandler(BaseHandler):
 			'topic_id': topic_id,
 		}
 		write_template(self.response, 'groups-layout.html',values)
-
+class EditUserHandler(BaseHandler):
+	def get(self):
+		# Use user_id to get user and put it in values
+		values = {
+			'user' : self.beevote_user,
+		}
+		write_template(self.response, 'edit-user.html', values)
+		
 class ProfileHandler(BaseHandler):
 	def get(self, user_id):
 		# Use user_id to get user and put it in values
@@ -377,6 +391,7 @@ app = webapp2.WSGIApplication([
 	('/api/create-proposal', api.CreateProposalHandler),
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
+	('/api/update-user', api.UpdateUser),
 	('/api/load-proposal', api.LoadProposalHandler),
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
@@ -392,7 +407,8 @@ app = webapp2.WSGIApplication([
 	('/register', RegistrationHandler),
 	('/request-registration',RequestRegistrationHandler),
 	('/registration-pending',RegistrationPendingHandler),
-	('/logout', LogoutHandler)
+	('/logout', LogoutHandler),
+	('/edit-user',EditUserHandler),
 ], debug=debug, config=config)
 
 app.error_handlers[401] = handle_401

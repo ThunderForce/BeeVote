@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+	<title>BeeVote</title>
+
+	{{ basic_head }}
+
+	<script type="text/javascript" src="/static/js/html-loader.js"></script>
+
+	<script>
+
+	</script>
+
+</head>
+
+<body>
+
+	{{ navbar }}
+
+	<!--Form per la modifica dei dati utente-->
+	<form action="/api/update-user" method="post" class="form-horizontal" id="edit-user-form">
+		<fieldset>
+			<h3 align="center">{{lang.edit_profile.edit_profile_title}}</h3>
+			<div class="form-group">
+				<label for="edit_user_name" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_name}}: </label>
+				<div class="col-lg-10">
+					<input class="form-control" id="edit_user_name" name="edit_name"  type="text" maxlength="64" autocomplete="off"  value="{{user.name}}">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="edit_user_surname" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_surname}}: </label>
+				<div class="col-lg-10">
+					<input class="form-control" id="edit_user_surname" name="edit_surname"  type="text" maxlength="64" autocomplete="off" value="{{user.surname}}" >
+				</div>
+			</div>
+
+<!--
+			<div class="form-group">
+				<label for="edit_user_language" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}: </label>
+				<div class="col-lg-10">
+					<input class="form-control" id="edit_user_language" name="edit_language" placeholder="" type="text" maxlength="64" autocomplete="off" >
+				</div>
+			</div>
+
+		-->
+
+
+			<div class="form-group">
+				<label class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}:</label>
+				<div class="col-lg-10">
+					<div class="radio radio-primary">
+						<label>
+							<input name="edit_language" id="optionsRadios1" value="it" checked="" type="radio">
+							{{lang.italian}}
+						</label>
+					</div>
+					<div class="radio radio-primary">
+						<label>
+							<input name="edit_language" id="optionsRadios2" value="en" type="radio">
+							{{lang.english}}
+						</label>
+					</div>
+				</div>
+			</div>
+
+
+
+			<div class="form-group">
+
+				<!--<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button> -->
+				<div class="row">
+					<div class="col-lg-9"></div>
+					<div class="col-lg-3">
+				<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#FFA000">{{lang.edit}}</button>
+			</div>
+			</div>
+			</div>
+		</fieldset>
+	</form>
+
+
+</body>
+</html>
