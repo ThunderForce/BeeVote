@@ -282,7 +282,7 @@
 				<div class="modal-content">
 					
 					<div class="modal-body">
-						
+						<button type="button" class="btn btn-raised" data-dismiss="modal" data-target="#addMembers" style="float:right;padding: 5px 10px 3px 10px;background-color:#F44336">X</button>
 							<div class="list-group">
 								<h2 align="center">{{lang.add_members_form.title_members}}<span id="group_name"></span>"</h2>
 								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
@@ -340,31 +340,31 @@
 										</h4>
 									</div>
 									<div class="list-group">
-										<div class="row">
-											<div class="col-lg-3">
-												<div class="list-group-item">
+										<div class="row" style="text-align:center;margin-left:-20px;margin-right:-20px;">
+											
+												<div class="list-group-item" style="display:inline-block">
 													<h4> {{lang.place}} </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised  mdi-communication-location-on" id="locationButton"></button>
 												</div>
-											</div>
-											<div class="col-lg-3">
-												<div class="list-group-item">
+											
+											
+												<div class="list-group-item" style="display:inline-block">
 													<h4> {{lang.date}} </h4>
 													<button  type="button" class="btn btn-info btn-fab btn-raised mdi-editor-insert-invitation" id="dateButton"></button>
 												</div>
-											</div>
-											<div class="col-lg-3">
-												<div class="list-group-item">
+											
+											
+												<div class="list-group-item" style="display:inline-block">
 													<h4> {{lang.time}} </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised mdi-action-query-builder" id="timeButton"></button>
 												</div>
-											</div>
-											<div class="col-lg-3">
-												<div class="list-group-item">
+											
+											
+												<div class="list-group-item" style="display:inline-block">
 													<h4> {{lang.deadline}} </h4>
 													<button type="button" class="btn btn-info btn-fab btn-raised mdi-notification-event-busy" id="deadLineButton"></button>
 												</div>
-											</div>
+											
 										</div>
 											<div class="form-group" id="topicWhereInput" style="display:none;">
 												<label for="inputWhere" class="col-lg-2 control-label" style="margin-top:10px;">{{lang.place}}: </label>

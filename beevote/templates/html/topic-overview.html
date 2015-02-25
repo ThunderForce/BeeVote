@@ -19,8 +19,9 @@ function initialize_proposal_map(id, place) {
 				mapTypeId: google.maps.MapTypeId.ROADMAP,
 				mapTypeControl: false
 			};
-			var map = new google.maps.Map($('#map_canvas_proposal[data-proposal="'+id+'"]')[0],myOptions);
 
+			var map = new google.maps.Map($('#map_canvas_proposal[data-proposal="'+id+'"]')[0],myOptions);
+			
 			var marker = new google.maps.Marker({
 				position: latlng, 
 				map: map, 
@@ -32,9 +33,13 @@ function initialize_proposal_map(id, place) {
 			}, 250
 			);
 		}
+		else {
+			$('#map_canvas_proposal[data-proposal="'+id+'"]').css('display', 'none');
+		}
 	});
 };
 $(document).ready(function() {
+	$('#topic_image').css('width', '99%');$('#topic_image').css('width', '100%');
 	$('input#groupId').val("{{ topic.group.key.id }}");
 	$('button#delete-topic').on('click', function() {
 		if (confirm("Are you sure to delete this topic?")) {
@@ -254,9 +259,11 @@ var address_topic = '{{ topic.place }}';
 
         initialize_topic_place(latitude,longitude);
 
-                } 
-
-        }); 
+       }
+      else {
+       	$('#map_canvas_topic').css('display', 'none');
+       } 
+    }); 
 
 function initialize_topic_place(latitude,longitude) {
         var latlng = new google.maps.LatLng(latitude,longitude);
@@ -423,7 +430,7 @@ function initialize_topic_place(latitude,longitude) {
 						{% endif %}
 						{% endif %}
 						{% if topic.place %}
-						<div id="map_canvas_topic" style="width:107%; height:200px; margin-top:10px;"></div>
+						<div id="map_canvas_topic" style="width:97%; height:200px; margin-top:10px;"></div>
 						{% endif %}
 					</div>
 				</div>
@@ -477,6 +484,9 @@ function initialize_topic_place(latitude,longitude) {
 						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
 						<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 						<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
+							{% if proposal.place %}
+							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:145%; height:200px; margin-top:10px;"></div>
+							{% endif %}
 							{% if proposal.description %}
 							<br>
 							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span> {{ proposal.description }}
@@ -484,20 +494,14 @@ function initialize_topic_place(latitude,longitude) {
 							<br>
 							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>{{lang.no_description}}
 							{% endif %}
-							{% if proposal.place %}
-							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:145%; height:200px; margin-top:10px;"></div>
-							{% endif %}
 						</div>
-					</div>
-					<div class="least-content" style="top:5px;right:20px;">
-						<b>{{lang.votes}} </b>
-						
-						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding-left:10px;padding-right:7px;margin-right:10px;background-color:#2196F3;">
-
+					</div>	
+						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding:5px 1px 4px 5px;position:absolute;top:-5px;right:20px;background-color:#2196F3;">
+							<b>{{lang.votes}}</b>
 							<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
 						</button>
-						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 40px; height: 40px;  padding: 8px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
-					</div>
+						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:37px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
+					
 				</div>
 			</div>
 		</div>
@@ -535,8 +539,10 @@ function initialize_topic_place(latitude,longitude) {
 <div id="voteList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-body">
-
+			<div class="modal-header" style="padding:0px 8px 0px 0px;">
+				<button type="button" class="btn btn-raised" data-dismiss="modal" data-target="#voteList" style="float:right;padding: 5px 10px 3px 10px;background-color:#F44336;z-index:1;">X</button>
+			</div>
+			<div class="modal-body" style="padding-top:30px;">
 				<div class="list-group" >
 					<div class="well well-lg proposal-well" color="yellow_g" style="padding: 1px 5px 23px 25px;"> 
 						<h2 id="prosalPopupTitle"></h2>
