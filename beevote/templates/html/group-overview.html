@@ -99,8 +99,8 @@ function resetForm(form_id) {
 						<img src="/static/images/group-default.jpg" id="group_image" style="width: 200px;height: 100%;">
 						{% endif %}
 						{% if group.is_own %}
-							<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" style="padding:7px;"></button></div>
-							<button id="delete-group" title="Delete this group" class="btn btn-raised mdi-action-delete" style="padding:8px;position:absolute;top:0px;right:25px;z-index:1;background-color:#F44336;"></button>
+							<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" title="{{lang.buttons.edit_group_photo_title}}" style="padding:7px;"></button></div>
+							<button id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="padding:8px;position:absolute;top:0px;right:25px;z-index:1;background-color:#F44336;"></button>
 						{% endif %}
 					</div>
 					<div class="row-content" style="width: 66%;margin-top: 10px;">
@@ -108,7 +108,7 @@ function resetForm(form_id) {
 							<h2 style="word-wrap:break-word;font-size:30px;padding-bottom:5px;margin:0px;">
 								{{ group.name }}
 								{% if group.is_own %}
-								<button type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" style="padding:7px;"></button>
+								<button type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:7px;"></button>
 								{% endif %}
 							</h2>
 							
@@ -119,7 +119,7 @@ function resetForm(form_id) {
 						</div>
 					</div>	
 					<div style="position:absolute;right:25px;bottom:20px;">
-						<button type="button" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);font-size:30px;"></button>
+						<button type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);font-size:30px;"></button>
 					</div>
 				</div>
 			</div>

@@ -1,3 +1,5 @@
+
+
 <div class="navbar navbar-default navbar-fixed-top" color="blue" style="box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse#nav">
@@ -20,18 +22,18 @@
 				<li></li>
 				<li><a href="#" style="color: #DCEEFD;">Library</a></li>
 				<li class="active">Data</li>
-				-->
-				{% for element in breadcumb.previous_elements %}
-				<li><a href="{{ element.href }}" style="color: #DCEEFD;">{{ element.title }}</a></li>
-				{% endfor %}
-				<li class="active">{{ breadcumb.current_element.title }}</li>
-			</ul>
+			-->
+			{% for element in breadcumb.previous_elements %}
+			<li><a href="{{ element.href }}" style="color: #DCEEFD;">{{ element.title }}</a></li>
+			{% endfor %}
+			<li class="active">{{ breadcumb.current_element.title }}</li>
 		</ul>
-		{% endif %}
+	</ul>
+	{% endif %}
 
 
-		<ul class="nav navbar-nav navbar-right">
-			<li>
+	<ul class="nav navbar-nav navbar-right">
+		<li>
 					<!--	
 					<form class="navbar-form navbar-left">
 						<input type="text" class="form-control col-lg-8 " placeholder="Search">
@@ -49,12 +51,17 @@
 				<ul class="dropdown-menu">
 					<!-- <li><a href="/profile/{{ user.user_id }}">Setting</a></li> -->
 					<li>
-						<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to feedback">Feedback</a>
+						<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to feedback">{{lang.feedback}}</a>
 					</li>
 					<li class="divider">
 					</li>
 					<li>
-						<a href="/logout" title="Click here to logout">Logout</a>
+						<a href="#" id="edit-user"  data-toggle="modal" data-target="#updateUser">{{lang.edit_profile.edit_profile_link}}</a> 
+					</li>
+					<li class="divider">
+					</li>
+					<li>
+						<a href="/logout" title="Click here to logout">{{lang.logout}}</a>
 					</li>
 				</ul>
 			</li>
@@ -68,6 +75,80 @@
 <!-- sagoma della navbar -->
 <div style="height: 75px;">
 </div>
+
+
+
+<div id="updateUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body" style="padding:15px 15px 0px 15px;">
+				<form action="/api/update-user" method="post" class="form-horizontal" id="edit-user-form">
+					<fieldset>
+						<h3 align="center">{{lang.edit_profile.edit_profile_title}}</h3>
+						<div class="form-group">
+							<label for="edit_user_name" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_name}}: </label>
+							<div class="col-lg-10">
+								<input class="form-control" id="edit_user_name" name="edit_name"  type="text" maxlength="64" autocomplete="off"  value="{{user.name}}">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="edit_user_surname" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_surname}}: </label>
+							<div class="col-lg-10">
+								<input class="form-control" id="edit_user_surname" name="edit_surname"  type="text" maxlength="64" autocomplete="off" value="{{user.surname}}" >
+							</div>
+						</div>
+
+<!--
+			<div class="form-group">
+				<label for="edit_user_language" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}: </label>
+				<div class="col-lg-10">
+					<input class="form-control" id="edit_user_language" name="edit_language" placeholder="" type="text" maxlength="64" autocomplete="off" >
+				</div>
+			</div>
+
+		-->
+
+
+		<div class="form-group">
+			<label class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}:</label>
+			<div class="col-lg-10">
+				<div class="radio radio-primary">
+					<label>
+						<input name="edit_language" id="optionsRadios1" value="it" type="radio" {% if user.language == 'it'%}checked{% endif %}>
+						{{lang.italian}}
+					</label>
+				</div>
+				<div class="radio radio-primary">
+					<label>
+						<input name="edit_language" id="optionsRadios2" value="en" type="radio" {% if user.language == 'en'%}checked{% endif %}>
+						{{lang.english}}
+					</label>
+				</div>
+			</div>
+		</div>
+
+
+
+		<div class="form-group">
+
+			<!--<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button> -->
+			<div class="row">
+				<div class="col-lg-9"></div>
+				<div class="col-lg-3">
+					<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#FFA000">{{lang.edit}}</button>
+				</div>
+			</div>
+		</div>
+	</fieldset>
+</form>
+
+</div>
+</div>
+</div>
+</div>
+
+
 
 <!--
 <div class="alert alert-dismissable alert-success" style="max-width: 900px; margin-left: auto; margin-right: auto; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">

@@ -34,7 +34,18 @@ import language
 def write_template(response, template_name, template_values={}):
 	directory = os.path.dirname(__file__)
 	path = os.path.join(directory, os.path.join('templates', template_name))
-	template_values.update({'lang': language.en})
+	user = users.get_current_user()
+	if user:
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+	else:
+		beevote_user = None
+
+	if not beevote_user or not beevote_user.language:
+		lang_package= 'en'
+	else:
+		lang_package=beevote_user.language
+
+	template_values.update({'lang': language.lang[lang_package]})
 	rendered_template = template.render(path, template_values)
 	response.headers["Pragma"]="no-cache"
 	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
@@ -139,6 +150,9 @@ class GroupHandler(BaseHandler):
 		values = {
 			'group': group,
 		}
+		
+		models.GroupAccess.update_specific_access(group, self.beevote_user)
+		
 		write_template(self.response, 'html/group-overview.html', values)
 
 class TopicsHandler(BaseHandler):
@@ -245,4 +259,7 @@ class TopicHandler(BaseHandler):
 		values = {
 			'topic': topic,
 		}
+		
+		models.TopicAccess.update_specific_access(topic, self.beevote_user)
+
 		write_template(self.response, 'html/topic-overview.html', values)

@@ -389,7 +389,7 @@ function initialize_topic_place(latitude,longitude) {
 					<img id="topic_image" src="/static/images/topic-icon.png" style="width:200px;height:100%;">
 					{% endif %}
 					{% if topic.is_own %}
-					<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" style="padding:7px;"></button></div>
+					<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" title="{{lang.buttons.edit_topic_photo_title}}" style="padding:7px;"></button></div>
 					{% endif %}
 				</div>
 				<div class="row-content" style="width:66%;margin-top:10px;">
@@ -436,10 +436,10 @@ function initialize_topic_place(latitude,longitude) {
 				</div>
 				<div style="float:right;margin-right:25px;">
 				{% if topic.is_own %}
-					<button id="delete-topic" title="Delete this topic" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
+					<button id="delete-topic" title="{{lang.buttons.delete_topic_title}}" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
 
-				<button id="topic-participation" title="Toggle participation" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">
+				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">
 					{% if not topic.participation %}
 					{{lang.topic_overview.not_partecipating}}
 					{%else%}
@@ -524,7 +524,7 @@ function initialize_topic_place(latitude,longitude) {
 						</div>
 						<div class="form-group">
 							<div class="modal-footer" style="padding:0px 25px 0px 0px">
-								<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateImage" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+								<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" title="{{lang.buttons.edit_topic_photo_title}}"data-target="#updateImage" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
 								<button type="submit" class="btn" id="edit-image" style="background-color:#2196F3;">{{lang.edit}}</button>
 							</div>
 						</div>

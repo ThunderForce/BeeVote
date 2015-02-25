@@ -3,3 +3,4 @@ beevote/static/images/Thumbs.db
 *.project
 *.pydevproject
 *.bat
+*.prefs

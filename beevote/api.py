@@ -221,6 +221,10 @@ class LoadGroupHandler(BaseApiHandler):
 		
 		group_json = fetch_group(group, arguments)
 		
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		models.GroupAccess.update_specific_access(group, beevote_user)
+		
 		self.response.out.write(get_json(group_json))
 
 class LoadTopicHandler(BaseApiHandler):
@@ -240,6 +244,10 @@ class LoadTopicHandler(BaseApiHandler):
 		
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
+		
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		models.TopicAccess.update_specific_access(topic, beevote_user)
 		
 		self.response.out.write(get_json(topic_json))
 
@@ -363,6 +371,44 @@ class LoadProposalHandler(webapp2.RequestHandler):
 			}
 		}
 		self.response.out.write(json.dumps(values))
+class UpdateUser(webapp2.RequestHandler):
+	def post(self):
+		name = self.request.get('edit_name', None)
+		surname = self.request.get('edit_surname', None)
+		language = self.request.get('edit_language', None)
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		if name and name == "":
+			values = {
+				'success': False,
+				'error': 'Name is required',
+			}
+		elif  surname and surname == "":
+			values = {
+				'success': False,
+				'error': 'Surname is required',
+			}
+		elif  language and language == "":
+			values = {
+				'success': False,
+				'error': 'Language is required',
+			}
+		else:
+			
+			if name:
+				beevote_user.name = name
+			if surname:
+				beevote_user.surname = surname
+			if language:
+				beevote_user.language = language
+			beevote_user.put()
+			user_id = user.user_id()
+			values = {
+				'success': True,
+				'user_id': user_id,
+			}
+		self.response.out.write(json.dumps(values))
+		self.redirect('/home')
 
 class LoadGroupMembersHandler(webapp2.RequestHandler):
 	def get(self):
@@ -553,15 +599,12 @@ class GroupNotificationsHandler(webapp2.RequestHandler):
 				'group_id': group_id,
 				'group_invitations': 0,
 				'topic_creations': 0,
-				'topic_expirations': 0,
 			}
 			for notification in notifications:
 				if notification.notification_code == models.GroupNotification.GROUP_INVITATION:
 					values['group_invitations'] += 1
 				elif notification.notification_code == models.GroupNotification.TOPIC_CREATION:
 					values['topic_creations'] += 1
-				elif notification.notification_code == models.GroupNotification.TOPIC_EXPIRATION:
-					values['topic_expirations'] += 1
 		self.response.out.write(json.dumps(values))
 
 class RemoveGroupHandler(webapp2.RequestHandler):
@@ -609,6 +652,7 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 				beevote_user_key = beevote_user.key()
 				if beevote_user_key not in group.members:
 					group.members.append(beevote_user_key)
+					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group, beevote_user=beevote_user)
 					group.put()
 					values = {
 						'success': True,
