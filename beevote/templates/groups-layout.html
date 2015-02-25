@@ -151,13 +151,12 @@
 				{% endif %}
 				
 				{% if feature_changes %}
-				var str = "{{lang.hi}} {{ user.name }}{{lang.groups_layout.changelog_message}}\n\n"+
-				{% for feature in feature_changes %}
-					"{{ feature.creation }}: {{ feature.description }}\n"+
-				{% endfor %}
-				"";
-				
-				alert(str);
+					var str = "{{lang.hi}} {{ user.name }}{{lang.groups_layout.changelog_message}}\n\n"+
+					{% for feature in feature_changes %}
+						"{{ feature.creation }}: {{ feature.description }}\n"+
+					{% endfor %}
+					"";
+					alert(str);
 				{% endif %}
 			});
 			

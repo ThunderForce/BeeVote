@@ -250,6 +250,22 @@ class GroupNotification(db.Model):
 	timestamp = db.DateTimeProperty(auto_now_add=True)
 	
 	@staticmethod
+	def get_for_beevote_user(beevote_user):
+		groups = beevote_user.get_groups_by_membership()
+		all_notifications = {}
+		for group in groups:
+			group_access = GroupAccess.get_specific_access(group, beevote_user)
+			if group_access:
+				timestamp = group_access.timestamp
+			elif beevote_user.last_access:
+				timestamp = beevote_user.last_access
+			else:
+				timestamp = datetime.datetime.min
+			group_notifications = GroupNotification.get_from_timestamp(timestamp, group, beevote_user)
+			all_notifications[str(group.key().id())] = group_notifications
+		return all_notifications
+	
+	@staticmethod
 	def get_from_timestamp(timestamp, group=None, beevote_user=None):
 		# TODO order results
 		if group:
