@@ -206,6 +206,38 @@ class FeatureChange(db.Model):
 	description = db.StringProperty(required=True)
 	creation = db.DateTimeProperty(auto_now_add=True)
 
+class GroupAccess(db.Model):
+	beevote_user = db.ReferenceProperty(BeeVoteUser, required=True)
+	group = db.ReferenceProperty(Group, required=True)
+	timestamp = db.DateTimeProperty()
+	@staticmethod
+	def get_specific_access(group, beevote_user):
+		return db.GqlQuery("SELECT * FROM GroupAccess WHERE group = :1 AND beevote_user = :2", group, beevote_user).get()
+	
+	@staticmethod
+	def update_specific_access(group, beevote_user):
+		access = GroupAccess.get_specific_access(group, beevote_user)
+		if not access:
+			access = GroupAccess(beevote_user=beevote_user, group=group)
+		access.timestamp = datetime.datetime.now()
+		access.put()
+
+class TopicAccess(db.Model):
+	beevote_user = db.ReferenceProperty(BeeVoteUser, required=True)
+	topic = db.ReferenceProperty(Topic, required=True)
+	timestamp = db.DateTimeProperty()
+	@staticmethod
+	def get_specific_access(topic, beevote_user):
+		return db.GqlQuery("SELECT * FROM TopicAccess WHERE topic = :1 AND beevote_user = :2", topic, beevote_user).get()
+	
+	@staticmethod
+	def update_specific_access(topic, beevote_user):
+		access = GroupAccess.get_specific_access(topic, beevote_user)
+		if not access:
+			access = TopicAccess(beevote_user=beevote_user, topic=topic)
+		access.timestamp = datetime.datetime.now()
+		access.put()
+
 class GroupNotification(db.Model):
 	GROUP_INVITATION = 0
 	GROUP_NAME_CHANGE = 1
@@ -225,7 +257,7 @@ class GroupNotification(db.Model):
 		else:
 			notifications = db.GqlQuery("SELECT * FROM GroupNotification WHERE timestamp > :1", timestamp).fetch(1000)
 		if beevote_user:
-			ret = [n for n in notifications if beevote_user.key() == n.beevote_user or not n.beevote_user]
+			ret = [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key() == n.beevote_user.key())]
 			return ret
 		else:
 			return notifications

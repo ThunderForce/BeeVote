@@ -221,6 +221,10 @@ class LoadGroupHandler(BaseApiHandler):
 		
 		group_json = fetch_group(group, arguments)
 		
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		models.GroupAccess.update_specific_access(group, beevote_user)
+		
 		self.response.out.write(get_json(group_json))
 
 class LoadTopicHandler(BaseApiHandler):
@@ -240,6 +244,10 @@ class LoadTopicHandler(BaseApiHandler):
 		
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
+		
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		models.TopicAccess.update_specific_access(topic, beevote_user)
 		
 		self.response.out.write(get_json(topic_json))
 
@@ -591,15 +599,12 @@ class GroupNotificationsHandler(webapp2.RequestHandler):
 				'group_id': group_id,
 				'group_invitations': 0,
 				'topic_creations': 0,
-				'topic_expirations': 0,
 			}
 			for notification in notifications:
 				if notification.notification_code == models.GroupNotification.GROUP_INVITATION:
 					values['group_invitations'] += 1
 				elif notification.notification_code == models.GroupNotification.TOPIC_CREATION:
 					values['topic_creations'] += 1
-				elif notification.notification_code == models.GroupNotification.TOPIC_EXPIRATION:
-					values['topic_expirations'] += 1
 		self.response.out.write(json.dumps(values))
 
 class RemoveGroupHandler(webapp2.RequestHandler):
@@ -647,6 +652,7 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 				beevote_user_key = beevote_user.key()
 				if beevote_user_key not in group.members:
 					group.members.append(beevote_user_key)
+					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group, beevote_user=beevote_user)
 					group.put()
 					values = {
 						'success': True,
