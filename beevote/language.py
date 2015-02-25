@@ -10,7 +10,7 @@ lang = {
 		'warning_photo':"Photo: maximum image size is 1 MB",
 		'cancel':"Cancel",
 		'edit':"Edit",
-		'general_error':" unexpected error!",
+		'general_error':"Unexpected error!",
 		'name':"Name: ",
 		'description':"Description: ",
 		'photo':"Photo",
@@ -34,7 +34,7 @@ lang = {
 			'deadline_reach':"This topic has reached its deadline: you cannot vote its proposals anymore.",
 			'not_partecipating':"You are not partecipating",
 			'partecipating':"You are partecipating",
-			'no_proposal':"This topic hasn't got any proposals yet",
+			'no_proposal':"This topic has no proposals yet",
 		},
 		'buttons':{
 			'create_group': "Create group",
@@ -47,7 +47,7 @@ lang = {
 			'edit_topic_photo_title': "Edit topic photo",
 			'delete_topic_title': "Delete this topic",
 			'not_partecipating_title' :"Toggle for not partecipating",
-			'partecipating_title' :"Toggel for partecipating",
+			'partecipating_title' :"Toggle for partecipating",
 		 },
 		'group_members':{
 		 'warning_delete': "Are you sure you want to remove this user from the group?",
@@ -61,7 +61,7 @@ lang = {
 		 'warning_delete_group':"Are you sure to delete this group?",
 		},
 		'groups_layout':{
-		 'changelog_message':"! There have been a few changes since your last access:",
+		 'changelog_message':"There have been a few changes since your last access:",
 		 'your_groups':"Your Groups"
 		},
 		'topics':{
@@ -73,15 +73,15 @@ lang = {
 		'name_placeholder': "Name of the group",
 		},
 		'add_members_form':{
-		'title_members':"Members of \"",
+		'title_members':"Members of ",
 		'add_member':"Add member",
-		'email_error':"this email is not associate to any beevote user",
+		'email_error':"This email is not associate to any beevote user",
 		},
 		'topic_form':{
 		'create_new_topic':"Create a new Topic",
 		'name_placeholder':"Title of the Topic",
-		'place_placeholder':"Location for the activity",
-		'time_placeholder':"Time for the activity",
+		'place_placeholder':"Location of the activity",
+		'time_placeholder':"Time of the activity",
 		'date_placeholder':"Date of the activity",
 		
 		},
@@ -95,7 +95,7 @@ lang = {
 		'edit_profile':{
 		'edit_user_name': "Change your name",
 		'edit_user_surname': "Change your surname",
-		'edit_user_language': "Change tha language",
+		'edit_user_language': "Change the language",
 		'edit_user_photo': "Change your profile picture (maximum image size is 1 MB)",
 		'edit_profile_title':"Edit here your profile",
 		'edit_profile_link':"Edit profile",
@@ -113,7 +113,7 @@ lang = {
 		'warning_photo':"Foto: la grandezza massima consentita è di un 1 MB",
 		'cancel':"Cancella",
 		'edit':"Modifica",
-		'general_error':" errore inaspettato!",
+		'general_error':"Errore inaspettato!",
 		'description':"Descrizione: ",
 		'name':"Nome: ",
 		'hi':"Ciao",
@@ -143,19 +143,19 @@ lang = {
 		 'warning_delete': "Sei sicuro di voler rimuovere questo utente dal gruppo?",
 		},
 		'groups':{
-		 'no_groups':"Non hai gruppi creane uno ora!",
+		 'no_groups':"Non hai gruppi. Creane uno ora!",
 		},
 		'group_overview':{
 		 'topics': "Discussioni",
-		 'no_topics':"Non ci sono discussioni in questo gruppo, creane uno adesso!",
+		 'no_topics':"Non ci sono discussioni in questo gruppo. Creane uno adesso!",
 		 'warning_delete_group':"Sei sicuro di voler cancellare questo gruppo?",
 		},
 		'topics':{
 		 'topic_list':"Le tue discussioni",
-		  'no_topics':"Non hai discussioni, scegli un gruppo e creane una ora!",
+		  'no_topics':"Non hai discussioni. Scegli un gruppo e creane una ora!",
 		},
 		'groups_layout':{
-		 'changelog_message':"! Ci sono state alcune modifiche dal tuo ultimo accesso:",
+		 'changelog_message':"Ci sono state alcune modifiche dal tuo ultimo accesso:",
 		 'your_groups':"I tuoi gruppi"
 		},
 		'buttons':{
@@ -192,15 +192,15 @@ lang = {
 		'time_placeholder':"Ora della proposta",
 		},
 		'add_members_form':{
-		'title_members':"Membri di \"",
+		'title_members':"Membri di ",
 		'add_member':"Aggiungi membro",
-		'email_error':"questa mail non è associato a nessun utente di beevote ",
+		'email_error':"Questa mail non è associata a nessun utente di beevote ",
 		},	
 		
 		'edit_profile':{
 		'edit_user_name': "Cambia il tuo nome",
 		'edit_user_surname': "Cambia il tuo cognome",
-		'edit_user_language': "Cambia la tua lingua",
+		'edit_user_language': "Cambia lingua",
 		'edit_user_photo': "Cambia la tua immagine, non può pesare più di 1 MB",
 		'edit_profile_title':"Modifica qui il tuo profilo",
 		'edit_profile_link':"Modifica profilo",

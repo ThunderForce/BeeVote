@@ -81,7 +81,7 @@
 <div id="updateUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-body" style="padding:15px 15px 0px 15px;">
+			<div class="modal-body">
 				<form action="/api/update-user" method="post" class="form-horizontal" id="edit-user-form">
 					<fieldset>
 						<h3 align="center">{{lang.edit_profile.edit_profile_title}}</h3>
@@ -133,12 +133,12 @@
 		<div class="form-group">
 
 			<!--<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button> -->
-			<div class="row">
-				<div class="col-lg-9"></div>
-				<div class="col-lg-3">
-					<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#FFA000">{{lang.edit}}</button>
+			
+				<div class="modal-footer" style="padding: 0px 10px 0px 0px;">
+				
+					<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#2196F3;">{{lang.edit}}</button>
 				</div>
-			</div>
+			
 		</div>
 	</fieldset>
 </form>
