@@ -204,6 +204,23 @@ class ProfileHandler(BaseHandler):
 		values = {}
 		write_template(self.response, 'user-profile.html', values)
 
+class UserImageHandler(webapp2.RequestHandler):
+	def get(self, user_id):
+		user_key = db.Key.from_path('BeeVoteUser', long(user_id))
+		user = db.get(user_key)
+		if user == None:
+			self.error(404)
+			self.response.out.write("User "+user_id+" does not exist")
+		else:
+			if user.img != None:
+				self.response.headers['Content-Type'] = 'image/png'
+				self.response.headers['Content-Disposition'] = 'inline; filename="user-'+user_id+'.png"'
+				
+				self.response.out.write(user.img)
+			else:
+				self.error(404)
+				self.response.out.write("User "+user_id+" does not have an image")
+
 class GroupImageHandler(webapp2.RequestHandler):
 	def get(self, group_id):
 		group_key = db.Key.from_path('Group', long(group_id))
@@ -369,6 +386,7 @@ else:
 
 app = webapp2.WSGIApplication([
 	('/', MainHandler),
+	('/user/(.*)/image', UserImageHandler),
 	('/group/(.*)/topic/(.*)/image', TopicImageHandler),
 	('/group/(.*)/image', GroupImageHandler),
 	webapp2.Route('/group/<group_id>/topic/<topic_id>', handler=HomeHandler),
@@ -392,9 +410,10 @@ app = webapp2.WSGIApplication([
 	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/update-user', api.UpdateUser),
-	('/api/load-proposal', api.LoadProposalHandler),
+	('/api/load-proposal', api.OldLoadProposalHandler),
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
+	('/api/group/(.*)/topic/(.*)/proposal/(.*)', api.LoadProposalHandler),
 	('/api/group/(.*)/topic/(.*)', api.LoadTopicHandler),
 	('/api/groups', api.LoadGroupsHandler),
 	('/api/group/(.*)', api.LoadGroupHandler),

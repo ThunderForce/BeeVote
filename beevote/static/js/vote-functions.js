@@ -1,11 +1,11 @@
 function load_votes(group, topic, proposal, success_callback) {
 	$.ajax({
-		url: "/api/load-votes",
+		//url: "/api/load-votes",
+		url: "/api/group/"+group+"/topic/"+topic+"/proposal/"+proposal,
 		method: "GET",
 		data: {
-			group_id: group,
-			topic_id: topic,
-			proposal_id: proposal
+			fetch_votes: true,
+			fetch_users: true
 		},
 		dataType: "json",
 		success: function(response) {

@@ -108,7 +108,7 @@ function resetForm(form_id) {
 							<h2 style="word-wrap:break-word;font-size:30px;padding-bottom:5px;margin:0px;">
 								{{ group.name }}
 								{% if group.is_own %}
-								<button type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:7px;"></button>
+								<button type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:7px;display:inline-block;"></button>
 								{% endif %}
 							</h2>
 							
@@ -119,7 +119,7 @@ function resetForm(form_id) {
 						</div>
 					</div>	
 					<div style="position:absolute;right:25px;bottom:20px;">
-						<button type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);font-size:30px;"></button>
+						<button type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);font-size:20px;"></button>
 					</div>
 				</div>
 			</div>

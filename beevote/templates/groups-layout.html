@@ -519,7 +519,11 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="row-picture">
+									{% if user.img %}
+									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
+									{% else %}
 									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
+									{% endif %}
 								</div>
 								<br>
 								<h4 class="list-group-item-heading" color="black">

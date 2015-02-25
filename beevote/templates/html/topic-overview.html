@@ -41,6 +41,9 @@ function initialize_proposal_map(id, place) {
 $(document).ready(function() {
 	$('#topic_image').css('width', '99%');$('#topic_image').css('width', '100%');
 	$('input#groupId').val("{{ topic.group.key.id }}");
+	$('#back-button').on('click', function(e) {
+		load_group_topics('{{ topic.group.key.id }}');
+	});
 	$('button#delete-topic').on('click', function() {
 		if (confirm("Are you sure to delete this topic?")) {
 			$.ajax({
@@ -163,7 +166,13 @@ $(document).ready(function() {
 						$('#message').html('<h3> These members voted this proposal </h3>');
 				
 						$.each(response.votes, function(index, vote) {
-							$('#member-vote-list').append('<div class="list-group-item"><div class="row-picture"><img class="circle" src="/static/images/user-default.jpg" alt="icon"></div><div class="row-content"><h3 class="list-group-item-heading">'+vote.name+' '+vote.surname+'</h3></div></div><div class="list-group-separator"></div>');
+							var str = '<div class="list-group-item"><div class="row-picture">';
+							if (vote.creator.data.has_image)
+								str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image" alt="icon">';
+							else
+								str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+							str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+vote.creator.data.name+' '+vote.creator.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
+							$('#member-vote-list').append(str);
 						});
 					}
 				}
@@ -314,8 +323,7 @@ function initialize_topic_place(latitude,longitude) {
 -				else
 -					remove_vote(group, topic, proposal, success_callback);
 -			}
--->
--		
+-->		
 
 <!--
 <div class="topic-overview">
@@ -378,6 +386,7 @@ function initialize_topic_place(latitude,longitude) {
 	</div>
 -->
 
+<button type="button" class="btn btn-raised mdi-hardware-keyboard-arrow-left" id="back-button" style="background-color:#00A65E;"></button>
 <div class="list-group">
 	<div class="list-group-item">
 		<div class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
@@ -465,7 +474,11 @@ function initialize_topic_place(latitude,longitude) {
 			<div class="row">
 				<!-- interno proposta -->
 				<div class="row-picture">
+					{% if proposal.creator.img %}
+					<img class="circle" src="/user/{{proposal.creator.key.id}}/image" alt="icon">
+					{% else %}
 					<img class="circle" src="/static/images/user-default.jpg" alt="icon">
+					{% endif %}
 				</div>
 				<div class="row-content">
 					<div class="col-lg-11" style="width:70%;">
@@ -497,7 +510,7 @@ function initialize_topic_place(latitude,longitude) {
 						</div>
 					</div>	
 						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding:5px 1px 4px 5px;position:absolute;top:-5px;right:20px;background-color:#2196F3;">
-							<b>{{lang.votes}}</b>
+							<b style="font-size:11px;">{{lang.votes}}</b>
 							<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
 						</button>
 						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:37px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
