@@ -57,7 +57,7 @@
 					},
 					clearForm: true,
 					error: function() {
-						alert("Errore inaspettato!");
+						alert("{{lang.general_error}}");
 					},
 					success: function(response) {
 						if (response.success) {
@@ -78,7 +78,7 @@
 					},
 					clearForm: true,
 					error: function() {
-						alert("Errore inaspettato!");
+						alert("{{lang.general_error}}");
 						$('button#add-member-button').attr("disabled", false);
 					},
 					success: function(response) {
@@ -100,7 +100,7 @@
 					},
 					clearForm: true,
 					error: function() {
-						alert("Errore inaspettato!");
+						alert("{{lang.general_error}}");
 						$('button#create-topic').attr("disabled", false);
 					},
 					success: function(response) {
@@ -151,7 +151,7 @@
 				{% endif %}
 				
 				{% if feature_changes %}
-					var str = "{{lang.hi}} {{ user.name }}{{lang.groups_layout.changelog_message}}\n\n"+
+					var str = "{{lang.hi}} {{ user.name }}! {{lang.groups_layout.changelog_message}}\n\n"+
 					{% for feature in feature_changes %}
 						"{{ feature.creation }}: {{ feature.description }}\n"+
 					{% endfor %}
@@ -283,7 +283,7 @@
 					<div class="modal-body">
 						<button type="button" class="btn btn-raised" data-dismiss="modal" data-target="#addMembers" style="float:right;padding: 5px 10px 3px 10px;background-color:#F44336">X</button>
 							<div class="list-group">
-								<h2 align="center">{{lang.add_members_form.title_members}}<span id="group_name"></span>"</h2>
+								<h2 align="center">{{lang.add_members_form.title_members}}"<span id="group_name"></span>"</h2>
 								<div class="jumbotron" style="padding-bottom: 1px; padding-top: 1px;">
 									<form id="add-member-form" class="form-horizontal" method="POST">
 										<fieldset>
@@ -518,7 +518,11 @@
 						<div class="row">
 							<div class="col-lg-12">
 								<div class="row-picture">
+									{% if user.img %}
+									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
+									{% else %}
 									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
+									{% endif %}
 								</div>
 								<br>
 								<h4 class="list-group-item-heading" color="black">

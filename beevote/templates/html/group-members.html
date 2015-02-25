@@ -27,7 +27,11 @@
 	{% for member in group.member_list %}
 	<div class="list-group-item">
 		<div class="row-picture">
+			{% if member.img %}
+			<img class="circle" src="/user/{{member.key.id}}/image" alt="icon">
+			{% else %}
 			<img class="circle" src="/static/images/user-default.jpg" alt="icon">
+			{% endif %}
 		</div>
 		<div class="row-content">
 			<h4 class="list-group-item-heading">{{member.name}} {{member.surname}}</h4>

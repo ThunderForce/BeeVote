@@ -66,7 +66,11 @@
 				</ul>
 			</li>
 			<li>
+				{% if user.img %}
+				<img class="image-circle" src="/user/{{user.key.id}}/image" title="Click here to logout" alt="icon">
+				{% else %}
 				<img class="image-circle" src="/static/images/user-default.jpg" title="Click here to logout" alt="icon">
+				{% endif %}
 			</li>
 		</ul>
 	</div>
@@ -81,8 +85,8 @@
 <div id="updateUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-body" style="padding:15px 15px 0px 15px;">
-				<form action="/api/update-user" method="post" class="form-horizontal" id="edit-user-form">
+			<div class="modal-body">
+				<form action="/api/update-user" method="post" class="form-horizontal" enctype="multipart/form-data" id="edit-user-form">
 					<fieldset>
 						<h3 align="center">{{lang.edit_profile.edit_profile_title}}</h3>
 						<div class="form-group">
@@ -96,6 +100,13 @@
 							<label for="edit_user_surname" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_surname}}: </label>
 							<div class="col-lg-10">
 								<input class="form-control" id="edit_user_surname" name="edit_surname"  type="text" maxlength="64" autocomplete="off" value="{{user.surname}}" >
+							</div>
+						</div>
+
+						<div class="form-group" >
+							<label for="inputImg" class="col-lg-2 control-label">{{lang.photo}}</label>
+							<div class="col-lg-10">
+								<input id="inputImg" type="file" name="edit_img"/>
 							</div>
 						</div>
 
@@ -130,15 +141,12 @@
 
 
 
-		<div class="form-group">
-
-			<!--<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button> -->
-			<div class="row">
-				<div class="col-lg-9"></div>
-				<div class="col-lg-3">
-					<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#FFA000">{{lang.edit}}</button>
+		<div class="form-group">			
+				<div class="modal-footer" style="padding: 0px 10px 0px 0px;">
+					<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+					<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#2196F3;">{{lang.edit}}</button>
 				</div>
-			</div>
+			
 		</div>
 	</fieldset>
 </form>

@@ -46,6 +46,7 @@ def fetch_user(beevote_user, arguments):
 			('name', beevote_user.name),
 			('surname', beevote_user.surname),
 			('email', beevote_user.email),
+			('has_image', beevote_user.img != None),
 			('creation', str(beevote_user.creation)),
 		]))
 	])
@@ -251,6 +252,25 @@ class LoadTopicHandler(BaseApiHandler):
 		
 		self.response.out.write(get_json(topic_json))
 
+class LoadProposalHandler(BaseApiHandler):
+	def get(self, group_id, topic_id, proposal_id):
+		group = models.Group.get_from_id(group_id)
+		if (not group):
+			self.abort(404, detail="This group does not exist.")
+		'''
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		'''
+		arguments = {
+			'fetch_votes': self.request.get('fetch_votes', 'false') == 'true',
+			'fetch_users': self.request.get('fetch_users', 'false') == 'true',
+		}
+		
+		proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
+		proposal_json = fetch_proposal(proposal, arguments)
+		
+		self.response.out.write(get_json(proposal_json))
+
 class LoadUserHandler(BaseApiHandler):
 	def get(self, user_id):
 		user = users.get_current_user()
@@ -348,7 +368,7 @@ class LoadVotesHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class LoadProposalHandler(webapp2.RequestHandler):
+class OldLoadProposalHandler(webapp2.RequestHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -376,6 +396,7 @@ class UpdateUser(webapp2.RequestHandler):
 		name = self.request.get('edit_name', None)
 		surname = self.request.get('edit_surname', None)
 		language = self.request.get('edit_language', None)
+		img = self.request.get('edit_img', None)
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		if name and name == "":
@@ -401,6 +422,8 @@ class UpdateUser(webapp2.RequestHandler):
 				beevote_user.surname = surname
 			if language:
 				beevote_user.language = language
+			if img:
+				beevote_user.img = img
 			beevote_user.put()
 			user_id = user.user_id()
 			values = {
