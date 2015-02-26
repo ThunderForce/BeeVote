@@ -442,6 +442,7 @@ class LoadGroupMembersHandler(webapp2.RequestHandler):
 			'success': True,
 			'members': group.members,
 		}
+		time.sleep(1)
 		self.response.out.write(json.dumps(values))
 
 class CreateGroupHandler(webapp2.RequestHandler):

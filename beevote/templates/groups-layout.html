@@ -11,6 +11,40 @@
 		<script>
 			$(document).ready(function() {
 
+				//Function to Sidebar
+				$("#menu-toggle").click(function(e) {
+					e.preventDefault();
+					if (e.stopPropagation) {
+						e.stopPropagation();   // W3C model
+					} else {
+						e.cancelBubble = true; // IE model
+					}
+					$("#wrapper").toggleClass("toggled");
+				});
+
+				$('#wrapper').click(function(e){
+				    if (e.stopPropagation) {
+						e.stopPropagation();   // W3C model
+					} else {
+						e.cancelBubble = true; // IE model
+					}
+				});
+
+				$('html').click(function(e){
+					if ($("#wrapper").hasClass('toggled')){
+						if (e.stopPropagation) {
+							e.stopPropagation();   // W3C model
+						} else {
+							e.cancelBubble = true; // IE model
+						}
+						$("#wrapper").removeClass("toggled");
+					}
+				});
+				
+				
+
+				// end function to sidebar
+
 				//Function to suggestion of Google Maps on places
 				initialize_place_suggestion();
 				
@@ -493,60 +527,74 @@
 			</li>
 		</ul>
 
-		<!-- Jumbotron Container -->
-		<div class="jumbotron" style="background-color: #EEEEEE; box-shadow: 0 3px 10px rgba(0, 0, 0, 0), 0 3px 10px rgba(0, 0, 0, 0); padding: 0px; max-width: 1100px;">
-			<div class="row">
-				<!-- Left column -->
-				<style type="text/css">
-					@media screen and (min-width:768px) {
-						#dummy-nav {
-							display: none;
-						}
+
+		
+		<!-- Row Container -->		
+		<div class="row" style="max-width: 1100px;margin-left: auto;margin-right: auto;margin-top: 75px;">
+			<style type="text/css">
+				@media screen and (min-width:768px) {
+					#wrapper {
+						display: none;
 					}
-				</style>
-				<div class="navbar" style="width:105px;background-color:#EEEEEE;margin-bottom:0px;" id="dummy-nav">
-				<button type="button" class="btn btn-raised navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse#left" style="background-color:#2196F3;" id="collapse-button">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
+					#menu-toggle {
+						cursor: default;
+					}
+				}
+			</style>
+			
+			<!--
+			<style type="text/css">
+				@media screen and (min-width:768px) {
+					#dummy-nav {
+						display: none;
+					}
+				}
+			</style>
+
+			<div class="navbar" style="width:105px;background-color:#EEEEEE;margin-bottom:0px;" id="dummy-nav">
+			<button type="button" class="btn btn-raised navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse#left" style="background-color:#2196F3;" id="collapse-button">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			</div>
+			-->
+			<!-- Left column -->
+			<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
+				<div class="navbar-collapse collapse navbar-responsive-collapse" id="left">
+				<!-- Jumbotron con immagine profilo -->
+				<div class="jumbotron" style="background-color: #2196F3; max-width: 900px;">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="row-picture">
+								{% if user.img %}
+								<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
+								{% else %}
+								<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
+								{% endif %}
+							</div>
+							<br>
+							<h4 class="list-group-item-heading" color="black">
+								<b>{{user.name}} {{user.surname}}</b>
+							</h4>
+						</div><!-- /col-lg-12 -->            
+					</div><!-- /row -->
+				</div><!-- /jumbotron Immagine profilo -->
+
+				<!-- Jumbotron Lista Gruppi -->
+				<div>
+					<h2>{{lang.groups_layout.your_groups}}</h2>
 				</div>
-				<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
-					<div class="navbar-collapse collapse navbar-responsive-collapse" id="left">
-					<!-- Jumbotron con immagine profilo -->
-					<div class="jumbotron" style="background-color: #2196F3; max-width: 900px;">
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="row-picture">
-									{% if user.img %}
-									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
-									{% else %}
-									<img style="width: 90px; height: 90px; border-radius: 100%;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
-									{% endif %}
-								</div>
-								<br>
-								<h4 class="list-group-item-heading" color="black">
-									<b>{{user.name}} {{user.surname}}</b>
-								</h4>
-							</div><!-- /col-lg-12 -->            
-						</div><!-- /row -->
-					</div><!-- /jumbotron Immagine profilo -->
-
-					<!-- Jumbotron Lista Gruppi -->
-					<div>
-						<h2>{{lang.groups_layout.your_groups}}</h2>
-					</div>
-					<br>
-					<div id="group-list"></div>
-				</div> <!-- /col-lg-4 -->
-				</div>
+				<br>
+				<div id="group-list"></div>
+			</div> <!-- /col-lg-4 -->
+			</div>
 
 
-				<!-- Colonna destra -->
-				<div class="col-lg-7" id="right-column" style="padding-left:20px;padding-right:20px;">
-					
-				</div><!-- /col-lg-8 -->
-			</div><!-- /row-inizio -->
-		</div>
+			<!-- Colonna destra -->
+			<div class="col-lg-7" id="right-column" style="padding-left:20px;padding-right:20px;">
+				
+			</div><!-- /col-lg-8 -->
+		</div><!-- /row-inizio -->
 	</body>
 </html>

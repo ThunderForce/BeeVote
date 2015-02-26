@@ -2,12 +2,14 @@
 
 <div class="navbar navbar-default navbar-fixed-top" color="blue" style="box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
 	<div class="navbar-header">
+		<!--
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse#nav">
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		</button>
-		<a class="navbar-brand" href="/">
+		-->
+		<a id="menu-toggle" class="navbar-brand" href="#menu-toggle">
 			<div>
 				<img src="/static/images/logo-inverted-48.png" class="logo">
 			</div>
@@ -56,7 +58,7 @@
 					<li class="divider">
 					</li>
 					<li>
-						<a href="#" id="edit-user"  data-toggle="modal" data-target="#updateUser">{{lang.edit_profile.edit_profile_link}}</a> 
+						<a href="#" id="x"  data-toggle="modal" data-target="#updateUser">{{lang.edit_profile.edit_profile_link}}</a> 
 					</li>
 					<li class="divider">
 					</li>
@@ -75,11 +77,6 @@
 		</ul>
 	</div>
 </div>
-
-<!-- sagoma della navbar -->
-<div style="height: 75px;">
-</div>
-
 
 
 <div id="updateUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -110,7 +107,7 @@
 							</div>
 						</div>
 
-<!--
+		<!--
 			<div class="form-group">
 				<label for="edit_user_language" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}: </label>
 				<div class="col-lg-10">
@@ -142,10 +139,10 @@
 
 
 		<div class="form-group">			
-				<div class="modal-footer" style="padding: 0px 10px 0px 0px;">
-					<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
-					<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#2196F3;">{{lang.edit}}</button>
-				</div>
+			<div class="modal-footer" style="padding: 0px 10px 0px 0px;">
+				<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+				<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#2196F3;">{{lang.edit}}</button>
+			</div>
 			
 		</div>
 	</fieldset>
@@ -156,6 +153,32 @@
 </div>
 </div>
 
+<!-- #sidebar-wrapper -->
+<div id="wrapper">
+	<!-- Sidebar--> 
+	<div id="sidebar-wrapper" style="background-color: #2196F3; z-index:1100; height: 101%;margin-top: -75px;" >
+		<ul class="sidebar-nav" id="sidebar-content">
+			<li class="sidebar-brand">
+				<a href="#" id="edit-user-sidebar" style="color: #fff;">
+					{{ user.name }} {{ user.surname }}
+				</a>
+			</li>
+			<li class="sidebar-logout">
+				<a href="/logout" title="Click here to logout" style="color: #fff;">
+					<i class="mdi-action-settings-power"> </i>
+					Log Out
+				</a>
+			</li>
+			<li class="sidebar-feedback" style="color: #fff;">
+				<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to feedback" style="color: #fff;">
+					<i class="mdi-action-thumbs-up-down"> </i>
+					Feedback
+				</a>
+			</li>
+		</ul>
+	</div>
+</div>
+<!-- /#sidebar-wrapper -->
 
 
 <!--

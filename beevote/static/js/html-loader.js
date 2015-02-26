@@ -18,6 +18,27 @@ function _load_right_column(url, additional_callback) {
 
 function load_groups(opened_group) {
 	$('#group-list').html('<div class="loader"></div>');
+	/* sidebar's ajax */
+	$.ajax({
+		url: '/api/groups',
+		method: "GET",
+		success: function(groups) {
+			var content = $('ul#sidebar-content');
+			$('ul#sidebar-content li:not(.sidebar-brand, .sidebar-logout, .sidebar-feedback)').remove();
+			$.each(groups, function(index, group) {
+				content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;">'+group.data.name+'</li>');
+			});
+			//Function to load sidebar group
+			$("li.sidebar-group").click(function(e) {
+				$("#wrapper").toggleClass("toggled");
+				load_group_topics($(this).data('group-id'));
+			});
+			$("li.sidebar-brand").click(function(e) {
+				$("#wrapper").toggleClass("toggled");
+				$('#updateUser').modal('show'); //open popup "updateUser"
+			});
+		}
+	});
 	if (opened_group == null)
 		$('#group-list').load('/html/groups');
 	else

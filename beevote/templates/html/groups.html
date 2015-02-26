@@ -1,9 +1,11 @@
 <script>
 	$(document).ready(function() {
 		$('div.group-well').on('click', function() {
+			/*
 			if($(window).width()<768) {
 				$('#collapse-button').click();
 			}
+			*/
 			if ($(this).hasClass("group-selected")) {
 				$('div.group-well').removeClass('group-selected');
 				load_all_topics();
