@@ -44,6 +44,7 @@ $(document).ready(function() {
 	$('#back-button').on('click', function(e) {
 		load_group_topics('{{ topic.group.key.id }}');
 	});
+
 	$('button#delete-topic').on('click', function() {
 		if (confirm("Are you sure to delete this topic?")) {
 			$.ajax({

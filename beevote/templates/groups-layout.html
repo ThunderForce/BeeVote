@@ -254,12 +254,14 @@
 
 		var autocomplete_topic_place, autocomplete_proposal_place;
 		function initialize_place_suggestion() {
-		  autocomplete_topic_place = new google.maps.places.Autocomplete(
-		    (document.getElementById('inputWhere')),
-		    { types: ['geocode'] });
-		  autocomplete_proposal_place = new google.maps.places.Autocomplete(
-		  	(document.getElementById('proposal_place')),
-		  	{ types: ['geocode'] });
+			if (typeof google != "undefined") {
+			  autocomplete_topic_place = new google.maps.places.Autocomplete(
+			    (document.getElementById('inputWhere')),
+			    { types: ['geocode'] });
+			  autocomplete_proposal_place = new google.maps.places.Autocomplete(
+			  	(document.getElementById('proposal_place')),
+			  	{ types: ['geocode'] });
+		  	}
 		}
 		</script>
 		
