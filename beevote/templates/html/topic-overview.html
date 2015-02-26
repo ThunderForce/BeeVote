@@ -1,42 +1,48 @@
 <script src="/static/js/vote-functions.js"></script>
 <script>
 function initialize_proposal_map(id, place) {
-	var geocoder = new google.maps.Geocoder();
-	var address_proposal = place;
+	if (typeof google != "undefined") {
+		var geocoder = new google.maps.Geocoder();
+		var address_proposal = place;
 
-	geocoder.geocode( { 'address': address_proposal}, function(results, status) {
+		geocoder.geocode( { 'address': address_proposal}, function(results, status) {
 
-		if (status == google.maps.GeocoderStatus.OK) {
-			var latitude = results[0].geometry.location.lat();
-			var longitude = results[0].geometry.location.lng();
+			if (status == google.maps.GeocoderStatus.OK) {
+				var latitude = results[0].geometry.location.lat();
+				var longitude = results[0].geometry.location.lng();
 
 
-			var latlng = new google.maps.LatLng(latitude,longitude);
+				var latlng = new google.maps.LatLng(latitude,longitude);
 
-			var myOptions = {
-				zoom: 14,
-				center: latlng,
-				mapTypeId: google.maps.MapTypeId.ROADMAP,
-				mapTypeControl: false
-			};
+				var myOptions = {
+					zoom: 14,
+					center: latlng,
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					mapTypeControl: false
+				};
 
-			var map = new google.maps.Map($('#map_canvas_proposal[data-proposal="'+id+'"]')[0],myOptions);
-			
-			var marker = new google.maps.Marker({
-				position: latlng, 
-				map: map, 
-				title: place
-			});
-			window.setTimeout(function() {
-				google.maps.event.trigger(map, 'resize');
-				map.panTo(marker.getPosition());
-			}, 250
-			);
-		}
-		else {
-			$('#map_canvas_proposal[data-proposal="'+id+'"]').css('display', 'none');
-		}
-	});
+				var map = new google.maps.Map($('#map_canvas_proposal[data-proposal="'+id+'"]')[0],myOptions);
+				
+				var marker = new google.maps.Marker({
+					position: latlng, 
+					map: map, 
+					title: place
+				});
+				window.setTimeout(function() {
+					google.maps.event.trigger(map, 'resize');
+					map.panTo(marker.getPosition());
+				}, 250
+				);
+			}
+			else {
+				$('#map_canvas_proposal[data-proposal="'+id+'"]').css('display', 'none');
+			}
+		});
+	}
+	else {
+		$('#map_canvas_proposal[data-proposal="'+id+'"]').css('height', 'auto');
+		$('#map_canvas_proposal[data-proposal="'+id+'"]').html('<p><span class="mdi-communication-location-off" style="margin-left:5px;"></span> Mappa non disponibile</p>');
+	}
 };
 $(document).ready(function() {
 	$('#topic_image').css('width', '99%');$('#topic_image').css('width', '100%');
@@ -335,8 +341,10 @@ $(document).ready(function() {
 	$.material.init();
 });
 
-var geocoder = new google.maps.Geocoder();
-var address_topic = '{{ topic.place }}';
+if (typeof google != "undefined") {
+	var geocoder = new google.maps.Geocoder();
+	var address_topic = '{{ topic.place }}';
+
 
     geocoder.geocode( { 'address': address_topic}, function(results, status) {
 
@@ -353,22 +361,27 @@ var address_topic = '{{ topic.place }}';
        } 
     }); 
 
-function initialize_topic_place(latitude,longitude) {
-        var latlng = new google.maps.LatLng(latitude,longitude);
+	function initialize_topic_place(latitude,longitude) {
+	        var latlng = new google.maps.LatLng(latitude,longitude);
 
-        var myOptions = {
-          zoom: 14,
-          center: latlng,
-          mapTypeId: google.maps.MapTypeId.ROADMAP,
-          mapTypeControl: false
-        };
-        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
+	        var myOptions = {
+	          zoom: 14,
+	          center: latlng,
+	          mapTypeId: google.maps.MapTypeId.ROADMAP,
+	          mapTypeControl: false
+	        };
+	        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
 
-        var marker = new google.maps.Marker({
-          position: latlng, 
-          map: map, 
-            title:"{{ topic.place }}"
-        }); 
+	        var marker = new google.maps.Marker({
+	          position: latlng, 
+	          map: map, 
+	            title:"{{ topic.place }}"
+	        }); 
+	}
+}
+else {
+	$('#map_canvas_topic').css('height', 'auto');
+	$('#map_canvas_topic').html('<p><span class="mdi-communication-location-off" style="margin-left:10px;"></span> Mappa non disponibile</p>');
 }
 </script>
 
