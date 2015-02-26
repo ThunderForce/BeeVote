@@ -104,6 +104,7 @@ lang = {
 		'edit_user_photo': "Change your profile picture (maximum image size is 1 MB)",
 		'edit_profile_title':"Edit here your profile",
 		'edit_profile_link':"Edit profile",
+		'user_email':"User email",
 
 		},
 		},
@@ -214,6 +215,7 @@ lang = {
 		'edit_user_photo': "Cambia la tua immagine, non può pesare più di 1 MB",
 		'edit_profile_title':"Modifica qui il tuo profilo",
 		'edit_profile_link':"Modifica profilo",
+		'user_email':"Email utente",
 		},
 		'proposal':{
 		'proposal_no_vote_message':"Nessuno ha votato questa proposta",
