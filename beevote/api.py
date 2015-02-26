@@ -271,6 +271,31 @@ class LoadProposalHandler(BaseApiHandler):
 		
 		self.response.out.write(get_json(proposal_json))
 
+class LoadParticipantsHandler(BaseApiHandler):
+	def get(self, group_id, topic_id):
+		group = models.Group.get_from_id(group_id)
+		if (not group):
+			self.abort(404, detail="This group does not exist.")
+		'''
+		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
+		'''
+		topic =models.Topic.get_from_id(group_id, topic_id)
+
+		arguments = {
+			'fetch_users': self.request.get('fetch_users', 'false') == 'true',
+		}
+
+		participants=[part for part in group.members if part not in topic.non_participant_users]
+		
+		beevote_users = models.BeeVoteUser.get(participants)
+		json_users = []
+		for user in beevote_users:
+			json_users.append(fetch_user(user, arguments))
+		
+		self.response.out.write(get_json(json_users))
+
+
 class LoadUserHandler(BaseApiHandler):
 	def get(self, user_id):
 		user = users.get_current_user()

@@ -48,6 +48,7 @@ lang = {
 			'delete_topic_title': "Delete this topic",
 			'not_partecipating_title' :"Toggle for not partecipating",
 			'partecipating_title' :"Toggle for partecipating",
+			'participants_title': "Show participants",
 		 },
 		'group_members':{
 		 'warning_delete': "Are you sure you want to remove this user from the group?",
@@ -90,7 +91,11 @@ lang = {
 		'title_placeholder':"Title of the proposal",
 		'place_placeholder':"Place of the proposal",
 		'date_placeholder':"Date of the proposal",
-		'time_placeholder':"Time of the proposal"
+		'time_placeholder':"Time of the proposal",
+		},
+		'proposal':{
+		'proposal_no_vote_message':"No one has voted yet",
+		'proposal_vote_message':"These members has voted this proposal",
 		},
 		'edit_profile':{
 		'edit_user_name': "Change your name",
@@ -101,6 +106,10 @@ lang = {
 		'edit_profile_link':"Edit profile",
 
 		},
+		},
+		'participants':{
+		'no_participants_message':"There aren't any participants for this topic",
+		'participants_message':"These are the participants for the topic",
 		},
 
 		'it': {
@@ -170,6 +179,7 @@ lang = {
 		'delete_topic_title': "Cancella questa discussione",
 		'not_partecipating_title' :"Clicca per non partecipare",
 		'partecipating_title' :"Clicca per partecipare",
+		'participants_title': "Mostra chi partecipa",
 		 },
 		 'create_group_form':{
 		'create_group':"Crea un nuovo gruppo",
@@ -204,6 +214,14 @@ lang = {
 		'edit_user_photo': "Cambia la tua immagine, non può pesare più di 1 MB",
 		'edit_profile_title':"Modifica qui il tuo profilo",
 		'edit_profile_link':"Modifica profilo",
+		},
+		'proposal':{
+		'proposal_no_vote_message':"Nessuno ha votato questa proposta",
+		'proposal_vote_message':"I seguenti membri hanno votato la proposta",
+		},
+			'participants':{
+		'no_participants_message':"Non ci sono partecipanti a questo topic",
+		'participants_message':"Questi sono i partecipanti al topic",
 		},
 	},
 	}
