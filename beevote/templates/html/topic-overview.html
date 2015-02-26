@@ -44,7 +44,6 @@ $(document).ready(function() {
 	$('#back-button').on('click', function(e) {
 		load_group_topics('{{ topic.group.key.id }}');
 	});
-
 	$('button#delete-topic').on('click', function() {
 		if (confirm("Are you sure to delete this topic?")) {
 			$.ajax({
@@ -64,11 +63,15 @@ $(document).ready(function() {
 			});
 		}
 	});
+
+
 	$("div.proposal-well").on("click", function() {
 		var proposal_id = $(this).data("proposal");
 		$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 		initialize_proposal_map(proposal_id, $(this).data("place"));
 	});
+
+
 	$('input#proposal_popup_group_id').val("{{ topic.group.key.id }}");
 	$('input#proposal_popup_topic_id').val("{{ topic.key.id }}");
 	$('#creation-buttons').html('');
@@ -96,6 +99,8 @@ $(document).ready(function() {
 	$('button#create-proposal-button').attr("disabled", true).css('background-color', '#888888');
 	{% endif %}
 	
+
+
 	$('.vote-checkbox').on('click', function(e) {
 
 		var group_id = {{ topic.parent.key.id }};
@@ -122,72 +127,11 @@ $(document).ready(function() {
 		}
 	});
 
-	/* Prova per non propagare il clik quando clisso sul voto*/
-	$('button#vote-button').on('click', function(e) {
 
-		var group_id = {{ topic.parent.key.id }};
-		var topic_id = {{ topic.key.id }};
-		var proposal_id = $(this).data("proposal");
 
-		$.ajax({
-			url: '/api/load-proposal',
-			method: 'GET',
-			data: { group_id: group_id, topic_id : topic_id, proposal_id: proposal_id} , 
-			dataType: 'json',
-			error: function() {
-				alert("Errore inaspettato!");
-			},
-			success: function(response) {
-				
-				$("#prosalPopupTitle").html(response.proposal.title);
-
-				$("#proposalPopup").html("");
-				if(response.proposal.place){
-					$("#proposalPopup").append('<span class="mdi-communication-location-on" style="margin-left:5px;"> '+response.proposal.place+' </span>');
-				};
-
-				if(response.proposal.date != "None"){
-					$("#proposalPopup").append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"> '+response.proposal.date+' </span>');
-				};
-
-				if(response.proposal.time != "None"){
-					$("#proposalPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> '+response.proposal.time+' </span>');
-				};
-				$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+response.proposal.creator.name+' '+response.proposal.creator.surname+' </span>');
-				
-				/*"<li>"+response.proposal.place+"</li>"+"<li>"+response.proposal.date+"</li>"+"<li>"+response.proposal.time+"</li>");*/
-
-				$('#voteList').modal('show');
-				$('#member-vote-list').html('Loading...');
-				var success_callback = function(response) {
-					$('#member-vote-list').html('');
-					if (response.votes.length == 0){
-						$('#message').html('<h3> No one has voted this proposal yet...</h3>');
-					} else {
-						$('#message').html('<h3> These members voted this proposal </h3>');
-				
-						$.each(response.votes, function(index, vote) {
-							var str = '<div class="list-group-item"><div class="row-picture">';
-							if (vote.creator.data.has_image)
-								str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image" alt="icon">';
-							else
-								str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
-							str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+vote.creator.data.name+' '+vote.creator.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
-							$('#member-vote-list').append(str);
-						});
-					}
-				}
-				load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
-			}
-		});
 	
-		if (e.stopPropagation) {
-			e.stopPropagation();   // W3C model
-		} else {
-			e.cancelBubble = true; // IE model
-		}
-	});
-	
+
+
 	$('#topic-participation').on('click', function() {
 		$(this).toggleClass('btn-success btn-warning mdi-toggle-check-box mdi-toggle-check-box-outline-blank');
 		$(this).addClass('disabled')
@@ -222,6 +166,8 @@ $(document).ready(function() {
 			})
 		}
 	});
+
+
 	$('.proposal-map').on('click', function(e) {
 	    if (e.stopPropagation) {
 			e.stopPropagation();
@@ -229,33 +175,165 @@ $(document).ready(function() {
 			e.cancelBubble = true;
 		}
 	});
+
+
+
+/* Prova per non propagare il clik quando clisso sul voto*/
+	$('button#vote-button').on('click', function(e) {
+
+		var group_id = {{ topic.parent.key.id }};
+		var topic_id = {{ topic.key.id }};
+		var proposal_id = $(this).data("proposal");
+
+		$.ajax({
+			url: '/api/load-proposal',
+			method: 'GET',
+			data: { group_id: group_id, topic_id : topic_id, proposal_id: proposal_id} , 
+			dataType: 'json',
+			error: function() {
+				alert("{{lang.general_error}}");
+			},
+			success: function(response) {
+				
+				$("#prosalPopupTitle").html(response.proposal.title);
+
+				$("#proposalPopup").html("");
+				if(response.proposal.place){
+					$("#proposalPopup").append('<span class="mdi-communication-location-on" style="margin-left:5px;"> '+response.proposal.place+' </span>');
+				};
+
+				if(response.proposal.date != "None"){
+					$("#proposalPopup").append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"> '+response.proposal.date+' </span>');
+				};
+
+				if(response.proposal.time != "None"){
+					$("#proposalPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> '+response.proposal.time+' </span>');
+				};
+				$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+response.proposal.creator.name+' '+response.proposal.creator.surname+' </span>');
+				
+				/*"<li>"+response.proposal.place+"</li>"+"<li>"+response.proposal.date+"</li>"+"<li>"+response.proposal.time+"</li>");*/
+
+				$('#voteList').modal('show');
+				$('#member-vote-list').html('Loading...');
+				var success_callback = function(response) {
+					$('#member-vote-list').html('');
+					if (response.votes.length == 0){
+						$('#message').html('<h3>{{lang.proposal.proposal_no_vote_message}}</h3>');
+					} else {
+						$('#message').html('<h3>{{lang.proposal.proposal_vote_message}}</h3>');
+				
+						$.each(response.votes, function(index, vote) {
+							var str = '<div class="list-group-item"><div class="row-picture">';
+							if (vote.creator.data.has_image)
+								str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image" alt="icon">';
+							else
+								str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+							str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+vote.creator.data.name+' '+vote.creator.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
+							$('#member-vote-list').append(str);
+						});
+					}
+				}
+				load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
+			}
+		});
+	
+		if (e.stopPropagation) {
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
+	});
+	
+
+
+	/* Prova per mostrare la lista dei partecipanti*/
+	$('button#participants-button').on('click', function(e) {
+
+		var group_id = {{ topic.parent.key.id }};
+		var topic_id = {{ topic.key.id }};
+		$('#member-participants-list').html('Loading...');
+
+		$.ajax({
+			url: '/api/group/'+group_id+'/topic/'+topic_id+'/participants',
+			method: 'GET',
+			data: { group_id: group_id, topic_id : topic_id} , 
+			dataType: 'json',
+			error: function() {
+				alert("{{lang.general_error}}");
+			},
+			success: function(users) {
+				
+				$('#participantsPopupTitle').html("{{topic.title}}");
+
+				$("#participantsTopicPopup").html("");
+
+				{% if topic.place != ""%}
+					$("#participantsTopicPopup").append('<span class="mdi-communication-location-on" style="margin-left:5px;"> {{topic.place}} </span>');
+				{%endif %}
+
+
+				{% if topic.date %}
+					$("#participantsTopicPopup").append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"> {{topic.date}} </span>');
+				
+				{%endif%}
+
+				{% if topic.time %}
+					$("#participantsTopicPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> {{topic.time}} </span>');
+				
+				{%endif%}
+				$("#participantsTopicPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> {{topic.creator.name}} {{topic.creator.surname}} </span>');
+
+
+				$('#participantsList').modal('show');
+				$('#member-participants-list').html('');
+				if (users.length == 0){
+					$('#participants-message').html('<h3>{{lang.participants.no_participants_message}}</h3>');
+				} else {
+					$('#participants-message').html('<h3>{{lang.participants.participants_message}}</h3>');
+			
+					$.each(users, function(index, user) {
+						var str = '<div class="list-group-item"><div class="row-picture">';
+						if (user.data.has_image)
+							str += '<img class="circle" src="/user/'+user.data.id+'/image" alt="icon">';
+						else
+							str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+						str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+user.data.name+' '+user.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
+						$('#member-participants-list').append(str);
+					});
+				}
+
+			}
+		});
+	});
+
+
+	$('#updateImage-form').ajaxForm({
+		dataType: "json",
+		beforeSubmit: function() {
+			$('#edit-image').attr("disabled", true);
+		},
+		clearForm: true,
+		error: function() {
+			alert("Unexpected error!");
+		},
+		success: function(response) {
+			if (response.success) {
+				load_topic(response.group_id, response.topic_id);
+				$('#updateImage').modal('hide');
+			} else {
+				alert(response.error);
+			}
+			$('#edit-image').attr("disabled", false);
+		}
+	});
+
+
+	$('#edit-cancel').on('click', function() {
+		resetForm("updateImage-form");
+	});
+
 	$.material.init();
 });
-
-$('#updateImage-form').ajaxForm({
-	dataType: "json",
-	beforeSubmit: function() {
-		$('#edit-image').attr("disabled", true);
-	},
-	clearForm: true,
-	error: function() {
-		alert("Unexpected error!");
-	},
-	success: function(response) {
-		if (response.success) {
-			load_topic(response.group_id, response.topic_id);
-			$('#updateImage').modal('hide');
-		} else {
-			alert(response.error);
-		}
-		$('#edit-image').attr("disabled", false);
-	}
-});
-
-$('#edit-cancel').on('click', function() {
-	resetForm("updateImage-form");
-});
-
 
 var geocoder = new google.maps.Geocoder();
 var address_topic = '{{ topic.place }}';
@@ -448,6 +526,7 @@ function initialize_topic_place(latitude,longitude) {
 				{% if topic.is_own %}
 					<button id="delete-topic" title="{{lang.buttons.delete_topic_title}}" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>
 				{% endif %}
+				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" ></button>
 
 				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}">&nbsp;<span id="participation-text">
 					{% if not topic.participation %}
@@ -566,6 +645,29 @@ function initialize_topic_place(latitude,longitude) {
 				<div id="message"></div>
 				<br>
 				<div class="list-group" id="member-vote-list"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<!-- Popup per la lista dei partecipanti al topic -->
+<div id="participantsList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header" style="padding:0px 8px 0px 0px;">
+				<button type="button" class="btn btn-raised" data-dismiss="modal" data-target="#participantsList" style="float:right;padding: 5px 10px 3px 10px;background-color:#F44336;z-index:1;">X</button>
+			</div>
+			<div class="modal-body" style="padding-top:30px;">
+				<div class="list-group" >
+					<div class="well well-lg proposal-well"  style="padding: 1px 5px 23px 25px;background-color:#2196F3"> 
+						<h2 id="participantsPopupTitle"></h2>
+						<div id="participantsTopicPopup"></div>
+					</div> 
+				</div>
+				<div id="participants-message"></div>
+				<br>
+				<div class="list-group" id="member-participants-list"></div>
 			</div>
 		</div>
 	</div>

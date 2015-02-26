@@ -7,6 +7,17 @@ $('span#group_name').html("{{ group.name }}");
 $('input#groupId').val("{{ group.key.id }}");
 
 $(document).ready(function() {
+	// popup edit group
+	$('form#updateInfo-form').attr('action', '/api/group/{{ group.key.id }}/update');
+	$('input#inputGroupName').attr('value', '{{ group.name }}');
+	$('textarea#inputDescription').html('{{ group.description }}');
+	//Button delete group
+	{% if group.is_own %}
+	$('span#delete-button').html('<button id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="left: -280px;background-color:#F44336;"></button>');
+	{% else %}
+	$('span#delete-button').html('');
+	{% endif %}
+	// end-popup edit group
 	$('#group_image').css('width', '99%');$('#group_image').css('width', '100%');
 	$('button#delete-group').on('click', function() {
 		if (confirm('{{lang.group_overview.warning_delete_group}}')) {
@@ -15,12 +26,13 @@ $(document).ready(function() {
 				method: 'POST',
 				dataType: 'json',
 				error: function() {
-					alert('lang.general_error');
+					alert('{{lang.general_error}}');
 				},
 				success: function(response) {
 					if (response.success) {
-						load_all_topics();
+						$('#updateInfo').modal('hide');
 						load_groups();
+						load_all_topics();
 					} else {
 						alert(response.error);
 					}
@@ -32,7 +44,8 @@ $(document).ready(function() {
 	$('#edit-cancel').on('click', function() {
 		resetForm("updateImage-form");
 	});
-
+	
+	/*
 	$('#updateImage-form').ajaxForm({
 		dataType: "json",
 		beforeSubmit: function() {
@@ -53,6 +66,8 @@ $(document).ready(function() {
 			$('#edit-image').attr("disabled", false);
 		}
 	});
+	*/
+
 
 	$('#updateInfo-form').ajaxForm({
 		dataType: "json",
@@ -98,18 +113,25 @@ function resetForm(form_id) {
 						{% else %}
 						<img src="/static/images/group-default.jpg" id="group_image" style="width: 200px;height: 100%;">
 						{% endif %}
+						<!-- Old Edit/Delete Button
 						{% if group.is_own %}
 							<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" title="{{lang.buttons.edit_group_photo_title}}" style="padding:7px;"></button></div>
 							<button id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="padding:8px;position:absolute;top:0px;right:25px;z-index:1;background-color:#F44336;"></button>
 						{% endif %}
+						-->
+						<!-- Edit Button -->
+						<button id="edit-group" type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:8px;position:absolute;top: -10px;right: 15px;z-index:1;"></button>
+						<!-- /Edit Button -->
 					</div>
 					<div class="row-content" style="width: 66%;margin-top: 10px;">
 						<div class="col-lg-11">
 							<h2 style="word-wrap:break-word;font-size:30px;padding-bottom:5px;margin:0px;">
 								{{ group.name }}
+								<!-- Old edit title Button
 								{% if group.is_own %}
 								<button type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:7px;display:inline-block;"></button>
 								{% endif %}
+								-->
 							</h2>
 							
 								{% if group.description %}
@@ -126,7 +148,7 @@ function resetForm(form_id) {
 		</div>
 	</div>
 
-	<!-- Form-update-image -->
+	<!-- Form-update-image 
 	<div id="updateImage" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -151,40 +173,7 @@ function resetForm(form_id) {
 				</div>
 			</div>
 	</div>
-
-	<!-- Form-update-title-description -->
-	<div id="updateInfo" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-body" style="padding:15px 15px 0px 15px;">
-						<form action="/api/group/{{ group.key.id }}/update" method="post" class="form-horizontal" enctype="multipart/form-data" id="updateInfo-form">
-							<fieldset>
-								<div class="form-group">
-									<label for="inputGroupName" class="col-lg-2 control-label">{{lang.name}} </label>
-									<div class="col-lg-10">
-										<input class="form-control" id="inputGroupName" name="name" placeholder="Name of the group" type="text" maxlength="32" required value="{{ group.name }}">
-									</div>
-								</div>
-								<div class="form-group">
-									<label for="textArea" class="col-lg-2 control-label">{{lang.description}}</label>
-									<div class="col-lg-10">
-										<textarea class="form-control" rows="3" id="inputDescription" name="description">{{ group.description }}
-										</textarea>
-										<span class="help-block">{{lang.description_message}}</span>
-									</div>
-								</div>
-								<div class="form-group">
-									<div class="modal-footer" style="padding:0px 25px 0px 0px">
-										<button type="button" id="edit-cancel" class="btn btn-default" data-dismiss="modal" data-target="#updateInfo" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
-										<button type="submit" class="btn" id="edit-info" style="background-color:#00A65E;">{{lang.edit}}</button>
-									</div>
-								</div>
-							</fieldset>
-						</form>
-					</div>
-				</div>
-			</div>
-	</div>
+	-->
 
 		<div class="list-group">
 			<div class="list-group-item">

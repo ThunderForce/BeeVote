@@ -173,6 +173,7 @@ class Topic(db.Model):
 
 	def is_user_participant(self, beevote_user):
 		return beevote_user.key() not in self.not_participating_users
+	
 
 class Proposal(db.Model):
 	title = db.StringProperty(required=True)
