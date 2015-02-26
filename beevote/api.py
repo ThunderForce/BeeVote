@@ -631,6 +631,20 @@ class GroupNotificationsHandler(webapp2.RequestHandler):
 					values['topic_creations'] += 1
 		self.response.out.write(json.dumps(values))
 
+class MemberAutocompleteHandler(webapp2.RequestHandler):
+	def get(self):
+		query = self.request.get('query').lower()
+		users = db.GqlQuery("SELECT * FROM BeeVoteUser").fetch(1000)
+		users = [u for u in users if (query in u.name.lower()+" "+u.surname.lower())][:10]
+		suggestions = []
+		for user in users:
+			suggestions.append({"value" : user.email, "data" : user.name+" "+user.surname})
+		values = {
+			"query" : "Unit",
+			"suggestions" : suggestions, 
+		}
+		self.response.out.write(json.dumps(values))
+
 class GroupsNotificationsHandler(webapp2.RequestHandler):
 	def get(self):
 		user = users.get_current_user()

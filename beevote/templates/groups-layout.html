@@ -47,6 +47,15 @@
 
 				//Function to suggestion of Google Maps on places
 				initialize_place_suggestion();
+
+				$('#email').autocomplete({
+				    serviceUrl: '/api/member-autocomplete',
+				    formatResult: function (suggestion, currentValue) {
+      					return suggestion.data.replace(new RegExp(currentValue, 'gi'), '<strong>$&</strong>')+" ("+suggestion.value+")";
+				    },
+				    showNoSuggestionNotice: true,
+				    noSuggestionNotice: "No Results",
+				});
 				
 				$('input#inputDate').datetimepicker({
 					timepicker:false,
