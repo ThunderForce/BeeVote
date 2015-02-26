@@ -14,3 +14,8 @@ indexes:
   properties:
   - name: group
   - name: timestamp
+
+- kind: TopicNotification
+  properties:
+  - name: topic
+  - name: timestamp

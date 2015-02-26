@@ -405,6 +405,7 @@ app = webapp2.WSGIApplication([
 	('/api/create-group', api.CreateGroupHandler),
 	('/api/group/(.*)/topic/(.*)/update', api.UpdateTopicHandler),
 	('/api/group/(.*)/update', api.UpdateGroupHandler),
+	('/api/topics-notifications', api.TopicsNotificationsHandler),
 	('/api/groups-notifications', api.GroupsNotificationsHandler),
 	('/api/member-autocomplete', api.MemberAutocompleteHandler),
 	('/api/create-topic', api.CreateTopicHandler),

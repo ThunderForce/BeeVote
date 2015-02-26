@@ -117,6 +117,7 @@ class Topic(db.Model):
 	img = db.BlobProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
 	non_participant_users = db.ListProperty(db.Key) # BeeVoteUser Key
+	last_change = db.DateTimeProperty(auto_now=True)
 	
 	@staticmethod
 	def get_from_id(group_id, topic_id):
@@ -273,8 +274,7 @@ class GroupNotification(db.Model):
 		else:
 			notifications = db.GqlQuery("SELECT * FROM GroupNotification WHERE timestamp > :1", timestamp).fetch(1000)
 		if beevote_user:
-			ret = [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key() == n.beevote_user.key())]
-			return ret
+			return [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key() == n.beevote_user.key())]
 		else:
 			return notifications
 	
@@ -286,7 +286,52 @@ class GroupNotification(db.Model):
 			beevote_user=beevote_user
 		)
 		notification.put()
-		
+
+class TopicNotification(db.Model):
+	TOPIC_CREATION = 0
+	PROPOSAL_CREATION = 1
+	TOPIC_EXPIRATION = 2
+	topic = db.ReferenceProperty(Topic, required=True)
+	notification_code = db.IntegerProperty(required=True)
+	beevote_user = db.ReferenceProperty(BeeVoteUser, required=False)
+	timestamp = db.DateTimeProperty(auto_now_add=True)
+	
+	@staticmethod
+	def get_for_beevote_user(beevote_user):
+		topics = beevote_user.get_topics_by_group_membership()
+		all_notifications = {}
+		for topic in topics:
+			topic_access = TopicAccess.get_specific_access(topic, beevote_user)
+			if topic_access:
+				timestamp = topic_access.timestamp
+			elif beevote_user.last_access:
+				timestamp = beevote_user.last_access
+			else:
+				timestamp = datetime.datetime.min
+			topic_notifications = TopicNotification.get_from_timestamp(timestamp, topic, beevote_user)
+			all_notifications[str(topic.group.key().id()) + '-' + str(topic.key().id())] = topic_notifications
+		return all_notifications
+	
+	@staticmethod
+	def get_from_timestamp(timestamp, topic=None, beevote_user=None):
+		# TODO order results
+		if topic:
+			notifications = db.GqlQuery("SELECT * FROM TopicNotification WHERE timestamp > :1 AND topic = :2", timestamp, topic).fetch(1000)
+		else:
+			notifications = db.GqlQuery("SELECT * FROM TopicNotification WHERE timestamp > :1", timestamp).fetch(1000)
+		if beevote_user:
+			return [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key() == n.beevote_user.key())]
+		else:
+			return notifications
+	
+	@staticmethod
+	def create(notification_code, topic, beevote_user=None):
+		notification = TopicNotification(
+			notification_code=notification_code,
+			topic=topic,
+			beevote_user=beevote_user
+		)
+		notification.put()
 
 # End of Data Model
 

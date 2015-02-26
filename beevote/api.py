@@ -665,6 +665,29 @@ class GroupsNotificationsHandler(webapp2.RequestHandler):
 			notifications_json[db_group] = notif
 		self.response.out.write(json.dumps(notifications_json))
 
+class TopicsNotificationsHandler(webapp2.RequestHandler):
+	def get(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		db_all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user)
+		notifications_json = {}
+		for db_topic in db_all_notifications.keys():
+			notif = {
+				'topic_creations': 0,
+				'proposal_creations': 0,
+				'topic_expirations': 0,
+			}
+			for db_notification in db_all_notifications[db_topic]:
+				if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
+					notif['topic_creations'] += 1
+				elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
+					notif['proposal_creations'] += 1
+				if db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
+					notif['topic_expirations'] += 1
+			notifications_json[db_topic] = notif
+		self.response.out.write(json.dumps(notifications_json))
+
 class RemoveGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
@@ -809,6 +832,8 @@ class CreateProposalHandler(webapp2.RequestHandler):
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 				proposal.description = description
 				proposal.put()
+				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic)
+				topic.put()
 				values = {
 					'success': True,
 					'group_id': group_id,
