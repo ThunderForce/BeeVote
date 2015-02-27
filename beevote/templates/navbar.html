@@ -9,6 +9,13 @@
 			<span class="icon-bar"></span>
 		</button>
 		-->
+		<style type="text/css">
+			@media screen and (min-width: 768px) {
+				#menu-toggle {
+					pointer-events: none;
+				}
+			}
+		</style>
 		<a id="menu-toggle" class="navbar-brand" href="#menu-toggle">
 			<div>
 				<img src="/static/images/logo-inverted-48.png" class="logo">
@@ -175,10 +182,10 @@
 					{{ user.name }} {{ user.surname }}
 				</a>
 			</li>
-			<li class="sidebar-logout">
-				<a href="/logout" title="Click here to logout" style="color: #fff;margin-left:10px;">
-					<i class="mdi-hardware-keyboard-return"> </i>
-					Log Out
+			<li class="sidebar-home" style="color: #fff;">
+				<a target="_blank" style="color: #fff;margin-left:10px;cursor:pointer;">
+					<i class="mdi-action-home"> </i>
+					Home
 				</a>
 			</li>
 			<li class="sidebar-feedback" style="color: #fff;">
@@ -187,6 +194,13 @@
 					Feedback
 				</a>
 			</li>
+			<li class="sidebar-logout">
+				<a href="/logout" title="Click here to logout" style="color: #fff;margin-left:10px;">
+					<i class="mdi-hardware-keyboard-return"> </i>
+					Logout
+				</a>
+			</li>
+			<li class="sidebar-groups" style="font-size:25px;color:#FFFFFF;margin-left:-10px;margin-bottom:10px;">{{lang.groups_layout.your_groups}} <i class="mdi-social-people" style="cursor:text;"></i></li>
 		</ul>
 	</div>
 </div>
