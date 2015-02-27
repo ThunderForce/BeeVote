@@ -187,12 +187,20 @@ class Proposal(db.Model):
 	
 	@staticmethod
 	def get_from_id(group_id, topic_id, proposal_id):
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
+		proposal = memcache.get('proposal_by_path_%s_%s_%s' % (group_id, topic_id, proposal_id))  # @UndefinedVariable
+		if proposal is None:
+			proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
+			proposal = db.get(proposal_key)
+			memcache.add('proposal_by_path_%s_%s_%s' % (group_id, topic_id, proposal_id), proposal, time=600)  # @UndefinedVariable
 		return proposal
 	
 	def get_votes(self):
 		return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', self).fetch(1000)
+	
+	def put(self):
+		db.Model.put(self)
+		if not memcache.replace('proposal_by_path_%s_%s_%s' % (self.topic.group.key().id(), self.topic.key().id(), self.key().id()), self, time=600):  # @UndefinedVariable
+			memcache.add('proposal_by_path_%s_%s_%s' % (self.topic.group.key().id(), self.topic.key().id(), self.key().id()), self, time=600)  # @UndefinedVariable
 	
 	def delete(self):
 		votes = self.get_votes()
