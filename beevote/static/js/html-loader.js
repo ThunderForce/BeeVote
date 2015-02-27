@@ -24,9 +24,15 @@ function load_groups(opened_group) {
 		method: "GET",
 		success: function(groups) {
 			var content = $('ul#sidebar-content');
-			$('ul#sidebar-content li:not(.sidebar-brand, .sidebar-logout, .sidebar-feedback)').remove();
+			$('ul#sidebar-content li:not(.sidebar-toggle, .sidebar-brand, .sidebar-logout, .sidebar-feedback)').remove();
+			content.append('<h3 style="margin-left:10px;margin-bottom:15px;color:#FFFFFF;">Your Groups <i class="mdi-social-people" style="cursor:text;"/></h3>');
 			$.each(groups, function(index, group) {
-				content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;">'+group.data.name+'</li>');
+				if (group.data.has_image) {
+					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/group/'+group.data.id+'/image" alt="icon" style="width:50px;height:50px;border-radius:100%;margin-right:10px;">'+group.data.name+'</li>');
+				}
+				else {
+					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/static/images/group-default.jpg" alt="icon" style="width:50px;height:50px;border-radius:100%;margin-right:10px;">'+group.data.name+'</li>');
+				}
 			});
 			//Function to load sidebar group
 			$("li.sidebar-group").click(function(e) {
@@ -36,6 +42,9 @@ function load_groups(opened_group) {
 			$("li.sidebar-brand").click(function(e) {
 				$("#wrapper").toggleClass("toggled");
 				$('#updateUser').modal('show'); //open popup "updateUser"
+			});
+			$('li.sidebar-toggle').click(function(e) {
+				$('#wrapper').toggleClass("toggled");
 			});
 		}
 	});

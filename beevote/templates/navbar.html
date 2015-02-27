@@ -158,19 +158,31 @@
 	<!-- Sidebar--> 
 	<div id="sidebar-wrapper" style="background-color: #2196F3; z-index:1100; height: 101%;margin-top: -75px;" >
 		<ul class="sidebar-nav" id="sidebar-content">
-			<li class="sidebar-brand">
-				<a href="#" id="edit-user-sidebar" style="color: #fff;">
+			<li class="sidebar-toggle" style="margin-left:-5px;margin-top:7px;">
+				<a id="menu-toggle" style="cursor:pointer;">
+					<div>
+						<img src="/static/images/logo-inverted-48.png" class="logo">
+					</div>
+				</a>
+			</li>
+			<li class="sidebar-brand" style="margin-top:5px;">
+				<a id="edit-user-sidebar" style="color: #fff;cursor:pointer;">
+					{% if user.img%}
+					<img style="width: 50px; height: 50px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
+					{% else %}
+					<img style="width: 50px; height: 50px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
+					{% endif %}
 					{{ user.name }} {{ user.surname }}
 				</a>
 			</li>
 			<li class="sidebar-logout">
-				<a href="/logout" title="Click here to logout" style="color: #fff;">
-					<i class="mdi-action-settings-power"> </i>
+				<a href="/logout" title="Click here to logout" style="color: #fff;margin-left:10px;">
+					<i class="mdi-hardware-keyboard-return"> </i>
 					Log Out
 				</a>
 			</li>
 			<li class="sidebar-feedback" style="color: #fff;">
-				<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to feedback" style="color: #fff;">
+				<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to feedback" style="color: #fff;margin-left:10px;">
 					<i class="mdi-action-thumbs-up-down"> </i>
 					Feedback
 				</a>
