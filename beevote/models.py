@@ -342,6 +342,13 @@ class TopicNotification(db.Model):
 		)
 		notification.put()
 
+class BugReport(db.Model):
+	device = db.StringProperty()
+	browser = db.StringProperty()
+	description = db.TextProperty()
+	occurrence = db.DateTimeProperty()
+	creation = db.DateTimeProperty(auto_now_add=True)
+
 # End of Data Model
 
 # Start of functions
