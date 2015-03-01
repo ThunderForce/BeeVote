@@ -953,6 +953,31 @@ class AddParticipationHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
+class CreateBugReportHandler(webapp2.RequestHandler):
+	def post(self):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		
+		device = self.request.get('device')
+		browser = self.request.get('browser')
+		description = self.request.get('description')
+		occurrence = self.request.get('occurrence')
+
+		report = models.BugReport(
+			device = device,
+			browser = browser,
+			description = description,
+			occurrence = occurrence,
+			creator = beevote_user 
+		)
+		report.put()
+		report_id = report.key().id()
+		values = {
+			'success': True,
+			'report_id': report_id,
+		}
+		self.response.out.write(json.dumps(values))
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))

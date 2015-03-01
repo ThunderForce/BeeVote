@@ -348,6 +348,7 @@ class BugReport(db.Model):
 	description = db.TextProperty()
 	occurrence = db.DateTimeProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
+	creator = db.ReferenceProperty(BeeVoteUser, required=True)
 
 # End of Data Model
 
