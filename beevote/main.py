@@ -352,6 +352,11 @@ class RegistrationPendingHandler(BaseHandler):
 		}
 		write_template(self.response, 'registration-pending.html', values)
 
+class ReportBugHandler(BaseHandler):
+	def get(self):
+		values = {}
+		write_template(self.response, 'report-bug.html', values)
+
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
 		self.redirect(users.create_logout_url('/'))
@@ -394,6 +399,7 @@ app = webapp2.WSGIApplication([
 	webapp2.Route('/home', handler=HomeHandler, defaults={'group_id': None, 'topic_id': None}),
 	#('/home', HomeHandler),
 	('/profile/(.*)', ProfileHandler),
+	('/report-bug', ReportBugHandler),
 	('/api/group/(.*)/topic/(.*)/proposal/(.*)/remove', api.RemoveProposalHandler),
 	('/api/group/(.*)/members/remove', api.RemoveGroupMemberHandler),
 	('/api/group/(.*)/members/add', api.AddGroupMemberHandler),
@@ -422,6 +428,7 @@ app = webapp2.WSGIApplication([
 	('/api/groups', api.LoadGroupsHandler),
 	('/api/group/(.*)', api.LoadGroupHandler),
 	('/api/user/(.*)', api.LoadUserHandler),
+	('/api/create-bug-report', api.CreateBugReportHandler),
 	('/html/topics', html_strips.TopicsHandler),
 	('/html/groups', html_strips.GroupsHandler),
 	('/html/group/(.*)/topic/(.*)', html_strips.TopicHandler),

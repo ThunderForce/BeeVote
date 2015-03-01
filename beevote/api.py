@@ -963,19 +963,28 @@ class CreateBugReportHandler(webapp2.RequestHandler):
 		description = self.request.get('description')
 		occurrence = self.request.get('occurrence')
 
-		report = models.BugReport(
-			device = device,
-			browser = browser,
-			description = description,
-			occurrence = occurrence,
-			creator = beevote_user 
-		)
-		report.put()
-		report_id = report.key().id()
-		values = {
-			'success': True,
-			'report_id': report_id,
-		}
+		try:
+			report = models.BugReport(
+				device = device,
+				browser = browser,
+				description = description,
+				creator = beevote_user 
+			)
+			if occurrence != "":
+				report.occurrence = datetime.datetime.strptime(occurrence, "%d/%m/%Y").date()
+				if report.occurrence.year <= 1900:
+					raise Exception('Year cannot be before 1900')
+			report.put()
+			report_id = report.key().id()
+			values = {
+				'success': True,
+				'report_id': report_id,
+			}
+		except Exception as exc:
+			values = {
+				'success': False,
+				'error': exc.args[0]
+			}
 		self.response.out.write(json.dumps(values))
 
 class LogoutHandler(webapp2.RequestHandler):

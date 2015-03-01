@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<title>Report a bug - BeeVote</title>
+		
+		{{ basic_head }}
+		
+		<script>
+			$(document).ready(function() {
+				$('input#bug-occurrence').datetimepicker({
+					format:'d/m/Y H:i'
+				});
+				$('#bug-form').ajaxForm({
+					dataType: "json",
+					beforeSubmit: function() {
+						$('#report-bug').attr("disabled", true);
+					},
+					clearForm: true,
+					error: function() {
+						alert("{{lang.general_error}}");
+					},
+					success: function(response) {
+						if (response.success) {
+							// TODO do something better
+							alert("OK");
+						} else {
+							alert(response.error);
+						}
+						$('#create-group').attr("disabled", false);
+					}
+				});
+			});
+		</script>
+		
+	</head>
+	<body>
+		<div class="jumbotron"  style="max-width:900px;margin-top:20px;">
+			<h1>Report a bug</h1>
+			<p>If you want to report a bug, fill the form below.</p>
+			<p>Please give us as much information as you can, so that we can find the problem faster.</p>
+			<div class="jumbotron">
+				<h2 align="center"><b>Report a bug</b></h2>
+				<form action="/api/create-bug-report" method="POST" class="form-horizontal" id="bug-form">
+                <fieldset>
+                  <div class="form-group">
+                    <label for="bug-device" class="col-lg-2 control-label">Device: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="bug-device" name="device" placeholder="The device with which you encountered the problem (possibly including OS version number)" type="text" maxlength="64">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="bug-browser" class="col-lg-2 control-label">Browser: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="bug-browser" name="browser" placeholder="The browser with which you encountered the problem (possibly including version number)" type="text" maxlength="64">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="bug-description" class="col-lg-2 control-label">Description: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="bug-description" name="description" placeholder="A brief description of the problem" type="text" maxlength="256">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="bug-occurrence" class="col-lg-2 control-label">Occurrence: </label>
+                    <div class="col-lg-10">
+                      <input class="form-control" id="bug-occurrence" name="occurrence" placeholder="Approximately when you encountered the problem" type="text" maxlength="64">
+                    </div>
+                  </div>
+
+                  <!-- BUTTON -->
+                  <div class="form-group">
+                    <div class="modal-footer">
+                      <button type="submit" class="btn btn-info" id="report-bug">Report</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+			</div>
+		</div>
+	</body>
+</html>

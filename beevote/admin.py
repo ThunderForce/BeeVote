@@ -57,6 +57,11 @@ class UserManagerHandler(BasicPageHandler):
 		users = db.GqlQuery("SELECT * FROM BeeVoteUser")
 		self.write_template('user-manager.html', {'requests': requests, 'users': users})
 
+class BugReportsHandler(BasicPageHandler):
+	def get(self):
+		reports = db.GqlQuery("SELECT * FROM BugReport")
+		self.write_template('bug-reports.html', {'reports': reports})
+
 class FeatureChangesHandler(BasicPageHandler):
 	def get(self):
 		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange").fetch(1000)
@@ -116,6 +121,7 @@ The BeeVote Team
 app = webapp2.WSGIApplication([
 	('/admin/remove-user/(.*)', RemoveUserHandler),
 	('/admin/user-manager', UserManagerHandler),
+	('/admin/bug-reports', BugReportsHandler),
 	('/admin/feature-changes', FeatureChangesHandler),
 	('/admin/add-feature-change', AddFeatureChangeHandler),
 	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler)

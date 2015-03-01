@@ -24,7 +24,7 @@ function load_groups(opened_group) {
 		method: "GET",
 		success: function(groups) {
 			var content = $('ul#sidebar-content');
-			$('ul#sidebar-content li:not(.sidebar-home, .sidebar-toggle, .sidebar-brand, .sidebar-logout, .sidebar-feedback, .sidebar-groups)').remove();
+			$('ul#sidebar-content li:not(.sidebar-home, .sidebar-toggle, .sidebar-brand, .sidebar-logout, .sidebar-feedback, .sidebar-bug-report, .sidebar-groups)').remove();
 			$.each(groups, function(index, group) {
 				if (group.data.has_image) {
 					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/group/'+group.data.id+'/image" alt="icon" style="width:50px;height:50px;border-radius:100%;margin-right:10px;">'+group.data.name+'</li>');
