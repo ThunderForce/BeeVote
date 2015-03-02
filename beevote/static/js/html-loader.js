@@ -26,11 +26,15 @@ function load_groups(opened_group) {
 			var content = $('ul#sidebar-content');
 			$('ul#sidebar-content li:not(.sidebar-home, .sidebar-toggle, .sidebar-brand, .sidebar-logout, .sidebar-feedback, .sidebar-bug-report, .sidebar-groups)').remove();
 			$.each(groups, function(index, group) {
+				var group_name = group.data.name;
+				if (group_name.length>15) {
+					group_name = group_name.substring(0, 12)+"...";
+				}
 				if (group.data.has_image) {
-					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/group/'+group.data.id+'/image" alt="icon" style="width:50px;height:50px;border-radius:100%;margin-right:10px;">'+group.data.name+'</li>');
+					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/group/'+group.data.id+'/image" alt="icon" style="width:40px;height:40px;border-radius:100%;margin-right:10px;">'+group_name+'</li>');
 				}
 				else {
-					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/static/images/group-default.jpg" alt="icon" style="width:50px;height:50px;border-radius:100%;margin-right:10px;">'+group.data.name+'</li>');
+					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/static/images/group-default.jpg" alt="icon" style="width:40px;height:40px;border-radius:100%;margin-right:10px;">'+group_name+'</li>');
 				}
 			});
 			//Function to load sidebar group

@@ -1,14 +1,5 @@
-
-
 <div class="navbar navbar-default navbar-fixed-top" color="blue" style="box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
 	<div class="navbar-header">
-		<!--
-		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse#nav">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
-		-->
 		<style type="text/css">
 			@media screen and (min-width: 768px) {
 				#menu-toggle {
@@ -23,30 +14,27 @@
 		</a>
 	</div>
 	<div class="navbar-collapse collapse navbar-responsive-collapse" id="nav">
-		
 		{% if breadcumb %}
 		<ul class="nav navbar-nav">
 			<ul class="breadcrumb list-inline" style="margin-left: -20px;">
-				<!--
-				<li></li>
-				<li><a href="#" style="color: #DCEEFD;">Library</a></li>
-				<li class="active">Data</li>
-			-->
-			{% for element in breadcumb.previous_elements %}
-			<li><a href="{{ element.href }}" style="color: #DCEEFD;">{{ element.title }}</a></li>
-			{% endfor %}
-			<li class="active">{{ breadcumb.current_element.title }}</li>
+					<!--
+					<li></li>
+					<li><a href="#" style="color: #DCEEFD;">Library</a></li>
+					<li class="active">Data</li>
+					-->
+				{% for element in breadcumb.previous_elements %}
+				<li><a href="{{ element.href }}" style="color: #DCEEFD;">{{ element.title }}</a></li>
+				{% endfor %}
+				<li class="active">{{ breadcumb.current_element.title }}</li>
+			</ul>
 		</ul>
-	</ul>
-	{% endif %}
-
-
-	<ul class="nav navbar-nav navbar-right">
-		<li>
-					<!--	
-					<form class="navbar-form navbar-left">
-						<input type="text" class="form-control col-lg-8 " placeholder="Search">
-					</form>
+		{% endif %}
+		<ul class="nav navbar-nav navbar-right">
+			<li>
+				<!--	
+				<form class="navbar-form navbar-left">
+					<input type="text" class="form-control col-lg-8 " placeholder="Search">
+				</form>
 				-->
 			</li>
 			<li class="dropdown">
@@ -58,7 +46,6 @@
 
 				</a>
 				<ul class="dropdown-menu">
-					<!-- <li><a href="/profile/{{ user.user_id }}">Setting</a></li> -->
 					<li>
 						<a href="{{ feedback_url }}?usp=send_form" target="_blank" title="Click here to feedback">{{lang.feedback}}</a>
 					</li>
@@ -90,7 +77,7 @@
 	</div>
 </div>
 
-
+<!-- Popup edit User -->
 <div id="updateUser" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
@@ -104,70 +91,52 @@
 								<input class="form-control" id="edit_user_name" name="edit_name"  type="text" maxlength="64" autocomplete="off"  value="{{user.name}}">
 							</div>
 						</div>
-
 						<div class="form-group">
 							<label for="edit_user_surname" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_surname}}: </label>
 							<div class="col-lg-10">
 								<input class="form-control" id="edit_user_surname" name="edit_surname"  type="text" maxlength="64" autocomplete="off" value="{{user.surname}}" >
 							</div>
 						</div>
-
 						<div class="form-group" >
 							<label for="inputImg" class="col-lg-2 control-label">{{lang.photo}}</label>
 							<div class="col-lg-10">
 								<input id="inputImg" type="file" name="edit_img"/>
 							</div>
 						</div>
-
-		<!--
-			<div class="form-group">
-				<label for="edit_user_language" class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}: </label>
-				<div class="col-lg-10">
-					<input class="form-control" id="edit_user_language" name="edit_language" placeholder="" type="text" maxlength="64" autocomplete="off" >
-				</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}:</label>
+							<div class="col-lg-10">
+								<div class="radio radio-primary">
+									<label>
+										<input name="edit_language" id="optionsRadios1" value="it" type="radio" {% if user.language == 'it'%}checked{% endif %}>
+										{{lang.italian}}
+									</label>
+								</div>
+								<div class="radio radio-primary">
+									<label>
+										<input name="edit_language" id="optionsRadios2" value="en" type="radio" {% if user.language == 'en'%}checked{% endif %}>
+										{{lang.english}}
+									</label>
+								</div>
+							</div>
+						</div>
+						<label>{{lang.edit_profile.user_email}}: {{user.email}}</label>
+						<div></div>
+						<div class="form-group">			
+							<div class="modal-footer" style="padding: 0px 10px 0px 0px;margin-top: 10px;">
+								<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
+								<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#2196F3;">{{lang.edit}}</button>
+							</div>
+						</div>
+					</fieldset>
+				</form>
 			</div>
-
-		-->
-
-
-		<div class="form-group">
-			<label class="col-lg-2 control-label">{{lang.edit_profile.edit_user_language}}:</label>
-			<div class="col-lg-10">
-				<div class="radio radio-primary">
-					<label>
-						<input name="edit_language" id="optionsRadios1" value="it" type="radio" {% if user.language == 'it'%}checked{% endif %}>
-						{{lang.italian}}
-					</label>
-				</div>
-				<div class="radio radio-primary">
-					<label>
-						<input name="edit_language" id="optionsRadios2" value="en" type="radio" {% if user.language == 'en'%}checked{% endif %}>
-						{{lang.english}}
-					</label>
-				</div>
-			</div>
-			</div>
-				<label>{{lang.edit_profile.user_email}}: {{user.email}}</label>
-			<div>
 		</div>
-		<div class="form-group">			
-			<div class="modal-footer" style="padding: 0px 10px 0px 0px;margin-top: 10px;">
-				<button type="button" class="btn btn-default" data-dismiss="modal" data-target="#myModal" id="proposal-cancel" style="background-color:#bdbdbd;">{{lang.cancel}}</button>
-				<button type="submit" class="btn btn-success" id="edit_user" style="background-color:#2196F3;">{{lang.edit}}</button>
-			</div>
-			
-		</div>
-	</fieldset>
-</form>
-
-</div>
-</div>
-</div>
+	</div>
 </div>
 
-<!-- #sidebar-wrapper -->
+<!-- Sidebar -->
 <div id="wrapper">
-	<!-- Sidebar--> 
 	<div id="sidebar-wrapper" style="background-color: #2196F3; z-index:1100; height: 101%;margin-top: -75px;" >
 		<ul class="sidebar-nav" id="sidebar-content">
 			<li class="sidebar-toggle" style="margin-left:-5px;margin-top:7px;">
@@ -180,9 +149,9 @@
 			<li class="sidebar-brand" style="margin-top:5px;">
 				<a id="edit-user-sidebar" style="color: #fff;cursor:pointer;">
 					{% if user.img%}
-					<img style="width: 50px; height: 50px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
+					<img style="width: 45px; height: 45px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
 					{% else %}
-					<img style="width: 50px; height: 50px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
+					<img style="width: 45px; height: 45px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
 					{% endif %}
 					{{ user.name }} {{ user.surname }}
 				</a>
@@ -211,12 +180,10 @@
 					Logout
 				</a>
 			</li>
-			<li class="sidebar-groups" style="font-size:25px;color:#FFFFFF;margin-left:-10px;margin-bottom:10px;">{{lang.groups_layout.your_groups}} <i class="mdi-social-people" style="cursor:text;"></i></li>
+			<li class="sidebar-groups" style="font-size:23px;color:#FFFFFF;margin-left:-10px;margin-bottom:10px;">{{lang.groups_layout.your_groups}} <i class="mdi-social-people" style="cursor:text;"></i></li>
 		</ul>
 	</div>
 </div>
-<!-- /#sidebar-wrapper -->
-
 
 <!--
 <div class="alert alert-dismissable alert-success" style="max-width: 900px; margin-left: auto; margin-right: auto; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
@@ -227,7 +194,8 @@
 </div>
 -->
 
-<!-- feedback script
+<!-- 
+	feedback script
     		$.snackbar({
     			content: "We would like to know what you think about BeeVote! Click <a href='{{ feedback_url }}' style='color: #2196F3;' target='_blank'>here</a> to give us feedback!", 
     			timeout: 0

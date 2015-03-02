@@ -424,28 +424,28 @@ class UpdateUser(webapp2.RequestHandler):
 		img = self.request.get('edit_img', None)
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		if name and name == "":
+		if name != None and name == "":
 			values = {
 				'success': False,
 				'error': 'Name is required',
 			}
-		elif  surname and surname == "":
+		elif  surname != None and surname == "":
 			values = {
 				'success': False,
 				'error': 'Surname is required',
 			}
-		elif  language and language == "":
+		elif  language != None and language == "":
 			values = {
 				'success': False,
 				'error': 'Language is required',
 			}
 		else:
 			
-			if name:
+			if name != None:
 				beevote_user.name = name
-			if surname:
+			if surname != None:
 				beevote_user.surname = surname
-			if language:
+			if language != None:
 				beevote_user.language = language
 			if img:
 				beevote_user.img = img
@@ -502,7 +502,7 @@ class UpdateGroupHandler(webapp2.RequestHandler):
 		name = self.request.get('name', None)
 		description = self.request.get('description', None)
 		img = self.request.get('img', None)
-		if name and name == "":
+		if name != None and name == "":
 			values = {
 				'success': False,
 				'error': 'Name is required',
@@ -510,9 +510,9 @@ class UpdateGroupHandler(webapp2.RequestHandler):
 		else:
 			group_key = db.Key.from_path('Group', long(group_id))
 			group = db.get(group_key)
-			if name:
+			if name != None:
 				group.name = name
-			if description:
+			if description != None:
 				group.description = description
 			if img:
 				group.img = img
