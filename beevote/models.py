@@ -93,6 +93,15 @@ class Group(db.Model):
 	def get_admins(self):
 		return db.get(self.admins)
 	
+	def get_notifications_for_user(self, beevote_user):
+		last_access = GroupAccess.get_specific_access(self, beevote_user)
+		group_notifications = GroupNotification.get_from_timestamp(last_access.timestamp, group=self)
+		topics_notifications = TopicNotification.get_for_beevote_user(beevote_user)
+		return {
+			'group_notifications': group_notifications,
+			'topics_notifications': topics_notifications[self.key().id()],
+		}
+	
 	def delete(self):
 		topics = self.get_topics()
 		for topic in topics:
@@ -152,6 +161,11 @@ class Topic(db.Model):
 	
 	def get_proposals(self):
 		return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', self).fetch(1000)
+	
+	def get_notifications_for_user(self, beevote_user):
+		last_access = TopicAccess.get_specific_access(self, beevote_user)
+		notifications = TopicNotification.get_from_timestamp(last_access.timestamp, topic=self)
+		return notifications
 	
 	def delete(self):
 		proposals = self.get_proposals()
@@ -252,8 +266,6 @@ class GroupNotification(db.Model):
 	GROUP_INVITATION = 0
 	GROUP_NAME_CHANGE = 1
 	GROUP_DESCRIPTION_CHANGE = 2
-	TOPIC_CREATION = 3
-	TOPIC_EXPIRATION = 4
 	group = db.ReferenceProperty(Group, required=True)
 	notification_code = db.IntegerProperty(required=True)
 	beevote_user = db.ReferenceProperty(BeeVoteUser, required=False)
@@ -302,24 +314,49 @@ class TopicNotification(db.Model):
 	TOPIC_EXPIRATION = 2
 	topic = db.ReferenceProperty(Topic, required=True)
 	notification_code = db.IntegerProperty(required=True)
-	beevote_user = db.ReferenceProperty(BeeVoteUser, required=False)
 	timestamp = db.DateTimeProperty(auto_now_add=True)
 	
 	@staticmethod
 	def get_for_beevote_user(beevote_user):
-		topics = beevote_user.get_topics_by_group_membership()
-		all_notifications = {}
-		for topic in topics:
-			topic_access = TopicAccess.get_specific_access(topic, beevote_user)
-			if topic_access:
-				timestamp = topic_access.timestamp
-			elif beevote_user.last_access:
-				timestamp = beevote_user.last_access
-			else:
-				timestamp = datetime.datetime.min
-			topic_notifications = TopicNotification.get_from_timestamp(timestamp, topic, beevote_user)
-			all_notifications[str(topic.group.key().id()) + '-' + str(topic.key().id())] = topic_notifications
-		return all_notifications
+		'''
+		{
+			'group_1_id': {
+				'topic_1_id': [
+					... notifications
+				],
+				'topic_2_id': [
+					... notifications
+				],
+				...
+			},
+			'group_2_id': {
+				'topic_3_id': [
+					... notifications
+				],
+				'topic_4_id': [
+					... notifications
+				],
+				...
+			},
+			...
+			
+		}
+		'''
+		user_topics = BeeVoteUser.get_topics_by_group_membership()
+		topics_accesses = [a for a in db.GqlQuery("SELECT * FROM TopicAccess").fetch(1000) if a.topic in user_topics]
+		topics_notifications = [n for n in db.GqlQuery("SELECT * FROM TopicNotification").fetch(1000) if n.topic in user_topics and n.timestamp >= next((a.timestamp for a in topics_accesses if a.topic == n.topic), beevote_user.last_access if beevote_user.last_access is not None else datetime.datetime.min)]
+		
+		notifications_by_group = {}
+		for notif in topics_notifications:
+			group_id = notif.topic.group.key().id()
+			topic_id = notif.topic.key().id()
+			if not group_id in notifications_by_group.keys():
+				notifications_by_group[group_id] = {}
+			if not topic_id in notifications_by_group[group_id].keys():
+				notifications_by_group[group_id][topic_id] = []
+			notifications_by_group[group_id][group_id].append(notif)
+		
+		return notifications_by_group
 	
 	@staticmethod
 	def get_from_timestamp(timestamp, topic=None, beevote_user=None):
