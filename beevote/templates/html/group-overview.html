@@ -9,11 +9,11 @@ $('input#groupId').val("{{ group.key.id }}");
 $(document).ready(function() {
 	// popup edit group
 	$('form#updateInfo-form').attr('action', '/api/group/{{ group.key.id }}/update');
-	$('input#inputGroupName').attr('value', '{{ group.name }}');
-	$('textarea#inputDescription').html('{{ group.description }}');
+	$('input#editGroupName').attr('value', '{{ group.name }}');
+	$('textarea#editDescription').html('{{ group.description }}');
 	//Button delete group
 	{% if group.is_own %}
-	$('span#delete-button').html('<button id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="left: -280px;background-color:#F44336;"></button>');
+	$('span#delete-button').html('<button type="button" id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="float:left;margin-left:20px;background-color:#F44336;"></button>');
 	{% else %}
 	$('span#delete-button').html('');
 	{% endif %}
@@ -40,10 +40,6 @@ $(document).ready(function() {
 			});
 		}
 	});
-
-	$('#edit-cancel').on('click', function() {
-		resetForm("updateImage-form");
-	});
 	
 	/*
 	$('#updateImage-form').ajaxForm({
@@ -68,8 +64,7 @@ $(document).ready(function() {
 	});
 	*/
 
-
-	$('#updateInfo-form').ajaxForm({
+	$('form#updateInfo-form').ajaxForm({
 		dataType: "json",
 		beforeSubmit: function() {
 			$('#edit-info').attr("disabled", true);

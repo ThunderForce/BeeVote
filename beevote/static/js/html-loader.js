@@ -34,17 +34,21 @@ function load_groups(opened_group) {
 				}
 			});
 			//Function to load sidebar group
+			$("li.sidebar-group").unbind("click");
 			$("li.sidebar-group").click(function(e) {
 				$("#wrapper").toggleClass("toggled");
 				load_group_topics($(this).data('group-id'));
 			});
+			$("li.sidebar-brand").unbind("click");
 			$("li.sidebar-brand").click(function(e) {
 				$("#wrapper").toggleClass("toggled");
 				$('#updateUser').modal('show'); //open popup "updateUser"
 			});
+			$('li.sidebar-toggle').unbind("click");
 			$('li.sidebar-toggle').click(function(e) {
 				$('#wrapper').toggleClass("toggled");
 			});
+			$('li.sidebar-home').unbind("click");
 			$('li.sidebar-home').click(function(e) {
 				$('#wrapper').toggleClass("toggled");
 				load_all_topics();
