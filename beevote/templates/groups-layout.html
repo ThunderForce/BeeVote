@@ -573,7 +573,18 @@
 					#menu-toggle {
 						cursor: default;
 					}
+					div#right-column{
+						padding-left:20px;
+						padding-right:20px;
+					}
 				}
+				@media screen and (max-width:768px) {
+					div#right-column{
+						padding-left:0px;
+						padding-right:0px;
+					}					
+				}
+
 			</style>
 			<!-- Left column -->
 			<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
@@ -604,7 +615,7 @@
 			</div>
 			</div>
 			<!-- Right column -->
-			<div class="col-lg-7" id="right-column" style="padding-left:20px;padding-right:20px;">
+			<div class="col-lg-7" id="right-column">
 			</div>
 		</div>
 

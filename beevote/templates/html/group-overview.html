@@ -97,11 +97,12 @@ function resetForm(form_id) {
 </script>
 
 
+
 	<div class="list-group" >
 		<div class="list-group-item">
 			<div class="well well-lg proposal-well" color="green_g" style="padding: 10px 0px 0px 25px;">
 				<div class="row">
-					<div class="row-picture" style="width: 33%;margin-bottom: 10px;">
+					<div id="group-img-well"class="row-picture">
 						{% if group.img %}
 						<img src="/group/{{group.key.id}}/image" id="group_image" style="width: 200px;height: 100%;">
 						{% else %}
@@ -117,9 +118,72 @@ function resetForm(form_id) {
 						<button id="edit-group" type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:8px;position:absolute;top: -10px;right: 15px;z-index:1;"></button>
 						<!-- /Edit Button -->
 					</div>
-					<div class="row-content" style="width: 66%;margin-top: 10px;">
-						<div class="col-lg-11">
-							<h2 style="word-wrap:break-word;font-size:30px;padding-bottom:5px;margin:0px;">
+
+					<style type="text/css">
+
+						div#group-col-dx-well{
+					    	margin-top: -10px;
+					    }
+					    h5#group-description-well{
+					    	margin-left: 1px;
+					    	margin-bottom: 42px;
+					    }
+					    div#group-img-well{
+							margin-bottom: 4px;
+							margin-top: -6px;
+							margin-left: -6px;						    	
+					    }
+					    div#group-row-content-well{
+						    	margin-top: 10px;
+						}
+
+						@media screen and (max-width: 768px) {
+						    h2#group-name-well{
+						        font-size:22px;
+						    }
+						    h5#group-description-well{
+					    		margin-top: 2px;
+					    	}
+						    div#group-col-dx-well{
+						    	margin-left: -20px;
+						    }
+						    button#button-members-group{
+						    	font-size: 15px;
+						    	right: 20px;
+								bottom: 16px;
+						    }
+						    div#group-img-well{
+							    width: 40%;
+						    }
+						    div#group-row-content-well{
+						    	width: 60%;
+						    }
+
+
+						}
+						@media screen and (min-width: 768px) {
+							div#group-col-dx-well{
+							    	margin-left: -12px;
+							    }
+							button#button-members-group{
+						    	font-size: 20px;
+						    	right:25px;
+						    	bottom:20px;
+						    }
+						    div#group-img-well{
+							    width: 33%;
+								margin-bottom: 4px;
+								margin-top: -6px;
+								margin-left: -6px;						    	
+						    }
+						    div#group-row-content-well{
+						    	width: 66%;
+						    }
+						}
+					</style>
+					<div id="group-row-content-well" class="row-content" style="">
+						<div id="group-col-dx-well" class="col-lg-11" style="">
+							<h2 id="group-name-well"style="word-wrap:break-word;padding-bottom:5px;margin:0px;">
 								{{ group.name }}
 								<!-- Old edit title Button
 								{% if group.is_own %}
@@ -129,14 +193,13 @@ function resetForm(form_id) {
 							</h2>
 							
 								{% if group.description %}
-								<h5 style="word-wrap:break-word;"><span class="mdi-editor-format-align-left"></span> {{ group.description }}
+								<h5 id="group-description-well"style="word-wrap:break-word;"><span class="mdi-editor-format-align-left"></span> {{ group.description }}
 								</h5>
 								{% endif %}
 						</div>
 					</div>	
-					<div style="position:absolute;right:25px;bottom:20px;">
-						<button type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="background-color:rgb(64, 255, 64);font-size:20px;"></button>
-					</div>
+					<!-- Button Members -->
+					<button id="button-members-group"type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="position:absolute;background-color:rgb(64, 255, 64);"></button>
 				</div>
 			</div>
 		</div>
