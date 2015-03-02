@@ -116,6 +116,10 @@ The BeeVote Team
 		
 		self.redirect('/admin/user-manager')
 
+class AdminMenuHandler(BasicPageHandler):
+	def get(self):
+		self.write_template('admin-menu.html', {})
+
 # End of handlers
 
 app = webapp2.WSGIApplication([
@@ -124,5 +128,6 @@ app = webapp2.WSGIApplication([
 	('/admin/bug-reports', BugReportsHandler),
 	('/admin/feature-changes', FeatureChangesHandler),
 	('/admin/add-feature-change', AddFeatureChangeHandler),
-	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler)
+	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler),
+	('/admin/home', AdminMenuHandler)
 ], debug=True)
