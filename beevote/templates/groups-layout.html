@@ -7,38 +7,8 @@
 
 		{{ basic_head }}
 
-		<script type="text/javascript" src="/static/js/html-loader.js"></script>
-
 		<script>
 			$(document).ready(function() {
-
-				//Script of mobile sidebar
-				$("#menu-toggle").click(function(e) {
-					e.preventDefault();
-					if (e.stopPropagation) {
-						e.stopPropagation();
-					} else {
-						e.cancelBubble = true;
-					}
-					$("#wrapper").toggleClass("toggled");
-				});
-				$('#wrapper').click(function(e){
-				    if (e.stopPropagation) {
-						e.stopPropagation();
-					} else {
-						e.cancelBubble = true;
-					}
-				});
-				$('html').click(function(e){
-					if ($("#wrapper").hasClass('toggled')){
-						if (e.stopPropagation) {
-							e.stopPropagation();
-						} else {
-							e.cancelBubble = true;
-						}
-						$("#wrapper").removeClass("toggled");
-					}
-				});
 
 				//Function call for places suggestions from Google Maps
 				initialize_place_suggestion();
@@ -204,7 +174,7 @@
 				{% endif %}
 			});
 			
-			//Buttons for creation of Groups, Topics and proposals
+			//Buttons for creation of Groups, Topics and Proposals
 			var buttons = {
 				create_group:
 					'<li style="padding-top:20px;padding-bottom:20px;">'+
@@ -238,7 +208,7 @@
 
 		//Function to empty Group and Proposal forms when cancel button is clicked
 		function resetForm(form_id) {
-			$('#'+form_id).each(function(){
+			$('#'+form_id).each(function() {
 				this.reset();
 			});
 		};
@@ -565,16 +535,6 @@
 
 		<!-- Container of home page -->		
 		<div class="row" style="max-width: 1100px;margin-left: auto;margin-right: auto;margin-top: 75px;">
-			<style type="text/css">
-				@media screen and (min-width:768px) {
-					#wrapper {
-						display: none;
-					}
-					#menu-toggle {
-						cursor: default;
-					}
-				}
-			</style>
 			<!-- Left column -->
 			<div class="col-lg-5" style="padding-left:20px;padding-right:20px;">
 				<div class="navbar-collapse collapse navbar-responsive-collapse" id="left">

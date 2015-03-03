@@ -1,3 +1,47 @@
+<style type="text/css">
+	@media screen and (min-width:768px) {
+		#wrapper {
+			display: none;
+		}
+		#menu-toggle {
+			cursor: default;
+		}
+	}
+</style>
+
+<script>
+	$(document).ready(function() {
+
+		//Script of mobile sidebar
+		$("#menu-toggle").click(function(e) {
+			e.preventDefault();
+			if (e.stopPropagation) {
+				e.stopPropagation();
+			} else {
+				e.cancelBubble = true;
+			}
+			$("#wrapper").toggleClass("toggled");
+		});
+		$('#wrapper').click(function(e){
+		    if (e.stopPropagation) {
+				e.stopPropagation();
+			} else {
+				e.cancelBubble = true;
+			}
+		});
+		$('html').click(function(e){
+			if ($("#wrapper").hasClass('toggled')){
+				if (e.stopPropagation) {
+					e.stopPropagation();
+				} else {
+					e.cancelBubble = true;
+				}
+				$("#wrapper").removeClass("toggled");
+			}
+		});
+	});
+</script>
+
 <div class="navbar navbar-default navbar-fixed-top" color="blue" style="box-shadow: 0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);">
 	<div class="navbar-header">
 		<style type="text/css">
