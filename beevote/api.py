@@ -649,7 +649,7 @@ class TopicsNotificationsHandler(webapp2.RequestHandler):
 		user = users.get_current_user()
 		user_id = user.user_id()
 		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		db_all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user)
+		db_all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user, beevote_user.get_topics_by_group_membership())
 		notifications_json = {}
 		
 		for group_id in db_all_notifications.keys():
