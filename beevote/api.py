@@ -221,11 +221,11 @@ class LoadGroupHandler(BaseApiHandler):
 		}
 		
 		group_json = fetch_group(group, arguments)
-		
+		'''
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		models.GroupAccess.update_specific_access(group, beevote_user)
-		
+		'''
 		self.response.out.write(get_json(group_json))
 
 class LoadTopicHandler(BaseApiHandler):
@@ -245,11 +245,11 @@ class LoadTopicHandler(BaseApiHandler):
 		
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
-		
+		'''
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		models.TopicAccess.update_specific_access(topic, beevote_user)
-		
+		'''
 		self.response.out.write(get_json(topic_json))
 
 class LoadProposalHandler(BaseApiHandler):
@@ -416,6 +416,7 @@ class OldLoadProposalHandler(webapp2.RequestHandler):
 			}
 		}
 		self.response.out.write(json.dumps(values))
+
 class UpdateUser(webapp2.RequestHandler):
 	def post(self):
 		name = self.request.get('edit_name', None)
@@ -565,8 +566,10 @@ class CreateTopicHandler(webapp2.RequestHandler):
 					img=img
 				)
 				topic.put()
+				'''
 				models.GroupNotification.create(models.GroupNotification.TOPIC_CREATION, group)
 				group.put()
+				'''
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -627,35 +630,6 @@ class UpdateTopicHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class GroupNotificationsHandler(webapp2.RequestHandler):
-	def post(self, group_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		group = models.Group.get_from_id(group_id)
-		if not is_user_in_group(beevote_user, group):
-			values = {
-				'success': False,
-				'group_id': group_id,
-				'error': "You are not authorized to interact with this group",
-			}
-		else:
-			timestamp_str = self.request.get('timestamp');
-			timestamp = datetime.datetime.strptime(timestamp_str, "%d/%m/%Y %H:%M")
-			notifications = models.GroupNotification.get_from_timestamp(timestamp, group=group, beevote_user=beevote_user)
-			values = {
-				'success': True,
-				'group_id': group_id,
-				'group_invitations': 0,
-				'topic_creations': 0,
-			}
-			for notification in notifications:
-				if notification.notification_code == models.GroupNotification.GROUP_INVITATION:
-					values['group_invitations'] += 1
-				elif notification.notification_code == models.GroupNotification.TOPIC_CREATION:
-					values['topic_creations'] += 1
-		self.response.out.write(json.dumps(values))
-
 class MemberAutocompleteHandler(webapp2.RequestHandler):
 	def get(self):
 		query = self.request.get('query').lower()
@@ -670,26 +644,6 @@ class MemberAutocompleteHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class GroupsNotificationsHandler(webapp2.RequestHandler):
-	def get(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		db_all_notifications = models.GroupNotification.get_for_beevote_user(beevote_user)
-		notifications_json = {}
-		for db_group in db_all_notifications.keys():
-			notif = {
-				'group_invitations': 0,
-				'topic_creations': 0,
-			}
-			for db_notification in db_all_notifications[db_group]:
-				if db_notification.notification_code == models.GroupNotification.GROUP_INVITATION:
-					notif['group_invitations'] += 1
-				elif db_notification.notification_code == models.GroupNotification.TOPIC_CREATION:
-					notif['topic_creations'] += 1
-			notifications_json[db_group] = notif
-		self.response.out.write(json.dumps(notifications_json))
-
 class TopicsNotificationsHandler(webapp2.RequestHandler):
 	def get(self):
 		user = users.get_current_user()
@@ -697,20 +651,22 @@ class TopicsNotificationsHandler(webapp2.RequestHandler):
 		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		db_all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user)
 		notifications_json = {}
-		for db_topic in db_all_notifications.keys():
-			notif = {
-				'topic_creations': 0,
-				'proposal_creations': 0,
-				'topic_expirations': 0,
-			}
-			for db_notification in db_all_notifications[db_topic]:
-				if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
-					notif['topic_creations'] += 1
-				elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
-					notif['proposal_creations'] += 1
-				if db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
-					notif['topic_expirations'] += 1
-			notifications_json[db_topic] = notif
+		
+		for group_id in db_all_notifications.keys():
+			for topic_id in db_all_notifications[group_id].keys():
+				notif = {
+					'topic_creations': 0,
+					'proposal_creations': 0,
+					'topic_expirations': 0,
+				}
+				for db_notification in db_all_notifications[group_id][topic_id]:
+					if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
+						notif['topic_creations'] += 1
+					elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
+						notif['proposal_creations'] += 1
+					if db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
+						notif['topic_expirations'] += 1
+				db_all_notifications[group_id][topic_id] = notif
 		self.response.out.write(json.dumps(notifications_json))
 
 class RemoveGroupHandler(webapp2.RequestHandler):
@@ -758,7 +714,9 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 				beevote_user_key = beevote_user.key()
 				if beevote_user_key not in group.members:
 					group.members.append(beevote_user_key)
+					'''
 					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group, beevote_user=beevote_user)
+					'''
 					group.put()
 					values = {
 						'success': True,
@@ -857,8 +815,10 @@ class CreateProposalHandler(webapp2.RequestHandler):
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 				proposal.description = description
 				proposal.put()
+				'''
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic)
 				topic.put()
+				'''
 				values = {
 					'success': True,
 					'group_id': group_id,

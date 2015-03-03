@@ -150,9 +150,9 @@ class GroupHandler(BaseHandler):
 		values = {
 			'group': group,
 		}
-		
+		'''
 		models.GroupAccess.update_specific_access(group, self.beevote_user)
-		
+		'''
 		write_template(self.response, 'html/group-overview.html', values)
 
 class TopicsHandler(BaseHandler):
@@ -259,7 +259,7 @@ class TopicHandler(BaseHandler):
 		values = {
 			'topic': topic,
 		}
-		
+		'''
 		models.TopicAccess.update_specific_access(topic, self.beevote_user)
-
+		'''
 		write_template(self.response, 'html/topic-overview.html', values)
