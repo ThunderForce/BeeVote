@@ -21,10 +21,12 @@ import json
 import time
 from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.api import mail
 
 import collections
 
 import models
+from models import GroupNotification, TopicNotification
 
 # Start of functions
 
@@ -221,11 +223,9 @@ class LoadGroupHandler(BaseApiHandler):
 		}
 		
 		group_json = fetch_group(group, arguments)
-		'''
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		models.GroupAccess.update_specific_access(group, beevote_user)
-		'''
 		self.response.out.write(get_json(group_json))
 
 class LoadTopicHandler(BaseApiHandler):
@@ -245,11 +245,9 @@ class LoadTopicHandler(BaseApiHandler):
 		
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
-		'''
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		models.TopicAccess.update_specific_access(topic, beevote_user)
-		'''
 		self.response.out.write(get_json(topic_json))
 
 class LoadProposalHandler(BaseApiHandler):
@@ -500,6 +498,8 @@ class CreateGroupHandler(webapp2.RequestHandler):
 
 class UpdateGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
+		user = users.get_current_user()
+		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('name', None)
 		description = self.request.get('description', None)
 		img = self.request.get('img', None)
@@ -511,11 +511,14 @@ class UpdateGroupHandler(webapp2.RequestHandler):
 		else:
 			group_key = db.Key.from_path('Group', long(group_id))
 			group = db.get(group_key)
-			if name != None:
+			if name != None and name != group.name:
 				group.name = name
-			if description != None:
+				GroupNotification.create(GroupNotification.GROUP_NAME_CHANGE, group, beevote_user)
+			if description != None and description != group.description:
+				GroupNotification.create(GroupNotification.GROUP_DESCRIPTION_CHANGE, group, beevote_user)
 				group.description = description
 			if img:
+				GroupNotification.create(GroupNotification.GROUP_IMAGE_CHANGE, group, beevote_user)
 				group.img = img
 			group.put()
 			group_id = group.key().id()
@@ -566,10 +569,8 @@ class CreateTopicHandler(webapp2.RequestHandler):
 					img=img
 				)
 				topic.put()
-				'''
-				models.GroupNotification.create(models.GroupNotification.TOPIC_CREATION, group)
+				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic=topic)
 				group.put()
-				'''
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -601,6 +602,7 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 
 			if topic.creator.key() == beevote_user.key():
 				topic.delete()
+				# TODO implement topic removal notification?
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -616,11 +618,11 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 
 class UpdateTopicHandler(webapp2.RequestHandler):
 	def post(self, group_id, topic_id):
-		
 		img = self.request.get('img', None)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if img:
 			topic.img = img
+			TopicNotification.create(TopicNotification.TOPIC_IMAGE_CHANGE, topic)
 		topic.put()
 		topic_id = topic.key().id()
 		values = {
@@ -649,25 +651,27 @@ class TopicsNotificationsHandler(webapp2.RequestHandler):
 		user = users.get_current_user()
 		user_id = user.user_id()
 		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		db_all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user, beevote_user.get_topics_by_group_membership())
-		notifications_json = {}
+		all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user, beevote_user.get_topics_by_group_membership())
 		
-		for group_id in db_all_notifications.keys():
-			for topic_id in db_all_notifications[group_id].keys():
+		for group_id in all_notifications.keys():
+			for topic_id in all_notifications[group_id].keys():
 				notif = {
 					'topic_creations': 0,
+					'topic_image_change': 0,
 					'proposal_creations': 0,
 					'topic_expirations': 0,
 				}
-				for db_notification in db_all_notifications[group_id][topic_id]:
+				for db_notification in all_notifications[group_id][topic_id]:
 					if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
 						notif['topic_creations'] += 1
+					elif db_notification.notification_code == models.TopicNotification.TOPIC_IMAGE_CHANGE:
+						notif['topic_image_change'] += 1
 					elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
 						notif['proposal_creations'] += 1
 					if db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
 						notif['topic_expirations'] += 1
-				db_all_notifications[group_id][topic_id] = notif
-		self.response.out.write(json.dumps(notifications_json))
+				all_notifications[group_id][topic_id] = notif
+		self.response.out.write(json.dumps(all_notifications))
 
 class RemoveGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
@@ -714,9 +718,7 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 				beevote_user_key = beevote_user.key()
 				if beevote_user_key not in group.members:
 					group.members.append(beevote_user_key)
-					'''
 					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group, beevote_user=beevote_user)
-					'''
 					group.put()
 					values = {
 						'success': True,
@@ -763,6 +765,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 				group.members.remove(deleted_user_key)
 				if deleted_user_key in group.admins:
 					group.admins.remove(deleted_user_key)
+				# TODO implement notification when a user leaves a group?
 				group.put()
 				values = {
 					'success': True,
@@ -815,10 +818,8 @@ class CreateProposalHandler(webapp2.RequestHandler):
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 				proposal.description = description
 				proposal.put()
-				'''
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic)
 				topic.put()
-				'''
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -935,6 +936,26 @@ class CreateBugReportHandler(webapp2.RequestHandler):
 				if report.occurrence.year <= 1900:
 					raise Exception('Year cannot be before 1900')
 			report.put()
+			mail.send_mail_to_admins(
+					sender="BeeVote Bug Report <bug-report@beevote.appspotmail.com>",
+					subject="BeeVote bog report received",
+					body="""
+Dear BeeVote admin,
+
+Your application has received the following bug report:
+- ID: {report.key.id}
+- Device: {report.device}
+- Browser: {report.browser}
+- Description: {report.description}
+- Occurrence: {report.occurrence}
+- Creation: {report.creation}
+- Creator ID: {report.creator}
+
+Follow this link to see all bug reports:
+{link}
+
+The BeeVote Team
+        """.format(report=report, link=self.request.host+"/admin/bug-reports"))
 			report_id = report.key().id()
 			values = {
 				'success': True,
