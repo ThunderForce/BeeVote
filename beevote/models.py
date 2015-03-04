@@ -30,12 +30,19 @@ class BeeVoteUser(db.Model):
 		return groups
 	
 	def get_topics_by_group_membership(self):
+		# method 1: more load on instance hours, less load on datastore
+		group_keys = [g.key() for g in self.get_groups_by_membership()]
+		topics = Topic.all().fetch(1000)
+		topics = [t for t in topics if t.group.key() in group_keys]
+		'''
+		# method 2: more load on datastore, less load on instance hours
 		groups = self.get_groups_by_membership()
 		topics = []
 		for group in groups:
 			group_topics = group.get_topics()
 			for topic in group_topics:
 				topics.append(topic)
+		'''		
 		return topics
 	
 	def put(self):
@@ -95,7 +102,7 @@ class Group(db.Model):
 	
 	def get_notifications_for_user(self, beevote_user):
 		last_access = GroupAccess.get_specific_access(self, beevote_user)
-		group_notifications = GroupNotification.get_from_timestamp(last_access.timestamp, group=self)
+		group_notifications = GroupNotification.get_from_timestamp(last_access.timestamp, group=self, beevote_user=beevote_user)
 		topics_notifications = TopicNotification.get_for_beevote_user(beevote_user, self.get_topics())
 		return {
 			'group_notifications': group_notifications,
@@ -136,6 +143,13 @@ class Topic(db.Model):
 			topic = db.get(topic_key)
 			memcache.add('topic_by_path_%s_%s' % (group_id, topic_id), topic, time=600)  # @UndefinedVariable
 		return topic
+	
+	@staticmethod
+	def get_for_groups(groups):
+		groups_keys = [g.key() for g in groups]
+		all_topics = Topic.all().fetch(1000)
+		topics = [t for t in all_topics if t.group.key() in groups_keys]
+		return topics
 	
 	@staticmethod
 	def create(title, group, creator, place="", date="", time="", deadline="", description="", img=""):
@@ -272,8 +286,45 @@ class GroupNotification(db.Model):
 	timestamp = db.DateTimeProperty(auto_now_add=True)
 	
 	@staticmethod
-	def get_for_beevote_user(beevote_user):
-		groups = beevote_user.get_groups_by_membership()
+	def get_for_beevote_user(beevote_user, groups):
+		'''
+		{
+			'group_1_id': {
+				'group_notifications': [
+					... group notifications
+				],
+				'topic_notifications_number': int
+			},
+			'group_2_id': {
+				'group_notifications': [
+					... group notifications
+				],
+				'topic_notifications_number': int
+			},
+			...
+			
+		}
+		'''
+		groups_keys = [g.key() for g in groups]
+		groups_accesses = [a for a in db.GqlQuery("SELECT * FROM GroupAccess").fetch(1000) if a.group.key() in groups_keys]
+		groups_notifications = [n for n in db.GqlQuery("SELECT * FROM GroupNotification").fetch(1000) if n.group.key() in groups_keys and n.timestamp >= next((a.timestamp for a in groups_accesses if a.topic == n.topic), beevote_user.last_access if beevote_user.last_access is not None else datetime.datetime.min)]
+		
+		notifications_by_group = {}
+		for notif in groups_notifications:
+			group_id = notif.topic.group.key().id()
+			if not group_id in notifications_by_group.keys():
+				notifications_by_group[group_id] = {'group_notifications': [], 'topic_notifications_number': 0}
+			notifications_by_group[group_id]['group_notifications'].append(notif)
+		
+		topics = Topic.get_for_groups(groups)
+		topics_notifications = TopicNotification.get_for_beevote_user(beevote_user, topics)
+		
+		for notif in topics_notifications:
+			notifications_by_group[notif.topic.group.key().id()]['topic_notifications_number'] += 1
+			
+		return notifications_by_group
+		
+		'''
 		all_notifications = {}
 		for group in groups:
 			group_access = GroupAccess.get_specific_access(group, beevote_user)
@@ -286,6 +337,7 @@ class GroupNotification(db.Model):
 			group_notifications = GroupNotification.get_from_timestamp(timestamp, group, beevote_user)
 			all_notifications[str(group.key().id())] = group_notifications
 		return all_notifications
+		'''
 	
 	@staticmethod
 	def get_from_timestamp(timestamp, group=None, beevote_user=None):
@@ -343,8 +395,9 @@ class TopicNotification(db.Model):
 		}
 		'''
 		
-		topics_accesses = [a for a in db.GqlQuery("SELECT * FROM TopicAccess").fetch(1000) if a.topic in topics]
-		topics_notifications = [n for n in db.GqlQuery("SELECT * FROM TopicNotification").fetch(1000) if n.topic in topics and n.timestamp >= next((a.timestamp for a in topics_accesses if a.topic == n.topic), beevote_user.last_access if beevote_user.last_access is not None else datetime.datetime.min)]
+		topics_keys = [t.key() for t in topics]
+		topics_accesses = [a for a in db.GqlQuery("SELECT * FROM TopicAccess").fetch(1000) if a.topic.key() in topics_keys]
+		topics_notifications = [n for n in db.GqlQuery("SELECT * FROM TopicNotification").fetch(1000) if n.topic.key() in topics_keys and n.timestamp >= next((a.timestamp for a in topics_accesses if a.topic == n.topic), beevote_user.last_access if beevote_user.last_access is not None else datetime.datetime.min)]
 		
 		notifications_by_group = {}
 		for notif in topics_notifications:
@@ -354,7 +407,7 @@ class TopicNotification(db.Model):
 				notifications_by_group[group_id] = {}
 			if not topic_id in notifications_by_group[group_id].keys():
 				notifications_by_group[group_id][topic_id] = []
-			notifications_by_group[group_id][group_id].append(notif)
+			notifications_by_group[group_id][topic_id].append(notif)
 		
 		return notifications_by_group
 	
