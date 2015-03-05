@@ -673,6 +673,51 @@ class TopicsNotificationsHandler(webapp2.RequestHandler):
 				all_notifications[group_id][topic_id] = notif
 		self.response.out.write(json.dumps(all_notifications))
 
+class GroupNotificationsHandler(webapp2.RequestHandler):
+	def get(self, group_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		group = models.Group.get_from_id(group_id)
+		notifications = group.get_notifications_for_user(beevote_user)
+		
+		group_notif = {
+			'group_invitations': 0,
+			'group_name_changes': 0,
+			'group_description_changes': 0,
+			'group_image_changes': 0,
+		}
+		for db_notification in notifications['group_notifications']:
+			if db_notification.notification_code == models.GroupNotification.GROUP_INVITATION:
+				group_notif['group_invitations'] += 1
+			elif db_notification.notification_code == models.GroupNotification.GROUP_NAME_CHANGE:
+				group_notif['group_name_changes'] += 1
+			elif db_notification.notification_code == models.GroupNotification.GROUP_DESCRIPTION_CHANGE:
+				group_notif['group_description_changes'] += 1
+			elif db_notification.notification_code == models.GroupNotification.GROUP_IMAGE_CHANGE:
+				group_notif['group_image_changes'] += 1
+		notifications['group_notifications'] = group_notif
+		
+		for topic_id in notifications['topics_notifications']:
+			notif = {
+				'topic_creations': 0,
+				'topic_image_changes': 0,
+				'proposal_creations': 0,
+				'topic_expirations': 0,
+			}
+			for db_notification in notifications['topics_notifications'][topic_id]:
+				if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
+					notif['topic_creations'] += 1
+				elif db_notification.notification_code == models.TopicNotification.TOPIC_IMAGE_CHANGE:
+					notif['topic_image_changes'] += 1
+				elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
+					notif['proposal_creations'] += 1
+				elif db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
+					notif['topic_expirations'] += 1
+			notifications['topics_notifications'][topic_id] = notif
+		
+		self.response.out.write(json.dumps(notifications))
+
 class RemoveGroupHandler(webapp2.RequestHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
