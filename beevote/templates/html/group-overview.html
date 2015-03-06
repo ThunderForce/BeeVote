@@ -1,6 +1,6 @@
 <script>
 $('div.topic-item').on('click', function() {
-	load_topic({{ group.key.id }}, $(this).data('topic-id'))
+	load_topic("{{ group.key.id }}", $(this).data('topic-id'))
 });
 
 $('span#group_name').html("{{ group.name }}");
@@ -99,7 +99,7 @@ function resetForm(form_id) {
 
 
 
-	<div class="list-group" >
+	<div class="list-group" id="group-head">
 		<div class="list-group-item">
 			<div class="well well-lg proposal-well" color="green_g" style="padding: 10px 0px 0px 25px;">
 				<div class="row">
@@ -139,6 +139,9 @@ function resetForm(form_id) {
 						}
 
 						@media screen and (max-width: 768px) {
+							div#group-head {
+								margin: 0;
+							}
 						    h2#group-name-well{
 						        font-size:22px;
 						    }
@@ -234,18 +237,18 @@ function resetForm(form_id) {
 							<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>
 							<h5>
 								{% if topic.place != "" %}
-								<span class="mdi-communication-location-on" style="margin-left:5px;"></span>{{ topic.place }}
+								<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ topic.place }}
 								{% endif %}
 								{% if topic.date %}
-								<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span>{{ topic.date }}
+								<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ topic.date }}
 								{% endif %}
 								{% if topic.time %}
-								<span class="mdi-action-query-builder" style="margin-left:5px;"></span>{{ topic.time }}
+								<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ topic.time }}
 								{% endif %}
 							</h5>
 							{% if topic.deadline %}
 							{% if topic.expired %}
-							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span>{{lang.topic_overview.deadline_reach}}</span></h5>
+							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span> {{lang.topic_overview.deadline_reach}}</span></h5>
 							{% else %}
 							<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy"></span>
 								<span>

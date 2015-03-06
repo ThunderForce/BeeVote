@@ -34,42 +34,40 @@
 	</head>
 	<body>
 		<div class="jumbotron"  style="max-width:900px;margin-top:20px;">
-			<h1>Report a bug</h1>
-			<p>If you want to report a bug, fill the form below.</p>
-			<p>Please give us as much information as you can, so that we can find the problem faster.</p>
+			<h1>{{lang.bugs.bug_report}}</h1>
+			<p>{{lang.bugs.first_message}}</p>
+			<p>{{lang.bugs.second_message}}</p>
 			<div class="jumbotron">
-				<h2 align="center"><b>Report a bug</b></h2>
+				<h2 align="center"><b>{{lang.bugs.bug_report}}</b></h2>
 				<form action="/api/create-bug-report" method="POST" class="form-horizontal" id="bug-form">
                 <fieldset>
                   <div class="form-group">
-                    <label for="bug-device" class="col-lg-2 control-label">Device: </label>
+                    <label for="bug-device" class="col-lg-2 control-label">{{lang.bugs.device}}: </label>
                     <div class="col-lg-10">
-                      <input class="form-control" id="bug-device" name="device" placeholder="The device with which you encountered the problem (possibly including OS version number)" type="text" maxlength="64">
+                      <input class="form-control" id="bug-device" name="device" placeholder="{{lang.bugs.device_placeholder}}" type="text" maxlength="64">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="bug-browser" class="col-lg-2 control-label">Browser: </label>
+                    <label for="bug-browser" class="col-lg-2 control-label">{{lang.bugs.browser}}: </label>
                     <div class="col-lg-10">
-                      <input class="form-control" id="bug-browser" name="browser" placeholder="The browser with which you encountered the problem (possibly including version number)" type="text" maxlength="64">
+                      <input class="form-control" id="bug-browser" name="browser" placeholder="{{lang.bugs.browser_placeholder}}" type="text" maxlength="64">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="bug-description" class="col-lg-2 control-label">Description: </label>
+                    <label for="bug-description" class="col-lg-2 control-label">{{lang.bugs.description}}: </label>
                     <div class="col-lg-10">
-                      <input class="form-control" id="bug-description" name="description" placeholder="A brief description of the problem" type="text" maxlength="256">
+                      <input class="form-control" id="bug-description" name="description" placeholder="{{lang.bugs.description_placeholder}}" type="text" maxlength="256">
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="bug-occurrence" class="col-lg-2 control-label">Occurrence: </label>
+                    <label for="bug-occurrence" class="col-lg-2 control-label">{{lang.bugs.occurrence}}: </label>
                     <div class="col-lg-10">
-                      <input class="form-control" id="bug-occurrence" name="occurrence" placeholder="Approximately when you encountered the problem" type="text" maxlength="64">
+                      <input class="form-control" id="bug-occurrence" name="occurrence" placeholder="{{lang.bugs.occurrence_placeholder}}" type="text" maxlength="64">
                     </div>
                   </div>
-
-                  <!-- BUTTON -->
                   <div class="form-group">
                     <div class="modal-footer">
-                      <button type="submit" class="btn btn-info" id="report-bug">Report</button>
+                      <button type="submit" class="btn btn-info" id="report-bug">{{lang.bugs.report}}</button>
                     </div>
                   </div>
                 </fieldset>

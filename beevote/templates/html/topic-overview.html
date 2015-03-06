@@ -520,6 +520,9 @@ else {
 	    button#back-button {
 	    	margin-top:-10px;
 	    }
+	    h2#proposals-head {
+	    	margin-top: -20px;
+	    }
 	}
 	@media screen and (min-width: 768px) {
 		div#topic-col-dx-well{
@@ -611,7 +614,7 @@ else {
 </div>
   
 <div class="list-group">
-	<h2 style="margin-left:20px;">{{ lang.proposals }}</h2>
+	<h2 id="proposals-head" style="margin-left:20px;">{{ lang.proposals }}</h2>
 	{% if not topic.proposals %}
 	<p style="margin-left:20px;">{{lang.no_proposals}}</p>
 	{% endif %}
@@ -632,6 +635,7 @@ else {
 						<h3 style="font-size:15px;padding-bottom:5px;margin:0px;">
 							<b>{{ proposal.title }}</b>
 						</h3>
+						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
 						{% if proposal.place %}
 						<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
 						{% endif %}
@@ -641,7 +645,6 @@ else {
 						{% if proposal.time %}
 						<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
 						{% endif %}
-						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
 						<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 						<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
 							{% if proposal.place %}

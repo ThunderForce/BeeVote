@@ -12,6 +12,16 @@ function _load_right_column(url, additional_callback) {
 			$('div#right-column').html(response);
 			if (typeof additional_callback == "function")
 				additional_callback();
+		},
+		statusCode: {
+			401: function() {
+				alert("You don't have permission to view this group. You'll be redirected to home page.");
+				load_all_topics();
+			},
+			500: function() {
+				alert("Internal server error. You'll be redirected to home page.");
+				load_all_topics();
+			}
 		}
 	});
 }

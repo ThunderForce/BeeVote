@@ -67,7 +67,6 @@
 					beforeSubmit: function() {
 						$('#create-group').attr("disabled", true);
 					},
-					clearForm: true,
 					error: function() {
 						alert("{{lang.general_error}}");
 					},
@@ -76,6 +75,7 @@
 							load_groups(response.group_id);
 							load_group_topics(response.group_id)
 							$('#createGroup').modal('hide');
+							resetForm("group-form");
 						} else {
 							alert(response.error);
 						}
@@ -110,7 +110,6 @@
 						arr.push({name: 'timezoneOffset', value: new Date().getTimezoneOffset()})
 						$('button#create-topic').attr("disabled", true);
 					},
-					clearForm: true,
 					error: function() {
 						alert("{{lang.general_error}}");
 						$('button#create-topic').attr("disabled", false);
@@ -133,7 +132,6 @@
 						arr.push({name: 'timezoneOffset', value: new Date().getTimezoneOffset()})
 						$('button#create-proposal').attr("disabled", true);
 					},
-					clearForm: true,
 					error: function() {
 						alert('{{lang.general_error}}');
 						$('button#create-proposal').attr("disabled", false);
@@ -152,11 +150,11 @@
 				
 				//Function calls to have dynamic navigation
 				{% if group_id %}
-					load_groups({{ group_id }});
+					load_groups("{{ group_id }}");
 					{% if topic_id %}
-						load_topic({{ group_id }}, {{ topic_id }});
+						load_topic("{{ group_id }}", "{{ topic_id }}");
 					{% else %}
-						load_group_topics({{ group_id }});
+						load_group_topics("{{ group_id }}");
 					{% endif %}
 				{% else %}
 					load_groups();
