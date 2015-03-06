@@ -43,7 +43,8 @@ lang = {
 			'description_placeholder': "A brief description of the problem",
 			'occurrence': "Occurrence",
 			'occurrence_placeholder': "Approximately when you encountered the problem",
-			'report': "Report"
+			'report': "Report",
+			'successful_report': "Your bug report has been registered. Thanks for your help"
 		},
 		'topic_overview': {
 			'deadline_reach':"This topic has reached its deadline: you cannot vote its proposals anymore.",
@@ -171,7 +172,8 @@ lang = {
 			'description_placeholder': "Una breve descrizione del problema",
 			'occurrence': "Occorrenza",
 			'occurrence_placeholder': "Approssimativamente quando hai riscontrato il problema",
-			'report': "Segnala"
+			'report': "Segnala",
+			'successful_report': "La tua segnalazione è stata registrata. Grazie per il tuo aiuto"
 		},
 		'topic_overview': {
 			'deadline_reach':"Questa discussione è scaduta: non puoi più votare le sue proposte",

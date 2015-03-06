@@ -1013,14 +1013,15 @@ class CreateBugReportHandler(webapp2.RequestHandler):
 				if report.occurrence.year <= 1900:
 					raise Exception('Year cannot be before 1900')
 			report.put()
+			report._id = report.key().id()
 			mail.send_mail_to_admins(
 					sender="BeeVote Bug Report <bug-report@beevote.appspotmail.com>",
-					subject="BeeVote bog report received",
+					subject="BeeVote bug report received",
 					body="""
 Dear BeeVote admin,
 
 Your application has received the following bug report:
-- ID: {report.key.id}
+- ID: {report._id}
 - Device: {report.device}
 - Browser: {report.browser}
 - Description: {report.description}
