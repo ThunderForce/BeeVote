@@ -28,6 +28,12 @@ import collections
 import models
 from models import GroupNotification, TopicNotification
 
+# Start of constants
+
+max_image_size = 850*1024 # 850 kb
+
+# End of constants
+
 # Start of functions
 
 # TEMPORARY
@@ -438,6 +444,11 @@ class UpdateUser(webapp2.RequestHandler):
 				'success': False,
 				'error': 'Language is required',
 			}
+		elif  img != None and len(img) >= max_image_size:
+			values = {
+				'success': False,
+				'error': 'You cannot upload an image bigger than 850 kb',
+			}
 		else:
 			
 			if name != None:
@@ -475,11 +486,16 @@ class CreateGroupHandler(webapp2.RequestHandler):
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('name')
 		description = self.request.get('description')
-		img = self.request.get('img')
+		img = self.request.get('img', None)
 		if name == "":
 			values = {
 				'success': False,
 				'error': 'Name is required',
+			}
+		elif  img != None and len(img) >= max_image_size:
+			values = {
+				'success': False,
+				'error': 'You cannot upload an image bigger than 850 kb',
 			}
 		else:
 			group = models.Group.create(
@@ -507,6 +523,11 @@ class UpdateGroupHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'error': 'Name is required',
+			}
+		elif  img != None and len(img) >= max_image_size:
+			values = {
+				'success': False,
+				'error': 'You cannot upload an image bigger than 850 kb',
 			}
 		else:
 			group_key = db.Key.from_path('Group', long(group_id))
@@ -542,7 +563,7 @@ class CreateTopicHandler(webapp2.RequestHandler):
 		time = self.request.get('time')
 		deadline = self.request.get('deadline')
 		description = self.request.get('description')
-		img = self.request.get('img')
+		img = self.request.get('img', None)
 		tzoffset = self.request.get('timezoneOffset')
 		
 		if title == "":
@@ -554,6 +575,11 @@ class CreateTopicHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'error': 'Group ID is required',
+			}
+		elif  img != None and len(img) >= max_image_size:
+			values = {
+				'success': False,
+				'error': 'You cannot upload an image bigger than 850 kb',
 			}
 		else:
 			try:
@@ -620,16 +646,22 @@ class UpdateTopicHandler(webapp2.RequestHandler):
 	def post(self, group_id, topic_id):
 		img = self.request.get('img', None)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if img:
-			topic.img = img
-			TopicNotification.create(TopicNotification.TOPIC_IMAGE_CHANGE, topic)
-		topic.put()
-		topic_id = topic.key().id()
-		values = {
-			'success': True,
-			'group_id': topic.group.key().id(),
-			'topic_id': topic_id,
-		}
+		if img != None and len(img) >= max_image_size:
+			values = {
+				'success': False,
+				'error': 'You cannot upload an image bigger than 850 kb',
+			}
+		else:
+			if img:
+				topic.img = img
+				TopicNotification.create(TopicNotification.TOPIC_IMAGE_CHANGE, topic)
+			topic.put()
+			topic_id = topic.key().id()
+			values = {
+				'success': True,
+				'group_id': topic.group.key().id(),
+				'topic_id': topic_id,
+			}
 		self.response.out.write(json.dumps(values))
 
 class MemberAutocompleteHandler(webapp2.RequestHandler):
