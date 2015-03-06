@@ -7,7 +7,7 @@ lang = {
 		'minutes':"minutes",
 		'no_description':"No description available",
 		'votes':"Votes: ",
-		'warning_photo':"Photo:",
+		'warning_photo':"(max 850 KB)",
 		'cancel':"Cancel",
 		'edit':"Edit",
 		'general_error':"Unexpected error!",
@@ -87,6 +87,7 @@ lang = {
 		'create_group_form':{
 			'create_group':"Create a new Group",
 			'name_placeholder': "Name of the group",
+			
 		},
 		'add_members_form':{
 			'title_members':"Members of ",
@@ -99,6 +100,7 @@ lang = {
 			'place_placeholder':"Location of the activity",
 			'time_placeholder':"Time of the activity",
 			'date_placeholder':"Date of the activity",
+			
 		},
 		'proposal_form':{
 			'proposal_title':"Create a new proposal",
@@ -115,7 +117,7 @@ lang = {
 			'edit_user_name': "Change your name",
 			'edit_user_surname': "Change your surname",
 			'edit_user_language': "Change the language",
-			'edit_user_photo': "Change your profile picture (maximum image size is 1 MB)",
+			'edit_user_photo': "Change your profile picture (maximum image size is 850 KB)",
 			'edit_profile_title':"Edit here your profile",
 			'edit_profile_link':"Edit profile",
 			'user_email':"User email",
@@ -133,7 +135,7 @@ lang = {
 		'minutes':"minuti",
 		'no_description':"Nessuna descrizione disponibile",
 		'votes':"Voti: ",
-		'warning_photo':"Foto:",
+		'warning_photo':"(massimo 850 KB)",
 		'cancel':"Annulla",
 		'edit':"Modifica",
 		'general_error':"Errore inaspettato!",
@@ -213,6 +215,7 @@ lang = {
 		 'create_group_form':{
 			'create_group':"Crea un nuovo gruppo",
 			'name_placeholder': "Nome del gruppo",
+			
 		},
 		
 		'topic_form':{
@@ -221,6 +224,7 @@ lang = {
 			'place_placeholder':"Luogo dell'attività",
 			'time_placeholder':"Ora dell'attività",
 			'date_placeholder':"Data dell'attività",
+
 		},
 		'proposal_form':{
 			'proposal_title':"Crea una nuova proposta",
@@ -238,7 +242,7 @@ lang = {
 			'edit_user_name': "Cambia il tuo nome",
 			'edit_user_surname': "Cambia il tuo cognome",
 			'edit_user_language': "Cambia lingua",
-			'edit_user_photo': "Cambia la tua immagine, non può pesare più di 1 MB",
+			'edit_user_photo': "Cambia la tua immagine, non può pesare più di 850 KB",
 			'edit_profile_title':"Modifica qui il tuo profilo",
 			'edit_profile_link':"Modifica profilo",
 			'user_email':"Email utente",
