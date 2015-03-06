@@ -11,7 +11,7 @@ $(document).ready(function() {
 	$('form#updateInfo-form').attr('action', '/api/group/{{ group.key.id }}/update');
 	resetForm('updateInfo-form');
 	$('input#editGroupName').attr('value', '{{ group.name }}');
-	$('textarea#editDescription').html('{{ group.description }}');
+	$('textarea#editDescription').html('{{ group.description|escapejs }}');
 	//Button delete group
 	{% if group.is_own %}
 	$('span#delete-button').html('<button type="button" id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="float:left;margin-left:20px;background-color:#F44336;"></button>');

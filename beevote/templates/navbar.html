@@ -21,6 +21,7 @@
 				e.cancelBubble = true;
 			}
 			$("#wrapper").toggleClass("toggled");
+			$("#sidebar-wrapper").scrollTop(0);
 		});
 		$('#wrapper').click(function(e){
 		    if (e.stopPropagation) {

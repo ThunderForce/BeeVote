@@ -517,8 +517,9 @@ else {
 	    div#topic-row-content-well{
 	    	width: 60%;
 	    }
-
-
+	    button#back-button {
+	    	margin-top:-10px;
+	    }
 	}
 	@media screen and (min-width: 768px) {
 		div#topic-col-dx-well{
@@ -536,7 +537,7 @@ else {
 	}
 </style>
 
-<button type="button" class="btn btn-raised mdi-hardware-keyboard-arrow-left" id="back-button" style="background-color:#00A65E;margin-left: 8px;"></button>
+<button type="button" class="btn btn-raised mdi-hardware-keyboard-arrow-left" id="back-button" style="background-color:#00A65E;margin-left: 10px;"></button>
 <div class="list-group">
 	<div class="list-group-item">
 		<div class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
@@ -627,9 +628,9 @@ else {
 					{% endif %}
 				</div>
 				<div class="row-content">
-					<div class="col-lg-11" style="width:70%;">
-						<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">
-							{{ proposal.title }}
+					<div class="col-lg-11" style="width:70%;padding:0;">
+						<h3 style="font-size:15px;padding-bottom:5px;margin:0px;">
+							<b>{{ proposal.title }}</b>
 						</h3>
 						{% if proposal.place %}
 						<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
@@ -644,7 +645,7 @@ else {
 						<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 						<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
 							{% if proposal.place %}
-							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:145%; height:200px; margin-top:10px;"></div>
+							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:140%; height:200px; margin-top:10px;"></div>
 							{% endif %}
 							{% if proposal.description %}
 							<br>
@@ -666,6 +667,7 @@ else {
 		</div>
 	</div>
 	{% endfor %}
+	<div><br><br><br></div>
 </div>
 
 
