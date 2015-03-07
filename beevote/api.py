@@ -28,6 +28,8 @@ import collections
 import models
 from models import GroupNotification, TopicNotification
 
+import language
+
 # Start of constants
 
 max_image_size = 850*1024 # 850 kb
@@ -176,6 +178,18 @@ class BaseApiHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
 		self.initialize(request, response)
 		
+		user = users.get_current_user()
+		if user:
+			beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		else:
+			beevote_user = None
+		
+		if not beevote_user or not beevote_user.language:
+			lang_package= 'en'
+		else:
+			lang_package=beevote_user.language
+		self.lang = language.lang[lang_package]
+		
 		'''
 		if not self.request.path in public_urls:
 			user = users.get_current_user()
@@ -315,7 +329,7 @@ class LoadUserHandler(BaseApiHandler):
 		
 		self.response.out.write(get_json(beevote_user_ret))
 
-class CreateVoteHandler(webapp2.RequestHandler):
+class CreateVoteHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
 		group_id = self.request.get('group_id')
@@ -347,7 +361,7 @@ class CreateVoteHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class RemoveVoteHandler(webapp2.RequestHandler):
+class RemoveVoteHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -376,7 +390,7 @@ class RemoveVoteHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class LoadVotesHandler(webapp2.RequestHandler):
+class LoadVotesHandler(BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -397,7 +411,7 @@ class LoadVotesHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class OldLoadProposalHandler(webapp2.RequestHandler):
+class OldLoadProposalHandler(BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -421,7 +435,7 @@ class OldLoadProposalHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class UpdateUser(webapp2.RequestHandler):
+class UpdateUser(BaseApiHandler):
 	def post(self):
 		name = self.request.get('edit_name', None)
 		surname = self.request.get('edit_surname', None)
@@ -432,22 +446,17 @@ class UpdateUser(webapp2.RequestHandler):
 		if name != None and name == "":
 			values = {
 				'success': False,
-				'error': 'Name is required',
+				'error': self.lang['errors']['name_required'],
 			}
-		elif  surname != None and surname == "":
+		elif surname != None and surname == "":
 			values = {
 				'success': False,
-				'error': 'Surname is required',
-			}
-		elif  language != None and language == "":
-			values = {
-				'success': False,
-				'error': 'Language is required',
+				'error': self.lang['errors']['surname_required'],
 			}
 		elif  img != None and len(img) >= max_image_size:
 			values = {
 				'success': False,
-				'error': 'You cannot upload an image bigger than 850 kb',
+				'error': self.lang['errors']['image_too_big'],
 			}
 		else:
 			
@@ -466,9 +475,8 @@ class UpdateUser(webapp2.RequestHandler):
 				'user_id': user_id,
 			}
 		self.response.out.write(json.dumps(values))
-		self.redirect('/home')
 
-class LoadGroupMembersHandler(webapp2.RequestHandler):
+class LoadGroupMembersHandler(BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		group_key = db.Key.from_path('Group', long(group_id))
@@ -480,7 +488,7 @@ class LoadGroupMembersHandler(webapp2.RequestHandler):
 		time.sleep(1)
 		self.response.out.write(json.dumps(values))
 
-class CreateGroupHandler(webapp2.RequestHandler):
+class CreateGroupHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
@@ -490,12 +498,12 @@ class CreateGroupHandler(webapp2.RequestHandler):
 		if name == "":
 			values = {
 				'success': False,
-				'error': 'Name is required',
+				'error': self.lang['errors']['name_required'],
 			}
 		elif  img != None and len(img) >= max_image_size:
 			values = {
 				'success': False,
-				'error': 'You cannot upload an image bigger than 850 kb',
+				'error': self.lang['errors']['image_too_big'],
 			}
 		else:
 			group = models.Group.create(
@@ -512,7 +520,7 @@ class CreateGroupHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class UpdateGroupHandler(webapp2.RequestHandler):
+class UpdateGroupHandler(BaseApiHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
@@ -522,12 +530,12 @@ class UpdateGroupHandler(webapp2.RequestHandler):
 		if name != None and name == "":
 			values = {
 				'success': False,
-				'error': 'Name is required',
+				'error': self.lang['errors']['name_required'],
 			}
 		elif  img != None and len(img) >= max_image_size:
 			values = {
 				'success': False,
-				'error': 'You cannot upload an image bigger than 850 kb',
+				'error': self.lang['errors']['image_too_big'],
 			}
 		else:
 			group_key = db.Key.from_path('Group', long(group_id))
@@ -549,7 +557,7 @@ class UpdateGroupHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class CreateTopicHandler(webapp2.RequestHandler):
+class CreateTopicHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
@@ -569,17 +577,17 @@ class CreateTopicHandler(webapp2.RequestHandler):
 		if title == "":
 			values = {
 				'success': False,
-				'error': 'Title is required',
+				'error': self.lang['errors']['title_required'],
 			}
 		elif group_id == "":
 			values = {
 				'success': False,
-				'error': 'Group ID is required',
+				'error': self.lang['errors']['group_id_required'],
 			}
 		elif  img != None and len(img) >= max_image_size:
 			values = {
 				'success': False,
-				'error': 'You cannot upload an image bigger than 850 kb',
+				'error': self.lang['errors']['image_too_big'],
 			}
 		else:
 			try:
@@ -609,7 +617,7 @@ class CreateTopicHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveTopicHandler(webapp2.RequestHandler):
+class RemoveTopicHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -620,7 +628,7 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'group_id': group_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
@@ -637,19 +645,19 @@ class RemoveTopicHandler(webapp2.RequestHandler):
 				values = {
 					'success': False,
 					'group_id': group_id,
-					'error': "You are not the creator of the topic",
+					'error': self.lang['errors']['topic_authorization_denied'],
 				}
 		self.response.out.write(json.dumps(values))
 
 
-class UpdateTopicHandler(webapp2.RequestHandler):
+class UpdateTopicHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		img = self.request.get('img', None)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if img != None and len(img) >= max_image_size:
 			values = {
 				'success': False,
-				'error': 'You cannot upload an image bigger than 850 kb',
+				'error': self.lang['errors']['image_too_big'],
 			}
 		else:
 			if img:
@@ -664,7 +672,7 @@ class UpdateTopicHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class MemberAutocompleteHandler(webapp2.RequestHandler):
+class MemberAutocompleteHandler(BaseApiHandler):
 	def get(self):
 		query = self.request.get('query').lower()
 		users = db.GqlQuery("SELECT * FROM BeeVoteUser").fetch(1000)
@@ -678,7 +686,7 @@ class MemberAutocompleteHandler(webapp2.RequestHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class TopicsNotificationsHandler(webapp2.RequestHandler):
+class TopicsNotificationsHandler(BaseApiHandler):
 	def get(self):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -705,7 +713,7 @@ class TopicsNotificationsHandler(webapp2.RequestHandler):
 				all_notifications[group_id][topic_id] = notif
 		self.response.out.write(json.dumps(all_notifications))
 
-class GroupNotificationsHandler(webapp2.RequestHandler):
+class GroupNotificationsHandler(BaseApiHandler):
 	def get(self, group_id):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -750,7 +758,7 @@ class GroupNotificationsHandler(webapp2.RequestHandler):
 		
 		self.response.out.write(json.dumps(notifications))
 
-class RemoveGroupHandler(webapp2.RequestHandler):
+class RemoveGroupHandler(BaseApiHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -761,7 +769,7 @@ class RemoveGroupHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'group_id': group_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			if beevote_user.key() in group.admins:
@@ -773,11 +781,11 @@ class RemoveGroupHandler(webapp2.RequestHandler):
 				values = {
 					'success': False,
 					'group_id': group_id,
-					'error': "You are not an admin of the group",
+					'error': self.lang['errors']['group_admin_authorization_denied'],
 				}
 		self.response.out.write(json.dumps(values))
 
-class AddGroupMemberHandler(webapp2.RequestHandler):
+class AddGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
@@ -786,7 +794,7 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'group_id': group_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			email = self.request.get("email")
@@ -805,16 +813,16 @@ class AddGroupMemberHandler(webapp2.RequestHandler):
 					values = {
 						'success': False,
 						'group_id': group_id,
-						'error': "User associated to email '"+email+"' is already in the group",
+						'error': self.lang['errors']['email_already_in_the_group'].format(email=email),
 					}
 			else:
 				values = {
 					'success': False,
-					'error': "Email '"+email+"' is not associated to any BeeVote account",
+					'error': self.lang['errors']['email_not_registered'].format(email=email),
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveGroupMemberHandler(webapp2.RequestHandler):
+class RemoveGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
 		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
@@ -824,7 +832,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'group_id': group_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			email = self.request.get("email")
@@ -836,7 +844,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 				values = {
 					'success': False,
 					'group_id': group_id,
-					'error': "User associated to email '"+email+"' is not in the group",
+					'error': self.lang['errors']['email_not_in_the_group'].format(email=email),
 				}
 			else:
 				group.members.remove(deleted_user_key)
@@ -850,7 +858,7 @@ class RemoveGroupMemberHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class CreateProposalHandler(webapp2.RequestHandler):
+class CreateProposalHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
@@ -864,17 +872,17 @@ class CreateProposalHandler(webapp2.RequestHandler):
 		if title == "":
 			values = {
 				'success': False,
-				'error': 'Title is required',
+				'error': self.lang['errors']['title_required'],
 			}
 		elif group_id == "":
 			values = {
 				'success': False,
-				'error': 'Group ID is required',
+				'error': self.lang['errors']['group_id_required'],
 			}
 		elif topic_id == "":
 			values = {
 				'success': False,
-				'error': 'Topic ID is required',
+				'error': self.lang['errors']['topic_id_required'],
 			}
 		else:
 			try:
@@ -890,7 +898,7 @@ class CreateProposalHandler(webapp2.RequestHandler):
 				if date != "":
 					proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
 					if proposal.date.year <= 1900:
-						raise Exception('Year cannot be before 1900')
+						raise Exception(self.lang['errors']['year_before_1900'])
 				if time != "":
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 				proposal.description = description
@@ -910,7 +918,7 @@ class CreateProposalHandler(webapp2.RequestHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveProposalHandler(webapp2.RequestHandler):
+class RemoveProposalHandler(BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -920,7 +928,7 @@ class RemoveProposalHandler(webapp2.RequestHandler):
 			values = {
 				'success': False,
 				'group_id': group_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
@@ -934,11 +942,11 @@ class RemoveProposalHandler(webapp2.RequestHandler):
 			else:
 				values = {
 					'success': False,
-					'error': "You are not the creator of the proposal",
+					'error': self.lang['errors']['proposal_authorization_denied'],
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveParticipationHandler(webapp2.RequestHandler):
+class RemoveParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -949,7 +957,7 @@ class RemoveParticipationHandler(webapp2.RequestHandler):
 				'success': False,
 				'group_id': group_id,
 				'topic_id': topic_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			topic.non_participant_users.append(beevote_user.key())
@@ -967,7 +975,7 @@ class RemoveParticipationHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class AddParticipationHandler(webapp2.RequestHandler):
+class AddParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		user = users.get_current_user()
 		user_id = user.user_id()
@@ -978,7 +986,7 @@ class AddParticipationHandler(webapp2.RequestHandler):
 				'success': False,
 				'group_id': group_id,
 				'topic_id': topic_id,
-				'error': "You are not authorized to interact with this group",
+				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
 			topic.non_participant_users.remove(beevote_user.key())
@@ -991,7 +999,7 @@ class AddParticipationHandler(webapp2.RequestHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class CreateBugReportHandler(webapp2.RequestHandler):
+class CreateBugReportHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
 		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
@@ -1011,7 +1019,7 @@ class CreateBugReportHandler(webapp2.RequestHandler):
 			if occurrence != "":
 				report.occurrence = datetime.datetime.strptime(occurrence, "%d/%m/%Y").date()
 				if report.occurrence.year <= 1900:
-					raise Exception('Year cannot be before 1900')
+					raise Exception(self.lang['errors']['year_before_1900'])
 			report.put()
 			report._id = report.key().id()
 			mail.send_mail_to_admins(

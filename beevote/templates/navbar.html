@@ -40,6 +40,24 @@
 				$("#wrapper").removeClass("toggled");
 			}
 		});
+		$('form#edit-user-form').ajaxForm({
+			dataType: "json",
+			beforeSubmit: function() {
+				$('button#edit_user').attr("disabled", true);
+			},
+			error: function() {
+				alert("{{lang.general_error}}");
+				$('button#edit_user').attr("disabled", false);
+			},
+			success: function(response) {
+				if (response.success) {
+					window.location.reload();
+				} else {
+					alert(response.error);
+					$('button#edit_user').attr("disabled", false);
+				}
+			}
+		});
 	});
 </script>
 

@@ -127,6 +127,22 @@ lang = {
 			'no_participants_message':"There aren't any participants for this topic",
 			'participants_message':"These are the participants for the topic",
 		},
+		'errors':{
+			'name_required':"Name is required",
+			'surname_required':"Surname is required",
+			'image_too_big': "You cannot upload an image bigger than 850 kb",
+			'title_required':"Title is required",
+			'group_id_required':"Group ID is required",
+			'topic_id_required':"Topic ID is required",
+			'group_authorization_denied': "You are not authorized to interact with this group",
+			'topic_authorization_denied': "You are not the creator of the topic",
+			'proposal_authorization_denied': "You are not the creator of the proposal",
+			'group_admin_authorization_denied': "You are not an admin of the group",
+			'email_already_in_the_group': "User associated to email '{email}' is already in the group",
+			'email_not_in_the_group': "User associated to email '{email}' is not in the group",
+			'email_not_registered': "Email '{email}' is not associated to any BeeVote account",
+			'year_before_1900': "Year cannot be before 1900"
+		}
 	},
 
 	'it': {
@@ -257,6 +273,22 @@ lang = {
 			'no_participants_message':"Non ci sono partecipanti a questo topic",
 			'participants_message':"Questi sono i partecipanti alla discussione",
 		},
+		'errors':{
+			'name_required':"Nome obbligatorio",
+			'surname_required':"Cognome obbligatorio",
+			'image_too_big': "Non puoi caricare un'immagine pi grande di 850 kb",
+			'title_required':"Titolo obbligatorio",
+			'group_id_required':"ID del gruppo obbligatorio",
+			'topic_id_required':"ID del topic obbligatorio",
+			'group_authorization_denied': "Non sei autorizzato a interagire con questo gruppo",
+			'topic_authorization_denied': "Non sei il creatore del topic",
+			'proposal_authorization_denied': "Non sei il creatore della proposta",
+			'group_admin_authorization_denied': "Non sei un amministratore del gruppo",
+			'email_already_in_the_group': "L'utente associato all'email '{email}' è già nel gruppo",
+			'email_not_in_the_group': "L'utente associato all'email '{email}' non è nel gruppo",
+			'email_not_registered': "L'email '{email}' non è associata a nessun account BeeVote",
+			'year_before_1900': "L'anno non può essere precedente al 1900"
+		}
 	},
 }
  
