@@ -691,7 +691,8 @@ class TopicsNotificationsHandler(BaseApiHandler):
 		user = users.get_current_user()
 		user_id = user.user_id()
 		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user, beevote_user.get_topics_by_group_membership())
+		topics = beevote_user.get_topics_by_group_membership()
+		all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user, topics)
 		
 		for group_id in all_notifications.keys():
 			for topic_id in all_notifications[group_id].keys():

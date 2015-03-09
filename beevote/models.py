@@ -384,7 +384,7 @@ class TopicNotification(db.Model):
 		
 		topics_keys = [t.key() for t in topics]
 		topics_accesses = [a for a in db.GqlQuery("SELECT * FROM TopicAccess").fetch(1000) if a.topic.key() in topics_keys and a.beevote_user.key() == beevote_user.key()]
-		topics_notifications = [n for n in db.GqlQuery("SELECT * FROM TopicNotification").fetch(1000) if n.topic.key() in topics_keys and n.timestamp >= next((a.timestamp for a in topics_accesses if a.topic.key() == n.topic.key()), datetime.datetime.min)]
+		topics_notifications = (n for n in db.GqlQuery("SELECT * FROM TopicNotification").fetch(1000) if n.topic.key() in topics_keys and n.timestamp >= next((a.timestamp for a in topics_accesses if a.topic.key() == n.topic.key()), datetime.datetime.min))
 		
 		notifications_by_group = {}
 		for notif in topics_notifications:

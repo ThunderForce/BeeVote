@@ -3,7 +3,7 @@ var _home_notifications = {
 	 group_id: int
 	 notifications: int
 	 */
-	group_notifications: [],
+	group_notifications: null,
 	
 	/*
 	 group_id: int
@@ -11,10 +11,10 @@ var _home_notifications = {
 	 new_topic: bool
 	 new_proposals: int
 	 */
-	topic_notifications: []
+	topic_notifications: null
 };
 function print_groups_notifications() {
-	if (_home_notifications.group_notifications.length > 0) {
+	if (_home_notifications.group_notifications != null) {
 		$('div.group-well span.notifications').html('');
 		$.each(_home_notifications.group_notifications, function(index, notification) {
 			$('div.group-well[data-group_id="'+notification.group_id+'"] span.notifications').html('<span class="badge" data-group="'+notification.group_id+'">'+notification.notifications+'</span>');
@@ -22,7 +22,7 @@ function print_groups_notifications() {
 	}
 }
 function print_topics_notifications() {
-	if (_home_notifications.topic_notifications.length > 0) {
+	if (_home_notifications.topic_notifications != null) {
 		$('div.topic-item span.notifications').html('');
 		$.each(_home_notifications.topic_notifications, function(index, notification) {
 			topic_notifications_span = $('div.topic-item[data-group-id="'+notification.group_id+'"][data-topic-id="'+notification.topic_id+'"] span.notifications');
@@ -74,6 +74,10 @@ function load_topics_notifications() {
 			})
 			print_groups_notifications();
 			print_topics_notifications();
+			setTimeout(
+				function() { load_topics_notifications(); },
+				60*1000 // 1 minute
+			);
 		}
 	});
 }
