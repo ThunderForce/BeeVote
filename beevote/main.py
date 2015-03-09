@@ -407,21 +407,27 @@ app = webapp2.WSGIApplication([
 	('/api/group/(.*)/topic/(.*)/add-participation', api.AddParticipationHandler),
 	('/api/group/(.*)/topic/(.*)/remove', api.RemoveTopicHandler),
 	('/api/group/(.*)/remove', api.RemoveGroupHandler),
-	('/api/create-group', api.CreateGroupHandler),
 	('/api/group/(.*)/topic/(.*)/update', api.UpdateTopicHandler),
 	('/api/group/(.*)/update', api.UpdateGroupHandler),
-	('/api/group/(.*)/notifications', api.GroupNotificationsHandler),
-	('/api/topics-notifications', api.TopicsNotificationsHandler),
 	('/api/member-autocomplete', api.MemberAutocompleteHandler),
-	('/api/create-topic', api.CreateTopicHandler),
-	('/api/create-proposal', api.CreateProposalHandler),
-	('/api/create-vote', api.CreateVoteHandler),
 	('/api/remove-vote', api.RemoveVoteHandler),
 	('/api/update-user', api.UpdateUser),
 	('/api/load-proposal', api.OldLoadProposalHandler),
 	('/api/load-votes', api.LoadVotesHandler),
 	('/api/load-group-members', api.LoadGroupMembersHandler),
 	('/api/group/(.*)/topic/(.*)/participants', api.LoadParticipantsHandler),
+	
+	# Creation handlers
+	('/api/create-group', api.CreateGroupHandler),
+	('/api/create-topic', api.CreateTopicHandler),
+	('/api/create-proposal', api.CreateProposalHandler),
+	('/api/create-vote', api.CreateVoteHandler),
+	
+	# Notifications handlers
+	('/api/group/(.*)/topic/(.*)/notifications', api.TopicNotificationsHandler),
+	('/api/group/(.*)/notifications', api.GroupNotificationsHandler),
+	('/api/topics-notifications', api.TopicsNotificationsHandler),
+	
 	('/api/group/(.*)/topic/(.*)/proposal/(.*)', api.LoadProposalHandler),
 	('/api/group/(.*)/topic/(.*)', api.LoadTopicHandler),
 	('/api/groups', api.LoadGroupsHandler),

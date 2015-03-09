@@ -5,6 +5,7 @@
 		});
 		$('#creation-buttons').html('');
 		$('#creation-buttons').append(buttons.create_group);
+		print_topics_notifications();
 	});
 </script>
 <style type="text/css">
@@ -41,6 +42,7 @@
 						{% else %}
 						<img class="circle" src="/static/images/topic-icon.png" alt="icon">
 						{% endif %}
+						<span class="notifications">...</span>
 					</div>
 					<div class="row-content">
 						<h3 style="font-size:20px;padding-bottom:5px;margin:0px;">{{ topic.title }}</h3>

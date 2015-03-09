@@ -758,6 +758,33 @@ class GroupNotificationsHandler(BaseApiHandler):
 		
 		self.response.out.write(json.dumps(notifications))
 
+class TopicNotificationsHandler(BaseApiHandler):
+	def get(self, group_id, topic_id):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		beevote_user = models.get_beevote_user_from_google_id(user_id)
+		topic = models.Topic.get_from_id(group_id, topic_id)
+		notifications = topic.get_notifications_for_user(beevote_user)
+		
+		notif = {
+			'topic_creations': 0,
+			'topic_image_changes': 0,
+			'proposal_creations': 0,
+			'topic_expirations': 0,
+		}
+		for db_notification in notifications:
+			if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
+				notif['topic_creations'] += 1
+			elif db_notification.notification_code == models.TopicNotification.TOPIC_IMAGE_CHANGE:
+				notif['topic_image_changes'] += 1
+			elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
+				notif['proposal_creations'] += 1
+			elif db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
+				notif['topic_expirations'] += 1
+		notifications = notif
+		
+		self.response.out.write(json.dumps(notifications))
+
 class RemoveGroupHandler(BaseApiHandler):
 	def post(self, group_id):
 		user = users.get_current_user()
