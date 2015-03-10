@@ -117,8 +117,6 @@ $(document).ready(function() {
 	$('button#create-proposal-button').attr("disabled", true).css('background-color', '#888888');
 	{% endif %}
 	
-
-
 	$('.vote-checkbox').on('click', function(e) {
 
 		var group_id = {{ topic.parent.key.id }};
@@ -144,11 +142,6 @@ $(document).ready(function() {
 			e.cancelBubble = true; // IE model
 		}
 	});
-
-
-
-	
-
 
 	$('#topic-participation').on('click', function() {
 		$(this).toggleClass('btn-success btn-warning mdi-toggle-check-box mdi-toggle-check-box-outline-blank');
@@ -194,9 +187,7 @@ $(document).ready(function() {
 		}
 	});
 
-
-
-/* Prova per non propagare il clik quando clisso sul voto*/
+/* Prova per non propagare il clik quando clicco sul voto*/
 	$('button#vote-button').on('click', function(e) {
 
 		var group_id = {{ topic.parent.key.id }};
@@ -262,8 +253,6 @@ $(document).ready(function() {
 		}
 	});
 	
-
-
 	/* Prova per mostrare la lista dei partecipanti*/
 	$('button#participants-button').on('click', function(e) {
 
@@ -324,7 +313,6 @@ $(document).ready(function() {
 		});
 	});
 
-
 	$('#updateInfoTopic-form').ajaxForm({
 		dataType: "json",
 		beforeSubmit: function() {
@@ -351,6 +339,8 @@ $(document).ready(function() {
 	});
 
 	$.material.init();
+	
+	clean_topic_notifications("{{ topic.group.key.id }}", "{{ topic.key.id }}");
 });
 
 if (typeof google != "undefined") {
