@@ -604,6 +604,7 @@ class CreateTopicHandler(BaseApiHandler):
 				)
 				topic.put()
 				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic=topic)
+				models.TopicAccess.update_specific_access(topic, beevote_user)
 				group.put()
 				values = {
 					'success': True,

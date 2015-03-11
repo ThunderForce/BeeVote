@@ -38,7 +38,7 @@ function clean_topic_notifications(group_id, topic_id) {
 		_home_notifications.topic_notifications = $.grep(_home_notifications.topic_notifications, function(notif, index) {
 			if (String(notif.group_id) == String(group_id) && String(notif.topic_id) == String(topic_id)) {
 				$.each(_home_notifications.group_notifications, function(i, v) {
-					if (v.group_id = group_id)
+					if (v.group_id == group_id)
 						v.notifications--;
 				});
 				return false;
@@ -51,7 +51,7 @@ function clean_topic_notifications(group_id, topic_id) {
 }
 function load_topics_notifications() {
 	// jQueryTarget must be like $('span#some_id');
-	$("span.notifications").html('...');
+	// $("span.notifications").html('...');
 	$.ajax({
 		url: "/api/topics-notifications",
 		method: "GET",
