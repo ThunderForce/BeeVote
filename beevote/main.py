@@ -102,7 +102,7 @@ def is_user_in_group(beevote_user, group):
 
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
-google_user_urls = ["/", "/logout", "/register", "/request-registration", "/registration-pending"]
+google_user_urls = ["/", "/logout", "/register"]
 
 class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
@@ -122,17 +122,10 @@ class BaseHandler(webapp2.RequestHandler):
 				self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 				
 				if not self.beevote_user:
-					registration_request = models.get_registration_request_from_google_id(user.user_id())
-					if not registration_request:
-						self.abort(401, headers={'Location': '/register'})
-						#self.abort(401, detail="You are not yet registered in the application")
-						#self.redirect("/register")
-						return
-					else:
-						self.abort(401, headers={'Location': '/registration-pending'})
-						#self.abort(401, detail="Your registration request has not been accepted yet")
-						#self.redirect("/registration-pending")
-						return
+					self.abort(401, headers={'Location': '/register'})
+					#self.abort(401, detail="You are not yet registered in the application")
+					#self.redirect("/register")
+					return
 
 	def dispatch(self):
 		# Get a session store for this request.
@@ -170,9 +163,6 @@ class HomeHandler(BaseHandler):
 		
 		if not self.beevote_user:
 			self.redirect("/register")
-			return
-		if models.get_registration_request_from_google_id(users.get_current_user().user_id()):
-			self.redirect("/registration-pending")
 			return
 		
 		last_access = self.beevote_user.last_access if hasattr(self.beevote_user, 'last_access') else None
@@ -257,100 +247,14 @@ class TopicImageHandler(webapp2.RequestHandler):
 
 class RegistrationHandler(BaseHandler):
 	def get(self):
-		if self.beevote_user:
+		user_id = users.get_current_user().user_id()
+		if self.beevote_user or models.get_beevote_user_from_google_id(user_id):
 			self.redirect("/")
-			return
-		if models.get_registration_request_from_google_id(users.get_current_user().user_id()):
-			self.redirect("/registration-pending")
 			return
 		values = {
 			'is_user_admin': users.is_current_user_admin()
 		}
 		write_template(self.response, 'registration-form.html', values)
-
-class RequestRegistrationHandler(BaseHandler):
-	def get(self):
-		self.redirect("/register")
-		return
-	def post(self):
-		user = users.get_current_user()
-		redirect_url = '/'
-		if self.beevote_user == None:
-			name = self.request.get('name')
-			surname = self.request.get('surname')
-			if not users.is_current_user_admin():
-				request = models.RegistrationRequest(
-					user_id = user.user_id(),
-					email = user.email(),
-					name = name,
-					surname = surname,
-				)
-				request.put()
-				
-				mail.send_mail_to_admins(
-					sender="BeeVote Registration Notifier <notify-registration@beevote.appspotmail.com>",
-					subject="BeeVote registration request received",
-					body="""
-Dear BeeVote admin,
-
-Your application has received the following registration request:
-- User ID: {request.user_id}
-- User email: {request.email}
-- Name: {request.name}
-- Surname: {request.surname}
-
-Follow this link to see all requests:
-{link}
-
-The BeeVote Team
-        """.format(request=request, link=self.request.host+"/admin/user-manager"))
-				
-				mail.send_mail(
-					sender='BeeVote Registration Notifier <registration-pending@beevote.appspotmail.com>',
-					to=request.email,
-					subject="BeeVote registration request pending",
-					body="""
-Dear {request.name} {request.surname},
-
-Your registration request has been sent: you will receive an email when an administrator accepts your request.
-
-Details of registration request:
-- User ID: {request.user_id}
-- User email: {request.email}
-- Name: {request.name}
-- Surname: {request.surname}
-
-The BeeVote Team
-""".format(request=request, link=self.request.host))
-				
-				redirect_url = '/registration-pending'	
-			else:
-				beevote_user = models.BeeVoteUser(
-					user_id = user.user_id(),
-					email = user.email(),
-					name = name,
-					surname = surname,
-				)
-				beevote_user.last_access = datetime.datetime.now()
-				beevote_user.put()
-				redirect_url = '/'	
-		time.sleep(1.00)
-		self.redirect(redirect_url)
-
-class RegistrationPendingHandler(BaseHandler):
-	def get(self):
-		user_id = users.get_current_user().user_id()
-		if self.beevote_user:
-			self.redirect("/")
-			return
-		request = models.get_registration_request_from_google_id(user_id)
-		if not request:
-			self.redirect("/register")
-			return
-		values = {
-			'request': request,
-		}
-		write_template(self.response, 'registration-pending.html', values)
 
 class ReportBugHandler(BaseHandler):
 	def get(self):
@@ -434,14 +338,13 @@ app = webapp2.WSGIApplication([
 	('/api/group/(.*)', api.LoadGroupHandler),
 	('/api/user/(.*)', api.LoadUserHandler),
 	('/api/create-bug-report', api.CreateBugReportHandler),
+	('/api/register', api.RegistrationHandler),
 	('/html/topics', html_strips.TopicsHandler),
 	('/html/groups', html_strips.GroupsHandler),
 	('/html/group/(.*)/topic/(.*)', html_strips.TopicHandler),
 	('/html/group/(.*)/members', html_strips.GroupMembersHandler),
 	('/html/group/(.*)', html_strips.GroupHandler),
 	('/register', RegistrationHandler),
-	('/request-registration',RequestRegistrationHandler),
-	('/registration-pending',RegistrationPendingHandler),
 	('/logout', LogoutHandler),
 	('/edit-user',EditUserHandler),
 ], debug=debug, config=config)

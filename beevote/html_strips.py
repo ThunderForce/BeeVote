@@ -72,11 +72,7 @@ class BaseHandler(webapp2.RequestHandler):
 		self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		
 		if not self.beevote_user:
-			registration_request = models.get_registration_request_from_google_id(user.user_id())
-			if not registration_request:
-				self.redirect("/register")
-			else:
-				self.redirect("/registration-pending")
+			self.redirect("/register")
 
 	def dispatch(self):
 		# Get a session store for this request.

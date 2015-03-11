@@ -51,13 +51,14 @@ class BeeVoteUser(db.Model):
 			memcache.add('beevoteuser_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
 		if not memcache.replace('beevoteuser_by_user_id_%s' % self.user_id, self, time=600):  # @UndefinedVariable
 			memcache.add('beevoteuser_by_user_id_%s' % self.user_id, self, time=600)  # @UndefinedVariable
-
+'''
 class RegistrationRequest(db.Model):
 	user_id = db.StringProperty()
 	email = db.StringProperty()
 	name = db.StringProperty()
 	surname = db.StringProperty()
 	creation = db.DateTimeProperty(auto_now_add=True)
+'''
 
 class Group(db.Model):
 	name = db.StringProperty(required=True)
@@ -438,8 +439,8 @@ def get_beevote_user_from_google_id(user_id):
 		beevote_user =  db.GqlQuery('SELECT * FROM BeeVoteUser WHERE user_id = :1', user_id).get()
 		memcache.add('beevoteuser_by_user_id_%s' % user_id, beevote_user, time=600)  # @UndefinedVariable
 	return beevote_user
-
+'''
 def get_registration_request_from_google_id(user_id):
 	return db.GqlQuery('SELECT * FROM RegistrationRequest WHERE user_id = :1', user_id).get()
-
+'''
 # End of functions

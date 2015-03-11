@@ -201,11 +201,7 @@ class BaseApiHandler(webapp2.RequestHandler):
 				return
 			self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 			if not self.beevote_user:
-				registration_request = models.get_registration_request_from_google_id(user.user_id())
-				if not registration_request:
-					self.redirect("/register")
-				else:
-					self.redirect("/registration-pending")
+				self.redirect("/register")
 		'''
 		
 		self.response.headers['Content-Type'] = "application/json"
@@ -1081,6 +1077,67 @@ The BeeVote Team
 				'success': False,
 				'error': exc.args[0]
 			}
+		self.response.out.write(json.dumps(values))
+
+class RegistrationHandler(BaseApiHandler):
+	def post(self):
+		user = users.get_current_user()
+		user_id = user.user_id()
+		name = self.request.get('name')
+		surname = self.request.get('surname')
+		email = user.email()
+		if name == "":
+			values = {
+				'success': False,
+				'error': self.lang['errors']['name_required']
+			}
+		elif surname == "":
+			values = {
+				'success': False,
+				'error': self.lang['errors']['surname_required']
+			}
+		else:
+			beevote_user = models.BeeVoteUser(
+				user_id = user_id,
+				email = email,
+				name = name,
+				surname = surname,
+				language = 'en',
+				last_access = datetime.datetime.now(),
+			)
+			
+			beevote_user.last_access = datetime.datetime.now()
+			
+			beevote_user.put()
+			
+			beevote_user._id = beevote_user.key().id()
+			
+			mail.send_mail(
+				sender='BeeVote Registration Notifier <registration-accepted@beevote.appspotmail.com>',
+				to=email,
+				subject="BeeVote registration request accepted",
+				body="""
+Dear {beevote_user.name} {beevote_user.surname},
+
+Your registration request has been accepted: now you can access BeeVote features!
+
+Follow this link to start:
+{link}
+
+Details of registration:
+- BeeVote User ID: {beevote_user._id}
+- Google User ID: {beevote_user.user_id}
+- User email: {beevote_user.email}
+- Name: {beevote_user.name}
+- Surname: {beevote_user.surname}
+
+The BeeVote Team
+	""".format(beevote_user=beevote_user, link=self.request.host))
+			
+			values = {
+				'success': True
+			}
+		
 		self.response.out.write(json.dumps(values))
 
 class LogoutHandler(webapp2.RequestHandler):

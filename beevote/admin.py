@@ -53,9 +53,8 @@ class RemoveUserHandler(webapp2.RequestHandler):
 
 class UserManagerHandler(BasicPageHandler):
 	def get(self):
-		requests = db.GqlQuery("SELECT * FROM RegistrationRequest")
 		users = db.GqlQuery("SELECT * FROM BeeVoteUser")
-		self.write_template('user-manager.html', {'requests': requests, 'users': users})
+		self.write_template('user-manager.html', {'users': users})
 
 class BugReportsHandler(BasicPageHandler):
 	def get(self):
@@ -77,45 +76,6 @@ class AddFeatureChangeHandler(BasicPageHandler):
 		feature.put()
 		self.redirect('/admin/feature-changes')
 
-class AcceptRegistrationRequestHandler(webapp2.RequestHandler):
-	def get(self, request_id):
-		request_key = db.Key.from_path('RegistrationRequest', long(request_id))
-		request = db.get(request_key)
-		beevote_user = models.BeeVoteUser(
-			user_id = request.user_id,
-			email = request.email,
-			name = request.name,
-			surname = request.surname
-		)
-		
-		beevote_user.last_access = datetime.datetime.now()
-		
-		beevote_user.put()
-		request.delete()
-		
-		mail.send_mail(
-			sender='BeeVote Registration Notifier <registration-accepted@beevote.appspotmail.com>',
-			to=request.email,
-			subject="BeeVote registration request accepted",
-			body="""
-Dear {request.name} {request.surname},
-
-Your registration request has been accepted: now you can access BeeVote features!
-
-Follow this link to start:
-{link}
-
-Details of registration request:
-- User ID: {request.user_id}
-- User email: {request.email}
-- Name: {request.name}
-- Surname: {request.surname}
-
-The BeeVote Team
-""".format(request=request, link=self.request.host))
-		
-		self.redirect('/admin/user-manager')
-
 class AdminMenuHandler(BasicPageHandler):
 	def get(self):
 		self.write_template('admin-menu.html', {})
@@ -128,6 +88,5 @@ app = webapp2.WSGIApplication([
 	('/admin/bug-reports', BugReportsHandler),
 	('/admin/feature-changes', FeatureChangesHandler),
 	('/admin/add-feature-change', AddFeatureChangeHandler),
-	('/admin/accept-request/(.*)', AcceptRegistrationRequestHandler),
 	('/admin/home', AdminMenuHandler)
 ], debug=True)

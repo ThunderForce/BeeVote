@@ -4,21 +4,38 @@
 		
 		{{ basic_head }}
 		
+		<script>
+			$(document).ready(function() {
+				$('form#user-form').ajaxForm({
+					dataType: "json",
+					beforeSubmit: function(arr) {
+						$('button#request-registration').attr("disabled", true);
+					},
+					error: function() {
+						alert('{{lang.general_error}}');
+						$('button#request-registration').attr("disabled", false);
+					},
+					success: function(response) {
+						if (response.success) {
+							window.location.href = '/home';
+						} else {
+							alert(response.error);
+							$('button#request-registration').attr("disabled", false);
+						}
+					}
+				});
+			});
+		</script>
+		
 	</head>
 	<body>
 		<div class="jumbotron"  style="max-width:900px;margin-top:20px;">
 			<h1>Welcome to BeeVote!</h1>
 			<p>Your Google account is not yet registered in the app.</p>
-		<p>To fully access the app complete the registration form by filling the following fields.</p>
-		{% if is_user_admin %}
-		<p>Since you are already an administrator your account will be instantly registered.</p>
-		{% else %}
-		<p>An administrator will accept your registration request within a few days.</p>
-		{% endif %}
-		<p>Please make sure that the fields correspond to your Google account data, as in the future your personal data will be fetched by your account.</p>
+			<p>To fully access the app complete the registration form by filling the following fields.</p>
 			<div class="jumbotron">
 				<h2 align="center"><b>Sign in</b></h2>
-				<form action="/request-registration" method="POST" class="form-horizontal" id="user-form">
+				<form action="/api/register" method="POST" class="form-horizontal" id="user-form">
                 <fieldset>
                   <div class="form-group">
                     <label for="inputName" class="col-lg-2 control-label">Name: </label>
@@ -42,17 +59,8 @@
                   </div>
                 </fieldset>
               </form>
-              <p><a href="/logout">Back</a></p>
+              <p><a href="/logout">Logout</a></p>
 			</div>
 		</div>
-
-		<!--<form action="/request-registration" method="POST">
-			<fieldset>
-				Name: <input type="text" name="name">
-				Surname: <input type="text" name="surname">
-				<input type="submit" value="Register">
-			</fieldset>
-		</form>
-		<p><a href="/logout">Logout</a></p> -->
 	</body>
 </html>
