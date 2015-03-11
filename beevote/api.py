@@ -180,14 +180,14 @@ class BaseApiHandler(webapp2.RequestHandler):
 		
 		user = users.get_current_user()
 		if user:
-			beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+			self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		else:
-			beevote_user = None
+			self.beevote_user = None
 		
-		if not beevote_user or not beevote_user.language:
+		if not self.beevote_user or not self.beevote_user.language:
 			lang_package= 'en'
 		else:
-			lang_package=beevote_user.language
+			lang_package = self.beevote_user.language
 		self.lang = language.lang[lang_package]
 		
 		'''
@@ -209,9 +209,7 @@ class BaseApiHandler(webapp2.RequestHandler):
 
 class LoadGroupsHandler(BaseApiHandler):
 	def get(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		datastore_groups = beevote_user.get_groups_by_membership()
+		datastore_groups = self.beevote_user.get_groups_by_membership()
 		arguments = {
 			'fetch_group_members': self.request.get('fetch_group_members', 'false') == 'true',
 			'fetch_topics': self.request.get('fetch_topics', 'false') == 'true',
@@ -239,9 +237,7 @@ class LoadGroupHandler(BaseApiHandler):
 		}
 		
 		group_json = fetch_group(group, arguments)
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		models.GroupAccess.update_specific_access(group, beevote_user)
+		models.GroupAccess.update_specific_access(group, self.beevote_user)
 		self.response.out.write(get_json(group_json))
 
 class LoadTopicHandler(BaseApiHandler):
@@ -261,9 +257,7 @@ class LoadTopicHandler(BaseApiHandler):
 		
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		topic_json = fetch_topic(topic, arguments)
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		models.TopicAccess.update_specific_access(topic, beevote_user)
+		models.TopicAccess.update_specific_access(topic, self.beevote_user)
 		self.response.out.write(get_json(topic_json))
 
 class LoadProposalHandler(BaseApiHandler):
@@ -312,13 +306,10 @@ class LoadParticipantsHandler(BaseApiHandler):
 
 class LoadUserHandler(BaseApiHandler):
 	def get(self, user_id):
-		user = users.get_current_user()
-		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		
 		target_beevote_user = models.BeeVoteUser.get_from_id(user_id)
 		
 		arguments = {
-			'is_current_user': target_beevote_user.key() == current_beevote_user.key()
+			'is_current_user': target_beevote_user.key() == self.beevote_user.key()
 		}
 		
 		beevote_user_ret = fetch_user(target_beevote_user, arguments)
@@ -327,7 +318,6 @@ class LoadUserHandler(BaseApiHandler):
 
 class CreateVoteHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -340,12 +330,10 @@ class CreateVoteHandler(BaseApiHandler):
 			if proposal.parent().expired:
 				success = False
 		if success:
-			user_id = user.user_id()
-			beevote_user = models.get_beevote_user_from_google_id(user_id)
 			vote = models.Vote(
 				proposal = proposal,
 				parent=proposal,
-				creator = beevote_user
+				creator = self.beevote_user
 			)
 			vote.put()
 			time.sleep(0.25)
@@ -360,8 +348,6 @@ class CreateVoteHandler(BaseApiHandler):
 class RemoveVoteHandler(BaseApiHandler):
 	def post(self):
 		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -374,7 +360,7 @@ class RemoveVoteHandler(BaseApiHandler):
 			if proposal.parent().expired:
 				success = False
 		if success:
-			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
+			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, self.beevote_user)
 			vote = votes.get()
 			vote.delete()
 			time.sleep(0.25)
@@ -437,8 +423,6 @@ class UpdateUser(BaseApiHandler):
 		surname = self.request.get('edit_surname', None)
 		language = self.request.get('edit_language', None)
 		img = self.request.get('edit_img', None)
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		if name != None and name == "":
 			values = {
 				'success': False,
@@ -457,15 +441,15 @@ class UpdateUser(BaseApiHandler):
 		else:
 			
 			if name != None:
-				beevote_user.name = name
+				self.beevote_user.name = name
 			if surname != None:
-				beevote_user.surname = surname
+				self.beevote_user.surname = surname
 			if language != None:
-				beevote_user.language = language
+				self.beevote_user.language = language
 			if img:
-				beevote_user.img = img
-			beevote_user.put()
-			user_id = user.user_id()
+				self.beevote_user.img = img
+			self.beevote_user.put()
+			user_id = self.beevote_user.key().id()
 			values = {
 				'success': True,
 				'user_id': user_id,
@@ -486,8 +470,6 @@ class LoadGroupMembersHandler(BaseApiHandler):
 
 class CreateGroupHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('name')
 		description = self.request.get('description')
 		img = self.request.get('img', None)
@@ -504,7 +486,7 @@ class CreateGroupHandler(BaseApiHandler):
 		else:
 			group = models.Group.create(
 				name = name,
-				creator = beevote_user,
+				creator = self.beevote_user,
 				description = description,
 				img = img
 			)
@@ -518,8 +500,6 @@ class CreateGroupHandler(BaseApiHandler):
 
 class UpdateGroupHandler(BaseApiHandler):
 	def post(self, group_id):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		name = self.request.get('name', None)
 		description = self.request.get('description', None)
 		img = self.request.get('img', None)
@@ -538,14 +518,15 @@ class UpdateGroupHandler(BaseApiHandler):
 			group = db.get(group_key)
 			if name != None and name != group.name:
 				group.name = name
-				GroupNotification.create(GroupNotification.GROUP_NAME_CHANGE, group, beevote_user)
+				GroupNotification.create(GroupNotification.GROUP_NAME_CHANGE, group, self.beevote_user)
 			if description != None and description != group.description:
-				GroupNotification.create(GroupNotification.GROUP_DESCRIPTION_CHANGE, group, beevote_user)
+				GroupNotification.create(GroupNotification.GROUP_DESCRIPTION_CHANGE, group, self.beevote_user)
 				group.description = description
 			if img:
-				GroupNotification.create(GroupNotification.GROUP_IMAGE_CHANGE, group, beevote_user)
+				GroupNotification.create(GroupNotification.GROUP_IMAGE_CHANGE, group, self.beevote_user)
 				group.img = img
 			group.put()
+			models.GroupAccess.update_specific_access(group, self.beevote_user)
 			group_id = group.key().id()
 			values = {
 				'success': True,
@@ -555,8 +536,6 @@ class UpdateGroupHandler(BaseApiHandler):
 
 class CreateTopicHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		group_id = self.request.get('group_id')
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
@@ -590,7 +569,7 @@ class CreateTopicHandler(BaseApiHandler):
 				topic = models.Topic.create(
 					title=title,
 					group=group,
-					creator=beevote_user,
+					creator=self.beevote_user,
 					place=place,
 					date=date,
 					time=time,
@@ -600,7 +579,7 @@ class CreateTopicHandler(BaseApiHandler):
 				)
 				topic.put()
 				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic=topic)
-				models.TopicAccess.update_specific_access(topic, beevote_user)
+				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
 				values = {
 					'success': True,
@@ -616,12 +595,9 @@ class CreateTopicHandler(BaseApiHandler):
 
 class RemoveTopicHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(beevote_user, group):
+		if not is_user_in_group(self.beevote_user, group):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -631,7 +607,7 @@ class RemoveTopicHandler(BaseApiHandler):
 			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
 			topic = db.get(topic_key)
 
-			if topic.creator.key() == beevote_user.key():
+			if topic.creator.key() == self.beevote_user.key():
 				topic.delete()
 				# TODO implement topic removal notification?
 				values = {
@@ -661,6 +637,7 @@ class UpdateTopicHandler(BaseApiHandler):
 				topic.img = img
 				TopicNotification.create(TopicNotification.TOPIC_IMAGE_CHANGE, topic)
 			topic.put()
+			models.TopicAccess.update_specific_access(topic, self.beevote_user)
 			topic_id = topic.key().id()
 			values = {
 				'success': True,
@@ -685,11 +662,8 @@ class MemberAutocompleteHandler(BaseApiHandler):
 
 class TopicsNotificationsHandler(BaseApiHandler):
 	def get(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
-		topics = beevote_user.get_topics_by_group_membership()
-		all_notifications = models.TopicNotification.get_for_beevote_user(beevote_user, topics)
+		topics = self.beevote_user.get_topics_by_group_membership()
+		all_notifications = models.TopicNotification.get_for_beevote_user(self.beevote_user, topics)
 		
 		for group_id in all_notifications.keys():
 			for topic_id in all_notifications[group_id].keys():
@@ -713,11 +687,8 @@ class TopicsNotificationsHandler(BaseApiHandler):
 
 class GroupNotificationsHandler(BaseApiHandler):
 	def get(self, group_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		group = models.Group.get_from_id(group_id)
-		notifications = group.get_notifications_for_user(beevote_user)
+		notifications = group.get_notifications_for_user(self.beevote_user)
 		
 		group_notif = {
 			'group_invitations': 0,
@@ -758,11 +729,8 @@ class GroupNotificationsHandler(BaseApiHandler):
 
 class TopicNotificationsHandler(BaseApiHandler):
 	def get(self, group_id, topic_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		topic = models.Topic.get_from_id(group_id, topic_id)
-		notifications = topic.get_notifications_for_user(beevote_user)
+		notifications = topic.get_notifications_for_user(self.beevote_user)
 		
 		notif = {
 			'topic_creations': 0,
@@ -785,19 +753,16 @@ class TopicNotificationsHandler(BaseApiHandler):
 
 class RemoveGroupHandler(BaseApiHandler):
 	def post(self, group_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(beevote_user, group):
+		if not is_user_in_group(self.beevote_user, group):
 			values = {
 				'success': False,
 				'group_id': group_id,
 				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
-			if beevote_user.key() in group.admins:
+			if self.beevote_user.key() in group.admins:
 				group.delete()
 				values = {
 					'success': True,
@@ -812,10 +777,9 @@ class RemoveGroupHandler(BaseApiHandler):
 
 class AddGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
-		user = users.get_current_user()
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(self.beevote_user, group):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -830,6 +794,7 @@ class AddGroupMemberHandler(BaseApiHandler):
 					group.members.append(beevote_user_key)
 					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group, beevote_user=beevote_user)
 					group.put()
+					models.GroupAccess.update_specific_access(group, self.beevote_user)
 					values = {
 						'success': True,
 						'group_id': group_id
@@ -849,11 +814,9 @@ class AddGroupMemberHandler(BaseApiHandler):
 
 class RemoveGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
-		user = users.get_current_user()
-		current_beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		group_key = db.Key.from_path('Group', long(group_id))
 		group = db.get(group_key)
-		if not is_user_in_group(current_beevote_user, group):
+		if not is_user_in_group(self.beevote_user, group):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -885,8 +848,6 @@ class RemoveGroupMemberHandler(BaseApiHandler):
 
 class CreateProposalHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
 		title = self.request.get('title')
 		where = self.request.get('place')
 		date = self.request.get('date')
@@ -916,7 +877,7 @@ class CreateProposalHandler(BaseApiHandler):
 					title=title,
 					topic=topic,
 					parent=topic,
-					creator=beevote_user,
+					creator=self.beevote_user,
 				)
 				if where != "":
 					proposal.place = where
@@ -929,6 +890,7 @@ class CreateProposalHandler(BaseApiHandler):
 				proposal.description = description
 				proposal.put()
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic)
+				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				topic.put()
 				values = {
 					'success': True,
@@ -945,11 +907,8 @@ class CreateProposalHandler(BaseApiHandler):
 
 class RemoveProposalHandler(BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		group = models.Group.get_from_id(group_id)
-		if not is_user_in_group(beevote_user, group):
+		if not is_user_in_group(self.beevote_user, group):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -957,7 +916,7 @@ class RemoveProposalHandler(BaseApiHandler):
 			}
 		else:
 			proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
-			if proposal.creator.key() == beevote_user.key():
+			if proposal.creator.key() == self.beevote_user.key():
 				proposal.delete()
 				values = {
 					'success': True,
@@ -973,11 +932,8 @@ class RemoveProposalHandler(BaseApiHandler):
 
 class RemoveParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if not is_user_in_group(beevote_user, topic.group):
+		if not is_user_in_group(self.beevote_user, topic.group):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -985,11 +941,11 @@ class RemoveParticipationHandler(BaseApiHandler):
 				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
-			topic.non_participant_users.append(beevote_user.key())
+			topic.non_participant_users.append(self.beevote_user.key())
 			topic.put()
 			proposals = topic.get_proposals()
 			for proposal in proposals:
-				votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, beevote_user)
+				votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, self.beevote_user)
 				for vote in votes:
 					vote.delete()
 			time.sleep(0.25)
@@ -1002,11 +958,8 @@ class RemoveParticipationHandler(BaseApiHandler):
 
 class AddParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		beevote_user = models.get_beevote_user_from_google_id(user_id)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if not is_user_in_group(beevote_user, topic.group):
+		if not is_user_in_group(self.beevote_user, topic.group):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -1014,7 +967,7 @@ class AddParticipationHandler(BaseApiHandler):
 				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
-			topic.non_participant_users.remove(beevote_user.key())
+			topic.non_participant_users.remove(self.beevote_user.key())
 			topic.put()
 			time.sleep(0.25)
 			values = {
@@ -1026,9 +979,6 @@ class AddParticipationHandler(BaseApiHandler):
 
 class CreateBugReportHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
-		
 		device = self.request.get('device')
 		browser = self.request.get('browser')
 		description = self.request.get('description')
@@ -1039,7 +989,7 @@ class CreateBugReportHandler(BaseApiHandler):
 				device = device,
 				browser = browser,
 				description = description,
-				creator = beevote_user 
+				creator = self.beevote_user 
 			)
 			if occurrence != "":
 				report.occurrence = datetime.datetime.strptime(occurrence, "%d/%m/%Y").date()
