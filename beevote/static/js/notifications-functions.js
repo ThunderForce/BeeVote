@@ -17,7 +17,7 @@ function print_groups_notifications() {
 	if (_home_notifications.group_notifications != null) {
 		$('div.group-well span.notifications').html('');
 		$.each(_home_notifications.group_notifications, function(index, notification) {
-			$('div.group-well[data-group_id="'+notification.group_id+'"] span.notifications').html('<span class="badge" data-group="'+notification.group_id+'">'+notification.notifications+'</span>');
+			$('div.group-well[data-group_id="'+notification.group_id+'"] span.notifications').html('<span class="badge" data-group="'+notification.group_id+'" style="background-color:#F44336;">'+notification.notifications+'</span>');
 		});
 	}
 }
@@ -27,9 +27,9 @@ function print_topics_notifications() {
 		$.each(_home_notifications.topic_notifications, function(index, notification) {
 			topic_notifications_span = $('div.topic-item[data-group-id="'+notification.group_id+'"][data-topic-id="'+notification.topic_id+'"] span.notifications');
 			if (notification.new_topic)
-				topic_notifications_span.append('<span class="label label-warning">New</span>');
+				topic_notifications_span.append('<span class="label" style="background-color:#F44336;position:absolute;top:7px;right:22px;">New</span>');
 			if (notification.new_proposals > 0)
-				topic_notifications_span.append('<span class="badge" data-group="'+notification.group_id+' data-topic="'+notification.topic_id+'">'+notification.new_proposals+'</span>');
+				topic_notifications_span.append('<span class="badge" data-group="'+notification.group_id+' data-topic="'+notification.topic_id+'" style="background-color:#F44336;position:absolute;top:30px;right:30px;">'+notification.new_proposals+'</span>');
 		});
 	}
 };
@@ -92,7 +92,7 @@ function load_topics_notifications() {
 			print_topics_notifications();
 			setTimeout(
 				function() { load_topics_notifications(); },
-				60*1000 // 1 minute
+				60*60*1000 // 1 hour
 			);
 		}
 	});

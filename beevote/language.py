@@ -48,8 +48,8 @@ lang = {
 		},
 		'topic_overview': {
 			'deadline_reach':"This topic has reached its deadline: you cannot vote its proposals anymore.",
-			'not_partecipating':"You are not partecipating",
-			'partecipating':"You are partecipating",
+			'not_partecipating':"You're not participating",
+			'partecipating':"You are participating",
 			'no_proposal':"This topic has no proposals yet",
 		},
 		'buttons':{
@@ -63,8 +63,8 @@ lang = {
 			'edit_topic_photo_title': "Edit topic photo",
 			'edit_topic_title': "Edit topic info",
 			'delete_topic_title': "Delete this topic",
-			'not_partecipating_title' :"Toggle for not partecipating",
-			'partecipating_title' :"Toggle for partecipating",
+			'not_partecipating_title' :"Toggle for not participating",
+			'partecipating_title' :"Toggle for participating",
 			'participants_title': "Show participants",
 		 },
 		'group_members':{

@@ -59,7 +59,7 @@
 	{% endif %}
 	{% for group in groups%}
 	<div class="list-group-item">
-		<div class="well well-lg group-well" color="green_g" data-group_id="{{ group.key.id }}" style="padding:0px; padding-top:9px; padding-left:9px; cursor: pointer; max-width:900px;">
+		<div class="well well-lg group-well" color="green_g" data-group_id="{{ group.key.id }}" style="padding:5px 50px 0px 5px; cursor: pointer; max-width:900px;">
 			<div class="row">
 				<div class="col-lg-10">
 					<div class="row-picture">
@@ -77,7 +77,7 @@
 							{{ group.name }}
 							{% endif %}
 						</h3>
-						<span class="notifications">...</span>
+						<span class="notifications" style="position:absolute;top:18px;right:-60px">...</span>
 					</div>
 				</div><!-- /col-lg-10 -->
 			</div><!-- /row -->
