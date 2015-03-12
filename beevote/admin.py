@@ -16,19 +16,16 @@
 #
 
 import os
-import webapp2
-#import json
+
 from google.appengine.ext import db
 from google.appengine.ext.webapp import template
-
-from google.appengine.api import mail
+import webapp2
 
 import models
 
-import datetime
 
+#import json
 # Start of handlers
-
 class BasicPageHandler(webapp2.RequestHandler):
 	def write_template(self, template_name, template_values={}):
 		

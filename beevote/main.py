@@ -15,26 +15,25 @@
 # limitations under the License.
 #
 
-import os
-import webapp2
-from webapp2_extras import sessions
-from google.appengine.ext import db
-from google.appengine.ext.webapp import template
-from google.appengine.api import users
-
-from google.appengine.api import mail
-
 import datetime
-
-import models
-import api
-import html_strips
+import os
 import time
 
+from google.appengine.api import mail
+from google.appengine.api import users
+from google.appengine.api.images import Image
+from google.appengine.ext import db
+from google.appengine.ext.webapp import template
+import webapp2
+from webapp2_extras import sessions
+
+import api
+import html_strips
 import language
+import models
+
 
 # Start of handlers
-
 def get_template(template_name, template_values={}, navbar_values={}):
 	directory = os.path.dirname(__file__)
 	basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
@@ -202,11 +201,27 @@ class UserImageHandler(webapp2.RequestHandler):
 			self.error(404)
 			self.response.out.write("User "+user_id+" does not exist")
 		else:
+			width = int(self.request.get('width', default_value="0"))
+			height = int(self.request.get('height', default_value="0"))
 			if user.img != None:
 				self.response.headers['Content-Type'] = 'image/png'
 				self.response.headers['Content-Disposition'] = 'inline; filename="user-'+user_id+'.png"'
 				
-				self.response.out.write(user.img)
+				if (width == 0) or (height == 0):
+					self.response.out.write(user.img)
+				else:
+					image = Image(image_data=user.img)
+					if (image.width / float(width)) > (image.height / float(height)):
+						image.resize(height=height)
+						image = Image(image_data=image.execute_transforms())
+						x_crop_ratio = (image.width - width) / float(image.width * 2)
+						image.crop(x_crop_ratio, 0.0, 1-x_crop_ratio, 1.0)
+					else:
+						image.resize(width=width)
+						image = Image(image_data=image.execute_transforms())
+						y_crop_ratio = (image.height - height) / float(image.height * 2)
+						image.crop(0.0, y_crop_ratio, 1.0, 1-y_crop_ratio)
+					self.response.out.write(image.execute_transforms())	
 			else:
 				self.error(404)
 				self.response.out.write("User "+user_id+" does not have an image")
