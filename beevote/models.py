@@ -271,7 +271,7 @@ class TopicAccess(db.Model):
 	
 	@staticmethod
 	def update_specific_access(topic, beevote_user):
-		access = GroupAccess.get_specific_access(topic, beevote_user)
+		access = TopicAccess.get_specific_access(topic, beevote_user)
 		if not access:
 			access = TopicAccess(beevote_user=beevote_user, topic=topic)
 		access.timestamp = datetime.datetime.now()
