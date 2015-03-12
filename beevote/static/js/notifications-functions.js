@@ -17,6 +17,7 @@ function print_groups_notifications() {
 	if (_home_notifications.group_notifications != null) {
 		$('div.group-well span.notifications').html('');
 		$.each(_home_notifications.group_notifications, function(index, notification) {
+			$('li.sidebar-group[data-group-id="'+notification.group_id+'"] span.notifications').html('<span class="badge" data-group="'+notification.group_id+'">'+notification.notifications+'</span>');
 			$('div.group-well[data-group_id="'+notification.group_id+'"] span.notifications').html('<span class="badge" data-group="'+notification.group_id+'">'+notification.notifications+'</span>');
 		});
 	}
