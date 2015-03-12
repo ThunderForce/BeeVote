@@ -118,6 +118,8 @@ div.loader
 	z-index: 9999;
 	background: url('/static/images/loading.gif') no-repeat;
 	background-size: contain;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 topic_color {
