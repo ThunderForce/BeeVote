@@ -41,7 +41,7 @@ function load_groups(opened_group) {
 					group_name = group_name.substring(0, 12)+"...";
 				}
 				if (group.data.has_image) {
-					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/group/'+group.data.id+'/image" alt="icon" style="width:40px;height:40px;border-radius:100%;margin-right:10px;">'+group_name+' <span class="notifications">...</span></li>');
+					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/group/'+group.data.id+'/image?width=64&height=64" alt="icon" style="width:40px;height:40px;border-radius:100%;margin-right:10px;">'+group_name+' <span class="notifications">...</span></li>');
 				}
 				else {
 					content.append('<li class="sidebar-group" data-group-id="'+group.data.id+'" style="cursor: pointer;color:#FFFFFF;font-size:19px;margin-bottom:10px;"><img class="circle" src="/static/images/group-default.jpg" alt="icon" style="width:40px;height:40px;border-radius:100%;margin-right:10px;">'+group_name+' <span class="notifications">...</span></li>');

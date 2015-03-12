@@ -230,7 +230,7 @@ function resetForm(form_id) {
 					<div class="row">
 						<div class="row-picture">
 							{% if topic.img %}
-							<img class="circle" src="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/image" alt="icon">
+							<img class="circle" src="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/image?width=128&height=128" alt="icon">
 							{% else %}
 							<img class="circle" src="/static/images/topic-icon.png" alt="icon">
 							{% endif %}

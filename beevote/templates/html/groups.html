@@ -64,7 +64,7 @@
 				<div class="col-lg-10">
 					<div class="row-picture">
 						{% if group.img != None %}
-							<img class="circle" src="/group/{{ group.key.id }}/image" alt="icon">
+							<img class="circle" src="/group/{{ group.key.id }}/image?width=64&height=64" alt="icon">
 						{% else %}
 							<img class="circle" src="/static/images/group-default.jpg" alt="icon">
 						{% endif %}

@@ -99,6 +99,20 @@ def is_user_in_group(beevote_user, group):
 	else:
 		return False
 
+def resize_image(image_data, width, height):
+	image = Image(image_data=image_data)
+	if (image.width / float(width)) > (image.height / float(height)):
+		image.resize(height=height)
+		image = Image(image_data=image.execute_transforms())
+		x_crop_ratio = (image.width - width) / float(image.width * 2)
+		image.crop(x_crop_ratio, 0.0, 1-x_crop_ratio, 1.0)
+	else:
+		image.resize(width=width)
+		image = Image(image_data=image.execute_transforms())
+		y_crop_ratio = (image.height - height) / float(image.height * 2)
+		image.crop(0.0, y_crop_ratio, 1.0, 1-y_crop_ratio)
+	return image.execute_transforms()
+
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
 google_user_urls = ["/", "/logout", "/register"]
@@ -201,27 +215,15 @@ class UserImageHandler(webapp2.RequestHandler):
 			self.error(404)
 			self.response.out.write("User "+user_id+" does not exist")
 		else:
-			width = int(self.request.get('width', default_value="0"))
-			height = int(self.request.get('height', default_value="0"))
 			if user.img != None:
 				self.response.headers['Content-Type'] = 'image/png'
 				self.response.headers['Content-Disposition'] = 'inline; filename="user-'+user_id+'.png"'
-				
-				if (width == 0) or (height == 0):
+				try:
+					width = int(self.request.get('width'))
+					height = int(self.request.get('height'))
+					self.response.out.write(resize_image(user.img, width, height))
+				except:
 					self.response.out.write(user.img)
-				else:
-					image = Image(image_data=user.img)
-					if (image.width / float(width)) > (image.height / float(height)):
-						image.resize(height=height)
-						image = Image(image_data=image.execute_transforms())
-						x_crop_ratio = (image.width - width) / float(image.width * 2)
-						image.crop(x_crop_ratio, 0.0, 1-x_crop_ratio, 1.0)
-					else:
-						image.resize(width=width)
-						image = Image(image_data=image.execute_transforms())
-						y_crop_ratio = (image.height - height) / float(image.height * 2)
-						image.crop(0.0, y_crop_ratio, 1.0, 1-y_crop_ratio)
-					self.response.out.write(image.execute_transforms())	
 			else:
 				self.error(404)
 				self.response.out.write("User "+user_id+" does not have an image")
@@ -237,8 +239,12 @@ class GroupImageHandler(webapp2.RequestHandler):
 			if group.img != None:
 				self.response.headers['Content-Type'] = 'image/png'
 				self.response.headers['Content-Disposition'] = 'inline; filename="group-'+group_id+'.png"'
-				
-				self.response.out.write(group.img)
+				try:
+					width = int(self.request.get('width'))
+					height = int(self.request.get('height'))
+					self.response.out.write(resize_image(group.img, width, height))
+				except:
+					self.response.out.write(group.img)
 			else:
 				self.error(404)
 				self.response.out.write("Group "+group_id+" does not have an image")
@@ -254,8 +260,12 @@ class TopicImageHandler(webapp2.RequestHandler):
 			if topic.img != None:
 				self.response.headers['Content-Type'] = 'image/png'
 				self.response.headers['Content-Disposition'] = 'inline; filename="topic-'+topic_id+'.png"'
-				
-				self.response.out.write(topic.img)
+				try:
+					width = int(self.request.get('width'))
+					height = int(self.request.get('height'))
+					self.response.out.write(resize_image(topic.img, width, height))
+				except:
+					self.response.out.write(topic.img)
 			else:
 				self.error(404)
 				self.response.out.write("Topic "+topic_id+" does not have an image")

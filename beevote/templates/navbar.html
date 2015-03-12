@@ -131,7 +131,7 @@
 			</li>
 			<li>
 				{% if user.img %}
-				<img class="image-circle" src="/user/{{user.key.id}}/image" title="Click here to logout" alt="icon">
+				<img class="image-circle" src="/user/{{user.key.id}}/image?width=64&height=64" title="Click here to logout" alt="icon">
 				{% else %}
 				<img class="image-circle" src="/static/images/user-default.jpg" title="Click here to logout" alt="icon">
 				{% endif %}
@@ -213,7 +213,7 @@
 			<li class="sidebar-brand" style="margin-top:5px;">
 				<a id="edit-user-sidebar" style="color: #fff;cursor:pointer;">
 					{% if user.img%}
-					<img style="width: 45px; height: 45px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/user/{{user.key.id}}/image" alt="icon"/>
+					<img style="width: 45px; height: 45px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/user/{{user.key.id}}/image?width=64&height=64" alt="icon"/>
 					{% else %}
 					<img style="width: 45px; height: 45px; border-radius: 100%; margin-left:-10px; margin-right:10px;" class="circle" src="/static/images/user-default.jpg" alt="icon"/>
 					{% endif %}

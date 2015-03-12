@@ -28,7 +28,7 @@
 	<div class="list-group-item">
 		<div class="row-picture">
 			{% if member.img %}
-			<img class="circle" src="/user/{{member.key.id}}/image" alt="icon">
+			<img class="circle" src="/user/{{member.key.id}}/image?width=128&height=128" alt="icon">
 			{% else %}
 			<img class="circle" src="/static/images/user-default.jpg" alt="icon">
 			{% endif %}

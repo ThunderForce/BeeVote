@@ -234,7 +234,7 @@ $(document).ready(function() {
 						$.each(response.votes, function(index, vote) {
 							var str = '<div class="list-group-item"><div class="row-picture">';
 							if (vote.creator.data.has_image)
-								str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image" alt="icon">';
+								str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image?width=64&height=64" alt="icon">';
 							else
 								str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
 							str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+vote.creator.data.name+' '+vote.creator.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
@@ -301,7 +301,7 @@ $(document).ready(function() {
 					$.each(users, function(index, user) {
 						var str = '<div class="list-group-item"><div class="row-picture">';
 						if (user.data.has_image)
-							str += '<img class="circle" src="/user/'+user.data.id+'/image" alt="icon">';
+							str += '<img class="circle" src="/user/'+user.data.id+'/image?width=64&height=64" alt="icon">';
 						else
 							str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
 						str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+user.data.name+' '+user.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
@@ -615,7 +615,7 @@ else {
 				<!-- interno proposta -->
 				<div class="row-picture">
 					{% if proposal.creator.img %}
-					<img class="circle" src="/user/{{proposal.creator.key.id}}/image" alt="icon">
+					<img class="circle" src="/user/{{proposal.creator.key.id}}/image?width=64&height=64" alt="icon">
 					{% else %}
 					<img class="circle" src="/static/images/user-default.jpg" alt="icon">
 					{% endif %}
