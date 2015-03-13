@@ -178,13 +178,11 @@ class HomeHandler(BaseHandler):
 			self.redirect("/register")
 			return
 		
-		last_access = self.beevote_user.last_access if hasattr(self.beevote_user, 'last_access') else None
+		last_access = self.beevote_user.last_access if hasattr(self.beevote_user, 'last_access') else datetime.datetime.min
 		self.beevote_user.last_access = datetime.datetime.now()
 		self.beevote_user.put()
 		
-		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange").fetch(1000)
-		
-		feature_changes = [f for f in feature_changes if ((not last_access) or f.creation > last_access)]
+		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange WHERE creation > :1", last_access).fetch(1000)
 		
 		values = {
 			'user' : self.beevote_user,

@@ -25,24 +25,16 @@ class BeeVoteUser(db.Model):
 		return beevote_user
 	
 	def get_groups_by_membership(self):
-		groups = db.GqlQuery("SELECT * FROM Group").fetch(1000)
-		groups = [g for g in groups if not (not self.key() in g.members) and (g.members != [])]
+		groups = db.GqlQuery("SELECT * FROM Group WHERE members = :1", self.key()).fetch(1000)
 		return groups
 	
 	def get_topics_by_group_membership(self):
-		# method 1: more load on instance hours, less load on datastore
-		group_keys = [g.key() for g in self.get_groups_by_membership()]
-		topics = Topic.all().fetch(1000)
-		topics = [t for t in topics if t.group.key() in group_keys]
-		'''
-		# method 2: more load on datastore, less load on instance hours
 		groups = self.get_groups_by_membership()
 		topics = []
 		for group in groups:
 			group_topics = group.get_topics()
 			for topic in group_topics:
 				topics.append(topic)
-		'''		
 		return topics
 	
 	def put(self):
@@ -299,9 +291,17 @@ class GroupNotification(db.Model):
 			
 		}
 		'''
-		groups_keys = [g.key() for g in groups]
-		groups_accesses = [a for a in db.GqlQuery("SELECT * FROM GroupAccess").fetch(1000) if a.group.key() in groups_keys]
-		groups_notifications = [n for n in db.GqlQuery("SELECT * FROM GroupNotification").fetch(1000) if n.group.key() in groups_keys and n.timestamp >= next((a.timestamp for a in groups_accesses if a.topic.key() == n.topic.key()), datetime.datetime.min)]
+		
+		groups_notifications = []
+		for group in groups:
+			g_a = GroupAccess.get_specific_access(group, beevote_user)
+			if g_a:
+				timestamp = g_a.timestamp
+			else:
+				timestamp = datetime.datetime.min
+			g_n = db.GqlQuery("SELECT * FROM GroupNotification WHERE group = :1 AND timestamp > :2", group, timestamp).fetch(1000)
+			for n in g_n:
+				groups_notifications.append(n)
 		
 		notifications_by_group = {}
 		for notif in groups_notifications:
@@ -375,9 +375,16 @@ class TopicNotification(db.Model):
 		}
 		'''
 		
-		topics_keys = [t.key() for t in topics]
-		topics_accesses = [a for a in db.GqlQuery("SELECT * FROM TopicAccess").fetch(1000) if a.topic.key() in topics_keys and a.beevote_user.key() == beevote_user.key()]
-		topics_notifications = (n for n in db.GqlQuery("SELECT * FROM TopicNotification").fetch(1000) if n.topic.key() in topics_keys and n.timestamp >= next((a.timestamp for a in topics_accesses if a.topic.key() == n.topic.key()), datetime.datetime.min))
+		topics_notifications = []
+		for topic in topics:
+			t_a = TopicAccess.get_specific_access(topic, beevote_user)
+			if t_a:
+				timestamp = t_a.timestamp
+			else:
+				timestamp = datetime.datetime.min
+			t_n = db.GqlQuery("SELECT * FROM TopicNotification WHERE topic = :1 AND timestamp > :2", topic, timestamp).fetch(1000)
+			for n in t_n:
+				topics_notifications.append(n)
 		
 		notifications_by_group = {}
 		for notif in topics_notifications:
