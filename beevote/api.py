@@ -15,23 +15,22 @@
 # limitations under the License.
 #
 
-import webapp2
+import collections
 import datetime
 import json
 import time
-from google.appengine.ext import db
-from google.appengine.api import users
+
 from google.appengine.api import mail
-
-import collections
-
-import models
-from models import GroupNotification, TopicNotification
+from google.appengine.api import users, memcache
+from google.appengine.ext import db
+import webapp2
 
 import language
+from models import GroupNotification, TopicNotification
+import models
+
 
 # Start of constants
-
 max_image_size = 850*1024 # 850 kb
 
 # End of constants
@@ -662,27 +661,29 @@ class MemberAutocompleteHandler(BaseApiHandler):
 
 class TopicsNotificationsHandler(BaseApiHandler):
 	def get(self):
-		topics = self.beevote_user.get_topics_by_group_membership()
-		all_notifications = models.TopicNotification.get_for_beevote_user(self.beevote_user, topics)
-		
-		for group_id in all_notifications.keys():
-			for topic_id in all_notifications[group_id].keys():
-				notif = {
-					'topic_creations': 0,
-					'topic_image_change': 0,
-					'proposal_creations': 0,
-					'topic_expirations': 0,
-				}
-				for db_notification in all_notifications[group_id][topic_id]:
-					if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
-						notif['topic_creations'] += 1
-					elif db_notification.notification_code == models.TopicNotification.TOPIC_IMAGE_CHANGE:
-						notif['topic_image_change'] += 1
-					elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
-						notif['proposal_creations'] += 1
-					if db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
-						notif['topic_expirations'] += 1
-				all_notifications[group_id][topic_id] = notif
+		all_notifications = memcache.get('topics_notifications_by_beevote_user_%s' % self.beevote_user.key().id()) # @UndefinedVariable
+		if not all_notifications:
+			topics = self.beevote_user.get_topics_by_group_membership()
+			all_notifications = models.TopicNotification.get_for_beevote_user(self.beevote_user, topics)
+			for group_id in all_notifications.keys():
+				for topic_id in all_notifications[group_id].keys():
+					notif = {
+						'topic_creations': 0,
+						'topic_image_change': 0,
+						'proposal_creations': 0,
+						'topic_expirations': 0,
+					}
+					for db_notification in all_notifications[group_id][topic_id]:
+						if db_notification.notification_code == models.TopicNotification.TOPIC_CREATION:
+							notif['topic_creations'] += 1
+						elif db_notification.notification_code == models.TopicNotification.TOPIC_IMAGE_CHANGE:
+							notif['topic_image_change'] += 1
+						elif db_notification.notification_code == models.TopicNotification.PROPOSAL_CREATION:
+							notif['proposal_creations'] += 1
+						if db_notification.notification_code == models.TopicNotification.TOPIC_EXPIRATION:
+							notif['topic_expirations'] += 1
+					all_notifications[group_id][topic_id] = notif
+			memcache.add('topics_notifications_by_beevote_user_%s' % self.beevote_user.key().id(), all_notifications, time=10) # @UndefinedVariable
 		self.response.out.write(json.dumps(all_notifications))
 
 class GroupNotificationsHandler(BaseApiHandler):

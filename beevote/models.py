@@ -235,11 +235,11 @@ class GroupAccess(db.Model):
 	timestamp = db.DateTimeProperty()
 	@staticmethod
 	def get_specific_access(group, beevote_user):
-		return db.GqlQuery("SELECT * FROM GroupAccess WHERE group = :1 AND beevote_user = :2 ORDER BY timestamp DESC", group, beevote_user).get()
+		return db.GqlQuery("SELECT timestamp FROM GroupAccess WHERE group = :1 AND beevote_user = :2 ORDER BY timestamp DESC", group, beevote_user).get()
 	
 	@staticmethod
 	def update_specific_access(group, beevote_user):
-		access = GroupAccess.get_specific_access(group, beevote_user)
+		access = db.GqlQuery("SELECT * FROM GroupAccess WHERE group = :1 AND beevote_user = :2 ORDER BY timestamp DESC", group, beevote_user).get()
 		if not access:
 			access = GroupAccess(beevote_user=beevote_user, group=group)
 		access.timestamp = datetime.datetime.now()
@@ -251,11 +251,11 @@ class TopicAccess(db.Model):
 	timestamp = db.DateTimeProperty()
 	@staticmethod
 	def get_specific_access(topic, beevote_user):
-		return db.GqlQuery("SELECT * FROM TopicAccess WHERE topic = :1 AND beevote_user = :2 ORDER BY timestamp DESC", topic, beevote_user).get()
+		return db.GqlQuery("SELECT timestamp FROM TopicAccess WHERE topic = :1 AND beevote_user = :2 ORDER BY timestamp DESC", topic, beevote_user).get()
 	
 	@staticmethod
 	def update_specific_access(topic, beevote_user):
-		access = TopicAccess.get_specific_access(topic, beevote_user)
+		access = db.GqlQuery("SELECT * FROM TopicAccess WHERE topic = :1 AND beevote_user = :2 ORDER BY timestamp DESC", topic, beevote_user).get()
 		if not access:
 			access = TopicAccess(beevote_user=beevote_user, topic=topic)
 		access.timestamp = datetime.datetime.now()
