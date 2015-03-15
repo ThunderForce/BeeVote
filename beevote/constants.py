@@ -1,0 +1,1 @@
+max_image_size = 850*1024 # 850 kb

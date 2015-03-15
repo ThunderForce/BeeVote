@@ -29,11 +29,7 @@ import language
 from models import GroupNotification, TopicNotification
 import models
 
-
-# Start of constants
-max_image_size = 850*1024 # 850 kb
-
-# End of constants
+import constants
 
 # Start of functions
 
@@ -346,7 +342,6 @@ class CreateVoteHandler(BaseApiHandler):
 
 class RemoveVoteHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
@@ -432,7 +427,7 @@ class UpdateUser(BaseApiHandler):
 				'success': False,
 				'error': self.lang['errors']['surname_required'],
 			}
-		elif  img != None and len(img) >= max_image_size:
+		elif img != None and len(img) >= constants.max_image_size:
 			values = {
 				'success': False,
 				'error': self.lang['errors']['image_too_big'],
@@ -477,7 +472,7 @@ class CreateGroupHandler(BaseApiHandler):
 				'success': False,
 				'error': self.lang['errors']['name_required'],
 			}
-		elif  img != None and len(img) >= max_image_size:
+		elif img != None and len(img) >= constants.max_image_size:
 			values = {
 				'success': False,
 				'error': self.lang['errors']['image_too_big'],
@@ -507,7 +502,7 @@ class UpdateGroupHandler(BaseApiHandler):
 				'success': False,
 				'error': self.lang['errors']['name_required'],
 			}
-		elif  img != None and len(img) >= max_image_size:
+		elif img != None and len(img) >= constants.max_image_size:
 			values = {
 				'success': False,
 				'error': self.lang['errors']['image_too_big'],
@@ -558,7 +553,7 @@ class CreateTopicHandler(BaseApiHandler):
 				'success': False,
 				'error': self.lang['errors']['group_id_required'],
 			}
-		elif  img != None and len(img) >= max_image_size:
+		elif img != None and len(img) >= constants.max_image_size:
 			values = {
 				'success': False,
 				'error': self.lang['errors']['image_too_big'],
@@ -626,7 +621,7 @@ class UpdateTopicHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		img = self.request.get('img', None)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if img != None and len(img) >= max_image_size:
+		if img != None and len(img) >= constants.max_image_size:
 			values = {
 				'success': False,
 				'error': self.lang['errors']['image_too_big'],
