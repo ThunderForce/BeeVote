@@ -85,8 +85,15 @@ $(document).ready(function() {
 
 	$("div.proposal-well").on("click", function() {
 		var proposal_id = $(this).data("proposal");
+		var is_open = $("div.proposal-details[data-proposal='" + proposal_id +"']").is(":visible");
 		$("div.proposal-details[data-proposal='" + proposal_id +"']").toggle({duration: 400});
 		initialize_proposal_map(proposal_id, $(this).data("place"));
+		
+		if(is_open){
+			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-down"></span>');
+		}else{
+			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-up"></span>');
+		}
 	});
 
 
@@ -187,7 +194,7 @@ $(document).ready(function() {
 		}
 	});
 
-/* Prova per non propagare il clik quando clicco sul voto*/
+/* Prova per non propagare il click quando clicco sul voto*/
 	$('button#vote-button').on('click', function(e) {
 
 		var group_id = {{ topic.parent.key.id }};
@@ -638,7 +645,7 @@ else {
 						<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 						<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
 							{% if proposal.place %}
-							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:140%; height:200px; margin-top:10px;"></div>
+							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:140%; height:200px; margin-top:25px;"></div>
 							{% endif %}
 							{% if proposal.description %}
 							<br>
@@ -649,14 +656,18 @@ else {
 							{% endif %}
 						</div>
 					</div>	
-						<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding:5px 1px 4px 5px;position:absolute;top:-5px;right:20px;background-color:#2196F3;">
-							<b style="font-size:11px;">{{lang.votes}}</b>
-							<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
-						</button>
-						<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:37px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
-					
-				</div>
+					<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding:5px 1px 4px 5px;position:absolute;top:-5px;right:20px;background-color:#2196F3;">
+						<b style="font-size:11px;">{{lang.votes}}</b>
+						<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
+					</button>
+					<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:37px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
+
+				</div>	
+				<div class="proposal-arrow modal-footer" data-proposal-arrow="{{ proposal.key.id }}" style="margin-top: -10px;border-top: none;padding: 0px;text-align: center;font-size: 20px;">
+					<span class="mdi-hardware-keyboard-arrow-down"></span>
+				</div>				
 			</div>
+
 		</div>
 	</div>
 	{% endfor %}
