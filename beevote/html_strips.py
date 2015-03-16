@@ -15,22 +15,22 @@
 # limitations under the License.
 #
 
-import os
-import webapp2
-from webapp2_extras import sessions
-import datetime
 from datetime import timedelta
-from google.appengine.ext import db
-from google.appengine.ext.webapp import template
-from google.appengine.api import users
-
-import models
+import datetime
+import os
 import time
 
+from google.appengine.api import users
+from google.appengine.ext import db
+from google.appengine.ext.webapp import template
+import webapp2
+from webapp2_extras import sessions
+
 import language
+import models
+
 
 # Start of handlers
-
 def write_template(response, template_name, template_values={}):
 	directory = os.path.dirname(__file__)
 	path = os.path.join(directory, os.path.join('templates', template_name))

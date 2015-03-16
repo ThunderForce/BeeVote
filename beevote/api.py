@@ -25,14 +25,13 @@ from google.appengine.api import users, memcache
 from google.appengine.ext import db
 import webapp2
 
+import constants
 import language
 from models import GroupNotification, TopicNotification
 import models
 
-import constants
 
 # Start of functions
-
 # TEMPORARY
 def is_user_in_group(beevote_user, group):
 	if group.members == [] or beevote_user.key() in group.members:

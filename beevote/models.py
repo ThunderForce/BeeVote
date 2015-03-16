@@ -1,10 +1,10 @@
-from google.appengine.ext import db
-from google.appengine.api import memcache
-
 import datetime
 
-# Start of Data Model
+from google.appengine.api import memcache
+from google.appengine.ext import db
 
+
+# Start of Data Model
 class BeeVoteUser(db.Model):
 	name = db.StringProperty()
 	surname = db.StringProperty()
