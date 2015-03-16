@@ -20,7 +20,7 @@ import webapp2
 from webapp2_extras import sessions
 import datetime
 from datetime import timedelta
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 from google.appengine.api import users
 
@@ -53,7 +53,7 @@ def write_template(response, template_name, template_values={}):
 	response.out.write(rendered_template)
 
 def is_user_in_group(beevote_user, group):
-	if group.members == [] or beevote_user.key() in group.members:
+	if group.members == [] or beevote_user.key in group.members:
 		return True
 	else:
 		return False
@@ -114,7 +114,7 @@ class GroupHandler(BaseHandler):
 			self.abort(404, detail="This group does not exist.")
 		if not is_user_in_group(self.beevote_user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		group.member_list = db.get(group.members)
+		group.member_list = ndb.get_multi(group.members)
 		topics = group.get_topics()
 		currentdatetime = datetime.datetime.now()
 		for topic in topics:
@@ -130,12 +130,12 @@ class GroupHandler(BaseHandler):
 				}
 			else:
 				topic.seconds_before_deadline = timedelta.max.total_seconds()
-			if topic.creator.key() == self.beevote_user.key():
+			if topic.creator == self.beevote_user.key:
 				topic.is_own = True
 			else:
 				topic.is_own = False
 		
-		if self.beevote_user.key() in group.admins:
+		if self.beevote_user.key in group.admins:
 			group.is_own = True
 		else:
 			group.is_own = False
@@ -171,7 +171,7 @@ class TopicsHandler(BaseHandler):
 				}
 			else:
 				topic.seconds_before_deadline = timedelta.max.total_seconds()
-			if topic.creator.key() == self.beevote_user.key():
+			if topic.creator == self.beevote_user.key:
 				topic.is_own = True
 			else:
 				topic.is_own = False
@@ -188,9 +188,9 @@ class GroupMembersHandler(BaseHandler):
 			self.abort(404, detail="This group does not exist.")
 		if not is_user_in_group(self.beevote_user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		group.member_list = db.get(group.members)
+		group.member_list = ndb.get_multi(group.members)
 		
-		if group.admins == [] or self.beevote_user.key() in group.admins:
+		if group.admins == [] or self.beevote_user.key in group.admins:
 			admin = True
 		else:
 			admin = False
@@ -211,11 +211,11 @@ class TopicHandler(BaseHandler):
 			self.abort(404, detail="This topic does not exist.")
 		if(topic.date != None):
 			topic.formatted_date = topic.date.strftime("%A   %d %B %Y")
-		if topic.creator.key() == self.beevote_user.key():
+		if topic.creator == self.beevote_user.key:
 			topic.is_own = True
 		else:
 			topic.is_own = False
-		if self.beevote_user.key() not in topic.non_participant_users:
+		if self.beevote_user.key not in topic.non_participant_users:
 			topic.participation = True
 		else:
 			topic.participation = False
@@ -224,7 +224,7 @@ class TopicHandler(BaseHandler):
 		
 		# Adding a variable on each proposal containing the NUMBER of votes of the proposal
 		for proposal in proposals:
-			votes = db.GqlQuery("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal, self.beevote_user)
+			votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal.key, self.beevote_user.key)
 			own_vote = votes.get()
 			if own_vote:
 				proposal.already_voted = True
