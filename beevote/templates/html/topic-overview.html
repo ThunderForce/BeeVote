@@ -138,13 +138,13 @@ $(document).ready(function() {
 		var is_open = $("div.topic-details[data-topic='" + topic_id +"']").is(":visible");
 		$("div.topic-details[data-topic='" + topic_id +"']").toggle({duration: 400});
 		initialize_topic_map(topic_id, $(this).data("place"));
-		/*
+		
 		if(is_open){
-			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-down"></span>');
+			$("div.topic-arrow[data-topic-arrow='" + topic_id +"']").html('<span class="mdi-hardware-keyboard-arrow-down"></span>');
 		}else{
-			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-up"></span>');
+			$("div.topic-arrow[data-topic-arrow='" + topic_id +"']").html('<span class="mdi-hardware-keyboard-arrow-up"></span>');
 		}
-		*/
+		
 	});
 
 	$("div.proposal-well").on("click", function() {
@@ -547,7 +547,7 @@ $(document).ready(function() {
 			</div>
 			<!-- END Topic Accordion Details -->
 
-			<div class="modal-footer" style="margin-top: -15px;border-top: none;padding: 0px 0px 6px 0px;text-align: right">
+			<div class="modal-footer" style="margin-top: -8px;border-top: none;padding: 0px 0px 6px 0px;text-align: right">
 				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" style="margin-bottom: 0px;height: 28px;"></button>
 
 				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-action-thumb-up {% else %} btn-warning mdi-action-thumb-down{% endif %} {% if topic.expired %} disabled {% endif %}" style="font-size:11px;margin-right: 6px;{% if topic.participation %} background-color: #0F9D58; {% else %} background-color: #DB4437; {% endif %}">&nbsp;<span id="participation-text">
@@ -558,6 +558,9 @@ $(document).ready(function() {
 					{% endif %}
 				</span>
 				</button>
+				<div class="topic-arrow" data-topic-arrow="{{ topic.key.id }}" style="margin-bottom: -8px;text-align: center;font-size: 20px;">
+					<span class="mdi-hardware-keyboard-arrow-down"></span>
+				</div>
 			</div>
 		</div>
 	</div>
