@@ -43,10 +43,6 @@ class BasicPageHandler(webapp2.RequestHandler):
 
 class RemoveUserHandler(webapp2.RequestHandler):
 	def get(self, user_id):
-		'''
-		beevote_user_key = db.Key.from_path('BeeVoteUser', long(user_id))
-		beevote_user = db.get(beevote_user_key)
-		'''
 		beevote_user = models.BeeVoteUser.get_by_id(long(user_id))
 		beevote_user.delete()
 		self.redirect('/admin/user-manager')

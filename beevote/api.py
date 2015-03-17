@@ -26,7 +26,6 @@ from google.appengine.ext import ndb
 import webapp2
 
 import language
-from models import GroupNotification, TopicNotification
 import models
 
 import constants
@@ -88,7 +87,7 @@ def fetch_topic(topic, arguments):
 			('time', str(topic.time) if topic.time else None),
 			('deadline', str(topic.deadline) if topic.deadline else None),
 			('creator', topic.creator.id()),
-			('group_id', topic.parent().key.id())
+			('group_id', topic.key.parent().id())
 		]))
 	])
 	if 'evaluate_deadlines' in arguments and arguments['evaluate_deadlines'] and topic.deadline != None:
@@ -283,13 +282,13 @@ class LoadParticipantsHandler(BaseApiHandler):
 		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
-		topic =models.Topic.get_from_id(group_id, topic_id)
+		topic = models.Topic.get_from_id(group_id, topic_id)
 
 		arguments = {
 			'fetch_users': self.request.get('fetch_users', 'false') == 'true',
 		}
 
-		participants=[part for part in group.members if part not in topic.non_participant_users]
+		participants = [part for part in group.members if part not in topic.non_participant_users]
 		
 		beevote_users = ndb.get_multi(participants)
 		json_users = []
@@ -316,22 +315,18 @@ class CreateVoteHandler(BaseApiHandler):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		'''
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		'''
 		proposal = models.Proposal.get_from_id(long(group_id), long(topic_id), long(proposal_id))
 		success = True
-		if proposal.parent().deadline != None:
+		if proposal.topic.get().deadline != None:
 			currentdatetime = datetime.datetime.now()
-			proposal.parent().expired = proposal.parent().deadline < currentdatetime
-			if proposal.parent().expired:
+			proposal.topic.get().expired = proposal.topic.get().deadline < currentdatetime
+			if proposal.topic.get().expired:
 				success = False
 		if success:
 			vote = models.Vote(
-				proposal = proposal,
-				parent=proposal,
-				creator = self.beevote_user
+				proposal = proposal.key,
+				parent = proposal.key,
+				creator = self.beevote_user.key
 			)
 			vote.put()
 			time.sleep(0.25)		
@@ -348,21 +343,17 @@ class RemoveVoteHandler(BaseApiHandler):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		'''
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		'''
 		proposal = models.Proposal.get_from_id(long(group_id), long(topic_id), long(proposal_id))
 		success = True
-		if proposal.parent().deadline != None:
+		if proposal.topic.get().deadline != None:
 			currentdatetime = datetime.datetime.now()
-			proposal.parent().expired = proposal.parent().deadline < currentdatetime
-			if proposal.parent().expired:
+			proposal.topic.get().expired = proposal.topic.get().deadline < currentdatetime
+			if proposal.topic.get().expired:
 				success = False
 		if success:
 			votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal.key, self.beevote_user.key)
 			vote = votes.get()
-			vote.delete()
+			vote.key.delete()
 			time.sleep(0.25)
 		votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1", proposal.key)
 		vote_number = votes.count()
@@ -377,18 +368,14 @@ class LoadVotesHandler(BaseApiHandler):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		'''
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		'''
 		proposal = models.Proposal.get_from_id(long(group_id), long(topic_id), long(proposal_id))
 		votes_db = ndb.gql("SELECT * FROM Vote WHERE proposal = :1", proposal.key).fetch(20)
 		votes = []
 		for vote in votes_db:
 			votes.append({
-				'name': vote.creator.name,
-				'surname': vote.creator.surname,
-				'email': vote.creator.email,
+				'name': vote.creator.get().name,
+				'surname': vote.creator.get().surname,
+				'email': vote.creator.get().email,
 			})
 		values = {
 			'success': True,
@@ -401,10 +388,6 @@ class OldLoadProposalHandler(BaseApiHandler):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
-		'''
-		proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-		proposal = db.get(proposal_key)
-		'''
 		proposal = models.Proposal.get_from_id(long(group_id), long(topic_id), long(proposal_id))
 		values = {
 			'success': True,
@@ -412,9 +395,9 @@ class OldLoadProposalHandler(BaseApiHandler):
 				'title': proposal.title,
 				'description': proposal.description,
 				'creator': {
-					'name': proposal.creator.name,
-					'surname': proposal.creator.surname,
-					'email': proposal.creator.email,
+					'name': proposal.creator.get().name,
+					'surname': proposal.creator.get().surname,
+					'email': proposal.creator.get().email,
 				},
 				'place': proposal.place,
 				'date': str(proposal.date),
@@ -462,13 +445,10 @@ class UpdateUser(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
+'''
 class LoadGroupMembersHandler(BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		values = {
 			'success': True,
@@ -476,6 +456,7 @@ class LoadGroupMembersHandler(BaseApiHandler):
 		}
 		time.sleep(1)
 		self.response.out.write(json.dumps(values))
+'''
 
 class CreateGroupHandler(BaseApiHandler):
 	def post(self):
@@ -495,7 +476,7 @@ class CreateGroupHandler(BaseApiHandler):
 		else:
 			group = models.Group.create(
 				name = name,
-				creator = self.beevote_user,
+				creator_key = self.beevote_user.key,
 				description = description,
 				img = img
 			)
@@ -523,19 +504,15 @@ class UpdateGroupHandler(BaseApiHandler):
 				'error': self.lang['errors']['image_too_big'],
 			}
 		else:
-			'''
-			group_key = db.Key.from_path('Group', long(group_id))
-			group = db.get(group_key)
-			'''
 			group = models.Group.get_from_id(long(group_id))
 			if name != None and name != group.name:
 				group.name = name
-				GroupNotification.create(GroupNotification.GROUP_NAME_CHANGE, group, self.beevote_user)
+				models.GroupNotification.create(models.GroupNotification.GROUP_NAME_CHANGE, group.key, self.beevote_user.key)
 			if description != None and description != group.description:
-				GroupNotification.create(GroupNotification.GROUP_DESCRIPTION_CHANGE, group, self.beevote_user)
+				models.GroupNotification.create(models.GroupNotification.GROUP_DESCRIPTION_CHANGE, group.key, self.beevote_user.key)
 				group.description = description
 			if img:
-				GroupNotification.create(GroupNotification.GROUP_IMAGE_CHANGE, group, self.beevote_user)
+				models.GroupNotification.create(models.GroupNotification.GROUP_IMAGE_CHANGE, group.key, self.beevote_user.key)
 				group.img = img
 			group.put()
 			models.GroupAccess.update_specific_access(group, self.beevote_user)
@@ -549,10 +526,6 @@ class UpdateGroupHandler(BaseApiHandler):
 class CreateTopicHandler(BaseApiHandler):
 	def post(self):
 		group_id = self.request.get('group_id')
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		
 		title = self.request.get('title')
@@ -583,8 +556,8 @@ class CreateTopicHandler(BaseApiHandler):
 			try:
 				topic = models.Topic.create(
 					title=title,
-					group=group,
-					creator=self.beevote_user,
+					group_key=group.key,
+					creator_key=self.beevote_user.key,
 					place=place,
 					date=date,
 					time=time,
@@ -593,7 +566,7 @@ class CreateTopicHandler(BaseApiHandler):
 					img=img
 				)
 				topic.put()
-				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic=topic)
+				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
 				values = {
@@ -610,10 +583,6 @@ class CreateTopicHandler(BaseApiHandler):
 
 class RemoveTopicHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		if not is_user_in_group(self.beevote_user, group):
 			values = {
@@ -622,14 +591,10 @@ class RemoveTopicHandler(BaseApiHandler):
 				'error': self.lang['errors']['group_authorization_denied'],
 			}
 		else:
-			'''
-			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-			topic = db.get(topic_key)
-			'''
 			topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 
 			if topic.creator == self.beevote_user.key:
-				topic.delete()
+				topic.key.delete()
 				# TODO implement topic removal notification?
 				values = {
 					'success': True,
@@ -656,7 +621,7 @@ class UpdateTopicHandler(BaseApiHandler):
 		else:
 			if img:
 				topic.img = img
-				TopicNotification.create(TopicNotification.TOPIC_IMAGE_CHANGE, topic)
+				models.TopicNotification.create(models.TopicNotification.TOPIC_IMAGE_CHANGE, topic_key=topic.key)
 			topic.put()
 			models.TopicAccess.update_specific_access(topic, self.beevote_user)
 			topic_id = topic.key.id()
@@ -776,10 +741,6 @@ class TopicNotificationsHandler(BaseApiHandler):
 
 class RemoveGroupHandler(BaseApiHandler):
 	def post(self, group_id):
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		if not is_user_in_group(self.beevote_user, group):
 			values = {
@@ -789,7 +750,7 @@ class RemoveGroupHandler(BaseApiHandler):
 			}
 		else:
 			if self.beevote_user.key in group.admins:
-				group.delete()
+				group.key.delete()
 				values = {
 					'success': True,
 				}
@@ -803,10 +764,6 @@ class RemoveGroupHandler(BaseApiHandler):
 
 class AddGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		if not is_user_in_group(self.beevote_user, group):
 			values = {
@@ -821,7 +778,7 @@ class AddGroupMemberHandler(BaseApiHandler):
 				beevote_user_key = beevote_user.key
 				if beevote_user_key not in group.members:
 					group.members.append(beevote_user_key)
-					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group, beevote_user=beevote_user)
+					models.GroupNotification.create(models.GroupNotification.GROUP_INVITATION, group.key, beevote_user_key=beevote_user.key)
 					group.put()
 					models.GroupAccess.update_specific_access(group, self.beevote_user)
 					values = {
@@ -843,10 +800,6 @@ class AddGroupMemberHandler(BaseApiHandler):
 
 class RemoveGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		if not is_user_in_group(self.beevote_user, group):
 			values = {
@@ -910,9 +863,9 @@ class CreateProposalHandler(BaseApiHandler):
 				topic = models.Topic.get_from_id(group_id, topic_id)
 				proposal = models.Proposal(
 					title=title,
-					topic=topic,
-					parent=topic,
-					creator=self.beevote_user,
+					topic=topic.key,
+					parent=topic.key,
+					creator=self.beevote_user.key,
 				)
 				if where != "":
 					proposal.place = where
@@ -924,7 +877,7 @@ class CreateProposalHandler(BaseApiHandler):
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 				proposal.description = description
 				proposal.put()
-				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic)
+				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				topic.put()
 				values = {
@@ -952,7 +905,7 @@ class RemoveProposalHandler(BaseApiHandler):
 		else:
 			proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
 			if proposal.creator == self.beevote_user.key:
-				proposal.delete()
+				proposal.key.delete()
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -982,7 +935,7 @@ class RemoveParticipationHandler(BaseApiHandler):
 			for proposal in proposals:
 				votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal.key, self.beevote_user.key)
 				for vote in votes:
-					vote.delete()
+					vote.key.delete()
 			time.sleep(0.25)
 			values = {
 				'success': True,
@@ -1024,7 +977,7 @@ class CreateBugReportHandler(BaseApiHandler):
 				device = device,
 				browser = browser,
 				description = description,
-				creator = self.beevote_user 
+				creator = self.beevote_user.key,
 			)
 			if occurrence != "":
 				report.occurrence = datetime.datetime.strptime(occurrence, "%d/%m/%Y").date()
@@ -1045,13 +998,13 @@ Your application has received the following bug report:
 - Description: {report.description}
 - Occurrence: {report.occurrence}
 - Creation: {report.creation}
-- Creator ID: {report.creator}
+- Creator ID: {creator_id}
 
 Follow this link to see all bug reports:
 {link}
 
 The BeeVote Team
-        """.format(report=report, link=self.request.host+"/admin/bug-reports"))
+        """.format(report=report, creator_id=report.creator.id(), link=self.request.host+"/admin/bug-reports"))
 			report_id = report.key.id()
 			values = {
 				'success': True,

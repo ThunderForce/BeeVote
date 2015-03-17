@@ -191,14 +191,7 @@ class HomeHandler(BaseHandler):
 			'topic_id': topic_id,
 		}
 		write_template(self.response, 'groups-layout.html',values)
-class EditUserHandler(BaseHandler):
-	def get(self):
-		# Use user_id to get user and put it in values
-		values = {
-			'user' : self.beevote_user,
-		}
-		write_template(self.response, 'edit-user.html', values)
-		
+
 class ProfileHandler(BaseHandler):
 	def get(self, user_id):
 		# Use user_id to get user and put it in values
@@ -207,10 +200,6 @@ class ProfileHandler(BaseHandler):
 
 class UserImageHandler(webapp2.RequestHandler):
 	def get(self, user_id):
-		'''
-		user_key = db.Key.from_path('BeeVoteUser', long(user_id))
-		user = db.get(user_key)
-		'''
 		user = models.BeeVoteUser.get_from_id(long(user_id))
 		if user == None:
 			self.error(404)
@@ -231,10 +220,6 @@ class UserImageHandler(webapp2.RequestHandler):
 
 class GroupImageHandler(webapp2.RequestHandler):
 	def get(self, group_id):
-		'''
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
-		'''
 		group = models.Group.get_from_id(long(group_id))
 		if group == None:
 			self.error(404)
@@ -255,10 +240,6 @@ class GroupImageHandler(webapp2.RequestHandler):
 
 class TopicImageHandler(webapp2.RequestHandler):
 	def get(self, group_id, topic_id):
-		'''
-		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-		topic = db.get(topic_key)
-		'''
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if topic == None:
 			self.error(404)
@@ -283,10 +264,7 @@ class RegistrationHandler(BaseHandler):
 		if self.beevote_user or models.get_beevote_user_from_google_id(user_id):
 			self.redirect("/")
 			return
-		values = {
-			'is_user_admin': users.is_current_user_admin()
-		}
-		write_template(self.response, 'registration-form.html', values)
+		write_template(self.response, 'registration-form.html', {})
 
 class ReportBugHandler(BaseHandler):
 	def get(self):
@@ -378,7 +356,6 @@ app = webapp2.WSGIApplication([
 	('/html/group/(.*)', html_strips.GroupHandler),
 	('/register', RegistrationHandler),
 	('/logout', LogoutHandler),
-	('/edit-user',EditUserHandler),
 ], debug=debug, config=config)
 
 app.error_handlers[401] = handle_401

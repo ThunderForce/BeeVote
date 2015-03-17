@@ -21,18 +21,13 @@ class BeeVoteUser(ndb.Model):
 		'''
 		beevote_user = memcache.get('beevoteuser_by_id_%s' % beevote_user_id)  # @UndefinedVariable
 		if beevote_user is None:
-			beevote_user_key = db.Key.from_path('BeeVoteUser', long(beevote_user_id))
-			beevote_user = db.get(beevote_user_key)
+			beevote_user = BeeVoteUser.get_by_id(beevote_user_id)
 			memcache.add('beevoteuser_by_id_%s' % beevote_user_id, beevote_user, time=600)  # @UndefinedVariable
 		return beevote_user
 		'''
 	
 	def get_groups_by_membership(self):
 		return Group.query(Group.members == self.key).fetch(1000)
-		'''
-		groups = db.GqlQuery("SELECT * FROM Group WHERE members = :1", self.key()).fetch(1000)
-		return groups
-		'''
 	
 	def get_topics_by_group_membership(self):
 		groups = self.get_groups_by_membership()
@@ -68,28 +63,26 @@ class Group(ndb.Model):
 		'''
 		group = memcache.get('group_by_id_%s' % group_id)  # @UndefinedVariable
 		if group is None:
-			group_key = db.Key.from_path('Group', long(group_id))
-			group = db.get(group_key)
+			group = Group.get_by_id(group_id)
 			memcache.add('group_by_id_%s' % group_id, group, time=600)  # @UndefinedVariable
 		return group
 		'''
 	
 	@staticmethod
-	def create(name, creator, description="", img=""):
+	def create(name, creator_key, description="", img=""):
 		group = Group(
 				name = name,
-				creator = creator,
+				creator = creator_key,
 				description = description,
 			)
 		if img != "":
 			group.img = img
-		group.members.append(creator.key)
-		group.admins.append(creator.key)
+		group.members.append(creator_key)
+		group.admins.append(creator_key)
 		return group
 	
 	def get_topics(self):
 		return Topic.query(Topic.group == self.key).fetch(1000)
-		# return db.GqlQuery('SELECT * FROM Topic WHERE group = :1', self).fetch(1000)
 	
 	def get_members(self):
 		return ndb.get_multi(self.members)
@@ -112,7 +105,6 @@ class Group(ndb.Model):
 			topic.delete()
 		memcache.delete('group_by_id_%s' % self.key.id())  # @UndefinedVariable
 		self.key.delete()
-		# db.Model.delete(self)
 
 	'''
 	def put(self):
@@ -141,8 +133,7 @@ class Topic(ndb.Model):
 		'''
 		topic = memcache.get('topic_by_path_%s_%s' % (group_id, topic_id))  # @UndefinedVariable
 		if topic is None:
-			topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-			topic = db.get(topic_key)
+			topic = ndb.Key('Group', group_id, 'Topic', topic_id).get()
 			memcache.add('topic_by_path_%s_%s' % (group_id, topic_id), topic, time=600)  # @UndefinedVariable
 		return topic
 		'''
@@ -151,16 +142,16 @@ class Topic(ndb.Model):
 	def get_for_groups(groups):
 		groups_keys = [g.key for g in groups]
 		all_topics = Topic.all().fetch(1000)
-		topics = [t for t in all_topics if t.group.key in groups_keys]
+		topics = [t for t in all_topics if t.group in groups_keys]
 		return topics
 	
 	@staticmethod
-	def create(title, group, creator, place="", date="", time="", deadline="", description="", img=""):
+	def create(title, group_key, creator_key, place="", date="", time="", deadline="", description="", img=""):
 		topic = Topic(
 			title=title,
-			group=group,
-			parent=group,
-			creator=creator,
+			group=group_key,
+			parent=group_key,
+			creator=creator_key,
 		)
 		topic.place = place
 		if date != "":
@@ -178,7 +169,6 @@ class Topic(ndb.Model):
 	
 	def get_proposals(self):
 		return Proposal.query(Proposal.topic == self.key).fetch(1000)
-		# return db.GqlQuery('SELECT * FROM Proposal WHERE topic = :1', self).fetch(1000)
 	
 	def get_notifications_for_user(self, beevote_user):
 		last_access = TopicAccess.get_specific_access(self, beevote_user)
@@ -191,7 +181,6 @@ class Topic(ndb.Model):
 			proposal.delete()
 		# memcache.delete('topic_by_path_%s_%s' % (self.group.key().id(), self.key().id()))  # @UndefinedVariable
 		self.key.delete()
-		# db.Model.delete(self)
 
 	'''
 	def put(self):
@@ -226,15 +215,13 @@ class Proposal(ndb.Model):
 		'''
 		proposal = memcache.get('proposal_by_path_%s_%s_%s' % (group_id, topic_id, proposal_id))  # @UndefinedVariable
 		if proposal is None:
-			proposal_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id))
-			proposal = db.get(proposal_key)
+			proposal = ndb.Key('Group', group_id, 'Topic', topic_id, 'Proposal', proposal_id).get()
 			memcache.add('proposal_by_path_%s_%s_%s' % (group_id, topic_id, proposal_id), proposal, time=600)  # @UndefinedVariable
 		return proposal
 		'''
 	
 	def get_votes(self):
 		return Vote.query(Vote.proposal == self.key).fetch(1000)
-		# return db.GqlQuery('SELECT * FROM Vote WHERE proposal = :1', self).fetch(1000)
 	
 	'''
 	def put(self):
@@ -270,7 +257,7 @@ class GroupAccess(ndb.Model):
 	def update_specific_access(group, beevote_user):
 		access = ndb.gql("SELECT * FROM GroupAccess WHERE group = :1 AND beevote_user = :2 ORDER BY timestamp DESC", group.key, beevote_user.key).get()
 		if not access:
-			access = GroupAccess(beevote_user=beevote_user, group=group)
+			access = GroupAccess(beevote_user=beevote_user.key, group=group.key)
 		access.timestamp = datetime.datetime.now()
 		access.put()
 
@@ -286,7 +273,7 @@ class TopicAccess(ndb.Model):
 	def update_specific_access(topic, beevote_user):
 		access = ndb.gql("SELECT * FROM TopicAccess WHERE topic = :1 AND beevote_user = :2 ORDER BY timestamp DESC", topic.key, beevote_user.key).get()
 		if not access:
-			access = TopicAccess(beevote_user=beevote_user, topic=topic)
+			access = TopicAccess(beevote_user=beevote_user.key, topic=topic.key)
 		access.timestamp = datetime.datetime.now()
 		access.put()
 
@@ -334,7 +321,7 @@ class GroupNotification(ndb.Model):
 		
 		notifications_by_group = {}
 		for notif in groups_notifications:
-			group_id = notif.topic.group.key.id()
+			group_id = notif.topic.get().group.key.id()
 			if not group_id in notifications_by_group.keys():
 				notifications_by_group[group_id] = {'group_notifications': []}
 			notifications_by_group[group_id]['group_notifications'].append(notif)
@@ -355,16 +342,16 @@ class GroupNotification(ndb.Model):
 		else:
 			notifications = ndb.gql("SELECT * FROM GroupNotification WHERE timestamp > :1", timestamp).fetch(1000)
 		if beevote_user:
-			return [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key == n.beevote_user.key)]
+			return [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key == n.beevote_user)]
 		else:
 			return notifications
 	
 	@staticmethod
-	def create(notification_code, group, beevote_user=None):
+	def create(notification_code, group_key, beevote_user_key=None):
 		notification = GroupNotification(
 			notification_code=notification_code,
-			group=group,
-			beevote_user=beevote_user
+			group=group_key,
+			beevote_user=beevote_user_key
 		)
 		notification.put()
 
@@ -418,7 +405,7 @@ class TopicNotification(ndb.Model):
 		notifications_by_group = {}
 		for notif in topics_notifications:
 			group_id = notif.topic.get().group.id()
-			topic_id = notif.topic.id()
+			topic_id = notif.topic.get().id()
 			if not group_id in notifications_by_group.keys():
 				notifications_by_group[group_id] = {}
 			if not topic_id in notifications_by_group[group_id].keys():
@@ -435,16 +422,16 @@ class TopicNotification(ndb.Model):
 		else:
 			notifications = ndb.gql("SELECT * FROM TopicNotification WHERE timestamp > :1", timestamp).fetch(1000)
 		if beevote_user:
-			return [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key == n.beevote_user.key)]
+			return [n for n in notifications if not n.beevote_user or (beevote_user and beevote_user.key == n.beevote_user)]
 		else:
 			return notifications
 	
 	@staticmethod
-	def create(notification_code, topic, beevote_user=None):
+	def create(notification_code, topic_key, beevote_user_key=None):
 		notification = TopicNotification(
 			notification_code=notification_code,
-			topic=topic,
-			beevote_user=beevote_user
+			topic=topic_key,
+			beevote_user=beevote_user_key
 		)
 		notification.put()
 		
