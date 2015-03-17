@@ -44,6 +44,57 @@ function initialize_proposal_map(id, place) {
 		$('#map_canvas_proposal[data-proposal="'+id+'"]').html('<p><span class="mdi-communication-location-off" style="margin-left:5px;"></span> Mappa non disponibile</p>');
 	}
 };
+
+function initialize_topic_map(id, place) {
+	if (typeof google != "undefined") {
+		var geocoder = new google.maps.Geocoder();
+		var address_topic = '{{ topic.place }}';
+
+
+	    geocoder.geocode( { 'address': address_topic}, 
+	    	function(results, status) {
+
+		      if (status == google.maps.GeocoderStatus.OK) {
+		        var latitude = results[0].geometry.location.lat();
+		        var longitude = results[0].geometry.location.lng();
+
+
+		        initialize_topic_place(latitude,longitude);
+
+		       }
+		      else {
+		       	$('#map_canvas_topic').css('display', 'none');
+		       } 
+			}); 
+
+		function initialize_topic_place(latitude,longitude) {
+		        var latlng = new google.maps.LatLng(latitude,longitude);
+
+		        var myOptions = {
+		          zoom: 14,
+		          center: latlng,
+		          mapTypeId: google.maps.MapTypeId.ROADMAP,
+		          mapTypeControl: false
+		        };
+		        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
+
+		        var marker = new google.maps.Marker({
+		          position: latlng, 
+		          map: map, 
+		            title:"{{ topic.place }}"
+		        });
+		        window.setTimeout(function() {
+					google.maps.event.trigger(map, 'resize');
+					map.panTo(marker.getPosition());
+				}, 250);
+		}
+	}
+	else {
+		$('#map_canvas_topic').css('height', 'auto');
+		$('#map_canvas_topic').html('<p><span class="mdi-communication-location-off" style="margin-left:10px;"></span> Mappa non disponibile</p>');
+	}
+};
+
 $(document).ready(function() {
 	// popup edit topic
 	$('form#updateInfoTopic-form').attr('action', '/api/group/{{topic.parent.key.id }}/topic/{{topic.key.id}}/update');
@@ -82,6 +133,19 @@ $(document).ready(function() {
 		}
 	});
 
+	$("div.topic-well").on("click", function() {
+		var topic_id = $(this).data("topic");
+		var is_open = $("div.topic-details[data-topic='" + topic_id +"']").is(":visible");
+		$("div.topic-details[data-topic='" + topic_id +"']").toggle({duration: 400});
+		initialize_topic_map(topic_id, $(this).data("place"));
+		/*
+		if(is_open){
+			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-down"></span>');
+		}else{
+			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-up"></span>');
+		}
+		*/
+	});
 
 	$("div.proposal-well").on("click", function() {
 		var proposal_id = $(this).data("proposal");
@@ -349,49 +413,6 @@ $(document).ready(function() {
 	
 	clean_topic_notifications("{{ topic.group.key.id }}", "{{ topic.key.id }}");
 });
-
-if (typeof google != "undefined") {
-	var geocoder = new google.maps.Geocoder();
-	var address_topic = '{{ topic.place }}';
-
-
-    geocoder.geocode( { 'address': address_topic}, function(results, status) {
-
-      if (status == google.maps.GeocoderStatus.OK) {
-        var latitude = results[0].geometry.location.lat();
-        var longitude = results[0].geometry.location.lng();
-
-
-        initialize_topic_place(latitude,longitude);
-
-       }
-      else {
-       	$('#map_canvas_topic').css('display', 'none');
-       } 
-    }); 
-
-	function initialize_topic_place(latitude,longitude) {
-	        var latlng = new google.maps.LatLng(latitude,longitude);
-
-	        var myOptions = {
-	          zoom: 14,
-	          center: latlng,
-	          mapTypeId: google.maps.MapTypeId.ROADMAP,
-	          mapTypeControl: false
-	        };
-	        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
-
-	        var marker = new google.maps.Marker({
-	          position: latlng, 
-	          map: map, 
-	            title:"{{ topic.place }}"
-	        }); 
-	}
-}
-else {
-	$('#map_canvas_topic').css('height', 'auto');
-	$('#map_canvas_topic').html('<p><span class="mdi-communication-location-off" style="margin-left:10px;"></span> Mappa non disponibile</p>');
-}
 </script>	
 
 
@@ -448,7 +469,7 @@ else {
 <button type="button" class="btn btn-raised mdi-hardware-keyboard-arrow-left" id="back-button" style="background-color:#00A65E;margin-left: 10px;"></button>
 <div class="list-group">
 	<div class="list-group-item">
-		<div class="well well-lg proposal-well" color="blue" style="padding: 10px 0px 0px 25px;">
+		<div class="well well-lg topic-well" data-topic="{{ topic.key.id }}" data-place="{{ topic.place }}" color="blue" style="cursor: pointer;padding: 10px 0px 0px 25px;">
 			<div class="row">
 				<div id="topic-img-well" class="row-picture" style="">
 					{% if topic.img != None %}
@@ -466,15 +487,6 @@ else {
 							{{ topic.title }}
 						</h2>
 						<p style="font-size:15px;margin:0;"><span class="mdi-action-account-box" style="margin-left:10px;"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}</p>
-						{% if not topic.formatted_date %}
-						{% if not topic.expired %}
-						{% if not topic.time_before_deadline %}
-						{% if topic.description %}
-						<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
-						{% endif %}
-						{% endif %}
-						{% endif %}
-						{% endif %}
 						{% if topic.formatted_date %}
 						<p style="font-size:15px;margin:0;"><span class="mdi-editor-insert-invitation" style="margin-left:10px;"></span>&nbsp;{{ topic.formatted_date }}</p>
 						{% endif %}
@@ -508,15 +520,33 @@ else {
 					</div>
 				</div>
 			</div>
+
+			<!-- Old topic-details
 			<div class="modal-footer" style="margin-right: 22px;margin-left: -5px;margin-top: 5px;border-top: none;padding: 0px;text-align: left">
 				{% if topic.description %}
 				<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
 				{% endif %}
 				{% if topic.place %}
-				<div id="map_canvas_topic" style="width:97%; height:200px; margin-top:10px;"></div>
+				<div id="map_canvas_topic" style="width:97%; height:200px; margin-top:10px;margin-bottom: 14px;margin-left: 10px;"></div>
 				{% endif %}
-
 			</div>
+			-->
+
+			<!-- Topic Accordion Details -->
+			<span class="topic-details-message" data-topic="{{ topic.key.id }}" style="display: none;"><small> (Loading...)</small></span>
+
+			<div class="topic-details modal-footer" data-topic="{{ topic.key.id }}" style="margin-right: 22px;margin-left: -5px;margin-top: 5px;border-top: none;padding: 0px;text-align: left;display: none;">
+				{% if topic.description %}
+				<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
+				{% else%}
+				<span class="mdi-editor-format-align-left" style="margin-left:8px;"></span>{{lang.no_description}}
+				{% endif %}
+				{% if topic.place %}
+				<div class="topic-map" id="map_canvas_topic" data-topic="{{ topic.key.id }}" style="width:97%; height:200px; margin-top:10px;margin-bottom: 14px;margin-left: 10px;"></div>
+				{% endif %}
+			</div>
+			<!-- END Topic Accordion Details -->
+
 			<div class="modal-footer" style="margin-top: -15px;border-top: none;padding: 0px 0px 6px 0px;text-align: right">
 				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" style="margin-bottom: 0px;height: 28px;"></button>
 
@@ -565,6 +595,8 @@ else {
 						{% if proposal.time %}
 						<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
 						{% endif %}
+						
+
 						<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 						<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
 							{% if proposal.place %}
@@ -578,6 +610,8 @@ else {
 							<span class="mdi-editor-format-align-left" style="margin-left:5px;"></span>{{lang.no_description}}
 							{% endif %}
 						</div>
+
+
 					</div>	
 					<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="vote-button" style="padding:5px 1px 4px 5px;position:absolute;top:-5px;right:20px;background-color:#2196F3;">
 						<b style="font-size:11px;">{{lang.votes}}</b>
