@@ -48,8 +48,8 @@ lang = {
 		},
 		'topic_overview': {
 			'deadline_reach':"This topic has reached its deadline: you cannot vote its proposals anymore.",
-			'not_partecipating':"You're not participating",
-			'partecipating':"You are participating",
+			'not_partecipating':"I don't partecipate",
+			'partecipating':"I participate",
 			'no_proposal':"This topic has no proposals yet",
 		},
 		'buttons':{
@@ -194,8 +194,8 @@ lang = {
 		},
 		'topic_overview': {
 			'deadline_reach':"Questa discussione è scaduta: non puoi più votare le sue proposte",
-			'not_partecipating':"Non stai partecipando",
-			'partecipating':"Stai partecipando",
+			'not_partecipating':"Non partecipo",
+			'partecipating':"Partecipo",
 			'no_proposal':"Questa discussione non ha ancora proposte ",
 		},
 		'group_members':{

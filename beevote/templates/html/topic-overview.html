@@ -465,10 +465,15 @@ else {
 						<h2 id="topic-name-well">
 							{{ topic.title }}
 						</h2>
-						<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
 						<p style="font-size:15px;margin:0;"><span class="mdi-action-account-box" style="margin-left:10px;"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}</p>
-						{% if topic.place != "" %}
-						<p style="font-size:15px;margin:0;"><span class="mdi-communication-location-on" style="margin-left:10px;"></span>&nbsp;{{ topic.place }}</p>
+						{% if not topic.formatted_date %}
+						{% if not topic.expired %}
+						{% if not topic.time_before_deadline %}
+						{% if topic.description %}
+						<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
+						{% endif %}
+						{% endif %}
+						{% endif %}
 						{% endif %}
 						{% if topic.formatted_date %}
 						<p style="font-size:15px;margin:0;"><span class="mdi-editor-insert-invitation" style="margin-left:10px;"></span>&nbsp;{{ topic.formatted_date }}</p>
@@ -497,22 +502,32 @@ else {
 						</p>
 						{% endif %}
 						{% endif %}
-						{% if topic.place %}
-						<div id="map_canvas_topic" style="width:97%; height:200px; margin-top:10px;"></div>
+						{% if topic.place != "" %}
+						<p style="font-size:15px;margin:0;"><span class="mdi-communication-location-on" style="margin-left:10px;"></span>&nbsp;{{ topic.place }}</p>
 						{% endif %}
 					</div>
 				</div>
-				<div style="float:right;margin-right:25px;">
-				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" ></button>
+			</div>
+			<div class="modal-footer" style="margin-right: 22px;margin-left: -5px;margin-top: 5px;border-top: none;padding: 0px;text-align: left">
+				{% if topic.description %}
+				<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
+				{% endif %}
+				{% if topic.place %}
+				<div id="map_canvas_topic" style="width:97%; height:200px; margin-top:10px;"></div>
+				{% endif %}
 
-				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-toggle-check-box {% else %} btn-warning mdi-toggle-check-box-outline-blank {% endif %} {% if topic.expired %} disabled {% endif %}" style="font-size:11px;">&nbsp;<span id="participation-text">
+			</div>
+			<div class="modal-footer" style="margin-top: -15px;border-top: none;padding: 0px 0px 6px 0px;text-align: right">
+				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" style="margin-bottom: 0px;height: 28px;"></button>
+
+				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-action-thumb-up {% else %} btn-warning mdi-action-thumb-down{% endif %} {% if topic.expired %} disabled {% endif %}" style="font-size:11px;margin-right: 6px;{% if topic.participation %} background-color: #0F9D58; {% else %} background-color: #DB4437; {% endif %}">&nbsp;<span id="participation-text">
 					{% if not topic.participation %}
 					{{lang.topic_overview.not_partecipating}}
 					{%else%}
 					{{lang.topic_overview.partecipating}}
 					{% endif %}
-				</span></button>
-				</div>
+				</span>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -575,7 +590,6 @@ else {
 					<span class="mdi-hardware-keyboard-arrow-down"></span>
 				</div>				
 			</div>
-
 		</div>
 	</div>
 	{% endfor %}
