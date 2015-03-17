@@ -257,6 +257,13 @@ $(document).ready(function() {
 			e.cancelBubble = true;
 		}
 	});
+	$('.topic-map').on('click', function(e) {
+	    if (e.stopPropagation) {
+			e.stopPropagation();
+		} else {
+			e.cancelBubble = true;
+		}
+	});
 
 /* Prova per non propagare il click quando clicco sul voto*/
 	$('button#vote-button').on('click', function(e) {
@@ -429,6 +436,15 @@ $(document).ready(function() {
 	div#topic-row-content-well{
 	    	margin-top: 10px;
 	}
+	p.topic-attribute{
+    	font-size:15px;
+    	margin:0;
+    }
+    div#topic-footer{
+    	border-top: none;
+    	padding: 0px 0px 6px 0px;
+    	text-align: right;
+    }
 
 	@media screen and (max-width: 768px) {
 	    h2#topic-name-well{
@@ -449,10 +465,16 @@ $(document).ready(function() {
 	    h2#proposals-head {
 	    	margin-top: -20px;
 	    }
+	    h2#topic-name-well{
+	    	margin-top: 14px;
+	    	margin-bottom: 2px;
+	    }
+	    
 	}
 	@media screen and (min-width: 768px) {
 		div#topic-col-dx-well{
 		    	margin-left: -12px;
+		    	padding-right: 0px;
 		    }
 	    div#topic-img-well{
 		    width: 33%;
@@ -462,6 +484,12 @@ $(document).ready(function() {
 	    }
 	    div#topic-row-content-well{
 	    	width: 66%;
+	    }
+	    p.topic-attribute{
+	    	margin-left: 10px;
+	    }
+	    div#topic-footer{
+	    	margin-right: 19px;
 	    }
 	}
 </style>
@@ -478,28 +506,29 @@ $(document).ready(function() {
 					<img id="topic_image" src="/static/images/topic-icon.png" style="width:200px;height:100%;">
 					{% endif %}
 				</div>
-				<!-- Edit Button -->
-				<button id="edit-topic" type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfoTopic" title="{{lang.buttons.edit_topic_title}}" style="padding:8px;position:absolute;top: -10px;right: 15px;z-index:1;"></button>
-				<!-- /Edit Button -->
 				<div id="topic-row-content-well" class="row-content">
 					<div id="topic-col-dx-well" class="col-lg-11">
 						<h2 id="topic-name-well">
 							{{ topic.title }}
 						</h2>
-						<p style="font-size:15px;margin:0;"><span class="mdi-action-account-box" style="margin-left:10px;"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}</p>
+						<p class="topic-attribute"><span class="mdi-action-account-box"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}</p>
+						
+						<p class="topic-attribute">
 						{% if topic.formatted_date %}
-						<p style="font-size:15px;margin:0;"><span class="mdi-editor-insert-invitation" style="margin-left:10px;"></span>&nbsp;{{ topic.formatted_date }}</p>
+						<span class="mdi-editor-insert-invitation"></span>&nbsp;{{ topic.formatted_date }}
 						{% endif %}
 						{% if topic.time %}
-						<p style="font-size:15px;margin:0;"><span class="mdi-action-query-builder" style="margin-left:10px;"></span>&nbsp;{{ topic.time }}</p>
+						<span class="mdi-action-query-builder"></span>&nbsp;{{ topic.time }}
 						{% endif %}
+						</p>						
+						
 						{% if topic.expired %}
 						<br>
-						<p style="font-size:15px;margin:0;">{{lang.topic_overview.deadline_reach}}</p>
+						<p class="topic-attribute">{{lang.topic_overview.deadline_reach}}</p>
 						{% else %}
 						{% if topic.time_before_deadline %}
-						<p style="font-size:15px;margin:0;">
-							<span class="mdi-notification-event-busy" style="margin-left:10px;"></span>&nbsp;
+						<p>
+							<span class="mdi-notification-event-busy"></span>&nbsp;
 							<span>
 								{% if topic.time_before_deadline.days != 0 %}
 								{{ topic.time_before_deadline.days }} {{lang.days}}
@@ -515,7 +544,7 @@ $(document).ready(function() {
 						{% endif %}
 						{% endif %}
 						{% if topic.place != "" %}
-						<p style="font-size:15px;margin:0;"><span class="mdi-communication-location-on" style="margin-left:10px;"></span>&nbsp;{{ topic.place }}</p>
+						<p class="topic-attribute"><span class="mdi-communication-location-on"></span>&nbsp;{{ topic.place }}</p>
 						{% endif %}
 					</div>
 				</div>
@@ -547,10 +576,15 @@ $(document).ready(function() {
 			</div>
 			<!-- END Topic Accordion Details -->
 
-			<div class="modal-footer" style="margin-top: -8px;border-top: none;padding: 0px 0px 6px 0px;text-align: right">
-				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" style="margin-bottom: 0px;height: 28px;"></button>
+			<div id="topic-footer" class="modal-footer">
 
-				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-action-thumb-up {% else %} btn-warning mdi-action-thumb-down{% endif %} {% if topic.expired %} disabled {% endif %}" style="font-size:11px;margin-right: 6px;{% if topic.participation %} background-color: #0F9D58; {% else %} background-color: #DB4437; {% endif %}">&nbsp;<span id="participation-text">
+				<!-- Edit Button -->
+				<button id="edit-topic" type="button" class="btn btn-success btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfoTopic" title="{{lang.buttons.edit_topic_title}}" style="margin-bottom: 0px;background-color: #0F9D58;padding:7px;z-index:1;"></button>
+				<!-- /Edit Button -->
+
+				<button  title="{{lang.buttons.participants_title}}" data-toggle="modal" data-target="#participantsList" data-proposal="{{ topic.key.id }}" id="participants-button" class="btn btn-success btn-raised mdi-action-account-child" style="padding: 8px 14px;height: 28px;"></button>
+
+				<button id="topic-participation" title="{% if topic.participation %}{{lang.buttons.not_partecipating_title}}{% else %}{{lang.buttons.partecipating_title}}{% endif %}" class="btn btn-raised {% if topic.participation %} btn-success mdi-action-thumb-up {% else %} btn-warning mdi-action-thumb-down{% endif %} {% if topic.expired %} disabled {% endif %}" style="padding: 8px;font-size:11px;margin-right: 8px;{% if topic.participation %} background-color: #0F9D58; {% else %} background-color: #DB4437; {% endif %}">&nbsp;<span id="participation-text">
 					{% if not topic.participation %}
 					{{lang.topic_overview.not_partecipating}}
 					{%else%}
