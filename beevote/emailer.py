@@ -28,7 +28,7 @@ def send_registration_notification(beevote_user, link):
         to=beevote_user.email,
         subject="BeeVote registration request accepted",
         body="""
-Dear {beevote_user.name} {beevote_user.surname},
+Dear {beevote_user.name},
 
 Your registration request has been accepted: now you can access BeeVote features!
 
@@ -44,3 +44,7 @@ Details of registration:
 
 The BeeVote Team
     """.format(beevote_user=beevote_user, link=link))
+
+def send_topic_creation_notification(beevote_users, topic, link):
+    # TODO
+    pass

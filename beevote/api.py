@@ -574,6 +574,12 @@ class CreateTopicHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic=topic)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
+				'''
+				emailer.send_topic_creation_notification(
+					beevote_users=group.get_members(),
+					topic=topic,
+					link=self.request.host+"/group/"+group.key().id()+"/topic/"+topic.key().id())
+				'''
 				values = {
 					'success': True,
 					'group_id': group_id,
