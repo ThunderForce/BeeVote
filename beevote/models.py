@@ -405,7 +405,7 @@ class TopicNotification(ndb.Model):
 		notifications_by_group = {}
 		for notif in topics_notifications:
 			group_id = notif.topic.get().group.id()
-			topic_id = notif.topic.get().id()
+			topic_id = notif.topic.id()
 			if not group_id in notifications_by_group.keys():
 				notifications_by_group[group_id] = {}
 			if not topic_id in notifications_by_group[group_id].keys():

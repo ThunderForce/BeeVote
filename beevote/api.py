@@ -445,18 +445,16 @@ class UpdateUser(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-'''
 class LoadGroupMembersHandler(BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		group = models.Group.get_from_id(long(group_id))
 		values = {
 			'success': True,
-			'members': group.members,
+			'members': group.get_members(),
 		}
 		time.sleep(1)
 		self.response.out.write(json.dumps(values))
-'''
 
 class CreateGroupHandler(BaseApiHandler):
 	def post(self):
