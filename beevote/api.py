@@ -18,6 +18,7 @@
 import collections
 import datetime
 import json
+import logging
 import time
 
 from google.appengine.api import mail
@@ -25,13 +26,12 @@ from google.appengine.api import users, memcache
 from google.appengine.ext import ndb
 import webapp2
 
+import constants
 import language
 import models
 
-import constants
 
 # Start of functions
-
 # TEMPORARY
 def is_user_in_group(beevote_user, group):
 	if group.members == [] or beevote_user.key in group.members:
@@ -87,7 +87,7 @@ def fetch_topic(topic, arguments):
 			('time', str(topic.time) if topic.time else None),
 			('deadline', str(topic.deadline) if topic.deadline else None),
 			('creator', topic.creator.id()),
-			('group_id', topic.key.parent().id())
+			('group_id', topic.group.id())
 		]))
 	])
 	if 'evaluate_deadlines' in arguments and arguments['evaluate_deadlines'] and topic.deadline != None:
@@ -151,7 +151,7 @@ def fetch_votes(votes, arguments):
 
 def fetch_vote(vote, arguments):
 	vote_dict = collections.OrderedDict([
-		('creator', fetch_user(vote.creator, arguments))
+		('creator', fetch_user(vote.creator.get(), arguments))
 	])
 	return vote_dict
 
@@ -885,6 +885,7 @@ class CreateProposalHandler(BaseApiHandler):
 					'proposal_id': proposal.key.id(),
 				}
 			except Exception as exc:
+				logging.exception("Error during topic creation")
 				values = {
 					'success': False,
 					'error': exc.args[0]

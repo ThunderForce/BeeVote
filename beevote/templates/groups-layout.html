@@ -508,8 +508,8 @@
 					<div class="modal-body">
 						<form action="/api/create-proposal" method="post" class="form-horizontal" id="proposal-form">
 							<fieldset>
-								<input type="hidden" id="proposal_popup_group_id" name="group_id" value="{{ topic.parent.key.id }}">
-								<input type="hidden" id="proposal_popup_topic_id" name="topic_id" value="{{ topic.key.id }}">
+								<input type="hidden" id="proposal_popup_group_id" name="group_id" value="{{ group_id }}">
+								<input type="hidden" id="proposal_popup_topic_id" name="topic_id" value="{{ topic_id }}">
 								<div class="form-group">
 									<label for="proposal_title" class="col-lg-2 control-label">{{lang.title}}: </label>
 									<div class="col-lg-10">

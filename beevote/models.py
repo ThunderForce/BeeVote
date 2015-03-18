@@ -59,7 +59,7 @@ class Group(ndb.Model):
 	
 	@staticmethod
 	def get_from_id(group_id):
-		return Group.get_by_id(group_id)
+		return Group.get_by_id(long(group_id))
 		'''
 		group = memcache.get('group_by_id_%s' % group_id)  # @UndefinedVariable
 		if group is None:
@@ -129,7 +129,7 @@ class Topic(ndb.Model):
 	
 	@staticmethod
 	def get_from_id(group_id, topic_id):
-		return ndb.Key('Group', group_id, 'Topic', topic_id).get()
+		return ndb.Key('Group', long(group_id), 'Topic', long(topic_id)).get()
 		'''
 		topic = memcache.get('topic_by_path_%s_%s' % (group_id, topic_id))  # @UndefinedVariable
 		if topic is None:
@@ -211,7 +211,7 @@ class Proposal(ndb.Model):
 	
 	@staticmethod
 	def get_from_id(group_id, topic_id, proposal_id):
-		return ndb.Key('Group', group_id, 'Topic', topic_id, 'Proposal', proposal_id).get()
+		return ndb.Key('Group', long(group_id), 'Topic', long(topic_id), 'Proposal', long(proposal_id)).get()
 		'''
 		proposal = memcache.get('proposal_by_path_%s_%s_%s' % (group_id, topic_id, proposal_id))  # @UndefinedVariable
 		if proposal is None:
@@ -427,11 +427,10 @@ class TopicNotification(ndb.Model):
 			return notifications
 	
 	@staticmethod
-	def create(notification_code, topic_key, beevote_user_key=None):
+	def create(notification_code, topic_key):
 		notification = TopicNotification(
 			notification_code=notification_code,
 			topic=topic_key,
-			beevote_user=beevote_user_key
 		)
 		notification.put()
 		

@@ -206,7 +206,7 @@ class TopicHandler(BaseHandler):
 		group = models.Group.get_from_id(long(group_id))
 		if not is_user_in_group(self.beevote_user, group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
-		topic = models.Topic.get_from_id(group_id, topic_id)
+		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if (not topic):
 			self.abort(404, detail="This topic does not exist.")
 		if(topic.date != None):
@@ -230,10 +230,9 @@ class TopicHandler(BaseHandler):
 				proposal.already_voted = True
 			else:
 				proposal.already_voted = False
-			proposal.vote_number = len(proposal.vote_set.fetch(1000))
+			proposal.vote_number = len(proposal.get_votes())
 			if(proposal.date != None):
 				proposal.formatted_date = proposal.date.strftime("%A   %d %B %Y")
-
 		
 		# Sorting the proposal according to vote number
 		topic.proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
