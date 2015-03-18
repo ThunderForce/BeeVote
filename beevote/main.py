@@ -17,9 +17,7 @@
 
 import datetime
 import os
-import time
 
-from google.appengine.api import mail
 from google.appengine.api import users
 from google.appengine.api.images import Image
 from google.appengine.ext import db

@@ -20,12 +20,12 @@ import datetime
 import json
 import time
 
-from google.appengine.api import mail
 from google.appengine.api import users, memcache
 from google.appengine.ext import db
 import webapp2
 
 import constants
+import emailer
 import language
 from models import GroupNotification, TopicNotification
 import models
@@ -992,26 +992,7 @@ class CreateBugReportHandler(BaseApiHandler):
 					raise Exception(self.lang['errors']['year_before_1900'])
 			report.put()
 			report._id = report.key().id()
-			mail.send_mail_to_admins(
-					sender="BeeVote Bug Report <bug-report@beevote.appspotmail.com>",
-					subject="BeeVote bug report received",
-					body="""
-Dear BeeVote admin,
-
-Your application has received the following bug report:
-- ID: {report._id}
-- Device: {report.device}
-- Browser: {report.browser}
-- Description: {report.description}
-- Occurrence: {report.occurrence}
-- Creation: {report.creation}
-- Creator ID: {report.creator}
-
-Follow this link to see all bug reports:
-{link}
-
-The BeeVote Team
-        """.format(report=report, link=self.request.host+"/admin/bug-reports"))
+			emailer.send_bug_report_to_admins(report, self.request.host+"/admin/bug-reports")
 			report_id = report.key().id()
 			values = {
 				'success': True,
@@ -1057,27 +1038,7 @@ class RegistrationHandler(BaseApiHandler):
 			
 			beevote_user._id = beevote_user.key().id()
 			
-			mail.send_mail(
-				sender='BeeVote Registration Notifier <registration-accepted@beevote.appspotmail.com>',
-				to=email,
-				subject="BeeVote registration request accepted",
-				body="""
-Dear {beevote_user.name} {beevote_user.surname},
-
-Your registration request has been accepted: now you can access BeeVote features!
-
-Follow this link to start:
-{link}
-
-Details of registration:
-- BeeVote User ID: {beevote_user._id}
-- Google User ID: {beevote_user.user_id}
-- User email: {beevote_user.email}
-- Name: {beevote_user.name}
-- Surname: {beevote_user.surname}
-
-The BeeVote Team
-	""".format(beevote_user=beevote_user, link=self.request.host))
+			emailer.send_registration_notification(beevote_user, self.request.host)
 			
 			values = {
 				'success': True
