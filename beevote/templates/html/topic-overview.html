@@ -214,7 +214,7 @@ $(document).ready(function() {
 		}
 	});
 
-	$('#topic-participation').on('click', function() {
+	$('#topic-participation').on('click', function(e) {
 		$(this).toggleClass('btn-success btn-warning mdi-toggle-check-box mdi-toggle-check-box-outline-blank');
 		$(this).addClass('disabled')
 		$('span#participation-text').html('Changing...');
@@ -247,8 +247,21 @@ $(document).ready(function() {
 				}
 			})
 		}
+		if (e.stopPropagation) {
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
 	});
 
+	$('button#edit-topic').on('click', function(e) {
+		$('#updateInfoTopic').modal('show');
+		if (e.stopPropagation) {
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
+	});
 
 	$('.proposal-map').on('click', function(e) {
 	    if (e.stopPropagation) {
@@ -389,6 +402,11 @@ $(document).ready(function() {
 
 			}
 		});
+		if (e.stopPropagation) {
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
 	});
 
 	$('#updateInfoTopic-form').ajaxForm({
