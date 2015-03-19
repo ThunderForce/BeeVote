@@ -263,6 +263,15 @@ $(document).ready(function() {
 		}
 	});
 
+	$('button#notification-topic').on('click', function(e) {
+		$('#notificationTopic').modal('show');
+		if (e.stopPropagation) {
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
+	});
+
 	$('.proposal-map').on('click', function(e) {
 	    if (e.stopPropagation) {
 			e.stopPropagation();
@@ -595,6 +604,9 @@ $(document).ready(function() {
 			<!-- END Topic Accordion Details -->
 
 			<div id="topic-footer" class="modal-footer">
+				<!-- NOTIFICATION Button -->
+				<button id="notification-topic" title="{{lang.buttons.notification_topic_title}}" type="button" class="btn btn-success btn-raised mdi-social-notifications" data-toggle="modal" data-target="#notificationTopic"  style="margin-bottom: 0px;background-color: #0F9D58;padding:7px;z-index:1;margin-right: 2px;"></button>
+				<!-- /NOTIFICATION Button -->
 
 				<!-- Edit Button -->
 				<button id="edit-topic" type="button" class="btn btn-success btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfoTopic" title="{{lang.buttons.edit_topic_title}}" style="margin-bottom: 0px;background-color: #0F9D58;padding:7px;z-index:1;"></button>

@@ -30,6 +30,11 @@ lang = {
 		'deadline_explain':"Fill this field if you want to set an expire time for the topic",
 		'italian':"italian",
 		'english':"english",
+		'notification_emails_settings': {
+			'topic': {
+				'proposal_creation': "Notification email for proposal creation",
+			},
+		},
 		'feedback_alert': {
 			'banner_1':'We would like to know what you think about Beevote! Click ',
 			'banner_2':'here',
@@ -181,6 +186,11 @@ lang = {
 		'detail_message':"Aggiungi i dettagli che vuoi far sapere agli altri ",
 		'italian':"italiano",
 		'english':"inglese",
+		'notification_emails_settings': {
+			'topic': {
+				'proposal_creation': "Email di notifica per creazione proposta",
+			},
+		},
 		'feedback_alert': {
 			'banner_1':'Vorremmo sapere cosa ne pensi di Beevote! Clicca ',
 			'banner_2':'qui',
