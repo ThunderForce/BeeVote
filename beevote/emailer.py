@@ -46,5 +46,19 @@ The BeeVote Team
     """.format(beevote_user=beevote_user, link=link))
 
 def send_topic_creation_notification(beevote_users, topic, link):
-    # TODO
-    pass
+    mail.send_mail(
+        sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
+        to=(u.email for u in beevote_users),
+        subject="BeeVote: new topic created",
+        body='''
+Dear {beevote_user.name},
+
+A new topic has been created on the group "{group.name}":
+
+"{topic.title}"
+
+Follow this link to see the topic:
+{link}
+
+The BeeVote Team
+    '''.format(topic=topic, group=topic.group.get(), link=link))
