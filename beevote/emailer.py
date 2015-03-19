@@ -45,6 +45,7 @@ Details of registration:
 The BeeVote Team
     """.format(beevote_user=beevote_user, link=link))
 
+# WARNING: USE ONLY AFTER MIGRATION TO NDB
 def send_topic_creation_notification(beevote_users, topic, link):
     mail.send_mail(
         sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
@@ -62,3 +63,24 @@ Follow this link to see the topic:
 
 The BeeVote Team
     '''.format(topic=topic, group=topic.group.get(), link=link))
+
+# WARNING: USE ONLY AFTER MIGRATION TO NDB
+def send_proposal_creation_email(beevote_users, proposal, link):
+    mail.send_mail(
+        sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
+        to=(u.email for u in beevote_users),
+        subject="BeeVote: new proposal created",
+        body='''
+Dear {beevote_user.name},
+
+A new proposal has been created in a topic you are following:
+
+- Group: "{group.name}"
+- Topic: "{topic.title}"
+- Proposal: "{proposal.title}"
+
+Follow this link to see the changes:
+{link}
+
+The BeeVote Team
+    '''.format(proposal=proposal, topic=proposal.topic.get(), group=proposal.topic.get().group.get(), link=link))
