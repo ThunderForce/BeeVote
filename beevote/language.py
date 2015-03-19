@@ -30,6 +30,11 @@ lang = {
 		'deadline_explain':"Fill this field if you want to set an expire time for the topic",
 		'italian':"italian",
 		'english':"english",
+		'feedback_alert': {
+			'banner_1':'We would like to know what you think about Beevote! Click ',
+			'banner_2':'here',
+			'banner_3':'to give us feedback!',
+		},
 		'bugs': {
 			'bug_report':"Report a bug",
 			'message_title':"Report a bug and help us improve your user experience",
@@ -176,6 +181,11 @@ lang = {
 		'detail_message':"Aggiungi i dettagli che vuoi far sapere agli altri ",
 		'italian':"italiano",
 		'english':"inglese",
+		'feedback_alert': {
+			'banner_1':'Vorremmo sapere cosa ne pensi di Beevote! Clicca ',
+			'banner_2':'qui',
+			'banner_3':'per darci il feedback!',
+		},
 		'bugs': {
 			'bug_report':"Segnala un problema",
 			'message_title':"Segnala un problema e aiutaci a migliorare la tua esperienza",
