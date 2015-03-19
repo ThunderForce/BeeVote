@@ -920,7 +920,7 @@ class RemoveProposalHandler(BaseApiHandler):
 class RemoveParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if not is_user_in_group(self.beevote_user, topic.group):
+		if not is_user_in_group(self.beevote_user, topic.group.get()):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -946,7 +946,7 @@ class RemoveParticipationHandler(BaseApiHandler):
 class AddParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if not is_user_in_group(self.beevote_user, topic.group):
+		if not is_user_in_group(self.beevote_user, topic.group.get()):
 			values = {
 				'success': False,
 				'group_id': group_id,

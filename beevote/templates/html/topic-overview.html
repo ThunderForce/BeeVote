@@ -51,7 +51,7 @@ $(document).ready(function() {
 	// end-popup edit topic
 	//Button delete group
 	{% if topic.is_own %}
-	$('span#delete-topic-button').html('<button id="delete-topic" title="{{lang.buttons.delete_topic_title}}" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>');
+	$('span#delete-topic-button').html('<button type="button" id="delete-topic" title="{{lang.buttons.delete_topic_title}}" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>');
 	{% else %}
 	$('span#delete-topic-button').html('');
 	{% endif %}
