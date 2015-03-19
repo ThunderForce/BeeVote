@@ -38,14 +38,12 @@ class BeeVoteUser(ndb.Model):
 				topics.append(topic)
 		return topics
 	
-	'''
 	def put(self):
-		db.Model.put(self)
-		if not memcache.replace('beevoteuser_by_id_%s' % self.key().id(), self, time=600):  # @UndefinedVariable
-			memcache.add('beevoteuser_by_id_%s' % self.key().id(), self, time=600)  # @UndefinedVariable
+		ndb.Model.put(self)
+		if not memcache.replace('beevoteuser_by_id_%s' % self.key.id(), self, time=600):  # @UndefinedVariable
+			memcache.add('beevoteuser_by_id_%s' % self.key.id(), self, time=600)  # @UndefinedVariable
 		if not memcache.replace('beevoteuser_by_user_id_%s' % self.user_id, self, time=600):  # @UndefinedVariable
 			memcache.add('beevoteuser_by_user_id_%s' % self.user_id, self, time=600)  # @UndefinedVariable
-	'''
 
 class Group(ndb.Model):
 	name = ndb.StringProperty(required=True)
