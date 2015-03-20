@@ -307,15 +307,15 @@ $(document).ready(function() {
 				$("#prosalPopupTitle").html(response.proposal.title);
 
 				$("#proposalPopup").html("");
-				if(response.proposal.place){
+				if(response.proposal.place != undefined){
 					$("#proposalPopup").append('<span class="mdi-communication-location-on" style="margin-left:5px;"> '+response.proposal.place+' </span>');
 				};
 
-				if(response.proposal.date != "None"){
+				if(typeof response.proposal.date !== 'undefined'){
 					$("#proposalPopup").append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"> '+response.proposal.date+' </span>');
 				};
 
-				if(response.proposal.time != "None"){
+				if(response.proposal.time != undefined){
 					$("#proposalPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> '+response.proposal.time+' </span>');
 				};
 				$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+response.proposal.creator.name+' '+response.proposal.creator.surname+' </span>');
@@ -625,7 +625,7 @@ $(document).ready(function() {
 	{% endif %}
 	{% for proposal in topic.proposals %}
 	<div class="list-group-item">
-		<div data-proposal="{{ proposal.key.id }}" data-place="{{ proposal.place }}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+		<div data-proposal="{{ proposal.key.id }}" data-place="{% if topic.place == "" %}{{ proposal.place }}{% endif %}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
 			<div class="row">
 				<!-- interno proposta -->
 				<div class="row-picture">
@@ -641,21 +641,29 @@ $(document).ready(function() {
 							<b>{{ proposal.title }}</b>
 						</h3>
 						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.get.name }} {{ proposal.creator.get.surname }}
-						{% if proposal.place %}
+						{% if topic.place == ""%}
+						{% if proposal.place%}  
 						<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
 						{% endif %}
+						{% endif %}
+						{% if topic.date == None %} 
 						{% if proposal.formatted_date %}
 						<span class="mdi-editor-insert-invitation" style="margin-left:5px;"></span> {{ proposal.formatted_date }}
 						{% endif %}
-						{% if proposal.time %}
+						{% endif %}
+						{% if topic.time == None%}
+						{% if proposal.time%}
 						<span class="mdi-action-query-builder" style="margin-left:5px;"></span> {{ proposal.time }}
+						{% endif %}
 						{% endif %}
 						
 
 						<span class="proposal-details-message" data-proposal="{{ proposal.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 						<div class="proposal-details" data-proposal="{{ proposal.key.id }}" style="display: none;">
+							{% if topic.place == ""%}
 							{% if proposal.place %}
 							<div class="proposal-map" id="map_canvas_proposal" data-proposal="{{proposal.key.id}}" style="width:140%; height:200px; margin-top:25px;"></div>
+							{% endif %}
 							{% endif %}
 							{% if proposal.description %}
 							<br>

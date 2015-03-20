@@ -391,6 +391,7 @@ class OldLoadProposalHandler(BaseApiHandler):
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
 		proposal = models.Proposal.get_from_id(long(group_id), long(topic_id), long(proposal_id))
+		topic = proposal.topic.get()
 		values = {
 			'success': True,
 			'proposal': {
@@ -401,11 +402,14 @@ class OldLoadProposalHandler(BaseApiHandler):
 					'surname': proposal.creator.get().surname,
 					'email': proposal.creator.get().email,
 				},
-				'place': proposal.place,
-				'date': str(proposal.date),
-				'time': str(proposal.time),
 			}
 		}
+		if topic.place == "" and proposal.place:
+			values['proposal']['place'] = proposal.place
+		if topic.date == None and proposal.date:
+			values['proposal']['date'] = str(proposal.date)
+		if topic.time == None and proposal.time:
+			values['proposal']['time'] = str(proposal.time)
 		self.response.out.write(json.dumps(values))
 
 class UpdateUser(BaseApiHandler):
