@@ -59,25 +59,25 @@
 	{% endif %}
 	{% for group in groups%}
 	<div class="list-group-item">
-		<div class="well well-lg group-well" color="green_g" data-group_id="{{ group.key.id }}" style="padding:5px 50px 0px 5px; cursor: pointer; max-width:900px;">
+		<div class="well well-lg group-well" color="green_g" data-group_id="{{ group.key.id }}" style="padding:5px 5px 0px 5px; cursor: pointer; max-width:900px;">
 			<div class="row">
-				<div class="col-lg-10">
-					<div class="row-picture">
+				<div class="col-lg-12">
+					<div class="row-picture" style="margin-top: 3px;margin-left: 3px;">
 						{% if group.img != None %}
-							<img class="circle" src="/group/{{ group.key.id }}/image?width=64&height=64" alt="icon">
+							<img class="circle" src="/group/{{ group.key.id }}/image?width=64&height=64" alt="icon" style="width: 50px;height: 50px;">
 						{% else %}
-							<img class="circle" src="/static/images/group-default.jpg" alt="icon">
+							<img class="circle" src="/static/images/group-default.jpg" alt="icon"style="width: 50px;height: 50px;">
 						{% endif %}
 					</div>
-					<div class="row-content">
-						<h3 class="list-group-item-heading">
+					<div class="row-content" style="width: calc(100% - 80px);min-height: 60px;">
+						<h3 class="list-group-item-heading" style="margin-top: 12px;">
 							{% if group.name_short %}
 							<span title="{{ group.name }}">{{group.name_short}}...</span>
 							{% else %}
 							{{ group.name }}
 							{% endif %}
 						</h3>
-						<span class="notifications" style="position:absolute;top:18px;right:-60px">...</span>
+						<span class="notifications" style="position:absolute;top:18px;right:28px">...</span>
 					</div>
 				</div><!-- /col-lg-10 -->
 			</div><!-- /row -->
