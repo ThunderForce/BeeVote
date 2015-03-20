@@ -3,52 +3,47 @@
 
 	<head>
 
-		<title>Welcome to BeeVote!</title>
+		<title>Welcome to Beevote</title>
 		
 		{{ basic_head }}
 		
 	</head>
 
-	<body>
+	<body style="max-width: 100%;overflow-x: hidden;">
+		<style type="text/css">
+			img.img-responsive{
+				display: block;
+				height: auto;
+			}
+			@media screen and (max-width: 768px){
+				img.img-responsive{
+					max-width: 100%;
+				}
+			}
+			@media screen and (min-width: 768px){
+				img.img-responsive{
+					max-width: 50%;
+				}
+			}
+		</style>
 		
-		<div class="jumbotron" style="margin-top: 0px; background-image: url('static/images/hexagon-pattern.png'); background-repeat: repeat; background-position: center; height: 305px; margin-bottom: 0px;">
-			<div class="row" align="center">
-				<img src="/static/images/favicon.png">
-			</div>
-			<div class="row" align="center">
-				<h1><b>BEEVOTE</b></h1>
-			</div>
-			<div class="row" align="center">
-				<h2 style="margin: 0px;"><b>Create your groups, propose in your topics and vote</b></h2>
+		<div class="jumbotron" style="margin-top: 0px; background-image: url('static/images/hexagon-pattern-blue.png'); background-repeat: repeat; background-position: center;margin-bottom: 0px;">
+			<div class="row" align="center" style="margin-top: 25px;margin-bottom: 25px;">
+				<div class="col-lg-12">
+                    <img class="img-responsive" style="" src="/static/images/logo-name.png" alt="Beevote">
+                </div>
 			</div>
 		</div>
-		<div class="jumbotron" style="margin-top: 16px; margin-left: 15px; margin-right: 15px;">
+		
 			<div class="row">
 				<div class="col-lg-6">
-							<iframe src="https://www.youtube.com/embed/lRak3pwrIc0" frameborder="0" allowfullscreen style="width: 100% !important; height: 338px !important;"></iframe>
-				</div>
-				<div class="col-lg-6">
-				<br>
+				<div class="jumbotron" style="padding-left: 20px;margin-top: 28px; margin-left: 15px; margin-right: 15px;">				
 					<div class="row" align="center">
-						This is an alpha version of <b>BeeVote</b>: only the basic features are present, including:
-						
-						Create groups,
-						
-						Add and remove group members,
-						
-						Create and remove topics,
-						
-						Create proposals,
-						
-						Vote proposals.
+						<p style="font-size: 15px;"><b>BeeVote</b> consente a gruppi di persone, come amici e colleghi, di organizzare in maniera semplice e rapida i luoghi, le date e gli orari di incontri ed eventi.</p>
+						<p>This is a beta version.</p>
 					</div>
-					<br>
 					<div class="row" align="center">
-						Availability of features may change, and <b>data stored in the system might be wiped during the process of improving the application</b>.
-					</div>
-					<br>
-					<div class="row" align="center">
-						Using this application requires a registered Google Account. For now to register your Google Account in the application please follow these steps:
+						<p style="font-size: 15px;">Using this application requires a registered Google Account. For now to register your Google Account in the application please follow these steps:
 						<br>
 						<b>- Login with your Google Account</b>
 						<br>
@@ -56,13 +51,15 @@
 						<br>
 						<b>- Start using BeeVote!</b>
 						<br>
-						<br>
+						<!--
 						{% if user %}
 							You are currently logged in as <b>{{ user.email }}</b>.
 						{% else %}
 							You are not currently logged in.
 						{% endif %}
-						<br>
+						-->
+						</p>
+						
 						<table>
 							<tr>
 								<td>
@@ -77,8 +74,14 @@
 						</table>
 					</div>
 				</div>
-			</div>
 		</div>
+				<div class="col-lg-6">
+				<div class="jumbotron" style="margin-top: 16px; margin-left: 15px; margin-right: 15px;background-color: #EEEEEE;box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0);padding: 3px;">
+					<iframe src="https://www.youtube.com/embed/lRak3pwrIc0" frameborder="0" allowfullscreen style="width: 100% !important; height: 338px !important;"></iframe>
+				</div>
+				</div>
+			</div>
+		
 
 	</body>
 
