@@ -540,22 +540,21 @@ $(document).ready(function() {
 						<p class="topic-attribute">
 							<span class="mdi-action-account-box"></span>&nbsp;{{ topic.creator.get.name }} {{ topic.creator.get.surname }}
 						</p>
-						
 						<p class="topic-attribute">
 							{% if topic.formatted_date %}
 							<span class="mdi-editor-insert-invitation"></span>&nbsp;{{ topic.formatted_date }}
 							{% endif %}
+						</p>						
+						<p class="topic-attribute">
 							{% if topic.time %}
 							<span class="mdi-action-query-builder"></span>&nbsp;{{ topic.time }}
 							{% endif %}
-						</p>						
-						
+						</p>
 						{% if topic.expired %}
-						<br>
 						<p class="topic-attribute">{{lang.topic_overview.deadline_reach}}</p>
 						{% else %}
 						{% if topic.time_before_deadline %}
-						<p>
+						<p class="topic-attribute">
 							<span class="mdi-notification-event-busy"></span>&nbsp;
 							<span>
 								{% if topic.time_before_deadline.days != 0 %}
@@ -577,18 +576,6 @@ $(document).ready(function() {
 					</div>
 				</div>
 			</div>
-
-			<!-- Old topic-details
-			<div class="modal-footer" style="margin-right: 22px;margin-left: -5px;margin-top: 5px;border-top: none;padding: 0px;text-align: left">
-				{% if topic.description %}
-				<p style="word-wrap:break-word;font-size:15px;margin-left:10px;"><span class="mdi-editor-format-align-left" ></span>&nbsp;{{ topic.description }}</p>
-				{% endif %}
-				{% if topic.place %}
-				<div id="map_canvas_topic" style="width:97%; height:200px; margin-top:10px;margin-bottom: 14px;margin-left: 10px;"></div>
-				{% endif %}
-			</div>
-			-->
-
 			<!-- Topic Accordion Details -->
 			<span class="topic-details-message" data-topic="{{ topic.key.id }}" style="display: none;"><small> (Loading...)</small></span>
 
@@ -605,7 +592,7 @@ $(document).ready(function() {
 			<!-- END Topic Accordion Details -->
 
 			<div id="topic-footer" class="modal-footer">
-				<!-- NOTIFICATION Button -->
+				<!-- NOTIFICATION Button 
 				<button id="notification-topic" title="{{lang.buttons.notification_topic_title}}" type="button" class="btn btn-success btn-raised mdi-social-notifications" data-toggle="modal" data-target="#notificationTopic"  style="margin-bottom: 0px;background-color: #0F9D58;padding:7px;z-index:1;margin-right: 2px;"></button>
 				<!-- /NOTIFICATION Button -->
 
