@@ -311,7 +311,7 @@ $(document).ready(function() {
 					$("#proposalPopup").append('<span class="mdi-communication-location-on" style="margin-left:5px;"> '+response.proposal.place+' </span>');
 				};
 
-				if(typeof response.proposal.date !== 'undefined'){
+				if(response.proposal.date != undefined){
 					$("#proposalPopup").append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"> '+response.proposal.date+' </span>');
 				};
 
