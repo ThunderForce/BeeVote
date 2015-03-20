@@ -17,7 +17,7 @@
 
 import os
 
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 import webapp2
 
@@ -43,24 +43,23 @@ class BasicPageHandler(webapp2.RequestHandler):
 
 class RemoveUserHandler(webapp2.RequestHandler):
 	def get(self, user_id):
-		beevote_user_key = db.Key.from_path('BeeVoteUser', long(user_id))
-		beevote_user = db.get(beevote_user_key)
+		beevote_user = models.BeeVoteUser.get_by_id(long(user_id))
 		beevote_user.delete()
 		self.redirect('/admin/user-manager')
 
 class UserManagerHandler(BasicPageHandler):
 	def get(self):
-		users = db.GqlQuery("SELECT * FROM BeeVoteUser")
+		users = ndb.gql("SELECT * FROM BeeVoteUser")
 		self.write_template('user-manager.html', {'users': users})
 
 class BugReportsHandler(BasicPageHandler):
 	def get(self):
-		reports = db.GqlQuery("SELECT * FROM BugReport")
+		reports = ndb.gql("SELECT * FROM BugReport")
 		self.write_template('bug-reports.html', {'reports': reports})
 
 class FeatureChangesHandler(BasicPageHandler):
 	def get(self):
-		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange").fetch(1000)
+		feature_changes = ndb.gql("SELECT * FROM FeatureChange").fetch(1000)
 		feature_changes = sorted(feature_changes, key=lambda feature: feature.creation, reverse=True)
 		self.write_template('feature-changes.html', {'feature_changes': feature_changes})
 

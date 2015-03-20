@@ -202,7 +202,7 @@ function resetForm(form_id) {
 			<p style="margin-left:20px;">{{lang.groups_overview.no_topics}}</p>
 			{% endif %}
 			{% for topic in group.topics %}
-			<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}" data-group-id="{{ topic.group.key.id }}">
+			<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}" data-group-id="{{ group.key.id }}">
 				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
 					<div class="row">
 						<div class="row-picture">

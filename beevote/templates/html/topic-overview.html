@@ -97,25 +97,25 @@ function initialize_topic_map(id, place) {
 
 $(document).ready(function() {
 	// popup edit topic
-	$('form#updateInfoTopic-form').attr('action', '/api/group/{{topic.parent.key.id }}/topic/{{topic.key.id}}/update');
+	$('form#updateInfoTopic-form').attr('action', '/api/group/{{topic.group.id }}/topic/{{topic.key.id}}/update');
 	resetForm('updateInfoTopic-form');
 	// end-popup edit topic
 	//Button delete group
 	{% if topic.is_own %}
-	$('span#delete-topic-button').html('<button id="delete-topic" title="{{lang.buttons.delete_topic_title}}" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>');
+	$('span#delete-topic-button').html('<button type="button" id="delete-topic" title="{{lang.buttons.delete_topic_title}}" class="btn btn-danger btn-raised mdi-action-delete" style="background-color:#DB4438"></button>');
 	{% else %}
 	$('span#delete-topic-button').html('');
 	{% endif %}
 	// end-popup edit group
 	$('#topic_image').css('width', '99%');$('#topic_image').css('width', '100%');
-	$('input#groupId').val("{{ topic.group.key.id }}");
+	$('input#groupId').val("{{ topic.group.id }}");
 	$('#back-button').on('click', function(e) {
-		load_group_topics('{{ topic.group.key.id }}');
+		load_group_topics('{{ topic.group.id }}');
 	});
 	$('button#delete-topic').on('click', function() {
 		if (confirm("Are you sure to delete this topic?")) {
 			$.ajax({
-				url: '/api/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/remove',
+				url: '/api/group/{{ topic.group.id }}/topic/{{ topic.key.id }}/remove',
 				method: 'POST',
 				dataType: 'json',
 				error: function() {
@@ -161,7 +161,7 @@ $(document).ready(function() {
 	});
 
 
-	$('input#proposal_popup_group_id').val("{{ topic.group.key.id }}");
+	$('input#proposal_popup_group_id').val("{{ topic.group.id }}");
 	$('input#proposal_popup_topic_id').val("{{ topic.key.id }}");
 	$('#creation-buttons').html('');
 	$('#creation-buttons').append(buttons.create_proposal);
@@ -190,7 +190,7 @@ $(document).ready(function() {
 	
 	$('.vote-checkbox').on('click', function(e) {
 
-		var group_id = {{ topic.parent.key.id }};
+		var group_id = {{ topic.group.id }};
 		var topic_id = {{ topic.key.id }};
 		var proposal_id = $(this).data("proposal");
 
@@ -222,7 +222,7 @@ $(document).ready(function() {
 		$(this).attr('disabled', true)
 		if (checked) {
 			$.ajax({
-				url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/add-participation',
+				url: '/api/group/{{ topic.group.id }}/topic/{{ topic.key.id }}/add-participation',
 				method: 'POST',
 				dataType: 'json',
 				success: function(response) {
@@ -235,7 +235,7 @@ $(document).ready(function() {
 			})
 		} else {
 			$.ajax({
-				url: '/api/group/{{ topic.group.key.id }}/topic/{{ topic.key.id }}/remove-participation',
+				url: '/api/group/{{ topic.group.id }}/topic/{{ topic.key.id }}/remove-participation',
 				method: 'POST',
 				dataType: 'json',
 				success: function(response) {
@@ -290,7 +290,7 @@ $(document).ready(function() {
 /* Prova per non propagare il click quando clicco sul voto*/
 	$('button#vote-button').on('click', function(e) {
 
-		var group_id = {{ topic.parent.key.id }};
+		var group_id = {{ topic.group.id }};
 		var topic_id = {{ topic.key.id }};
 		var proposal_id = $(this).data("proposal");
 
@@ -342,7 +342,7 @@ $(document).ready(function() {
 						});
 					}
 				}
-				load_votes("{{ topic.parent.key.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
+				load_votes("{{ topic.group.id }}", "{{ topic.key.id }}", proposal_id, success_callback);
 			}
 		});
 	
@@ -356,7 +356,7 @@ $(document).ready(function() {
 	/* Prova per mostrare la lista dei partecipanti*/
 	$('button#participants-button').on('click', function(e) {
 
-		var group_id = {{ topic.parent.key.id }};
+		var group_id = {{ topic.group.id }};
 		var topic_id = {{ topic.key.id }};
 		$('#member-participants-list').html('Loading...');
 
@@ -388,7 +388,7 @@ $(document).ready(function() {
 					$("#participantsTopicPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> {{topic.time}} </span>');
 				
 				{%endif%}
-				$("#participantsTopicPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> {{topic.creator.name}} {{topic.creator.surname}} </span>');
+				$("#participantsTopicPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> {{topic.creator.get.name}} {{topic.creator.get.surname}} </span>');
 
 
 				$('#participantsList').modal('show');
@@ -445,10 +445,9 @@ $(document).ready(function() {
 
 	$.material.init();
 	
-	clean_topic_notifications("{{ topic.group.key.id }}", "{{ topic.key.id }}");
+	clean_topic_notifications("{{ topic.group.id }}", "{{ topic.key.id }}");
 });
 </script>	
-
 
 <style type="text/css">
 
@@ -528,7 +527,7 @@ $(document).ready(function() {
 			<div class="row">
 				<div id="topic-img-well" class="row-picture" style="">
 					{% if topic.img != None %}
-					<img id="topic_image" src="/group/{{ topic.parent.key.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;">
+					<img id="topic_image" src="/group/{{ topic.group.id }}/topic/{{ topic.key.id }}/image" style="width:200px;height:100%;">
 					{% else %}
 					<img id="topic_image" src="/static/images/topic-icon.png" style="width:200px;height:100%;">
 					{% endif %}
@@ -538,15 +537,17 @@ $(document).ready(function() {
 						<h2 id="topic-name-well">
 							{{ topic.title }}
 						</h2>
-						<p class="topic-attribute"><span class="mdi-action-account-box"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}</p>
+						<p class="topic-attribute">
+							<span class="mdi-action-account-box"></span>&nbsp;{{ topic.creator.name }} {{ topic.creator.surname }}
+						</p>
 						
 						<p class="topic-attribute">
-						{% if topic.formatted_date %}
-						<span class="mdi-editor-insert-invitation"></span>&nbsp;{{ topic.formatted_date }}
-						{% endif %}
-						{% if topic.time %}
-						<span class="mdi-action-query-builder"></span>&nbsp;{{ topic.time }}
-						{% endif %}
+							{% if topic.formatted_date %}
+							<span class="mdi-editor-insert-invitation"></span>&nbsp;{{ topic.formatted_date }}
+							{% endif %}
+							{% if topic.time %}
+							<span class="mdi-action-query-builder"></span>&nbsp;{{ topic.time }}
+							{% endif %}
 						</p>						
 						
 						{% if topic.expired %}
@@ -641,8 +642,8 @@ $(document).ready(function() {
 			<div class="row">
 				<!-- interno proposta -->
 				<div class="row-picture">
-					{% if proposal.creator.img %}
-					<img class="circle" src="/user/{{proposal.creator.key.id}}/image?width=64&height=64" alt="icon">
+					{% if proposal.creator.get.img %}
+					<img class="circle" src="/user/{{proposal.creator.id}}/image?width=64&height=64" alt="icon">
 					{% else %}
 					<img class="circle" src="/static/images/user-default.jpg" alt="icon">
 					{% endif %}
@@ -652,7 +653,7 @@ $(document).ready(function() {
 						<h3 style="font-size:15px;padding-bottom:5px;margin:0px;">
 							<b>{{ proposal.title }}</b>
 						</h3>
-						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.name }} {{ proposal.creator.surname }}
+						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.get.name }} {{ proposal.creator.get.surname }}
 						{% if proposal.place %}
 						<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}
 						{% endif %}

@@ -20,7 +20,7 @@ import os
 
 from google.appengine.api import users
 from google.appengine.api.images import Image
-from google.appengine.ext import db
+from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 import webapp2
 from webapp2_extras import sessions
@@ -92,7 +92,7 @@ def write_template(response, template_name, template_values={}, navbar_values={}
 	response.out.write(get_template(template_name, template_values, navbar_values))
 
 def is_user_in_group(beevote_user, group):
-	if group.members == [] or beevote_user.key() in group.members:
+	if group.members == [] or beevote_user.key in group.members:
 		return True
 	else:
 		return False
@@ -180,7 +180,7 @@ class HomeHandler(BaseHandler):
 		self.beevote_user.last_access = datetime.datetime.now()
 		self.beevote_user.put()
 		
-		feature_changes = db.GqlQuery("SELECT * FROM FeatureChange WHERE creation > :1", last_access).fetch(1000)
+		feature_changes = ndb.gql("SELECT * FROM FeatureChange WHERE creation > :1", last_access).fetch(1000)
 		
 		values = {
 			'user' : self.beevote_user,
@@ -189,14 +189,7 @@ class HomeHandler(BaseHandler):
 			'topic_id': topic_id,
 		}
 		write_template(self.response, 'groups-layout.html',values)
-class EditUserHandler(BaseHandler):
-	def get(self):
-		# Use user_id to get user and put it in values
-		values = {
-			'user' : self.beevote_user,
-		}
-		write_template(self.response, 'edit-user.html', values)
-		
+
 class ProfileHandler(BaseHandler):
 	def get(self, user_id):
 		# Use user_id to get user and put it in values
@@ -205,8 +198,7 @@ class ProfileHandler(BaseHandler):
 
 class UserImageHandler(webapp2.RequestHandler):
 	def get(self, user_id):
-		user_key = db.Key.from_path('BeeVoteUser', long(user_id))
-		user = db.get(user_key)
+		user = models.BeeVoteUser.get_from_id(long(user_id))
 		if user == None:
 			self.error(404)
 			self.response.out.write("User "+user_id+" does not exist")
@@ -226,8 +218,7 @@ class UserImageHandler(webapp2.RequestHandler):
 
 class GroupImageHandler(webapp2.RequestHandler):
 	def get(self, group_id):
-		group_key = db.Key.from_path('Group', long(group_id))
-		group = db.get(group_key)
+		group = models.Group.get_from_id(long(group_id))
 		if group == None:
 			self.error(404)
 			self.response.out.write("Group "+group_id+" does not exist")
@@ -247,8 +238,7 @@ class GroupImageHandler(webapp2.RequestHandler):
 
 class TopicImageHandler(webapp2.RequestHandler):
 	def get(self, group_id, topic_id):
-		topic_key = db.Key.from_path('Group', long(group_id), 'Topic', long(topic_id))
-		topic = db.get(topic_key)
+		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if topic == None:
 			self.error(404)
 			self.response.out.write("Topic "+topic_id+" does not exist")
@@ -272,10 +262,7 @@ class RegistrationHandler(BaseHandler):
 		if self.beevote_user or models.get_beevote_user_from_google_id(user_id):
 			self.redirect("/")
 			return
-		values = {
-			'is_user_admin': users.is_current_user_admin()
-		}
-		write_template(self.response, 'registration-form.html', values)
+		write_template(self.response, 'registration-form.html', {})
 
 class ReportBugHandler(BaseHandler):
 	def get(self):
@@ -367,7 +354,6 @@ app = webapp2.WSGIApplication([
 	('/html/group/(.*)', html_strips.GroupHandler),
 	('/register', RegistrationHandler),
 	('/logout', LogoutHandler),
-	('/edit-user',EditUserHandler),
 ], debug=debug, config=config)
 
 app.error_handlers[401] = handle_401
