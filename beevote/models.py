@@ -17,14 +17,11 @@ class BeeVoteUser(ndb.Model):
 	
 	@staticmethod
 	def get_from_id(beevote_user_id):
-		return BeeVoteUser.get_by_id(beevote_user_id)
-		'''
 		beevote_user = memcache.get('beevoteuser_by_id_%s' % beevote_user_id)  # @UndefinedVariable
 		if beevote_user is None:
 			beevote_user = BeeVoteUser.get_by_id(beevote_user_id)
 			memcache.add('beevoteuser_by_id_%s' % beevote_user_id, beevote_user, time=600)  # @UndefinedVariable
 		return beevote_user
-		'''
 	
 	def get_groups_by_membership(self):
 		return Group.query(Group.members == self.key).fetch(1000)
@@ -101,7 +98,9 @@ class Group(ndb.Model):
 		topics = self.get_topics()
 		for topic in topics:
 			topic.delete()
+		'''
 		memcache.delete('group_by_id_%s' % self.key.id())  # @UndefinedVariable
+		'''
 		self.key.delete()
 
 	'''
@@ -233,7 +232,6 @@ class Proposal(ndb.Model):
 		for vote in votes:
 			vote.delete()
 		self.key.delete()
-		# db.Model.delete(self)
 	
 class Vote(ndb.Model):
 	proposal = ndb.KeyProperty(kind=Proposal, required=True)
