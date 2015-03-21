@@ -31,6 +31,7 @@ import emailer
 
 import language
 import models
+from models import TopicSettings
 
 
 # Start of functions
@@ -890,6 +891,8 @@ class CreateProposalHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				topic.put()
+				emailed_users = (u for u in topic.group.get().get_members() if TopicSettings.get_settings(u, topic).proposal_creation_email)
+				emailer.send_proposal_creation_email(emailed_users, proposal, self.request.host+"/group/"+topic.group.id()+"/topic/"+topic.key.id())
 				values = {
 					'success': True,
 					'group_id': group_id,
