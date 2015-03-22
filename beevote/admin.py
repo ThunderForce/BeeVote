@@ -53,8 +53,8 @@ class StatsHandler(BasicPageHandler):
 		groups = ndb.gql("SELECT * FROM Group").fetch(1000)
 		topics = ndb.gql("SELECT * FROM Topic").fetch(1000)
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
-		users_active_in_last_24_hours = [u for u in users if (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
-		users_active_in_last_week = [u for u in users if (datetime.datetime.now() - u.last_access).total_seconds() < (7*24*60*60)]
+		users_active_in_last_24_hours = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
+		users_active_in_last_week = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (7*24*60*60)]
 		self.write_template('stats.html', {'stats': {
 			'number_of_groups': len(groups),
 			'average_members_per_group': sum(len(g.members) for g in groups) / float(len(groups)),
