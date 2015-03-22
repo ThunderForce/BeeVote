@@ -437,7 +437,7 @@ class TopicPersonalSettings(ndb.Model):
 	
 	@staticmethod
 	def get_settings(beevote_user, topic):
-		settings = TopicPersonalSettings.query(TopicPersonalSettings.beevote_user == beevote_user, TopicPersonalSettings.topic == topic)
+		settings = TopicPersonalSettings.query(TopicPersonalSettings.beevote_user == beevote_user.key, TopicPersonalSettings.topic == topic.key).get()
 		if not settings:
 			settings = TopicPersonalSettings.create_default_settings(beevote_user, topic)
 		return settings
@@ -445,8 +445,8 @@ class TopicPersonalSettings(ndb.Model):
 	@staticmethod
 	def create_default_settings(beevote_user, topic):
 		return TopicPersonalSettings(
-			beevote_user=beevote_user,
-			topic=topic,
+			beevote_user=beevote_user.key,
+			topic=topic.key,
 			proposal_creation_email=False
 		)
 
