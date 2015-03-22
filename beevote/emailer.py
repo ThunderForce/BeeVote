@@ -1,7 +1,37 @@
+import logging
+
 from google.appengine.api import mail
+from google.appengine.runtime import apiproxy_errors
+
+def _send_mail_to_admins(sender, subject, body):
+    try:
+        mail.send_mail_to_admins(
+            sender=sender,
+            subject=subject,
+            body=body,
+        )
+        return True
+    except apiproxy_errors.OverQuotaError, message:
+        logging.error(message)
+        return False
+    pass
+
+def _send_mail_to_user(sender, to, subject, body):
+    try:
+        mail.send_mail(
+            sender=sender,
+            to=to,
+            subject=subject,
+            body=body,
+        )
+        return True
+    except apiproxy_errors.OverQuotaError, message:
+        logging.error(message)
+        return False
+    pass
 
 def send_bug_report_to_admins(report, link):
-    mail.send_mail_to_admins(
+    return _send_mail_to_admins(
         sender="BeeVote Bug Report <bug-report@beevote.appspotmail.com>",
         subject="BeeVote bug report received",
         body="""
@@ -23,7 +53,7 @@ The BeeVote Team
     """.format(report=report, link=link))
 
 def send_registration_notification(beevote_user, link):
-    mail.send_mail(
+    return _send_mail_to_user(
         sender='BeeVote Registration Notifier <registration-accepted@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject="BeeVote registration request accepted",
@@ -46,7 +76,7 @@ The BeeVote Team
     """.format(beevote_user=beevote_user, link=link))
 
 def send_topic_creation_notification(beevote_users, topic, link):
-    mail.send_mail(
+    return _send_mail_to_user(
         sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
         to=(u.email for u in beevote_users),
         subject="BeeVote: new topic created",
@@ -65,7 +95,7 @@ The BeeVote Team
 
 def send_proposal_creation_email(beevote_users, proposal, link):
     if len(beevote_users) > 0:
-        mail.send_mail(
+        return _send_mail_to_user(
             sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
             to=(u.email for u in beevote_users),
             subject="BeeVote: new proposal created",
@@ -83,3 +113,5 @@ Follow this link to see the changes:
 
 The BeeVote Team
         '''.format(proposal=proposal, topic=proposal.topic.get(), group=proposal.topic.get().group.get(), link=link))
+    else:
+        return True

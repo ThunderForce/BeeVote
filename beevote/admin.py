@@ -15,6 +15,7 @@
 # limitations under the License.
 #
 
+import datetime
 import os
 
 from google.appengine.ext import ndb
@@ -47,9 +48,32 @@ class RemoveUserHandler(webapp2.RequestHandler):
 		beevote_user.delete()
 		self.redirect('/admin/user-manager')
 
+class StatsHandler(BasicPageHandler):
+	def get(self):
+		groups = ndb.gql("SELECT * FROM Group").fetch(1000)
+		topics = ndb.gql("SELECT * FROM Topic").fetch(1000)
+		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
+		users_active_in_last_24_hours = [u for u in users if (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
+		users_active_in_last_week = [u for u in users if (datetime.datetime.now() - u.last_access).total_seconds() < (7*24*60*60)]
+		self.write_template('stats.html', {'stats': {
+			'number_of_groups': len(groups),
+			'average_members_per_group': sum(len(g.members) for g in groups) / float(len(groups)),
+			'number_of_topics': len(topics),
+			'average_topics_per_group': len(topics) / float(len(groups)),
+			'number_of_users': len(users),
+			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
+			'users_active_in_last_week': len(users_active_in_last_week),
+		}})
+
 class UserManagerHandler(BasicPageHandler):
 	def get(self):
-		users = ndb.gql("SELECT * FROM BeeVoteUser")
+		sort_param = self.request.get("sort")
+		if sort_param == "creation":
+			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY creation DESC")
+		elif sort_param == "last_access":
+			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY last_access DESC")
+		else:
+			users = ndb.gql("SELECT * FROM BeeVoteUser")
 		self.write_template('user-manager.html', {'users': users})
 
 class BugReportsHandler(BasicPageHandler):
@@ -80,6 +104,7 @@ class AdminMenuHandler(BasicPageHandler):
 
 app = webapp2.WSGIApplication([
 	('/admin/remove-user/(.*)', RemoveUserHandler),
+	('/admin/stats', StatsHandler),
 	('/admin/user-manager', UserManagerHandler),
 	('/admin/bug-reports', BugReportsHandler),
 	('/admin/feature-changes', FeatureChangesHandler),

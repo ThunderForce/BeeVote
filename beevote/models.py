@@ -2,8 +2,6 @@ import datetime
 from google.appengine.ext import ndb
 
 from google.appengine.api import memcache
-from google.appengine.ext import db
-
 
 # Start of Data Model
 
@@ -432,21 +430,21 @@ class TopicNotification(ndb.Model):
 		)
 		notification.put()
 		
-class TopicSettings(ndb.Model):
+class TopicPersonalSettings(ndb.Model):
 	beevote_user = ndb.KeyProperty(kind=BeeVoteUser, required=True)
 	topic = ndb.KeyProperty(kind=Topic, required=True)
 	proposal_creation_email = ndb.BooleanProperty()
 	
 	@staticmethod
 	def get_settings(beevote_user, topic):
-		settings = TopicSettings.query(TopicSettings.beevote_user == beevote_user, TopicSettings.topic == topic)
+		settings = TopicPersonalSettings.query(TopicPersonalSettings.beevote_user == beevote_user, TopicPersonalSettings.topic == topic)
 		if not settings:
-			settings = TopicSettings.create_default_settings(beevote_user, topic)
+			settings = TopicPersonalSettings.create_default_settings(beevote_user, topic)
 		return settings
 	
 	@staticmethod
 	def create_default_settings(beevote_user, topic):
-		return TopicSettings(
+		return TopicPersonalSettings(
 			beevote_user=beevote_user,
 			topic=topic,
 			proposal_creation_email=False
