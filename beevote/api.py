@@ -26,12 +26,10 @@ from google.appengine.ext import ndb
 import webapp2
 
 import constants
-
 import emailer
-
 import language
+from models import TopicPersonalSettings, GroupPersonalSettings
 import models
-from models import TopicPersonalSettings
 
 
 # Start of functions
@@ -574,12 +572,8 @@ class CreateTopicHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
-				'''
-				emailer.send_topic_creation_notification(
-					beevote_users=group.get_members(),
-					topic=topic,
-					link=self.request.host+"/group/"+group.key().id()+"/topic/"+topic.key().id())
-				'''
+				emailed_users = [u for u in group.get_members() if GroupPersonalSettings.get_settings(u, group).topic_creation_email]
+				emailer.send_topic_creation_email(emailed_users, topic, self.request.host+"/group/"+str(group.key.id())+"/topic/"+str(topic.key.id()))
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -977,6 +971,35 @@ class AddParticipationHandler(BaseApiHandler):
 				'group_id': group_id,
 				'topic_id': topic_id,
 			}
+		self.response.out.write(json.dumps(values))
+
+class UpdateGroupPersonalSettingsHandler(BaseApiHandler):
+	def post(self, group_id):
+		topic_creation_email = self.request.get("topic_creation_email", None)
+		group = models.Group.get_from_id(group_id)
+		personal_settings = models.GroupPersonalSettings.get_settings(self.beevote_user, group)
+		if topic_creation_email:
+			personal_settings.topic_creation_email = (topic_creation_email == True)
+		personal_settings.put()
+		values = {
+			'success': True,
+			'group_id': group_id,
+		}
+		self.response.out.write(json.dumps(values))
+
+class UpdateTopicPersonalSettingsHandler(BaseApiHandler):
+	def post(self, group_id, topic_id):
+		proposal_creation_email = self.request.get("proposal_creation_email", None)
+		topic = models.Topic.get_from_id(group_id, topic_id)
+		personal_settings = models.TopicPersonalSettings.get_settings(self.beevote_user, topic)
+		if proposal_creation_email:
+			personal_settings.proposal_creation_email = (proposal_creation_email == True)
+		personal_settings.put()
+		values = {
+			'success': True,
+			'group_id': group_id,
+			'topic_id': topic_id,
+		}
 		self.response.out.write(json.dumps(values))
 
 class CreateBugReportHandler(BaseApiHandler):

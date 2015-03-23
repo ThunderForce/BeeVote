@@ -429,7 +429,30 @@ class TopicNotification(ndb.Model):
 			topic=topic_key,
 		)
 		notification.put()
-		
+
+class GroupPersonalSettings(ndb.Model):
+	beevote_user = ndb.KeyProperty(kind=BeeVoteUser, required=True)
+	group = ndb.KeyProperty(kind=Group, required=True)
+	topic_creation_email = ndb.BooleanProperty()
+	
+	@staticmethod
+	def get_settings(beevote_user, group):
+		settings = GroupPersonalSettings.query(
+			GroupPersonalSettings.beevote_user == beevote_user.key,
+			GroupPersonalSettings.group == group.key
+		).get()
+		if not settings:
+			settings = GroupPersonalSettings.create_default_settings(beevote_user, group)
+		return settings
+	
+	@staticmethod
+	def create_default_settings(beevote_user, group):
+		return GroupPersonalSettings(
+			beevote_user=beevote_user.key,
+			group=group.key,
+			topic_creation_email=False
+		)
+
 class TopicPersonalSettings(ndb.Model):
 	beevote_user = ndb.KeyProperty(kind=BeeVoteUser, required=True)
 	topic = ndb.KeyProperty(kind=Topic, required=True)
@@ -437,7 +460,10 @@ class TopicPersonalSettings(ndb.Model):
 	
 	@staticmethod
 	def get_settings(beevote_user, topic):
-		settings = TopicPersonalSettings.query(TopicPersonalSettings.beevote_user == beevote_user.key, TopicPersonalSettings.topic == topic.key).get()
+		settings = TopicPersonalSettings.query(
+			TopicPersonalSettings.beevote_user == beevote_user.key,
+			TopicPersonalSettings.topic == topic.key
+		).get()
 		if not settings:
 			settings = TopicPersonalSettings.create_default_settings(beevote_user, topic)
 		return settings
