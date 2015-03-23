@@ -27,11 +27,18 @@
 			}
 		</style>
 		
-		<div class="jumbotron" style="margin-top: 0px; background-image: url('static/images/hexagon-pattern-blue.png'); background-repeat: repeat; background-position: center;margin-bottom: 0px;">
+		<div class="jumbotron" style="margin-top: 0px; background-image: url('static/images/hexagon-pattern-blue.png'); background-repeat: repeat; background-position: center;margin-bottom: 0px;position: fixed;z-index: 1;width: 100%;">
 			<div class="row" align="center" style="margin-top: 25px;margin-bottom: 25px;">
 				<div class="col-lg-12">
                     <img class="img-responsive" style="" src="/static/images/logo-name.png" alt="Beevote">
                 </div>
+			</div>
+		</div>
+		<div class="jumbotron" style="margin-top: 0px; background-image: url('static/images/hexagon-pattern-blue.png'); background-repeat: repeat; background-position: center;margin-bottom: 0px;width: 100%;  box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0)">
+		<div class="row" align="center" style="margin-top: 25px;margin-bottom: 25px;">
+				<div class="col-lg-12">
+		            <img class="img-responsive" style="" src="/static/images/logo-name.png" alt="Beevote">
+		        </div>
 			</div>
 		</div>
 		
@@ -39,8 +46,20 @@
 			<div class="col-lg-6">
 				<div class="jumbotron" style="padding-left: 20px;margin-top: 16px; margin-left: 15px; margin-right: 15px;">				
 					<div class="row" align="center">
-						<p style="font-size: 15px;padding-left: 30px;padding-right: 30px;"><b>Beevote</b> allows groups of people, such as friends and colleagues, to organize quickly and easily the places, dates and times of meetings and events!</p>
-						<p>This is a beta version.</p>
+						<p style="font-size: 15px;padding-left: 30px;padding-right: 30px;"><b>Beevote</b> allows groups of people, such as friends and colleagues, to organize quickly and easily places, dates and times of meetings and events!</p>
+						<p style="  margin-bottom: 0px;">This is a beta version.</p>
+						<table style="  margin-bottom: 8px;">
+							<tr>
+								<td>
+									<a href="{{ login_url }}"><button class="btn btn-info">Login</button></a>
+								</td>
+								{% if user %}
+								<td>
+									<a href="/logout"><button class="btn btn-info">Logout</button></a>
+								</td>
+								{% endif %}
+							</tr>
+						</table>				
 					</div>
 					<div class="row" align="center">
 						<p style="font-size: 13px;padding-left: 30px;padding-right: 30px;">Using this application requires a registered Google Account. For now to register your Google Account in the application please follow these steps:
@@ -60,33 +79,27 @@
 						-->
 						</p>
 						
-						<table>
-							<tr>
-								<td>
-									<a href="{{ login_url }}"><button class="btn btn-info">Login</button></a>
-								</td>
-								{% if user %}
-								<td>
-									<a href="/logout"><button class="btn btn-info">Logout</button></a>
-								</td>
-								{% endif %}
-							</tr>
-						</table>
-						<div style="margin-top: 19px;">
-							<a href="https://plus.google.com/108299825091406534382" rel="publisher" target="_blank">Google+</a>
-          					&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="http://facebook.com/Beevote" target="_blank"><span class="kc">Facebook</span></a>
+						
+						<div style="margin-top: 29px;margin-right: 87px;">
+							<a href="https://plus.google.com/108299825091406534382" rel="publisher" target="_blank">
+								<a href="//plus.google.com/u/0/108299825091406534382?prsrc=3"
+								   rel="publisher" target="_top" style="text-decoration:none;display:inline-block;color:#333;text-align:center; font:13px/16px arial,sans-serif;white-space:nowrap;">
+								<span style="display:inline-block;font-weight:bold;vertical-align:top;margin-right:5px; margin-top:8px;">Beevote</span><span style="display:inline-block;vertical-align:top;margin-right:15px; margin-top:8px;">on</span>
+								<img src="//ssl.gstatic.com/images/icons/gplus-32.png" alt="Google+" style="border:0;width:32px;height:32px;"/>
+								</a></a>
+          					&nbsp;&nbsp;|&nbsp;&nbsp;<a href="http://facebook.com/Beevote" target="_blank"><span class="kc">
+          						<img style="width:32px;height:32px;margin-top: 1px;" src="/static/images/icon_fb.png" alt="Beevote">
+          					</span></a>
 						</div>
 					</div>
 				</div>
-		</div>
-				<div class="col-lg-6">
+			</div>
+			<div class="col-lg-6">
 				<div class="jumbotron" style="margin-top: 16px; margin-left: 15px; margin-right: 15px;background-color: #EEEEEE;box-shadow: 0 0px 0px rgba(0, 0, 0, 0), 0 0px 0px rgba(0, 0, 0, 0);padding: 3px;">
 					<iframe src="https://www.youtube.com/embed/lRak3pwrIc0" frameborder="0" allowfullscreen style="width: 100% !important; height: 338px !important;"></iframe>
 				</div>
-				</div>
 			</div>
-		
-
+		</div>
 	</body>
 
 </html>
