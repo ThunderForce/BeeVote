@@ -157,7 +157,21 @@ lang = {
 			'email_not_registered': "Email '{email}' is not associated to any BeeVote account",
 			'year_before_1900': "Year cannot be before 1900"
 		},
+		'elements': {
+			'group_uppercase': "Group",
+			'topic_uppercase': "Topic",
+			'proposal_uppercase': "Proposal",
+			'group': "group",
+			'topic': "topic",
+			'proposal': "proposal",
+		},
 		'email': {
+			'common': {
+				'slogan': "The new way to make decision and organize",
+				'new_notification_on': "New notification on",
+				'beevote_team': "The Beevote team",
+				'go_to': "Go to"
+			},
 			'topic_creation': {
 				'subject': "Beevote: new topic created",
 				'body': u'''
@@ -175,6 +189,12 @@ The Beevote team
 '''
 			},
 			'proposal_creation': {
+				'body_lines': {
+					'line_1': "A new proposal has been created in a topic you are following",
+					'last_line_part_1': "Click",
+					'last_line_part_2': "here",
+					'last_line_part_3': "to see the changes",
+				},
 				'subject': "Beevote: new proposal created",
 				'body': u'''
 Dear {beevote_user_name},
@@ -352,7 +372,21 @@ The Beevote team
 			'email_not_registered': "L'email '{email}' non è associata a nessun account BeeVote",
 			'year_before_1900': "L'anno non può essere precedente al 1900"
 		},
+		'elements': {
+			'group_uppercase': "Gruppo",
+			'topic_uppercase': "Discussione",
+			'proposal_uppercase': "Proposta",
+			'group': "gruppo",
+			'topic': "discussione",
+			'proposal': "proposta",
+		},
 		'email': {
+			'common': {
+				'slogan': "Il nuovo modo per prendere decisioni e organizzarsi",
+				'new_notification_on': "Nuova notifica su",
+				'beevote_team': "Il team di Beevote",
+				'go_to': "Vai su"
+			},
 			'topic_creation': {
 				'subject': "Beevote: nuova discussione creata",
 				'body': u'''
@@ -370,6 +404,12 @@ Il team di Beevote
 '''
 			},
 			'proposal_creation': {
+				'body_lines': {
+					'line_1': "Una nuova proposta è stata creata in una discussione che stai seguendo",
+					'last_line_part_1': "Clicca",
+					'last_line_part_2': "qui",
+					'last_line_part_3': "per vedere i cambiamenti",
+				},
 				'subject': "Beevote: nuova proposta creata",
 				'body': u'''
 Caro {beevote_user_name},

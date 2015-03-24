@@ -1,9 +1,19 @@
 import logging
+import os
 
+from google.appengine.ext.webapp import template
 from google.appengine.api import mail
 from google.appengine.runtime import apiproxy_errors
 
 import language
+
+
+def _get_email_body(template_name, lang_package, template_values):
+    directory = os.path.dirname(__file__)
+    path = os.path.join(directory, os.path.join('templates/email', template_name))
+    template_values.update({'lang': language.lang[lang_package]})
+    rendered_template = template.render(path, template_values)
+    return rendered_template
 
 def _send_mail_to_admins(sender, subject, body):
     try:
@@ -81,6 +91,14 @@ def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
         sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['proposal_creation']['subject'],
+        # One day...
+        # body=_get_email_body("proposal-creation.html", lang_code, {
+        #    'beevote_user_name': beevote_user.name,
+        #    'group_name': proposal.topic.get().group.get().name,
+        #    'topic_title': proposal.topic.get().title,
+        #    'proposal_title': proposal.title,
+        #    'link': link
+        #})
         body=language.lang[lang_code]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
     
 def send_topic_creation_email(beevote_user, lang_code, topic, link):
