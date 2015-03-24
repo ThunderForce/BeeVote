@@ -145,8 +145,11 @@ class GroupHandler(BaseHandler):
 		topics = sorted(topics, key=lambda topic: topic.seconds_before_deadline)
 		group.topics = topics
 		
+		personal_settings = models.GroupPersonalSettings.get_settings(self.beevote_user, group)
+		
 		values = {
 			'group': group,
+			'personal_settings': personal_settings,
 		}
 		models.GroupAccess.update_specific_access(group, self.beevote_user)
 		write_template(self.response, 'html/group-overview.html', values)

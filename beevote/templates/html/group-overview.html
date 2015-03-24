@@ -7,6 +7,15 @@ $('span#group_name').html("{{ group.name }}");
 $('input#groupId').val("{{ group.key.id }}");
 
 $(document).ready(function() {
+	// popup group personal settings
+	$('form#notificationGroup-form').attr('action', '/api/group/{{group.key.id }}/update-personal-settings');
+	// personal settings
+	{% if personal_settings.topic_creation_email %}
+		$('form#notificationGroup-form input#topic_creation_email').attr('checked', true);
+	{% else %}
+		$('form#notificationGroup-form input#topic_creation_email').attr('checked', false);
+	{% endif %}
+	// end personal settings
 	// popup edit group
 	$('form#updateInfo-form').attr('action', '/api/group/{{ group.key.id }}/update');
 	resetForm('updateInfo-form');
@@ -135,6 +144,11 @@ function resetForm(form_id) {
 						    	right: 20px;
 								bottom: 16px;
 						    }
+						    button#notification-group{
+						    	font-size: 15px;
+						    	right: 100px;
+								bottom: 16px;
+						    }
 						    div#group-img-well{
 							    width: 40%;
 						    }
@@ -151,6 +165,11 @@ function resetForm(form_id) {
 							button#button-members-group{
 						    	font-size: 20px;
 						    	right:25px;
+						    	bottom:20px;
+						    }
+						    button#notification-group{
+						    	font-size: 20px;
+						    	right:114px;
 						    	bottom:20px;
 						    }
 						    div#group-img-well{
@@ -182,7 +201,8 @@ function resetForm(form_id) {
 						</div>
 					</div>	
 					<!-- Button Members -->
-					<button id="button-members-group"type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="position:absolute;background-color:rgb(64, 255, 64);"></button>
+					<button id="notification-group" title="{{lang.buttons.notification_group_title}}" type="button" class="btn btn-raised mdi-social-notifications" data-toggle="modal" data-target="#notificationGroup" style="position:absolute;background-color: #2196F3;padding:8px;z-index:1;"></button>
+					<button id="button-members-group"type="button" title="{{lang.buttons.edit_group_members}}" class="btn btn-raised mdi-social-people" data-toggle="modal" data-target="#addMembers" style="position:absolute;background-color:#2196F3;/*rgb(64, 255, 64);*/"></button>
 				</div>
 			</div>
 		</div>

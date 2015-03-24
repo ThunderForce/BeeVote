@@ -994,7 +994,7 @@ class UpdateGroupPersonalSettingsHandler(BaseApiHandler):
 		group = models.Group.get_from_id(group_id)
 		personal_settings = models.GroupPersonalSettings.get_settings(self.beevote_user, group)
 		if topic_creation_email:
-			personal_settings.topic_creation_email = (topic_creation_email == True)
+			personal_settings.topic_creation_email = (topic_creation_email is not None)
 		personal_settings.put()
 		values = {
 			'success': True,

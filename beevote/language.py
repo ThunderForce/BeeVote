@@ -34,6 +34,9 @@ lang = {
 			'topic': {
 				'proposal_creation': "Notification email for proposal creation",
 			},
+			'group': {
+				'topic_creation': "Notification email for topic creation",
+			},
 		},
 		'feedback_alert': {
 			'banner_1':'We would like to know what you think about Beevote! Click ',
@@ -224,6 +227,9 @@ The Beevote team
 		'notification_emails_settings': {
 			'topic': {
 				'proposal_creation': "Email di notifica per creazione proposta",
+			},
+			'group': {
+				'topic_creation': "Email di notifica per creazione discussione",
 			},
 		},
 		'feedback_alert': {

@@ -30,7 +30,6 @@ def _send_mail_to_user(sender, to, subject, body):
     except apiproxy_errors.OverQuotaError, message:
         logging.error(message)
         return False
-    pass
 
 def send_bug_report_to_admins(report, link):
     return _send_mail_to_admins(

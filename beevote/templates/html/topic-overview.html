@@ -111,9 +111,9 @@ $(document).ready(function() {
 	// end-popup edit group
 	// personal settings
 	{% if personal_settings.proposal_creation_email %}
-		$('input#proposal_creation_email').attr('checked', true);
+		$('form#notificationTopic-form input#proposal_creation_email').attr('checked', true);
 	{% else %}
-		$('input#proposal_creation_email').attr('checked', false);
+		$('form#notificationTopic-form input#proposal_creation_email').attr('checked', false);
 	{% endif %}
 	// end personal settings
 	$('#topic_image').css('width', '99%');$('#topic_image').css('width', '100%');
