@@ -92,18 +92,27 @@ def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['proposal_creation']['subject'],
         # One day...
-        # body=_get_email_body("proposal-creation.html", lang_code, {
-        #    'beevote_user_name': beevote_user.name,
-        #    'group_name': proposal.topic.get().group.get().name,
-        #    'topic_title': proposal.topic.get().title,
-        #    'proposal_title': proposal.title,
-        #    'link': link
-        #})
-        body=language.lang[lang_code]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
+        body=_get_email_body("proposal-creation.html", lang_code, {
+            'beevote_user_name': beevote_user.name,
+            'group_name': proposal.topic.get().group.get().name,
+            'topic_title': proposal.topic.get().title,
+            'proposal_title': proposal.title,
+            'link': link
+        })
+        # body=language.lang[lang_code]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
+    )
     
 def send_topic_creation_email(beevote_user, lang_code, topic, link):
     return _send_mail_to_user(
         sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['topic_creation']['subject'],
-        body=language.lang[lang_code]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link))
+        # One day...
+        body=_get_email_body("topic-creation.html", lang_code, {
+            'beevote_user_name': beevote_user.name,
+            'group_name': topic.group.get().name,
+            'topic_title': topic.title,
+            'link': link
+        })
+        # body=language.lang[lang_code]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link)
+    )

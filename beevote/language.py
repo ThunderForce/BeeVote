@@ -173,6 +173,12 @@ lang = {
 				'go_to': "Go to"
 			},
 			'topic_creation': {
+				'body_lines': {
+					'line_1': "A new topic has been created in one of your groups",
+					'last_line_part_1': "Click",
+					'last_line_part_2': "here",
+					'last_line_part_3': "to see the new topic",
+				},
 				'subject': "Beevote: new topic created",
 				'body': u'''
 Dear {beevote_user_name},
@@ -388,6 +394,12 @@ The Beevote team
 				'go_to': "Vai su"
 			},
 			'topic_creation': {
+				'body_lines': {
+					'line_1': "Una nuova discussione è stata creata in uno dei tuoi gruppi",
+					'last_line_part_1': "Clicca",
+					'last_line_part_2': "qui",
+					'last_line_part_3': "per vedere la nuova discussione",
+				},
 				'subject': "Beevote: nuova discussione creata",
 				'body': u'''
 Caro {beevote_user_name},
