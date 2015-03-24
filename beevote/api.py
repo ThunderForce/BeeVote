@@ -20,6 +20,7 @@ import datetime
 import json
 import logging
 import time
+import traceback
 
 from google.appengine.api import users, memcache
 from google.appengine.ext import ndb
@@ -573,13 +574,20 @@ class CreateTopicHandler(BaseApiHandler):
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
 				emailed_users = [u for u in group.get_members() if GroupPersonalSettings.get_settings(u, group).topic_creation_email]
-				emailer.send_topic_creation_email(emailed_users, topic, self.request.host+"/group/"+str(group.key.id())+"/topic/"+str(topic.key.id()))
+				for user in emailed_users:
+					if not user.language:
+						lang_package= 'en'
+					else:
+						lang_package = user.language
+					emailer.send_topic_creation_email(user, lang_package, topic, self.request.host+"/group/"+str(group.key.id())+"/topic/"+str(topic.key.id()))
 				values = {
 					'success': True,
 					'group_id': group_id,
 					'topic_id': topic.key.id(),
 				}
 			except Exception as exc:
+				stacktrace = traceback.format_exc()
+				logging.error("%s", stacktrace)
 				values = {
 					'success': False,
 					'error': exc.args[0]
@@ -886,7 +894,13 @@ class CreateProposalHandler(BaseApiHandler):
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				topic.put()
 				emailed_users = [u for u in topic.group.get().get_members() if TopicPersonalSettings.get_settings(u, topic).proposal_creation_email]
-				emailer.send_proposal_creation_email(emailed_users, proposal, self.request.host+"/group/"+str(topic.group.id())+"/topic/"+str(topic.key.id()))
+				
+				for user in emailed_users:
+					if not user.language:
+						lang_package= 'en'
+					else:
+						lang_package = user.language
+					emailer.send_proposal_creation_email(user, lang_package, proposal, self.request.host+"/group/"+str(topic.group.id())+"/topic/"+str(topic.key.id()))
 				values = {
 					'success': True,
 					'group_id': group_id,
@@ -894,7 +908,8 @@ class CreateProposalHandler(BaseApiHandler):
 					'proposal_id': proposal.key.id(),
 				}
 			except Exception as exc:
-				logging.exception("Error during topic creation")
+				stacktrace = traceback.format_exc()
+				logging.error("%s", stacktrace)
 				values = {
 					'success': False,
 					'error': exc.args[0]
@@ -1031,6 +1046,8 @@ class CreateBugReportHandler(BaseApiHandler):
 				'report_id': report_id,
 			}
 		except Exception as exc:
+			stacktrace = traceback.format_exc()
+			logging.error("%s", stacktrace)
 			values = {
 				'success': False,
 				'error': exc.args[0]

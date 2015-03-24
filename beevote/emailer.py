@@ -75,65 +75,16 @@ Details of registration:
 The BeeVote Team
     """.format(beevote_user=beevote_user, link=link))
 
-def send_topic_creation_notification(beevote_users, topic, link):
+def send_proposal_creation_email(beevote_user, language, proposal, link):
+    return _send_mail_to_user(
+        sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
+        to=beevote_user.email,
+        subject=language.lang[language]['email']['proposal_creation']['subject'],
+        body=language.lang[language]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
+    
+def send_topic_creation_email(beevote_user, language, topic, link):
     return _send_mail_to_user(
         sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
-        to=(u.email for u in beevote_users),
-        subject="BeeVote: new topic created",
-        body='''
-Dear {beevote_user.name},
-
-A new topic has been created on the group "{group.name}":
-
-"{topic.title}"
-
-Follow this link to see the topic:
-{link}
-
-The BeeVote Team
-    '''.format(topic=topic, group=topic.group.get(), link=link))
-
-def send_proposal_creation_email(beevote_users, proposal, link):
-    if len(beevote_users) > 0:
-        return _send_mail_to_user(
-            sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
-            to=(u.email for u in beevote_users),
-            subject="BeeVote: new proposal created",
-            body='''
-Dear {beevote_user.name},
-
-A new proposal has been created in a topic you are following:
-
-- Group: "{group.name}"
-- Topic: "{topic.title}"
-- Proposal: "{proposal.title}"
-
-Follow this link to see the changes:
-{link}
-
-The BeeVote Team
-        '''.format(proposal=proposal, topic=proposal.topic.get(), group=proposal.topic.get().group.get(), link=link))
-    else:
-        return True
-
-def send_topic_creation_email(beevote_users, topic, link):
-    if len(beevote_users) > 0:
-        return _send_mail_to_user(
-            sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
-            to=(u.email for u in beevote_users),
-            subject="BeeVote: new topic created",
-            body='''
-Dear {beevote_user.name},
-
-A new topic has been created in one of your groups:
-
-- Group: "{group.name}"
-- Topic: "{topic.title}"
-
-Follow this link to see the new topic:
-{link}
-
-The BeeVote Team
-        '''.format(topic=topic, group=topic.group.get(), link=link))
-    else:
-        return True
+        to=beevote_user.email,
+        subject=language.lang[language]['email']['topic_creation']['subject'],
+        body=language.lang[language]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link))

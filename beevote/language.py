@@ -153,6 +153,41 @@ lang = {
 			'email_not_in_the_group': "User associated to email '{email}' is not in the group",
 			'email_not_registered': "Email '{email}' is not associated to any BeeVote account",
 			'year_before_1900': "Year cannot be before 1900"
+		},
+		'email': {
+			'topic_creation': {
+				'subject': "Beevote: new topic created",
+				'body': '''
+Dear {beevote_user_name},
+
+A new topic has been created in one of your groups:
+
+- Group: "{group_name}"
+- Topic: "{topic_title}"
+
+Follow this link to see the new topic:
+{link}
+
+The Beevote team
+'''
+			},
+			'proposal_creation': {
+				'subject': "Beevote: new proposal created",
+				'body': '''
+Dear {beevote_user_name},
+
+A new proposal has been created in a topic you are following:
+
+- Group: "{group_name}"
+- Topic: "{topic_title}"
+- Proposal: "{proposal_title}"
+
+Follow this link to see the changes:
+{link}
+
+The Beevote team
+'''
+			}
 		}
 	},
 
@@ -310,7 +345,41 @@ lang = {
 			'email_not_in_the_group': "L'utente associato all'email '{email}' non è nel gruppo",
 			'email_not_registered': "L'email '{email}' non è associata a nessun account BeeVote",
 			'year_before_1900': "L'anno non può essere precedente al 1900"
+		},
+		'email': {
+			'topic_creation': {
+				'subject': "Beevote: nuova discussione creata",
+				'body': '''
+Caro {beevote_user_name},
+
+una nuova discussione è stata creata in uno dei tuoi gruppi:
+
+- Gruppo: "{group_name}"
+- Discussione: "{topic_title}"
+
+Vai a questo link per vedere la nuova discussione:
+{link}
+
+Il team di Beevote
+'''
+			},
+			'proposal_creation': {
+				'subject': "Beevote: nuova proposta creata",
+				'body': '''
+Caro {beevote_user_name},
+
+una nuova proposta è stata creata in una discussione che stai seguendo:
+
+- Gruppo: "{group_name}"
+- Discussione: "{topic_title}"
+- Proposta: "{proposal_title}"
+
+Vai a questo link per vedere le modifiche:
+{link}
+
+Il team di Beevote
+'''
+			}
 		}
 	},
 }
- 

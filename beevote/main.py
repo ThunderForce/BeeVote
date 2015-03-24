@@ -16,7 +16,9 @@
 #
 
 import datetime
+import logging
 import os
+import traceback
 
 from google.appengine.api import users
 from google.appengine.api.images import Image
@@ -211,6 +213,8 @@ class UserImageHandler(webapp2.RequestHandler):
 					height = int(self.request.get('height'))
 					self.response.out.write(resize_image(user.img, width, height))
 				except:
+					stacktrace = traceback.format_exc()
+					logging.error("%s", stacktrace)
 					self.response.out.write(user.img)
 			else:
 				self.error(404)
@@ -231,6 +235,8 @@ class GroupImageHandler(webapp2.RequestHandler):
 					height = int(self.request.get('height'))
 					self.response.out.write(resize_image(group.img, width, height))
 				except:
+					stacktrace = traceback.format_exc()
+					logging.error("%s", stacktrace)
 					self.response.out.write(group.img)
 			else:
 				self.error(404)
@@ -251,6 +257,8 @@ class TopicImageHandler(webapp2.RequestHandler):
 					height = int(self.request.get('height'))
 					self.response.out.write(resize_image(topic.img, width, height))
 				except:
+					stacktrace = traceback.format_exc()
+					logging.error("%s", stacktrace)
 					self.response.out.write(topic.img)
 			else:
 				self.error(404)
