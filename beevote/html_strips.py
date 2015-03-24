@@ -250,9 +250,11 @@ class TopicHandler(BaseHandler):
 				'hours': time_before_deadline.seconds/3600,
 				'days': time_before_deadline.days,
 			}
-			
+		
+		personal_settings = models.TopicPersonalSettings.get_settings(self.beevote_user, topic)
 		values = {
 			'topic': topic,
+			'personal_settings': personal_settings
 		}
 		models.TopicAccess.update_specific_access(topic, self.beevote_user)
 		write_template(self.response, 'html/topic-overview.html', values)

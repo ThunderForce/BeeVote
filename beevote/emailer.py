@@ -3,6 +3,8 @@ import logging
 from google.appengine.api import mail
 from google.appengine.runtime import apiproxy_errors
 
+import language
+
 def _send_mail_to_admins(sender, subject, body):
     try:
         mail.send_mail_to_admins(
@@ -75,16 +77,16 @@ Details of registration:
 The BeeVote Team
     """.format(beevote_user=beevote_user, link=link))
 
-def send_proposal_creation_email(beevote_user, language, proposal, link):
+def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
     return _send_mail_to_user(
         sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
-        subject=language.lang[language]['email']['proposal_creation']['subject'],
-        body=language.lang[language]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
+        subject=language.lang[lang_code]['email']['proposal_creation']['subject'],
+        body=language.lang[lang_code]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
     
-def send_topic_creation_email(beevote_user, language, topic, link):
+def send_topic_creation_email(beevote_user, lang_code, topic, link):
     return _send_mail_to_user(
         sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
-        subject=language.lang[language]['email']['topic_creation']['subject'],
-        body=language.lang[language]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link))
+        subject=language.lang[lang_code]['email']['topic_creation']['subject'],
+        body=language.lang[lang_code]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link))

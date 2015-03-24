@@ -157,7 +157,7 @@ lang = {
 		'email': {
 			'topic_creation': {
 				'subject': "Beevote: new topic created",
-				'body': '''
+				'body': u'''
 Dear {beevote_user_name},
 
 A new topic has been created in one of your groups:
@@ -173,7 +173,7 @@ The Beevote team
 			},
 			'proposal_creation': {
 				'subject': "Beevote: new proposal created",
-				'body': '''
+				'body': u'''
 Dear {beevote_user_name},
 
 A new proposal has been created in a topic you are following:
@@ -349,7 +349,7 @@ The Beevote team
 		'email': {
 			'topic_creation': {
 				'subject': "Beevote: nuova discussione creata",
-				'body': '''
+				'body': u'''
 Caro {beevote_user_name},
 
 una nuova discussione è stata creata in uno dei tuoi gruppi:
@@ -365,7 +365,7 @@ Il team di Beevote
 			},
 			'proposal_creation': {
 				'subject': "Beevote: nuova proposta creata",
-				'body': '''
+				'body': u'''
 Caro {beevote_user_name},
 
 una nuova proposta è stata creata in una discussione che stai seguendo:

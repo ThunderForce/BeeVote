@@ -573,7 +573,7 @@ class CreateTopicHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
-				emailed_users = [u for u in group.get_members() if GroupPersonalSettings.get_settings(u, group).topic_creation_email]
+				emailed_users = [u for u in group.get_members() if u.key != self.beevote_user.key and GroupPersonalSettings.get_settings(u, group).topic_creation_email]
 				for user in emailed_users:
 					if not user.language:
 						lang_package= 'en'
@@ -893,7 +893,7 @@ class CreateProposalHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				topic.put()
-				emailed_users = [u for u in topic.group.get().get_members() if TopicPersonalSettings.get_settings(u, topic).proposal_creation_email]
+				emailed_users = [u for u in topic.group.get().get_members() if u.key != self.beevote_user.key and TopicPersonalSettings.get_settings(u, topic).proposal_creation_email]
 				
 				for user in emailed_users:
 					if not user.language:
@@ -1008,7 +1008,7 @@ class UpdateTopicPersonalSettingsHandler(BaseApiHandler):
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		personal_settings = models.TopicPersonalSettings.get_settings(self.beevote_user, topic)
 		if proposal_creation_email:
-			personal_settings.proposal_creation_email = (proposal_creation_email == True)
+			personal_settings.proposal_creation_email = (proposal_creation_email is not None)
 		personal_settings.put()
 		values = {
 			'success': True,

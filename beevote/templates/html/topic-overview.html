@@ -96,6 +96,8 @@ function initialize_topic_map(id, place) {
 };
 
 $(document).ready(function() {
+	// popup topic personal settings
+	$('form#notificationTopic-form').attr('action', '/api/group/{{topic.group.id }}/topic/{{topic.key.id}}/update-personal-settings');
 	// popup edit topic
 	$('form#updateInfoTopic-form').attr('action', '/api/group/{{topic.group.id }}/topic/{{topic.key.id}}/update');
 	resetForm('updateInfoTopic-form');
@@ -107,6 +109,13 @@ $(document).ready(function() {
 	$('span#delete-topic-button').html('');
 	{% endif %}
 	// end-popup edit group
+	// personal settings
+	{% if personal_settings.proposal_creation_email %}
+		$('input#proposal_creation_email').attr('checked', true);
+	{% else %}
+		$('input#proposal_creation_email').attr('checked', false);
+	{% endif %}
+	// end personal settings
 	$('#topic_image').css('width', '99%');$('#topic_image').css('width', '100%');
 	$('input#groupId').val("{{ topic.group.id }}");
 	$('#back-button').on('click', function(e) {
@@ -592,7 +601,7 @@ $(document).ready(function() {
 			<!-- END Topic Accordion Details -->
 
 			<div id="topic-footer" class="modal-footer">
-				<!-- NOTIFICATION Button 
+				<!-- NOTIFICATION Button -->
 				<button id="notification-topic" title="{{lang.buttons.notification_topic_title}}" type="button" class="btn btn-success btn-raised mdi-social-notifications" data-toggle="modal" data-target="#notificationTopic"  style="margin-bottom: 0px;background-color: #0F9D58;padding:7px;z-index:1;margin-right: 2px;"></button>
 				<!-- /NOTIFICATION Button -->
 
