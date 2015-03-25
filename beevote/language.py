@@ -154,7 +154,7 @@ lang = {
 			'group_admin_authorization_denied': "You are not an admin of the group",
 			'email_already_in_the_group': "User associated to email '{email}' is already in the group",
 			'email_not_in_the_group': "User associated to email '{email}' is not in the group",
-			'email_not_registered': "Email '{email}' is not associated to any BeeVote account",
+			'email_not_registered': "Email '{email}' is not associated to any Beevote account",
 			'year_before_1900': "Year cannot be before 1900"
 		},
 		'elements': {
@@ -375,7 +375,7 @@ The Beevote team
 			'group_admin_authorization_denied': "Non sei un amministratore del gruppo",
 			'email_already_in_the_group': "L'utente associato all'email '{email}' è già nel gruppo",
 			'email_not_in_the_group': "L'utente associato all'email '{email}' non è nel gruppo",
-			'email_not_registered': "L'email '{email}' non è associata a nessun account BeeVote",
+			'email_not_registered': "L'email '{email}' non è associata a nessun account Beevote",
 			'year_before_1900': "L'anno non può essere precedente al 1900"
 		},
 		'elements': {

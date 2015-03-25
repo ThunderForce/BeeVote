@@ -43,10 +43,10 @@ def _send_mail_to_user(sender, to, subject, body):
 
 def send_bug_report_to_admins(report, link):
     return _send_mail_to_admins(
-        sender="BeeVote Bug Report <bug-report@beevote.appspotmail.com>",
-        subject="BeeVote bug report received",
+        sender="Beevote Bug Report <bug-report@beevote.appspotmail.com>",
+        subject="Beevote bug report received",
         body="""
-Dear BeeVote admin,
+Dear Beevote admin,
 
 Your application has received the following bug report:
 - ID: {report._id}
@@ -60,17 +60,16 @@ Your application has received the following bug report:
 Follow this link to see all bug reports:
 {link}
 
-The BeeVote Team
+The Beevote Team
     """.format(report=report, link=link))
 
 def send_registration_notification(beevote_user, lang_code, link):
     return _send_mail_to_user(
-        sender='BeeVote Registration Notifier <registration-successful@beevote.appspotmail.com>',
+        sender='Beevote Registration Notifier <registration-successful@beevote.appspotmail.com>',
         to=beevote_user.email,
-        subject="BeeVote: successfully registered",
+        subject="Beevote: successfully registered",
         body=_get_email_body("registration-notification.html", lang_code, {
             'beevote_user_id': beevote_user.key.id(),
-            'google_user_id': beevote_user.user_id,
             'beevote_user_name': beevote_user.name,
             'beevote_user_surname': beevote_user.nsurame,
             'beevote_user_email': beevote_user.email,
@@ -79,7 +78,7 @@ def send_registration_notification(beevote_user, lang_code, link):
     ) 
 def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
     return _send_mail_to_user(
-        sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
+        sender='Beevote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['proposal_creation']['subject'],
         # One day...
@@ -95,7 +94,7 @@ def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
     
 def send_topic_creation_email(beevote_user, lang_code, topic, link):
     return _send_mail_to_user(
-        sender='BeeVote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
+        sender='Beevote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['topic_creation']['subject'],
         # One day...
