@@ -23,15 +23,12 @@ import time
 import traceback
 
 from google.appengine.api import users, memcache
-from google.appengine.ext import ndb
 import webapp2
 
 import constants
 import emailer
 import language
-from models import TopicPersonalSettings, GroupPersonalSettings
 import models
-
 
 # Start of functions
 # TEMPORARY
@@ -292,7 +289,7 @@ class LoadParticipantsHandler(BaseApiHandler):
 
 		participants = [part for part in group.members if part not in topic.non_participant_users]
 		
-		beevote_users = ndb.get_multi(participants)
+		beevote_users = models.BeeVoteUser.get_from_keys(participants)
 		json_users = []
 		for user in beevote_users:
 			json_users.append(fetch_user(user, arguments))
@@ -332,7 +329,7 @@ class CreateVoteHandler(BaseApiHandler):
 			)
 			vote.put()
 			time.sleep(0.25)		
-		votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1", proposal.key)
+		votes = proposal.get_votes()
 		vote_number = votes.count()
 		values = {
 			'success': success,
@@ -353,11 +350,9 @@ class RemoveVoteHandler(BaseApiHandler):
 			if proposal.topic.get().expired:
 				success = False
 		if success:
-			votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal.key, self.beevote_user.key)
-			vote = votes.get()
-			vote.key.delete()
+			proposal.remove_user_vote(self.beevote_user)
 			time.sleep(0.25)
-		votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1", proposal.key)
+		votes = proposal.get_votes()
 		vote_number = votes.count()
 		values = {
 			'success': success,
@@ -371,7 +366,7 @@ class LoadVotesHandler(BaseApiHandler):
 		topic_id = self.request.get('topic_id')
 		proposal_id = self.request.get('proposal_id')
 		proposal = models.Proposal.get_from_id(long(group_id), long(topic_id), long(proposal_id))
-		votes_db = ndb.gql("SELECT * FROM Vote WHERE proposal = :1", proposal.key).fetch(20)
+		votes_db = proposal.get_votes()
 		votes = []
 		for vote in votes_db:
 			votes.append({
@@ -573,7 +568,7 @@ class CreateTopicHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.TOPIC_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				group.put()
-				emailed_users = [u for u in group.get_members() if u.key != self.beevote_user.key and GroupPersonalSettings.get_settings(u, group).topic_creation_email]
+				emailed_users = [u for u in group.get_members() if u.key != self.beevote_user.key and models.GroupPersonalSettings.get_settings(u, group).topic_creation_email]
 				for user in emailed_users:
 					if not user.language:
 						lang_package= 'en'
@@ -648,7 +643,7 @@ class UpdateTopicHandler(BaseApiHandler):
 class MemberAutocompleteHandler(BaseApiHandler):
 	def get(self):
 		query = self.request.get('query').lower()
-		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
+		users = models.BeeVoteUser.get_all()
 		users = [u for u in users if (query in u.name.lower()+" "+u.surname.lower())][:10]
 		suggestions = []
 		for user in users:
@@ -786,7 +781,7 @@ class AddGroupMemberHandler(BaseApiHandler):
 			}
 		else:
 			email = self.request.get("email")
-			beevote_user = ndb.gql('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
+			beevote_user = models.BeeVoteUser.get_by_email(email)
 			if beevote_user:
 				beevote_user_key = beevote_user.key
 				if beevote_user_key not in group.members:
@@ -822,11 +817,7 @@ class RemoveGroupMemberHandler(BaseApiHandler):
 			}
 		else:
 			email = self.request.get("email")
-			deleted_beevote_user = ndb.gql('SELECT * FROM BeeVoteUser WHERE email = :1', email).get()
-			'''
-			group_key = db.Key.from_path('Group', long(group_id))
-			group = db.get(group_key)
-			'''
+			deleted_beevote_user = models.BeeVoteUser.get_by_email(email)
 			group = models.Group.get_from_id(long(group_id))
 			deleted_user_key = deleted_beevote_user.key
 			if deleted_user_key not in group.members:
@@ -893,7 +884,7 @@ class CreateProposalHandler(BaseApiHandler):
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic_key=topic.key)
 				models.TopicAccess.update_specific_access(topic, self.beevote_user)
 				topic.put()
-				emailed_users = [u for u in topic.group.get().get_members() if u.key != self.beevote_user.key and TopicPersonalSettings.get_settings(u, topic).proposal_creation_email]
+				emailed_users = [u for u in topic.group.get().get_members() if u.key != self.beevote_user.key and models.TopicPersonalSettings.get_settings(u, topic).proposal_creation_email]
 				
 				for user in emailed_users:
 					if not user.language:
@@ -954,11 +945,7 @@ class RemoveParticipationHandler(BaseApiHandler):
 		else:
 			topic.non_participant_users.append(self.beevote_user.key)
 			topic.put()
-			proposals = topic.get_proposals()
-			for proposal in proposals:
-				votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal.key, self.beevote_user.key)
-				for vote in votes:
-					vote.key.delete()
+			topic.delete_votes_by_user(self.beevote_user)
 			time.sleep(0.25)
 			values = {
 				'success': True,

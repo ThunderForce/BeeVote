@@ -22,7 +22,6 @@ import traceback
 
 from google.appengine.api import users
 from google.appengine.api.images import Image
-from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 import webapp2
 from webapp2_extras import sessions
@@ -182,7 +181,7 @@ class HomeHandler(BaseHandler):
 		self.beevote_user.last_access = datetime.datetime.now()
 		self.beevote_user.put()
 		
-		feature_changes = ndb.gql("SELECT * FROM FeatureChange WHERE creation > :1", last_access).fetch(1000)
+		feature_changes = models.FeatureChange.get_from_date(last_access)
 		
 		values = {
 			'user' : self.beevote_user,

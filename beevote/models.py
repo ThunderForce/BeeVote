@@ -23,6 +23,18 @@ class BeeVoteUser(ndb.Model):
 			memcache.add('beevoteuser_by_id_%s' % beevote_user_id, beevote_user, time=600)  # @UndefinedVariable
 		return beevote_user
 	
+	@staticmethod
+	def get_by_email(email):
+		return BeeVoteUser.query(BeeVoteUser.email == email).get()
+	
+	@staticmethod
+	def get_all():
+		return ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
+	
+	@staticmethod
+	def get_from_keys(keys):
+		return ndb.get_multi(keys)
+	
 	def get_groups_by_membership(self):
 		return Group.query(Group.members == self.key).fetch(1000)
 	
@@ -172,6 +184,14 @@ class Topic(ndb.Model):
 		notifications = TopicNotification.get_from_timestamp(last_access.timestamp, topic=self)
 		return notifications
 	
+	def delete_votes_by_user(self, beevote_user):
+		beevote_user_key = beevote_user.key
+		proposals = self.get_proposals()
+		for proposal in proposals:
+			votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", proposal.key, beevote_user_key)
+			for vote in votes:
+				vote.key.delete()
+	
 	def delete(self):
 		proposals = self.get_proposals()
 		for proposal in proposals:
@@ -220,6 +240,11 @@ class Proposal(ndb.Model):
 	def get_votes(self):
 		return Vote.query(Vote.proposal == self.key).fetch(1000)
 	
+	def remove_user_vote(self, beevote_user):
+		votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", self.key, beevote_user.key)
+		for vote in votes:
+			vote.key.delete()
+	
 	'''
 	def put(self):
 		db.Model.put(self)
@@ -240,6 +265,10 @@ class Vote(ndb.Model):
 class FeatureChange(ndb.Model):
 	description = ndb.StringProperty(required=True)
 	creation = ndb.DateTimeProperty(auto_now_add=True)
+	
+	@staticmethod
+	def get_from_date(date):
+		return ndb.gql("SELECT * FROM FeatureChange WHERE creation > :1", date).fetch(1000)
 
 class GroupAccess(ndb.Model):
 	beevote_user = ndb.KeyProperty(kind=BeeVoteUser, required=True)
