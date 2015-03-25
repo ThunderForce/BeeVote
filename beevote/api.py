@@ -1085,9 +1085,7 @@ class RegistrationHandler(BaseApiHandler):
 			
 			beevote_user.put()
 			
-			beevote_user._id = beevote_user.key.id()
-			
-			emailer.send_registration_notification(beevote_user, self.request.host)
+			emailer.send_registration_notification(beevote_user, 'en', self.request.host)
 			
 			values = {
 				'success': True

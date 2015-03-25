@@ -63,29 +63,20 @@ Follow this link to see all bug reports:
 The BeeVote Team
     """.format(report=report, link=link))
 
-def send_registration_notification(beevote_user, link):
+def send_registration_notification(beevote_user, lang_code, link):
     return _send_mail_to_user(
-        sender='BeeVote Registration Notifier <registration-accepted@beevote.appspotmail.com>',
+        sender='BeeVote Registration Notifier <registration-successful@beevote.appspotmail.com>',
         to=beevote_user.email,
-        subject="BeeVote registration request accepted",
-        body="""
-Dear {beevote_user.name},
-
-Your registration request has been accepted: now you can access BeeVote features!
-
-Follow this link to start:
-{link}
-
-Details of registration:
-- BeeVote User ID: {beevote_user._id}
-- Google User ID: {beevote_user.user_id}
-- User email: {beevote_user.email}
-- Name: {beevote_user.name}
-- Surname: {beevote_user.surname}
-
-The BeeVote Team
-    """.format(beevote_user=beevote_user, link=link))
-
+        subject="BeeVote: successfully registered",
+        body=_get_email_body("registration-notification.html", lang_code, {
+            'beevote_user_id': beevote_user.key.id(),
+            'google_user_id': beevote_user.user_id,
+            'beevote_user_name': beevote_user.name,
+            'beevote_user_surname': beevote_user.nsurame,
+            'beevote_user_email': beevote_user.email,
+            'link': link
+        })
+    ) 
 def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
     return _send_mail_to_user(
         sender='BeeVote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
