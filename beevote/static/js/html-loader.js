@@ -19,8 +19,10 @@ function _load_right_column(url, additional_callback) {
 				load_all_topics();
 			},
 			500: function() {
-				alert("Internal server error. You'll be redirected to home page.");
-				load_all_topics();
+				$('div#right-column').html("" +
+						"<p>Internal server error.</p>" +
+						"<p>Try to refresh the page.</p>" +
+						"<p>If the problem persists contact us.</p>");
 			}
 		}
 	});
@@ -69,6 +71,26 @@ function load_groups(opened_group) {
 			});
 		}
 	});
+	$.ajax({
+		url: '/html/groups',
+		method: "GET",
+		success: function(response) {
+			$('div#group-list').html(response);
+			if (opened_group != null) {
+				$('div.group-well').removeClass('group-selected');
+				$('div.group-well[data-group_id="'+opened_group+'"]').addClass('group-selected');
+			}
+		},
+		statusCode: {
+			500: function() {
+				$('div#group-list').html("" +
+						"<p>Internal server error.</p>" +
+						"<p>Try to refresh the page.</p>" +
+						"<p>If the problem persists contact us.</p>");
+			}
+		}
+	});
+	/*
 	if (opened_group == null)
 		$('#group-list').load('/html/groups');
 	else
@@ -77,6 +99,7 @@ function load_groups(opened_group) {
 			$('div.group-well[data-group_id="'+opened_group+'"]').addClass('group-selected');
 //			$('div.group-well[data-group_id="'+opened_group+'"]').click();
 		});
+	*/
 }
 
 // Start of left columns loadings
