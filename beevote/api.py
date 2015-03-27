@@ -871,13 +871,13 @@ class CreateProposalHandler(BaseApiHandler):
 					parent=topic.key,
 					creator=self.beevote_user.key,
 				)
-				if where != "":
+				if where != "" and topic.place == "":
 					proposal.place = where
-				if date != "":
+				if date != "" and topic.date is None:
 					proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
 					if proposal.date.year <= 1900:
 						raise Exception(self.lang['errors']['year_before_1900'])
-				if time != "":
+				if time != "" and topic.time is None:
 					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
 				proposal.description = description
 				proposal.put()
