@@ -15,6 +15,14 @@ def _get_email_body(template_name, lang_package, template_values):
     rendered_template = template.render(path, template_values)
     return rendered_template
 
+def _get_email_content(body_template, lang_package, template_values):
+    directory = os.path.dirname(__file__)
+    path = os.path.join(directory, os.path.join('templates/email', 'basic-template.html'))
+    rendered_template = template.render(path, {
+        'email_body_table': _get_email_body(body_template, lang_package, template_values)
+    })
+    return rendered_template
+
 def _send_mail_to_admins(sender, subject, body):
     try:
         mail.send_mail_to_admins(
@@ -68,7 +76,7 @@ def send_registration_notification(beevote_user, lang_code, link):
         sender='Beevote Registration Notifier <registration-successful@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject="Beevote: successfully registered",
-        body=_get_email_body("registration-notification.html", lang_code, {
+        body=_get_email_content("registration-notification.html", lang_code, {
             'beevote_user_id': beevote_user.key.id(),
             'beevote_user_name': beevote_user.name,
             'beevote_user_surname': beevote_user.nsurame,
@@ -82,7 +90,7 @@ def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['proposal_creation']['subject'],
         # One day...
-        body=_get_email_body("proposal-creation.html", lang_code, {
+        body=_get_email_content("proposal-creation.html", lang_code, {
             'beevote_user_name': beevote_user.name,
             'group_name': proposal.topic.get().group.get().name,
             'topic_title': proposal.topic.get().title,
@@ -98,7 +106,7 @@ def send_topic_creation_email(beevote_user, lang_code, topic, link):
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['topic_creation']['subject'],
         # One day...
-        body=_get_email_body("topic-creation.html", lang_code, {
+        body=_get_email_content("topic-creation.html", lang_code, {
             'beevote_user_name': beevote_user.name,
             'group_name': topic.group.get().name,
             'topic_title': topic.title,
