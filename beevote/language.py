@@ -157,6 +157,7 @@ lang = {
 			'email_not_registered': "Email '{email}' is not associated to any Beevote account",
 			'year_before_1900': "Year cannot be before 1900"
 		},
+		'unknown_user': "Unknown user",
 		'elements': {
 			'group_uppercase': "Group",
 			'topic_uppercase': "Topic",
@@ -378,6 +379,7 @@ The Beevote team
 			'email_not_registered': "L'email '{email}' non è associata a nessun account Beevote",
 			'year_before_1900': "L'anno non può essere precedente al 1900"
 		},
+		'unknown_user': "Utente sconosciuto",
 		'elements': {
 			'group_uppercase': "Gruppo",
 			'topic_uppercase': "Discussione",

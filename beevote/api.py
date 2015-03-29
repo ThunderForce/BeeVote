@@ -43,6 +43,8 @@ def get_json(json_obj):
 	return json.dumps(json_obj, indent=4, separators=(',', ': '))
 
 def fetch_user(beevote_user, arguments):
+	if beevote_user is None:
+		return None
 	user = collections.OrderedDict([
 		('data', collections.OrderedDict([
 			('id', beevote_user.key.id()),
@@ -330,7 +332,7 @@ class CreateVoteHandler(BaseApiHandler):
 			vote.put()
 			time.sleep(0.25)		
 		votes = proposal.get_votes()
-		vote_number = votes.count()
+		vote_number = len(votes)
 		values = {
 			'success': success,
 			'vote_number': vote_number
@@ -353,7 +355,7 @@ class RemoveVoteHandler(BaseApiHandler):
 			proposal.remove_user_vote(self.beevote_user)
 			time.sleep(0.25)
 		votes = proposal.get_votes()
-		vote_number = votes.count()
+		vote_number = len(votes)
 		values = {
 			'success': success,
 			'vote_number': vote_number,
@@ -392,13 +394,16 @@ class OldLoadProposalHandler(BaseApiHandler):
 			'proposal': {
 				'title': proposal.title,
 				'description': proposal.description,
-				'creator': {
-					'name': proposal.creator.get().name,
-					'surname': proposal.creator.get().surname,
-					'email': proposal.creator.get().email,
-				},
 			}
 		}
+		if proposal.creator.get():
+			values['creator'] = {
+				'name': proposal.creator.get().name,
+				'surname': proposal.creator.get().surname,
+				'email': proposal.creator.get().email,
+			}
+		else:
+			values['creator'] = None
 		if topic.place == "" and proposal.place:
 			values['proposal']['place'] = proposal.place
 		if topic.date == None and proposal.date:

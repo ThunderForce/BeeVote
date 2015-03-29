@@ -327,7 +327,10 @@ $(document).ready(function() {
 				if(response.proposal.time != undefined){
 					$("#proposalPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> '+response.proposal.time+' </span>');
 				};
-				$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+response.proposal.creator.name+' '+response.proposal.creator.surname+' </span>');
+				if (response.proposal.creator != null)
+					$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+response.proposal.creator.name+' '+response.proposal.creator.surname+' </span>');
+				else
+					$("#proposalPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"><i> {{ lang.unknown_user }} </i></span>');
 				
 				/*"<li>"+response.proposal.place+"</li>"+"<li>"+response.proposal.date+"</li>"+"<li>"+response.proposal.time+"</li>");*/
 
@@ -342,11 +345,16 @@ $(document).ready(function() {
 				
 						$.each(response.votes, function(index, vote) {
 							var str = '<div class="list-group-item"><div class="row-picture">';
-							if (vote.creator.data.has_image)
-								str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image?width=64&height=64" alt="icon">';
-							else
+							if (vote.creator == null) {
 								str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
-							str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+vote.creator.data.name+' '+vote.creator.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
+								str += '</div><div class="row-content"><h3 class="list-group-item-heading"><i>{{lang.unknown_user}}</i></h3></div></div><div class="list-group-separator"></div>'
+							} else {
+								if (vote.creator.data.has_image)
+									str += '<img class="circle" src="/user/'+vote.creator.data.id+'/image?width=64&height=64" alt="icon">';
+								else
+									str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+								str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+vote.creator.data.name+' '+vote.creator.data.surname+'</h3></div></div><div class="list-group-separator"></div>'
+							}
 							$('#member-vote-list').append(str);
 						});
 					}
@@ -397,7 +405,7 @@ $(document).ready(function() {
 					$("#participantsTopicPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> {{topic.time}} </span>');
 				
 				{%endif%}
-				$("#participantsTopicPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> {{topic.creator.get.name}} {{topic.creator.get.surname}} </span>');
+				$("#participantsTopicPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;">{% if topic.creator.get %} {{topic.creator.get.name}} {{topic.creator.get.surname}} {% else %}<i> {{lang.unknown_user}} </i>{% endif %}</span>');
 
 
 				$('#participantsList').modal('show');
@@ -547,7 +555,7 @@ $(document).ready(function() {
 							{{ topic.title }}
 						</h2>
 						<p class="topic-attribute">
-							<span class="mdi-action-account-box"></span>&nbsp;{{ topic.creator.get.name }} {{ topic.creator.get.surname }}
+							<span class="mdi-action-account-box"></span>&nbsp;{% if topic.creator.get %}{{ topic.creator.get.name }} {{ topic.creator.get.surname }}{% else %}<i>{{ lang.unknown_user }}</i>{% endif %}
 						</p>
 						<p class="topic-attribute">
 							{% if topic.formatted_date %}
@@ -634,7 +642,7 @@ $(document).ready(function() {
 	{% endif %}
 	{% for proposal in topic.proposals %}
 	<div class="list-group-item">
-		<div data-proposal="{{ proposal.key.id }}" data-place="{% if topic.place == "" %}{{ proposal.place }}{% endif %}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+		<div data-proposal="{{ proposal.key.id }}" data-place="{% if topic.place == '' %}{{ proposal.place }}{% endif %}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
 			<div class="row">
 				<!-- interno proposta -->
 				<div class="row-picture">
@@ -649,7 +657,7 @@ $(document).ready(function() {
 						<h3 style="font-size:15px;padding-bottom:5px;margin:0px;">
 							<b>{{ proposal.title }}</b>
 						</h3>
-						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {{ proposal.creator.get.name }} {{ proposal.creator.get.surname }}
+						<span class="mdi-action-account-box" style="margin-left:5px;"></span> {% if proposal.creator.get %}{{ proposal.creator.get.name }} {{ proposal.creator.get.surname }}{% else %}<i>{{ lang.unknown_user }}</i>{% endif %}
 						{% if topic.place == ""%}
 						{% if proposal.place%}  
 						<span class="mdi-communication-location-on" style="margin-left:5px;"></span> {{ proposal.place }}

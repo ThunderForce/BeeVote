@@ -59,7 +59,7 @@ class Group(ndb.Model):
 	description = ndb.TextProperty()
 	members = ndb.KeyProperty(kind=BeeVoteUser, repeated=True) # BeeVoteUser Key
 	admins = ndb.KeyProperty(kind=BeeVoteUser, repeated=True) # BeeVoteUser Key
-	creator = ndb.KeyProperty(kind=BeeVoteUser, required=True)
+	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
 	img = ndb.BlobProperty()
 	creation = ndb.DateTimeProperty(auto_now_add=True)
 	last_change = ndb.DateTimeProperty(auto_now=True)
@@ -130,7 +130,7 @@ class Topic(ndb.Model):
 	date = ndb.DateProperty()
 	time = ndb.TimeProperty()
 	deadline = ndb.DateTimeProperty()
-	creator = ndb.KeyProperty(kind=BeeVoteUser, required=True)
+	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
 	img = ndb.BlobProperty()
 	creation = ndb.DateTimeProperty(auto_now_add=True)
 	non_participant_users = ndb.KeyProperty(kind=BeeVoteUser, repeated=True) # BeeVoteUser Key
@@ -223,7 +223,7 @@ class Proposal(ndb.Model):
 	place = ndb.StringProperty()
 	date = ndb.DateProperty()
 	time = ndb.TimeProperty()
-	creator = ndb.KeyProperty(kind=BeeVoteUser, required=True)
+	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
 	creation = ndb.DateTimeProperty(auto_now_add=True)
 	
 	@staticmethod
@@ -260,7 +260,7 @@ class Proposal(ndb.Model):
 	
 class Vote(ndb.Model):
 	proposal = ndb.KeyProperty(kind=Proposal, required=True)
-	creator = ndb.KeyProperty(kind=BeeVoteUser, required=True)
+	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
 
 class FeatureChange(ndb.Model):
 	description = ndb.StringProperty(required=True)
@@ -511,7 +511,7 @@ class BugReport(ndb.Model):
 	description = ndb.TextProperty()
 	occurrence = ndb.DateTimeProperty()
 	creation = ndb.DateTimeProperty(auto_now_add=True)
-	creator = ndb.KeyProperty(kind=BeeVoteUser, required=True)
+	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
 
 # End of Data Model
 
