@@ -6,6 +6,7 @@ from google.appengine.api import mail
 from google.appengine.runtime import apiproxy_errors
 
 import language
+from email.base64mime import body_decode
 
 
 def _get_email_body(template_name, lang_package, template_values):
@@ -19,6 +20,7 @@ def _get_email_content(body_template, lang_package, template_values):
     directory = os.path.dirname(__file__)
     path = os.path.join(directory, os.path.join('templates/email', 'basic-template.html'))
     rendered_template = template.render(path, {
+        'lang': language.lang[lang_package],
         'email_body_table': _get_email_body(body_template, lang_package, template_values)
     })
     return rendered_template
@@ -38,12 +40,21 @@ def _send_mail_to_admins(sender, subject, body):
 
 def _send_mail_to_user(sender, to, subject, body):
     try:
+        message = mail.EmailMessage(
+            sender=sender,
+            to=to,
+            subject=subject,
+            html=body
+        )
+        message.send()
+        '''
         mail.send_mail(
             sender=sender,
             to=to,
             subject=subject,
             body=body,
         )
+        '''
         return True
     except apiproxy_errors.OverQuotaError, message:
         logging.error(message)
