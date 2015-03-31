@@ -240,6 +240,9 @@ class Proposal(ndb.Model):
 	def get_votes(self):
 		return Vote.query(Vote.proposal == self.key).fetch(1000)
 	
+	def get_comments(self):
+		return ProposalComment.query(ProposalComment.proposal == self.key).fetch(1000)
+	
 	def remove_user_vote(self, beevote_user):
 		votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", self.key, beevote_user.key)
 		for vote in votes:
@@ -257,7 +260,13 @@ class Proposal(ndb.Model):
 		for vote in votes:
 			vote.delete()
 		self.key.delete()
-	
+
+class ProposalComment(ndb.Model):
+	proposal = ndb.KeyProperty(kind=Proposal, required=True)
+	description = ndb.TextProperty()
+	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
+	creation = ndb.DateTimeProperty(auto_now_add=True)
+
 class Vote(ndb.Model):
 	proposal = ndb.KeyProperty(kind=Proposal, required=True)
 	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)

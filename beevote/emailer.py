@@ -6,8 +6,6 @@ from google.appengine.api import mail
 from google.appengine.runtime import apiproxy_errors
 
 import language
-from email.base64mime import body_decode
-
 
 def _get_email_body(template_name, lang_package, template_values):
     directory = os.path.dirname(__file__)
