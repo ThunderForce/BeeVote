@@ -912,6 +912,42 @@ class CreateProposalHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
+class CreateProposalCommentHandler(BaseApiHandler):
+	def post(self, group_id, topic_id, proposal_id):
+		description = self.request.get('description')
+		if description == "":
+			values = {
+				'success': False,
+				'error': "The comment cannot be empty",
+			}
+		else:
+			try:
+				proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
+				comment = models.ProposalComment(
+					description=description,
+					proposal=proposal.key,
+					parent=proposal.key,
+					creator=self.beevote_user.key,
+				)
+				comment.put()
+				# TODO: manage notifications
+				values = {
+					'success': True,
+					'group_id': group_id,
+					'topic_id': topic_id,
+					'proposal_id': proposal_id,
+					'comment_id': comment.key.id(),
+					'comment_description': comment.description
+				}
+			except Exception as exc:
+				stacktrace = traceback.format_exc()
+				logging.error("%s", stacktrace)
+				values = {
+					'success': False,
+					'error': exc.args[0]
+				}
+		self.response.out.write(json.dumps(values))
+
 class RemoveProposalHandler(BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
 		group = models.Group.get_from_id(group_id)

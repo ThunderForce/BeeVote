@@ -349,6 +349,7 @@ app = webapp2.WSGIApplication([
 	
 	('/api/group/(.*)/topic/(.*)/update-personal-settings', api.UpdateTopicPersonalSettingsHandler),
 	('/api/group/(.*)/update-personal-settings', api.UpdateGroupPersonalSettingsHandler),
+	('/api/group/(.*)/topic/(.*)/proposal/(.*)/add-comment', api.CreateProposalCommentHandler),
 	('/api/group/(.*)/topic/(.*)/proposal/(.*)', api.LoadProposalHandler),
 	('/api/group/(.*)/topic/(.*)', api.LoadTopicHandler),
 	('/api/groups', api.LoadGroupsHandler),
