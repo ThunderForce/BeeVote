@@ -116,6 +116,10 @@ def fetch_proposal(proposal, arguments):
 		votes = proposal.get_votes()
 		proposal_dict['vote_number'] = len(votes)
 		proposal_dict['votes'] = fetch_votes(votes, arguments)
+	if 'fetch_comments' in arguments and arguments['fetch_comments']:
+		comments = proposal.get_comments()
+		proposal_dict['comment_number'] = len(comments)
+		proposal_dict['comments'] = fetch_comments(comments, arguments)
 	return proposal_dict
 
 def fetch_groups(groups, arguments):
@@ -150,11 +154,26 @@ def fetch_votes(votes, arguments):
 		votes_ret.append(vote)
 	return votes_ret
 
+def fetch_comments(comments, arguments):
+	comments_ret = []
+	for datastore_comment in comments:
+		comment = fetch_comment(datastore_comment, arguments)
+		comments_ret.append(comment)
+	return comments_ret
+
 def fetch_vote(vote, arguments):
 	vote_dict = collections.OrderedDict([
 		('creator', fetch_user(vote.creator.get(), arguments))
 	])
 	return vote_dict
+
+def fetch_comment(comment, arguments):
+	comment_dict = collections.OrderedDict([
+		('creator', fetch_user(comment.creator.get(), arguments)),
+		('creation', str(comment.creation))
+		('description', comment.description)
+	])
+	return comment_dict
 
 def fetch_proposals_from_topic(topic, arguments):
 	datastore_proposals = topic.get_proposals()
@@ -267,6 +286,7 @@ class LoadProposalHandler(BaseApiHandler):
 		arguments = {
 			'fetch_votes': self.request.get('fetch_votes', 'false') == 'true',
 			'fetch_users': self.request.get('fetch_users', 'false') == 'true',
+			'fetch_comments': self.request.get('fetch_comments', 'false') == 'true',
 		}
 		
 		proposal = models.Proposal.get_from_id(group_id, topic_id, proposal_id)
