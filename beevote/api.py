@@ -938,7 +938,7 @@ class CreateProposalCommentHandler(BaseApiHandler):
 		if description == "":
 			values = {
 				'success': False,
-				'error': "The comment cannot be empty",
+				'error': self.lang['errors']['comment_empty'],
 			}
 		else:
 			try:
