@@ -52,6 +52,9 @@ class StatsHandler(BasicPageHandler):
 	def get(self):
 		groups = ndb.gql("SELECT * FROM Group").fetch(1000)
 		topics = ndb.gql("SELECT * FROM Topic").fetch(1000)
+		topic_created_in_last_24_hours = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (24*60*60)]
+		topic_created_in_last_week = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (7*24*60*60)]
+		topic_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (30*24*60*60)]
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
 		users_active_in_last_24_hours = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
 		users_active_in_last_week = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (7*24*60*60)]
@@ -60,6 +63,9 @@ class StatsHandler(BasicPageHandler):
 			'number_of_groups': len(groups),
 			'average_members_per_group': sum(len(g.members) for g in groups) / float(len(groups)),
 			'number_of_topics': len(topics),
+			'topic_created_in_last_24_hours': len(topic_created_in_last_24_hours),
+			'topic_created_in_last_week': len(topic_created_in_last_week),
+			'topic_created_in_last_30_days': len(topic_created_in_last_30_days),
 			'average_topics_per_group': len(topics) / float(len(groups)),
 			'number_of_users': len(users),
 			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
