@@ -183,8 +183,9 @@ lang = {
 				},
 				'subject': "Beevote: new topic created",
 				'body': u'''
-Dear {beevote_user_name},
-
+New notification on Beevote!
+				
+Hi {beevote_user_name},
 A new topic has been created in one of your groups:
 
 - Group: "{group_name}"
@@ -205,8 +206,9 @@ The Beevote team
 				},
 				'subject': "Beevote: new proposal created",
 				'body': u'''
-Dear {beevote_user_name},
-
+New notification on Beevote!
+				
+Hi {beevote_user_name},
 A new proposal has been created in a topic you are following:
 
 - Group: "{group_name}"
@@ -406,7 +408,9 @@ The Beevote team
 				},
 				'subject': "Beevote: nuova discussione creata",
 				'body': u'''
-Caro {beevote_user_name},
+Nuova notifica su Beevote!
+
+Ciao {beevote_user_name},
 
 una nuova discussione è stata creata in uno dei tuoi gruppi:
 
@@ -428,7 +432,9 @@ Il team di Beevote
 				},
 				'subject': "Beevote: nuova proposta creata",
 				'body': u'''
-Caro {beevote_user_name},
+Nuova notifica su Beevote!
+
+Ciao {beevote_user_name},
 
 una nuova proposta è stata creata in una discussione che stai seguendo:
 

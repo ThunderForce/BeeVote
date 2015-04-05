@@ -36,13 +36,14 @@ def _send_mail_to_admins(sender, subject, body):
         return False
     pass
 
-def _send_mail_to_user(sender, to, subject, body):
+def _send_mail_to_user(sender, to, subject, body="", html):
     try:
         message = mail.EmailMessage(
             sender=sender,
             to=to,
             subject=subject,
-            html=body
+            body=body,
+            html=html
         )
         message.send()
         '''
@@ -85,7 +86,7 @@ def send_registration_notification(beevote_user, lang_code, link):
         sender='Beevote Registration Notifier <registration-successful@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject="Beevote: successfully registered",
-        body=_get_email_content("registration-notification.html", lang_code, {
+        html=_get_email_content("registration-notification.html", lang_code, {
             'beevote_user_id': beevote_user.key.id(),
             'beevote_user_name': beevote_user.name,
             'beevote_user_surname': beevote_user.nsurame,
@@ -98,15 +99,14 @@ def send_proposal_creation_email(beevote_user, lang_code, proposal, link):
         sender='Beevote proposal creation notifier <new-proposal-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['proposal_creation']['subject'],
-        # One day...
-        body=_get_email_content("proposal-creation.html", lang_code, {
+        body=language.lang[lang_code]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link),
+        html=_get_email_content("proposal-creation.html", lang_code, {
             'beevote_user_name': beevote_user.name,
             'group_name': proposal.topic.get().group.get().name,
             'topic_title': proposal.topic.get().title,
             'proposal_title': proposal.title,
             'link': link
         })
-        # body=language.lang[lang_code]['email']['proposal_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=proposal.topic.get().group.get().name, topic_title=proposal.topic.get().title, proposal_title=proposal.title, link=link))
     )
     
 def send_topic_creation_email(beevote_user, lang_code, topic, link):
@@ -114,12 +114,11 @@ def send_topic_creation_email(beevote_user, lang_code, topic, link):
         sender='Beevote topic creation notifier <new-topic-notification@beevote.appspotmail.com>',
         to=beevote_user.email,
         subject=language.lang[lang_code]['email']['topic_creation']['subject'],
-        # One day...
-        body=_get_email_content("topic-creation.html", lang_code, {
+        body=language.lang[lang_code]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link),
+        html=_get_email_content("topic-creation.html", lang_code, {
             'beevote_user_name': beevote_user.name,
             'group_name': topic.group.get().name,
             'topic_title': topic.title,
             'link': link
         })
-        # body=language.lang[lang_code]['email']['topic_creation']['body'].format(beevote_user_name=beevote_user.name, group_name=topic.group.get().name, topic_title=topic.title, link=link)
     )
