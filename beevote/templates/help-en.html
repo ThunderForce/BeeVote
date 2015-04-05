@@ -3,6 +3,20 @@
 		<title>
 			Beevote Help Page
 		</title>
+		<style>
+			p, ul, ol {
+				margin-top: 0px;
+				margin-bottom: 0px;
+			}
+			div {
+				margin-top: 4px;
+				margin-bottom: 4px;
+				padding: 4px;
+			}
+			div:target {
+				background-color: #E0E0E0;
+			}
+		</style>
 	</head>
 	<body>
 		<h1>
@@ -14,6 +28,7 @@
 					Page elements
 					<ul>
 						<li><a href="#plus-button">Plus button</a></li>
+						<li><a href="#navbar">Navbar</a></li>
 					</ul>
 				</li>
 				<li>
@@ -22,6 +37,7 @@
 						<li><a href="#create-group">Create a group</a></li>
 						<li><a href="#create-topic">Create a topic</a></li>
 						<li><a href="#create-proposal">Create a proposal</a></li>
+						<li><a href="#edit-profile">Edit your profile</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -29,46 +45,88 @@
 		<h2>Page elements</h2>
 		<div id="plus-button" style="border: 1px solid;">
 			<h3>Plus button</h3>
-			At the bottom left corner of the page there is the plus button: it is needed to create groups, topics and proposals.
-			When you hover the cursor on it a different number of buttons will popup, according to the current page:
-			<ul>
-				<li>Green button: lets you <a href="#create-group">create a group</a>, will appear in any screen</li>
-				<li>Blue button: lets you <a href="#create-topic">create a topic</a>, will appear in the group screen and in the topic screen</li>
-				<li>Yellow button: lets you <a href="#create-proposal">create a proposal</a>, will appear in the topic screen</li>
-			</ul>
+			<p>At the bottom left corner of the page there is the plus button: it is needed to create groups, topics and proposals.</p>
+			<p>
+				When you hover the cursor on it a different number of buttons will popup, according to the current page:
+				<ul>
+					<li>Green button: lets you <a href="#create-group">create a group</a>, will appear in any screen</li>
+					<li>Blue button: lets you <a href="#create-topic">create a topic</a>, will appear in the group screen and in the topic screen</li>
+					<li>Yellow button: lets you <a href="#create-proposal">create a proposal</a>, will appear in the topic screen</li>
+				</ul>
+			</p>
+		</div>
+		<div id="navbar" style="border: 1px solid;">
+			<h3>Navbar</h3>
+			<p>At the top of the page there is the navbar: it is a blue bar covering the entire screen width.</p>
+			<p><span>(Mobile) </span>In the mobile view, the left icon is needed to open and close the sidebar.</p>
+			<p>
+				There is a menu with various options, located differently according to your device:
+				<ul>
+					<li><span>(Desktop) </span>In the desktop version the menu is a dropdown in the top left corner</li>
+					<li><span>(Mobile) </span>In the mobile version the menu is located in the sidebar</li>
+				</ul>
+				The options are the following:
+				<ul>
+					<li>Feedback: redirects you to a Google form where you can give us feedback on the application</li>
+					<li>Report a bug: from here you can fill a form to report a bug you encountered</li>
+					<li>Edit profile: from here you can <a href="#edit-profile">edit your profile and personal settings</a> like name and language</li>
+					<li>Logout: click here to logout from the system</li>
+				</ul>
+			</p>
 		</div>
 		<h2>Actions</h2>
 		<div id="create-group" style="border: 1px solid;">
 			<h3>Create a group</h3>
 			To create a group:
 			<ol>
-				<li>hover on the <a href="#plus-button">red plus button</a> in the bottom left corner</li>
-				<li>when the popup button show up, click the green one</li>
-				<li>enter group information</li>
-				<li>click the "Create" button</li>
+				<li>Hover on the <a href="#plus-button">red plus button</a> in the bottom left corner</li>
+				<li>When the popup buttons show up, click the green one</li>
+				<li>Enter group information</li>
+				<li>Click the "Create" button</li>
 			</ol> 
 		</div>
 		<div id="create-topic" style="border: 1px solid;">
 			<h3>Create a topic</h3>
 			To create a topic:
 			<ol>
-				<li>open the group in which you want to create the topic</li>
-				<li>hover on the <a href="#plus-button">red plus button</a> in the bottom left corner</li>
-				<li>when the popup button show up, click the blue one</li>
-				<li>enter topic information</li>
-				<li>click the "Create" button</li>
+				<li>Open the group in which you want to create the topic</li>
+				<li>Hover on the <a href="#plus-button">red plus button</a> in the bottom left corner</li>
+				<li>When the popup buttons show up, click the blue one</li>
+				<li>Enter topic information</li>
+				<li>Click the "Create" button</li>
 			</ol> 
 		</div>
 		<div id="create-proposal" style="border: 1px solid;">
 			<h3>Create a proposal</h3>
 			To create a proposal:
 			<ol>
-				<li>open the topic in which you want to create the proposal</li>
-				<li>hover on the <a href="#plus-button">red plus button</a> in the bottom left corner</li>
-				<li>when the popup button show up, click the yellow one</li>
-				<li>enter proposal information</li>
-				<li>click the "Create" button</li>
+				<li>Open the topic in which you want to create the proposal</li>
+				<li>Hover on the <a href="#plus-button">red plus button</a> in the bottom left corner</li>
+				<li>When the popup buttons show up, click the yellow one</li>
+				<li>Enter proposal information</li>
+				<li>Click the "Create" button</li>
 			</ol> 
+		</div>
+		<div id="edit-profile" style="border: 1px solid">
+			<h3>Edit your profile</h3>
+			To edit your profile:
+			<ol>
+				<li>
+					<p><span>(Desktop) </span>In the desktop version, open the dropdown menu on the <a href="#navbar">navbar</a></p>
+					<p>or</p>
+					<p><span>(Mobile) </span>In the mobile version, open the sidebar from the <a href="#navbar">navbar</a></p>
+				</li>
+				<li>Click on "Edit profile"</li>
+				<li>Change the settings that you need. You can change:
+					<ul>
+						<li>Your name</li>
+						<li>Your surname</li>
+						<li>Your profile picture</li>
+						<li>Your language (for now only english and italian are available)</li>
+					</ul>
+				</li>
+				<li>Click the "Edit" button</li>
+			</ol>
 		</div>
 	</body>
 </html>
