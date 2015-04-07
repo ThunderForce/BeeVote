@@ -36,7 +36,7 @@ def _send_mail_to_admins(sender, subject, body):
         return False
     pass
 
-def _send_mail_to_user(sender, to, subject, body="", html):
+def _send_mail_to_user(sender, to, subject, html, body=""):
     try:
         message = mail.EmailMessage(
             sender=sender,
@@ -46,14 +46,6 @@ def _send_mail_to_user(sender, to, subject, body="", html):
             html=html
         )
         message.send()
-        '''
-        mail.send_mail(
-            sender=sender,
-            to=to,
-            subject=subject,
-            body=body,
-        )
-        '''
         return True
     except apiproxy_errors.OverQuotaError, message:
         logging.error(message)
@@ -83,9 +75,10 @@ The Beevote Team
 
 def send_registration_notification(beevote_user, lang_code, link):
     return _send_mail_to_user(
-        sender='Beevote Registration Notifier <registration-successful@beevote.appspotmail.com>',
+        sender='Beevote registration notifier <registration-successful@beevote.appspotmail.com>',
         to=beevote_user.email,
-        subject="Beevote: successfully registered",
+        subject=language.lang[lang_code]['email']['registration']['subject'],
+        body=language.lang[lang_code]['email']['registration']['body'].format(beevote_user_name=beevote_user.name, beevote_user_surname=beevote_user.surname, beevote_user_email=beevote_user.email, link=link),
         html=_get_email_content("registration-notification.html", lang_code, {
             'beevote_user_id': beevote_user.key.id(),
             'beevote_user_name': beevote_user.name,

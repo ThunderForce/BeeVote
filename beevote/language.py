@@ -163,16 +163,50 @@ lang = {
 			'group_uppercase': "Group",
 			'topic_uppercase': "Topic",
 			'proposal_uppercase': "Proposal",
+			'name_uppercase': "Name",
+			'surname_uppercase': "Surname",
+			'email_uppercase': "Email",
 			'group': "group",
 			'topic': "topic",
 			'proposal': "proposal",
+			'name': "name",
+			'surname': "surname",
+			'email': "email",
 		},
 		'email': {
 			'common': {
 				'slogan': "The new way to make decision and organize",
 				'new_notification_on': "New notification on",
+				'successfully_registered_on': "Successfully registered on",
 				'beevote_team': "The Beevote team",
 				'go_to': "Go to"
+			},
+			'registration': {
+				'body_lines': {
+					'line_1': "Your registration request has been accepted: now you can access Beevote features!",
+					'line_2': "Details of registration:",
+					'last_line_part_1': "Click",
+					'last_line_part_2': "here",
+					'last_line_part_3': "to start using Beevote",
+				},
+				'subject': "Beevote: successfully registered",
+				'body': u'''
+Successfully registered on Beevote!
+
+Hi {{ beevote_user_name }},
+
+Your registration request has been accepted: now you can access Beevote features!
+Details of registration:
+
+- User email: {{ beevote_user_email }}
+- Name: {{ beevote_user_name }}
+- Surname: {{ beevote_user_surname }}
+
+Follow this link to start using Beevote:
+{link}
+
+The Beevote team
+'''
 			},
 			'topic_creation': {
 				'body_lines': {
@@ -388,16 +422,50 @@ The Beevote team
 			'group_uppercase': "Gruppo",
 			'topic_uppercase': "Discussione",
 			'proposal_uppercase': "Proposta",
+			'name_uppercase': "Nome",
+			'surname_uppercase': "Cognome",
+			'email_uppercase': "Email",
 			'group': "gruppo",
 			'topic': "discussione",
 			'proposal': "proposta",
+			'name': "nome",
+			'surname': "cognome",
+			'email': "email",
 		},
 		'email': {
 			'common': {
 				'slogan': "Il nuovo modo per prendere decisioni e organizzarsi",
 				'new_notification_on': "Nuova notifica su",
+				'successfully_registered_on': "Registrato con successo su",
 				'beevote_team': "Il team di Beevote",
 				'go_to': "Vai su"
+			},
+			'registration': {
+				'body_lines': {
+					'line_1': "La tua richiesta di registrazione è stata accettata: ora puoi accedere alle funzioni di Beevote!",
+					'line_2': "Dettagli della registrazione:",
+					'last_line_part_1': "Clicca",
+					'last_line_part_2': "qui",
+					'last_line_part_3': "per iniziare a usare Beevote",
+				},
+				'subject': "Beevote: registrato con successo",
+				'body': u'''
+Registrato con successo su Beevote!
+
+Ciao {{ beevote_user_name }},
+
+La tua richiesta di registrazione è stata accettata: ora puoi accedere alle funzioni di Beevote!
+Dettagli della registrazione:
+
+- Email: {{ beevote_user_email }}
+- Nome: {{ beevote_user_name }}
+- Cognome: {{ beevote_user_surname }}
+
+Segui questo link per iniziare a usare Beevote:
+{link}
+
+Il team di Beevote
+'''
 			},
 			'topic_creation': {
 				'body_lines': {

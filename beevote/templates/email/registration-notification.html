@@ -2,21 +2,20 @@
 		<tbody>
 			<tr>
 				<td colspan="2" align="left" style="font-family:Roboto,Arial,Helvetica,sans-serif;font-size:30px;font-weight:bold;padding:20px 20px 10px">
-					Successfully registered on <span class="kc">Beevote</span>!
+					{{ lang.email.common.successfully_registered_on }} <span class="kc">Beevote</span>!
 				</td>
 			</tr>
 			<tr>
 				<td colspan="2" align="left" style="font-family:Roboto,Arial,Helvetica,sans-serif;font-size:16px;padding:0 20px 20px">
 					<p>{{ lang.hi }} {{ beevote_user_name }},</p>
-					<p>Your registration request has been accepted: now you can access Beevote features!</p>
-					<p>Details of registration:</p>
+					<p>{{ lang.email.registration.body_lines.line_1 }}</p>
+					<p>{{ lang.email.registration.body_lines.line_2 }}</p>
+
+					<p style="margin-top: 3px; margin-bottom:3px;">- {{ lang.elements.email_uppercase }}: <b>{{ beevote_user_email }}</b></p>
+					<p style="margin-top: 3px; margin-bottom:3px;">- {{ lang.elements.name_uppercase }}: <b>{{ beevote_user_name }}</b></p>
+					<p style="margin-top: 3px; margin-bottom:3px;">- {{ lang.elements.surname_uppercase }}: <b>{{ beevote_user_surname }}</b></p>
 	
-					<p style="margin-top: 3px; margin-bottom:3px;">- Beevote User ID: <b>{{ beevote_user_id }}</b></p>
-					<p style="margin-top: 3px; margin-bottom:3px;">- User email: <b>{{ beevote_user_email }}</b></p>
-					<p style="margin-top: 3px; margin-bottom:3px;">- Name: <b>{{ beevote_user_name }}</b></p>
-					<p style="margin-top: 3px; margin-bottom:3px;">- Surname: <b>{{ beevote_user_surname }}</b></p>
-	
-					<p>Click <a href="{{ link }}" style="color: #2196F3">here</a> to start using Beevote.</p>
+					<p>{{ lang.email.registration.body_lines.last_line_part_1 }} <a href="{{ link }}" style="color: #2196F3">{{ lang.email.registration.body_lines.last_line_part_2 }}</a> {{ lang.email.registration.body_lines.last_line_part_3 }}.</p>
 
 					<p>{{ lang.email.common.beevote_team }}</p>
 				</td>
