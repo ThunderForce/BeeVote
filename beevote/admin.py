@@ -53,6 +53,7 @@ class StatsHandler(BasicPageHandler):
 		groups = ndb.gql("SELECT * FROM Group").fetch(1000)
 		topics = ndb.gql("SELECT * FROM Topic").fetch(1000)
 		proposals = ndb.gql("SELECT * FROM Proposal").fetch(1000)
+		votes = ndb.gql("SELECT * FROM Vote").fetch(1000)
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
 		topic_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (30*24*60*60)]
 		topic_created_in_last_week = [t for t in topic_created_in_last_30_days if (datetime.datetime.now() - t.creation).total_seconds() < (7*24*60*60)]
@@ -74,6 +75,7 @@ class StatsHandler(BasicPageHandler):
 			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
 			'users_active_in_last_week': len(users_active_in_last_week),
 			'users_active_in_last_30_days': len(users_active_in_last_30_days),
+			'number_of_votes': len(votes),
 		}})
 
 class UserManagerHandler(BasicPageHandler):
