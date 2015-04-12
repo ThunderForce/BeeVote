@@ -72,6 +72,10 @@ class StatsHandler(BasicPageHandler):
 			'number_of_proposals': len(proposals),
 			'average_proposals_per_topic': len(proposals) / float(len(topics)),
 			'number_of_users': len(users),
+			'users_by_language': {
+				'en': len([u for u in users if (u.language is None) or (u.language == 'en')]),
+				'it': len([u for u in users if u.language == 'it']),
+			},
 			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
 			'users_active_in_last_week': len(users_active_in_last_week),
 			'users_active_in_last_30_days': len(users_active_in_last_30_days),
