@@ -58,6 +58,9 @@ class StatsHandler(BasicPageHandler):
 		topic_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (30*24*60*60)]
 		topic_created_in_last_week = [t for t in topic_created_in_last_30_days if (datetime.datetime.now() - t.creation).total_seconds() < (7*24*60*60)]
 		topic_created_in_last_24_hours = [t for t in topic_created_in_last_week if (datetime.datetime.now() - t.creation).total_seconds() < (24*60*60)]
+		users_registered_in_last_30_days = [u for u in users if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (30*24*60*60)]
+		users_registered_in_last_week = [u for u in users_registered_in_last_30_days if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (7*24*60*60)]
+		users_registered_in_last_24_hours = [u for u in users_registered_in_last_week if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (24*60*60)]
 		users_active_in_last_30_days = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (30*24*60*60)]
 		users_active_in_last_week = [u for u in users_active_in_last_30_days if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (7*24*60*60)]
 		users_active_in_last_24_hours = [u for u in users_active_in_last_week if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
@@ -76,6 +79,9 @@ class StatsHandler(BasicPageHandler):
 				'en': len([u for u in users if (u.language is None) or (u.language == 'en')]),
 				'it': len([u for u in users if u.language == 'it']),
 			},
+			'users_registered_in_last_24_hours': len(users_registered_in_last_24_hours),
+			'users_registered_in_last_week': len(users_registered_in_last_week),
+			'users_registered_in_last_30_days': len(users_registered_in_last_30_days),
 			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
 			'users_active_in_last_week': len(users_active_in_last_week),
 			'users_active_in_last_30_days': len(users_active_in_last_30_days),
