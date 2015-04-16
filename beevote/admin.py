@@ -55,6 +55,9 @@ class StatsHandler(BasicPageHandler):
 		proposals = ndb.gql("SELECT * FROM Proposal").fetch(1000)
 		votes = ndb.gql("SELECT * FROM Vote").fetch(1000)
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
+		groups_created_in_last_30_days = [g for g in groups if (datetime.datetime.now() - g.creation).total_seconds() < (30*24*60*60)]
+		groups_created_in_last_week = [g for g in groups_created_in_last_30_days if (datetime.datetime.now() - g.creation).total_seconds() < (7*24*60*60)]
+		groups_created_in_last_24_hours = [g for g in groups_created_in_last_week if (datetime.datetime.now() - g.creation).total_seconds() < (24*60*60)]
 		topic_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (30*24*60*60)]
 		topic_created_in_last_week = [t for t in topic_created_in_last_30_days if (datetime.datetime.now() - t.creation).total_seconds() < (7*24*60*60)]
 		topic_created_in_last_24_hours = [t for t in topic_created_in_last_week if (datetime.datetime.now() - t.creation).total_seconds() < (24*60*60)]
@@ -69,6 +72,9 @@ class StatsHandler(BasicPageHandler):
 		users_active_in_last_24_hours = [u for u in users_active_in_last_week if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
 		self.write_template('stats.html', {'stats': {
 			'number_of_groups': len(groups),
+			'groups_created_in_last_24_hours': len(groups_created_in_last_24_hours),
+			'groups_created_in_last_week': len(groups_created_in_last_week),
+			'groups_created_in_last_30_days': len(groups_created_in_last_30_days),
 			'average_members_per_group': sum(len(g.members) for g in groups) / float(len(groups)),
 			'number_of_topics': len(topics),
 			'topic_created_in_last_24_hours': len(topic_created_in_last_24_hours),
