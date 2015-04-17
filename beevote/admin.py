@@ -58,9 +58,9 @@ class StatsHandler(BasicPageHandler):
 		groups_created_in_last_30_days = [g for g in groups if (datetime.datetime.now() - g.creation).total_seconds() < (30*24*60*60)]
 		groups_created_in_last_week = [g for g in groups_created_in_last_30_days if (datetime.datetime.now() - g.creation).total_seconds() < (7*24*60*60)]
 		groups_created_in_last_24_hours = [g for g in groups_created_in_last_week if (datetime.datetime.now() - g.creation).total_seconds() < (24*60*60)]
-		topic_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (30*24*60*60)]
-		topic_created_in_last_week = [t for t in topic_created_in_last_30_days if (datetime.datetime.now() - t.creation).total_seconds() < (7*24*60*60)]
-		topic_created_in_last_24_hours = [t for t in topic_created_in_last_week if (datetime.datetime.now() - t.creation).total_seconds() < (24*60*60)]
+		topics_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (30*24*60*60)]
+		topics_created_in_last_week = [t for t in topics_created_in_last_30_days if (datetime.datetime.now() - t.creation).total_seconds() < (7*24*60*60)]
+		topics_created_in_last_24_hours = [t for t in topics_created_in_last_week if (datetime.datetime.now() - t.creation).total_seconds() < (24*60*60)]
 		proposals_created_in_last_30_days = [p for p in proposals if (datetime.datetime.now() - p.creation).total_seconds() < (30*24*60*60)]
 		proposals_created_in_last_week = [p for p in proposals_created_in_last_30_days if (datetime.datetime.now() - p.creation).total_seconds() < (7*24*60*60)]
 		proposals_created_in_last_24_hours = [p for p in proposals_created_in_last_week if (datetime.datetime.now() - p.creation).total_seconds() < (24*60*60)]
@@ -77,9 +77,9 @@ class StatsHandler(BasicPageHandler):
 			'groups_created_in_last_30_days': len(groups_created_in_last_30_days),
 			'average_members_per_group': sum(len(g.members) for g in groups) / float(len(groups)),
 			'number_of_topics': len(topics),
-			'topic_created_in_last_24_hours': len(topic_created_in_last_24_hours),
-			'topic_created_in_last_week': len(topic_created_in_last_week),
-			'topic_created_in_last_30_days': len(topic_created_in_last_30_days),
+			'topics_created_in_last_24_hours': len(topics_created_in_last_24_hours),
+			'topics_created_in_last_week': len(topics_created_in_last_week),
+			'topics_created_in_last_30_days': len(topics_created_in_last_30_days),
 			'average_topics_per_group': len(topics) / float(len(groups)),
 			'number_of_proposals': len(proposals),
 			'proposals_created_in_last_24_hours': len(proposals_created_in_last_24_hours),
