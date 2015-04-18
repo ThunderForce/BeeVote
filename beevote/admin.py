@@ -53,6 +53,7 @@ class StatsHandler(BasicPageHandler):
 		groups = ndb.gql("SELECT * FROM Group").fetch(1000)
 		topics = ndb.gql("SELECT * FROM Topic").fetch(1000)
 		proposals = ndb.gql("SELECT * FROM Proposal").fetch(1000)
+		proposal_comments = ndb.gql("SELECT * FROM ProposalComment").fetch(1000)
 		votes = ndb.gql("SELECT * FROM Vote").fetch(1000)
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
 		reports = ndb.gql("SELECT * FROM BugReport").fetch(1000)
@@ -65,6 +66,9 @@ class StatsHandler(BasicPageHandler):
 		proposals_created_in_last_30_days = [p for p in proposals if (datetime.datetime.now() - p.creation).total_seconds() < (30*24*60*60)]
 		proposals_created_in_last_week = [p for p in proposals_created_in_last_30_days if (datetime.datetime.now() - p.creation).total_seconds() < (7*24*60*60)]
 		proposals_created_in_last_24_hours = [p for p in proposals_created_in_last_week if (datetime.datetime.now() - p.creation).total_seconds() < (24*60*60)]
+		proposal_comments_created_in_last_30_days = [c for c in proposal_comments if (datetime.datetime.now() - c.creation).total_seconds() < (30*24*60*60)]
+		proposal_comments_created_in_last_week = [c for c in proposal_comments_created_in_last_30_days if (datetime.datetime.now() - c.creation).total_seconds() < (7*24*60*60)]
+		proposal_comments_created_in_last_24_hours = [c for c in proposal_comments_created_in_last_week if (datetime.datetime.now() - c.creation).total_seconds() < (24*60*60)]
 		users_registered_in_last_30_days = [u for u in users if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (30*24*60*60)]
 		users_registered_in_last_week = [u for u in users_registered_in_last_30_days if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (7*24*60*60)]
 		users_registered_in_last_24_hours = [u for u in users_registered_in_last_week if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (24*60*60)]
@@ -90,6 +94,10 @@ class StatsHandler(BasicPageHandler):
 			'proposals_created_in_last_week': len(proposals_created_in_last_week),
 			'proposals_created_in_last_30_days': len(proposals_created_in_last_30_days),
 			'average_proposals_per_topic': len(proposals) / float(len(topics)),
+			'number_of_proposal_comments': len(proposal_comments),
+			'proposal_comments_created_in_last_24_hours': len(proposal_comments_created_in_last_24_hours),
+			'proposal_comments_created_in_last_week': len(proposal_comments_created_in_last_week),
+			'proposal_comments_created_in_last_30_days': len(proposal_comments_created_in_last_30_days),
 			'number_of_users': len(users),
 			'users_by_language': {
 				'en': len([u for u in users if (u.language is None) or (u.language == 'en')]),
