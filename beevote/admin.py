@@ -55,6 +55,7 @@ class StatsHandler(BasicPageHandler):
 		proposals = ndb.gql("SELECT * FROM Proposal").fetch(1000)
 		votes = ndb.gql("SELECT * FROM Vote").fetch(1000)
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
+		reports = ndb.gql("SELECT * FROM BugReport").fetch(1000)
 		groups_created_in_last_30_days = [g for g in groups if (datetime.datetime.now() - g.creation).total_seconds() < (30*24*60*60)]
 		groups_created_in_last_week = [g for g in groups_created_in_last_30_days if (datetime.datetime.now() - g.creation).total_seconds() < (7*24*60*60)]
 		groups_created_in_last_24_hours = [g for g in groups_created_in_last_week if (datetime.datetime.now() - g.creation).total_seconds() < (24*60*60)]
@@ -70,6 +71,9 @@ class StatsHandler(BasicPageHandler):
 		users_active_in_last_30_days = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (30*24*60*60)]
 		users_active_in_last_week = [u for u in users_active_in_last_30_days if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (7*24*60*60)]
 		users_active_in_last_24_hours = [u for u in users_active_in_last_week if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (24*60*60)]
+		reports_created_in_last_30_days = [r for r in reports if (datetime.datetime.now() - r.creation).total_seconds() < (30*24*60*60)]
+		reports_created_in_last_week = [r for r in reports_created_in_last_30_days if (datetime.datetime.now() - r.creation).total_seconds() < (7*24*60*60)]
+		reports_created_in_last_24_hours = [r for r in reports_created_in_last_week if (datetime.datetime.now() - r.creation).total_seconds() < (24*60*60)]
 		self.write_template('stats.html', {'stats': {
 			'number_of_groups': len(groups),
 			'groups_created_in_last_24_hours': len(groups_created_in_last_24_hours),
@@ -97,6 +101,10 @@ class StatsHandler(BasicPageHandler):
 			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
 			'users_active_in_last_week': len(users_active_in_last_week),
 			'users_active_in_last_30_days': len(users_active_in_last_30_days),
+			'number_of_reports': len(reports),
+			'reports_created_in_last_24_hours': len(reports_created_in_last_24_hours),
+			'reports_created_in_last_week': len(reports_created_in_last_week),
+			'reports_created_in_last_30_days': len(reports_created_in_last_30_days),
 			'number_of_votes': len(votes),
 		}})
 
