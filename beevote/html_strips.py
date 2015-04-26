@@ -236,6 +236,7 @@ class TopicHandler(BaseHandler):
 			else:
 				proposal.already_voted = False
 			proposal.vote_number = len(proposal.get_votes())
+			proposal.comment_number = len(proposal.get_comments())
 			if(proposal.date != None):
 				proposal.formatted_date = proposal.date.strftime("%A   %d %B %Y")
 		
