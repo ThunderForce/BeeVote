@@ -130,6 +130,10 @@ class UserManagerHandler(BasicPageHandler):
 			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY creation DESC")
 		elif sort_param == "last_access":
 			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY last_access DESC")
+		elif sort_param == "email":
+			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY email ASC")
+		elif sort_param == "language":
+			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY language ASC")
 		else:
 			users = ndb.gql("SELECT * FROM BeeVoteUser")
 		self.write_template('user-manager.html', {'users': users})
