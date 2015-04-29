@@ -370,6 +370,69 @@ $(document).ready(function() {
 		}
 	});
 	
+	// Popup commenti
+	$('button#comments-button').on('click', function(e) {
+
+		var group_id = {{ topic.group.id }};
+		var topic_id = {{ topic.key.id }};
+		var proposal_id = $(this).data("proposal");
+
+		$.ajax({
+			url: '/api/group/'+group_id+'/topic/'+topic_id+'/proposal/'+proposal_id,
+			method: 'GET',
+			data: {
+				fetch_comments: "true"
+			}, 
+			dataType: 'json',
+			error: function() {
+				alert("{{lang.general_error}}");
+			},
+			success: function(proposal) {
+				
+				$('form#new-comment-form').attr('action', '/api/group/{{topic.group.id }}/topic/{{topic.key.id}}/proposal/'+proposal.id+'/add-comment');
+				$('form#new-comment-form')[0].reset();
+				
+				$(".proposal_title").html(proposal.title);
+
+				$("#proposal_comments_popup").html("");
+				if (proposal.creator != null)
+					$("#proposal_comments_popup").append('<span class="mdi-action-account-box" style="margin-left:5px;"> '+proposal.creator.data.name+' '+proposal.creator.data.surname+' </span>');
+				else
+					$("#proposal_comments_popup").append('<span class="mdi-action-account-box" style="margin-left:5px;"><i> {{ lang.unknown_user }} </i></span>');
+
+				$('#commentList').modal('show');
+				$('#proposal_comment_list').html('');
+				if (proposal.comments.length == 0) {
+					$('#comments_popup_message').html('<h3>No comments yet.</h3>');
+				} else {
+					$('#comments_popup_message').html('<h3>Comments:</h3>');
+			
+					$.each(proposal.comments, function(index, comment) {
+						var str = '<div class="list-group-item"><div class="row-picture">';
+						if (comment.creator == null) {
+							str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+							str += '</div><div class="row-content"><h3 class="list-group-item-heading"><i>{{lang.unknown_user}}</i></h3></div></div><div class="list-group-separator"></div>'
+						} else {
+							if (comment.creator.data.has_image)
+								str += '<img class="circle" src="/user/'+comment.creator.data.id+'/image?width=64&height=64" alt="icon">';
+							else
+								str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+							str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+comment.creator.data.name+' '+comment.creator.data.surname+' ('+comment.creation+')</h3>'+comment.description+'</div></div><div class="list-group-separator"></div>'
+						}
+						$('#proposal_comment_list').append(str);
+					});
+				}
+			}
+		});
+	
+		if (e.stopPropagation) {
+			e.stopPropagation();   // W3C model
+		} else {
+			e.cancelBubble = true; // IE model
+		}
+	});
+	// Popup commenti
+	
 	/* Prova per mostrare la lista dei partecipanti*/
 	$('button#participants-button').on('click', function(e) {
 
@@ -454,8 +517,40 @@ $(document).ready(function() {
 			$('#edit-image').attr("disabled", false);
 		}
 	});
-
-
+	
+	// new comment form
+	$('form#new-comment-form').ajaxForm({
+		dataType: "json",
+		beforeSubmit: function() {
+			$('button#add-comment').attr("disabled", true);
+		},
+		clearForm: true,
+		error: function() {
+			alert("Unexpected error!");
+			$('button#add-comment').attr("disabled", false);
+		},
+		success: function(response) {
+			if (response.success) {
+				var str = '<div class="list-group-item"><div class="row-picture">';
+				if (response.comment_creator == null) {
+					str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+					str += '</div><div class="row-content"><h3 class="list-group-item-heading"><i>{{lang.unknown_user}}</i></h3></div></div><div class="list-group-separator"></div>'
+				} else {
+					if (response.comment_creator.data.has_image)
+						str += '<img class="circle" src="/user/'+response.comment_creator.data.id+'/image?width=64&height=64" alt="icon">';
+					else
+						str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+					str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+response.comment_creator.data.name+' '+response.comment_creator.data.surname+' ('+response.comment_creation+')</h3>'+response.comment_description+'</div></div><div class="list-group-separator"></div>'
+				}
+				$('#proposal_comment_list').append(str);
+			} else {
+				alert(response.error);
+			}
+			$('button#add-comment').attr("disabled", false);
+		}
+	});
+	// new comment form
+	
 	$('#edit-cancel').on('click', function() {
 		resetForm("updateInfoTopic-form");
 	});
@@ -698,12 +793,10 @@ $(document).ready(function() {
 						<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.vote_number }} </span>&nbsp;
 					</button>
 					<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:33px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
-					<!-- 
 					<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="comments-button" style="padding:3px 1px 2px 5px;position:absolute;top:61px;right:20px;background-color:#2196F3;">
 						<b style="font-size:11px;">Comments: </b>
 						<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.comment_number }} </span>&nbsp;
 					</button>
-					-->
 				</div>	
 				<div class="proposal-arrow modal-footer" data-proposal-arrow="{{ proposal.key.id }}" style="margin-top: -10px;border-top: none;padding: 0px;text-align: center;font-size: 20px;">
 					<span class="mdi-hardware-keyboard-arrow-down"></span>
@@ -738,12 +831,11 @@ $(document).ready(function() {
 </div>
 
 <!-- Popup per la lista dei commenti -->
-<!--
 <div id="commentList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header" style="padding:0px 8px 0px 0px;">
-				<button type="button" class="btn btn-raised" data-dismiss="modal" data-target="#commentList" style="float:right;padding: 5px 10px 3px 10px;background-color:#F44336;z-index:1;">X</button>
+				<button id="close-comment-list" type="button" class="btn btn-raised" data-dismiss="modal" data-target="#commentList" style="float:right;padding: 5px 10px 3px 10px;background-color:#F44336;z-index:1;">X</button>
 			</div>
 			<div class="modal-body" style="padding-top:30px;">
 				<div class="list-group" >
@@ -755,11 +847,28 @@ $(document).ready(function() {
 				<div id="comments_popup_message"></div>
 				<br>
 				<div class="list-group" id="proposal_comment_list"></div>
+				<div>
+					<form id="new-comment-form" action="" method="post" class="form-horizontal" enctype="multipart/form-data">
+						<fieldset>
+							<div class="form-group">
+								<label for="textArea" class="col-lg-2 control-label">Comment</label>
+								<div class="col-lg-10">
+									<textarea class="form-control" rows="3" id="input-comment" name="comment"></textarea>
+									<span class="help-block">Write here a comment</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="modal-footer">
+									<button type="submit" class="btn" id="add-comment" style="background-color:#00A65E;">Add comment</button>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
 </div>
--->
 
 <!-- Popup per la lista dei partecipanti al topic -->
 <div id="participantsList" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >

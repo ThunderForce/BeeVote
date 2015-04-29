@@ -111,6 +111,7 @@ def fetch_proposal(proposal, arguments):
 		('id', proposal.key.id()),
 		('title', proposal.title),
 		('description', proposal.description),
+		('creator', fetch_user(proposal.creator.get(), arguments))
 	])
 	if 'fetch_votes' in arguments and arguments['fetch_votes']:
 		votes = proposal.get_votes()
@@ -170,7 +171,7 @@ def fetch_vote(vote, arguments):
 def fetch_comment(comment, arguments):
 	comment_dict = collections.OrderedDict([
 		('creator', fetch_user(comment.creator.get(), arguments)),
-		('creation', str(comment.creation))
+		('creation', comment.creation.strftime("%Y/%m/%d %H:%M:%S")),
 		('description', comment.description)
 	])
 	return comment_dict
@@ -934,7 +935,7 @@ class CreateProposalHandler(BaseApiHandler):
 
 class CreateProposalCommentHandler(BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
-		description = self.request.get('description')
+		description = self.request.get('comment')
 		if description == "":
 			values = {
 				'success': False,
@@ -957,6 +958,8 @@ class CreateProposalCommentHandler(BaseApiHandler):
 					'topic_id': topic_id,
 					'proposal_id': proposal_id,
 					'comment_id': comment.key.id(),
+					'comment_creator': fetch_user(comment.creator.get(), []),
+					'comment_creation': str(comment.creation),
 					'comment_description': comment.description
 				}
 			except Exception as exc:

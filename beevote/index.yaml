@@ -22,6 +22,17 @@ indexes:
   - name: group
   - name: timestamp
 
+- kind: ProposalComment
+  properties:
+  - name: proposal
+  - name: creation
+
+- kind: ProposalComment
+  properties:
+  - name: proposal
+  - name: creation
+    direction: desc
+
 - kind: TopicAccess
   properties:
   - name: beevote_user
