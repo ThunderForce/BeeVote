@@ -741,7 +741,7 @@ $(document).ready(function() {
 	{% endif %}
 	{% for proposal in topic.proposals %}
 	<div class="list-group-item">
-		<div data-proposal="{{ proposal.key.id }}" data-place="{% if topic.place == '' %}{{ proposal.place }}{% endif %}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px;">
+		<div data-proposal="{{ proposal.key.id }}" data-place="{% if topic.place == '' %}{{ proposal.place }}{% endif %}" class="well well-lg proposal-well" color="yellow_g" style="cursor: pointer;padding: 10px 0px 0px 25px; min-height: 100px;">
 			<div class="row">
 				<!-- interno proposta -->
 				<div class="row-picture">
