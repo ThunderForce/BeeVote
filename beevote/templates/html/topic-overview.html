@@ -389,8 +389,10 @@ $(document).ready(function() {
 			},
 			success: function(proposal) {
 				
-				$('form#new-comment-form').attr('action', '/api/group/{{topic.group.id }}/topic/{{topic.key.id}}/proposal/'+proposal.id+'/add-comment');
-				$('form#new-comment-form')[0].reset();
+				if ($('form#new-comment-form').length > 0) {
+					$('form#new-comment-form').attr('action', '/api/group/{{topic.group.id }}/topic/{{topic.key.id}}/proposal/'+proposal.id+'/add-comment');
+					$('form#new-comment-form')[0].reset();
+				}
 				
 				$(".proposal_title").html(proposal.title);
 
@@ -519,36 +521,38 @@ $(document).ready(function() {
 	});
 	
 	// new comment form
-	$('form#new-comment-form').ajaxForm({
-		dataType: "json",
-		beforeSubmit: function() {
-			$('button#add-comment').attr("disabled", true);
-		},
-		clearForm: true,
-		error: function() {
-			alert("{{ lang.general_error }}");
-			$('button#add-comment').attr("disabled", false);
-		},
-		success: function(response) {
-			if (response.success) {
-				var str = '<div class="list-group-item"><div class="row-picture">';
-				if (response.comment_creator == null) {
-					str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
-					str += '</div><div class="row-content"><h3 class="list-group-item-heading"><i>{{lang.unknown_user}}</i></h3></div></div><div class="list-group-separator"></div>'
-				} else {
-					if (response.comment_creator.data.has_image)
-						str += '<img class="circle" src="/user/'+response.comment_creator.data.id+'/image?width=64&height=64" alt="icon">';
-					else
+	if ($('form#new-comment-form').length > 0) {
+		$('form#new-comment-form').ajaxForm({
+			dataType: "json",
+			beforeSubmit: function() {
+				$('button#add-comment').attr("disabled", true);
+			},
+			clearForm: true,
+			error: function() {
+				alert("{{ lang.general_error }}");
+				$('button#add-comment').attr("disabled", false);
+			},
+			success: function(response) {
+				if (response.success) {
+					var str = '<div class="list-group-item"><div class="row-picture">';
+					if (response.comment_creator == null) {
 						str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
-					str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+response.comment_creator.data.name+' '+response.comment_creator.data.surname+' ('+response.comment_creation+')</h3>'+response.comment_description+'</div></div><div class="list-group-separator"></div>'
+						str += '</div><div class="row-content"><h3 class="list-group-item-heading"><i>{{lang.unknown_user}}</i></h3></div></div><div class="list-group-separator"></div>'
+					} else {
+						if (response.comment_creator.data.has_image)
+							str += '<img class="circle" src="/user/'+response.comment_creator.data.id+'/image?width=64&height=64" alt="icon">';
+						else
+							str += '<img class="circle" src="/static/images/user-default.jpg" alt="icon">';
+						str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+response.comment_creator.data.name+' '+response.comment_creator.data.surname+' ('+response.comment_creation+')</h3>'+response.comment_description+'</div></div><div class="list-group-separator"></div>'
+					}
+					$('#proposal_comment_list').append(str);
+				} else {
+					alert(response.error);
 				}
-				$('#proposal_comment_list').append(str);
-			} else {
-				alert(response.error);
+				$('button#add-comment').attr("disabled", false);
 			}
-			$('button#add-comment').attr("disabled", false);
-		}
-	});
+		});
+	}
 	// new comment form
 	
 	$('#edit-cancel').on('click', function() {
@@ -848,6 +852,7 @@ $(document).ready(function() {
 				<br>
 				<div class="list-group" id="proposal_comment_list"></div>
 				<div>
+					{% if not topic.expired %}
 					<form id="new-comment-form" action="" method="post" class="form-horizontal" enctype="multipart/form-data">
 						<fieldset>
 							<div class="form-group">
@@ -864,6 +869,7 @@ $(document).ready(function() {
 							</div>
 						</fieldset>
 					</form>
+					{% endif %}
 				</div>
 			</div>
 		</div>

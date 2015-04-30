@@ -418,13 +418,13 @@ class OldLoadProposalHandler(BaseApiHandler):
 			}
 		}
 		if proposal.creator.get():
-			values['creator'] = {
+			values['proposal']['creator'] = {
 				'name': proposal.creator.get().name,
 				'surname': proposal.creator.get().surname,
 				'email': proposal.creator.get().email,
 			}
 		else:
-			values['creator'] = None
+			values['proposal']['creator'] = None
 		if topic.place == "" and proposal.place:
 			values['proposal']['place'] = proposal.place
 		if topic.date == None and proposal.date:
