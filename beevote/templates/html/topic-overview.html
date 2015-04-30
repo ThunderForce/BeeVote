@@ -403,9 +403,9 @@ $(document).ready(function() {
 				$('#commentList').modal('show');
 				$('#proposal_comment_list').html('');
 				if (proposal.comments.length == 0) {
-					$('#comments_popup_message').html('<h3>No comments yet.</h3>');
+					$('#comments_popup_message').html('<h3>{{ lang.comment_list_popup.no_comments_yet }}.</h3>');
 				} else {
-					$('#comments_popup_message').html('<h3>Comments:</h3>');
+					$('#comments_popup_message').html('<h3>{{ lang.comment_list_popup.comments }}:</h3>');
 			
 					$.each(proposal.comments, function(index, comment) {
 						var str = '<div class="list-group-item"><div class="row-picture">';
@@ -505,7 +505,7 @@ $(document).ready(function() {
 		},
 		clearForm: true,
 		error: function() {
-			alert("Unexpected error!");
+			alert("{{ lang.general_error }}");
 		},
 		success: function(response) {
 			if (response.success) {
@@ -526,7 +526,7 @@ $(document).ready(function() {
 		},
 		clearForm: true,
 		error: function() {
-			alert("Unexpected error!");
+			alert("{{ lang.general_error }}");
 			$('button#add-comment').attr("disabled", false);
 		},
 		success: function(response) {
@@ -851,15 +851,15 @@ $(document).ready(function() {
 					<form id="new-comment-form" action="" method="post" class="form-horizontal" enctype="multipart/form-data">
 						<fieldset>
 							<div class="form-group">
-								<label for="textArea" class="col-lg-2 control-label">Comment</label>
+								<label for="textArea" class="col-lg-2 control-label">{{ lang.elements.comment_uppercase }}</label>
 								<div class="col-lg-10">
 									<textarea class="form-control" rows="3" id="input-comment" name="comment"></textarea>
-									<span class="help-block">Write here a comment</span>
+									<span class="help-block">{{ lang.comment_list_popup.write_comment_here }}</span>
 								</div>
 							</div>
 							<div class="form-group">
 								<div class="modal-footer">
-									<button type="submit" class="btn" id="add-comment" style="background-color:#00A65E;">Add comment</button>
+									<button type="submit" class="btn" id="add-comment" style="background-color:#00A65E;">{{ lang.comment_list_popup.add_comment }}</button>
 								</div>
 							</div>
 						</fieldset>
