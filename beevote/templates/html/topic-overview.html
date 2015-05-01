@@ -546,6 +546,9 @@ $(document).ready(function() {
 						str += '</div><div class="row-content"><h3 class="list-group-item-heading">'+response.comment_creator.data.name+' '+response.comment_creator.data.surname+' ('+response.comment_creation+')</h3>'+response.comment_description+'</div></div><div class="list-group-separator"></div>'
 					}
 					$('#proposal_comment_list').append(str);
+					var comment_number_span = $("span.comment-number[data-proposal='" + response.proposal_id +"']")
+					var previous_comments = parseInt(comment_number_span.html());
+					comment_number_span.html(previous_comments+1);
 				} else {
 					alert(response.error);
 				}
@@ -799,7 +802,7 @@ $(document).ready(function() {
 					<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:33px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
 					<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="comments-button" style="padding:3px 1px 2px 5px;position:absolute;top:61px;right:20px;background-color:#2196F3;">
 						<b style="font-size:11px;">Comments: </b>
-						<span class="badge vote-number" data-proposal="{{ proposal.key.id }}">{{ proposal.comment_number }} </span>&nbsp;
+						<span class="badge comment-number" data-proposal="{{ proposal.key.id }}">{{ proposal.comment_number }} </span>&nbsp;
 					</button>
 				</div>	
 				<div class="proposal-arrow modal-footer" data-proposal-arrow="{{ proposal.key.id }}" style="margin-top: -10px;border-top: none;padding: 0px;text-align: center;font-size: 20px;">
