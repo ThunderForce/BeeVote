@@ -959,7 +959,7 @@ class CreateProposalCommentHandler(BaseApiHandler):
 					'proposal_id': proposal_id,
 					'comment_id': comment.key.id(),
 					'comment_creator': fetch_user(comment.creator.get(), []),
-					'comment_creation': str(comment.creation),
+					'comment_creation': comment.creation.strftime("%Y/%m/%d %H:%M:%S"),
 					'comment_description': comment.description
 				}
 			except Exception as exc:
