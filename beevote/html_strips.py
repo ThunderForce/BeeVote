@@ -17,6 +17,8 @@
 
 from datetime import timedelta
 
+import constants
+
 import datetime
 import os
 import time
@@ -163,7 +165,7 @@ class TopicsHandler(BaseHandler):
 		currentdatetime = datetime.datetime.now()
 		for topic in topics:
 			if(topic.date != None):
-				topic.formatted_date = topic.date.strftime("%A   %d %B %Y")
+				topic.formatted_date = topic.date.strftime(constants.topic_date_format)
 			if topic.deadline != None:
 				topic.expired = topic.deadline < currentdatetime
 				time_before_deadline = topic.deadline - currentdatetime
@@ -215,7 +217,7 @@ class TopicHandler(BaseHandler):
 		if (not topic):
 			self.abort(404, detail="This topic does not exist.")
 		if(topic.date != None):
-			topic.formatted_date = topic.date.strftime("%A   %d %B %Y")
+			topic.formatted_date = topic.date.strftime(constants.topic_date_format)
 		if topic.creator == self.beevote_user.key:
 			topic.is_own = True
 		else:
@@ -238,7 +240,7 @@ class TopicHandler(BaseHandler):
 			proposal.vote_number = len(proposal.get_votes())
 			proposal.comment_number = len(proposal.get_comments())
 			if(proposal.date != None):
-				proposal.formatted_date = proposal.date.strftime("%A   %d %B %Y")
+				proposal.formatted_date = proposal.date.strftime(constants.proposal_date_format)
 		
 		# Sorting the proposal according to vote number
 		topic.proposals = sorted(proposals, key=lambda proposal: proposal.vote_number, reverse=True)
