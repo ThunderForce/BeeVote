@@ -40,7 +40,7 @@ def get_template(template_name, template_values={}, navbar_values={}):
 
 	user = users.get_current_user()
 	if user:
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
 	else:
 		beevote_user = None
 
@@ -131,7 +131,7 @@ class BaseHandler(webapp2.RequestHandler):
 				#return
 			if not self.request.path in google_user_urls:
 				
-				self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+				self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
 				
 				if not self.beevote_user:
 					self.abort(401, headers={'Location': '/register'})
@@ -159,7 +159,7 @@ class MainHandler(BaseHandler):
 	def get(self):
 		user = users.get_current_user()
 		if user:
-			if not self.beevote_user and not models.get_beevote_user_from_google_id(user.user_id()):
+			if not self.beevote_user and not models.BeeVoteUser.get_from_google_id(user.user_id()):
 				self.redirect("/register")
 				return
 			else:
@@ -281,7 +281,7 @@ class TopicImageHandler(webapp2.RequestHandler):
 class RegistrationHandler(BaseHandler):
 	def get(self):
 		user_id = users.get_current_user().user_id()
-		if self.beevote_user or models.get_beevote_user_from_google_id(user_id):
+		if self.beevote_user or models.BeeVoteUser.get_from_google_id(user_id):
 			self.redirect("/")
 			return
 		write_template(self.response, 'registration-form.html', {})
@@ -324,32 +324,16 @@ else:
 	debug = software == "Development"
 
 app = webapp2.WSGIApplication([
+	# Home handlers
 	('/', MainHandler),
-	('/user/(\d+)/image', UserImageHandler),
-	('/group/(\d+)/topic/(\d+)/image', TopicImageHandler),
-	('/group/(\d+)/image', GroupImageHandler),
 	webapp2.Route('/group/<group_id:\d+>/topic/<topic_id:\d+>', handler=HomeHandler),
 	webapp2.Route('/group/<group_id:\d+>', handler=HomeHandler, defaults={'topic_id': None}),
 	webapp2.Route('/home', handler=HomeHandler, defaults={'group_id': None, 'topic_id': None}),
-	#('/home', HomeHandler),
-	('/profile/(\d+)', ProfileHandler),
-	('/report-bug', ReportBugHandler),
-	('/api/group/(\d+)/topic/(\d+)/proposal/(\d+)/remove', api.RemoveProposalHandler),
-	('/api/group/(\d+)/members/remove', api.RemoveGroupMemberHandler),
-	('/api/group/(\d+)/members/add', api.AddGroupMemberHandler),
-	('/api/group/(\d+)/topic/(\d+)/remove-participation', api.RemoveParticipationHandler),
-	('/api/group/(\d+)/topic/(\d+)/add-participation', api.AddParticipationHandler),
-	('/api/group/(\d+)/topic/(\d+)/remove', api.RemoveTopicHandler),
-	('/api/group/(\d+)/remove', api.RemoveGroupHandler),
-	('/api/group/(\d+)/topic/(\d+)/update', api.UpdateTopicHandler),
-	('/api/group/(\d+)/update', api.UpdateGroupHandler),
-	('/api/member-autocomplete', api.MemberAutocompleteHandler),
-	('/api/remove-vote', api.RemoveVoteHandler),
-	('/api/update-user', api.UpdateUser),
-	('/api/load-proposal', api.OldLoadProposalHandler),
-	('/api/load-votes', api.LoadVotesHandler),
-	('/api/load-group-members', api.LoadGroupMembersHandler),
-	('/api/group/(\d+)/topic/(\d+)/participants', api.LoadParticipantsHandler),
+	
+	# Images handlers
+	('/user/(\d+)/image', UserImageHandler),
+	('/group/(\d+)/topic/(\d+)/image', TopicImageHandler),
+	('/group/(\d+)/image', GroupImageHandler),
 	
 	# Creation handlers
 	('/api/create-group', api.CreateGroupHandler),
@@ -357,13 +341,34 @@ app = webapp2.WSGIApplication([
 	('/api/create-proposal', api.CreateProposalHandler),
 	('/api/create-vote', api.CreateVoteHandler),
 	
+	# Updating handlers
+	('/api/update-user', api.UpdateUser),
+	('/api/group/(\d+)/topic/(\d+)/update', api.UpdateTopicHandler),
+	('/api/group/(\d+)/topic/(\d+)/update-personal-settings', api.UpdateTopicPersonalSettingsHandler),
+	('/api/group/(\d+)/update-personal-settings', api.UpdateGroupPersonalSettingsHandler),
+	
+	# Removal handlers
+	('/api/group/(\d+)/remove', api.RemoveGroupHandler),
+	('/api/group/(\d+)/topic/(\d+)/remove-participation', api.RemoveParticipationHandler),
+	('/api/group/(\d+)/topic/(\d+)/proposal/(\d+)/remove', api.RemoveProposalHandler),
+	('/api/group/(\d+)/members/remove', api.RemoveGroupMemberHandler),
+	('/api/group/(\d+)/topic/(\d+)/remove', api.RemoveTopicHandler),
+	('/api/remove-vote', api.RemoveVoteHandler),
+	
 	# Notifications handlers
 	('/api/group/(\d+)/topic/(\d+)/notifications', api.TopicNotificationsHandler),
 	('/api/group/(\d+)/notifications', api.GroupNotificationsHandler),
 	('/api/topics-notifications', api.TopicsNotificationsHandler),
 	
-	('/api/group/(\d+)/topic/(\d+)/update-personal-settings', api.UpdateTopicPersonalSettingsHandler),
-	('/api/group/(\d+)/update-personal-settings', api.UpdateGroupPersonalSettingsHandler),
+	# Other API handlers
+	('/api/group/(\d+)/members/add', api.AddGroupMemberHandler),
+	('/api/group/(\d+)/topic/(\d+)/add-participation', api.AddParticipationHandler),
+	('/api/group/(\d+)/update', api.UpdateGroupHandler),
+	('/api/member-autocomplete', api.MemberAutocompleteHandler),
+	('/api/load-proposal', api.OldLoadProposalHandler),
+	('/api/load-votes', api.LoadVotesHandler),
+	('/api/load-group-members', api.LoadGroupMembersHandler),
+	('/api/group/(\d+)/topic/(\d+)/participants', api.LoadParticipantsHandler),
 	('/api/group/(\d+)/topic/(\d+)/proposal/(\d+)/add-comment', api.CreateProposalCommentHandler),
 	('/api/group/(\d+)/topic/(\d+)/proposal/(\d+)', api.LoadProposalHandler),
 	('/api/group/(\d+)/topic/(\d+)', api.LoadTopicHandler),
@@ -372,11 +377,17 @@ app = webapp2.WSGIApplication([
 	('/api/user/(\d+)', api.LoadUserHandler),
 	('/api/create-bug-report', api.CreateBugReportHandler),
 	('/api/register', api.RegistrationHandler),
+	
+	# HTML strips handlers
 	('/html/topics', html_strips.TopicsHandler),
 	('/html/groups', html_strips.GroupsHandler),
 	('/html/group/(\d+)/topic/(\d+)', html_strips.TopicHandler),
 	('/html/group/(\d+)/members', html_strips.GroupMembersHandler),
 	('/html/group/(\d+)', html_strips.GroupHandler),
+	
+	# Other handlers
+	('/profile/(\d+)', ProfileHandler),
+	('/report-bug', ReportBugHandler),
 	('/register', RegistrationHandler),
 	('/logout', LogoutHandler),
 ], debug=debug, config=config)

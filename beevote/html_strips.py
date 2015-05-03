@@ -40,7 +40,7 @@ def write_template(response, template_name, template_values={}):
 	path = os.path.join(directory, os.path.join('templates', template_name))
 	user = users.get_current_user()
 	if user:
-		beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
 	else:
 		beevote_user = None
 
@@ -73,7 +73,7 @@ class BaseHandler(webapp2.RequestHandler):
 			self.redirect(users.create_login_url(url))
 			return
 		
-		self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+		self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
 		
 		if not self.beevote_user:
 			self.redirect("/register")

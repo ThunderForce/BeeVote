@@ -24,6 +24,14 @@ class BeeVoteUser(ndb.Model):
 		return beevote_user
 	
 	@staticmethod
+	def get_from_google_id(user_id):
+		beevote_user = memcache.get('beevoteuser_by_user_id_%s' % user_id)  # @UndefinedVariable
+		if beevote_user is None:
+			beevote_user =  ndb.gql('SELECT * FROM BeeVoteUser WHERE user_id = :1', user_id).get()
+			memcache.add('beevoteuser_by_user_id_%s' % user_id, beevote_user, time=600)  # @UndefinedVariable
+		return beevote_user
+	
+	@staticmethod
 	def get_by_email(email):
 		return BeeVoteUser.query(BeeVoteUser.email == email).get()
 	
@@ -524,14 +532,3 @@ class BugReport(ndb.Model):
 	creator = ndb.KeyProperty(kind=BeeVoteUser, required=False)
 
 # End of Data Model
-
-# Start of functions
-
-def get_beevote_user_from_google_id(user_id):
-	beevote_user = memcache.get('beevoteuser_by_user_id_%s' % user_id)  # @UndefinedVariable
-	if beevote_user is None:
-		beevote_user =  ndb.gql('SELECT * FROM BeeVoteUser WHERE user_id = :1', user_id).get()
-		memcache.add('beevoteuser_by_user_id_%s' % user_id, beevote_user, time=600)  # @UndefinedVariable
-	return beevote_user
-
-# End of functions

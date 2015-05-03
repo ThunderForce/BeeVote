@@ -195,7 +195,7 @@ class BaseApiHandler(webapp2.RequestHandler):
 		
 		user = users.get_current_user()
 		if user:
-			self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+			self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
 		else:
 			self.beevote_user = None
 		
@@ -214,7 +214,7 @@ class BaseApiHandler(webapp2.RequestHandler):
 					url += '?' + request.query_string
 				self.redirect(users.create_login_url(url))
 				return
-			self.beevote_user = models.get_beevote_user_from_google_id(user.user_id())
+			self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
 			if not self.beevote_user:
 				self.redirect("/register")
 		'''
@@ -241,7 +241,7 @@ class LoadGroupHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
@@ -261,7 +261,7 @@ class LoadTopicHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
@@ -281,7 +281,7 @@ class LoadProposalHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
@@ -301,7 +301,7 @@ class LoadParticipantsHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.get_beevote_user_from_google_id(user.user_id()), group):
+		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		topic = models.Topic.get_from_id(group_id, topic_id)
@@ -1112,6 +1112,7 @@ class RegistrationHandler(BaseApiHandler):
 		name = self.request.get('name')
 		surname = self.request.get('surname')
 		email = user.email()
+		language = 'en'
 		if name == "":
 			values = {
 				'success': False,
@@ -1128,7 +1129,7 @@ class RegistrationHandler(BaseApiHandler):
 				email = email,
 				name = name,
 				surname = surname,
-				language = 'en',
+				language = language,
 				last_access = datetime.datetime.now(),
 			)
 			
@@ -1136,7 +1137,7 @@ class RegistrationHandler(BaseApiHandler):
 			
 			beevote_user.put()
 			
-			emailer.send_registration_notification(beevote_user, 'en', self.request.host)
+			emailer.send_registration_notification(beevote_user, language, self.request.host)
 			
 			values = {
 				'success': True
