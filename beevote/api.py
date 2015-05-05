@@ -900,11 +900,11 @@ class CreateProposalHandler(BaseApiHandler):
 				if where != "" and topic.place == "":
 					proposal.place = where
 				if date != "" and topic.date is None:
-					proposal.date = datetime.datetime.strptime(date, "%d/%m/%Y").date()
+					proposal.date = datetime.datetime.strptime(date, constants.proposal_input_date_format).date()
 					if proposal.date.year <= 1900:
 						raise Exception(self.lang['errors']['year_before_1900'])
 				if time != "" and topic.time is None:
-					proposal.time = datetime.datetime.strptime(time, '%H:%M').time()
+					proposal.time = datetime.datetime.strptime(time, constants.proposal_input_time_format).time()
 				proposal.description = description
 				proposal.put()
 				models.TopicNotification.create(models.TopicNotification.PROPOSAL_CREATION, topic_key=topic.key)
