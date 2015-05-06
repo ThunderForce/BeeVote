@@ -102,6 +102,12 @@ class Group(ndb.Model):
 	def get_members(self):
 		return ndb.get_multi(self.members)
 
+	def contains_user(self, beevote_user):
+		if self.members == [] or beevote_user.key in self.members:
+			return True
+		else:
+			return False
+
 	def get_admins(self):
 		return ndb.get_multi(self.admins)
 	

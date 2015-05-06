@@ -31,13 +31,6 @@ import language
 import models
 
 # Start of functions
-# TEMPORARY
-def is_user_in_group(beevote_user, group):
-	if group.members == [] or beevote_user.key in group.members:
-		return True
-	else:
-		return False
-# TEMPORARY
 
 def get_json(json_obj):
 	return json.dumps(json_obj, indent=4, separators=(',', ': '))
@@ -241,7 +234,7 @@ class LoadGroupHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
+		if not group.contains_user(models.BeeVoteUser.get_from_google_id(user.user_id())):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
@@ -261,7 +254,7 @@ class LoadTopicHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
+		if not group.contains_user(models.BeeVoteUser.get_from_google_id(user.user_id())):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
@@ -281,7 +274,7 @@ class LoadProposalHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
+		if not group.contains_user(models.BeeVoteUser.get_from_google_id(user.user_id())):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		arguments = {
@@ -301,7 +294,7 @@ class LoadParticipantsHandler(BaseApiHandler):
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
 		'''
-		if not is_user_in_group(models.BeeVoteUser.get_from_google_id(user.user_id()), group):
+		if not group.contains_user(models.BeeVoteUser.get_from_google_id(user.user_id())):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		'''
 		topic = models.Topic.get_from_id(group_id, topic_id)
@@ -618,7 +611,7 @@ class CreateTopicHandler(BaseApiHandler):
 class RemoveTopicHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		group = models.Group.get_from_id(long(group_id))
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -776,7 +769,7 @@ class TopicNotificationsHandler(BaseApiHandler):
 class RemoveGroupHandler(BaseApiHandler):
 	def post(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -799,7 +792,7 @@ class RemoveGroupHandler(BaseApiHandler):
 class AddGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -835,7 +828,7 @@ class AddGroupMemberHandler(BaseApiHandler):
 class RemoveGroupMemberHandler(BaseApiHandler):
 	def post(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -974,7 +967,7 @@ class CreateProposalCommentHandler(BaseApiHandler):
 class RemoveProposalHandler(BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
 		group = models.Group.get_from_id(group_id)
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -999,7 +992,7 @@ class RemoveProposalHandler(BaseApiHandler):
 class RemoveParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if not is_user_in_group(self.beevote_user, topic.group.get()):
+		if not topic.group.get().contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
@@ -1021,7 +1014,7 @@ class RemoveParticipationHandler(BaseApiHandler):
 class AddParticipationHandler(BaseApiHandler):
 	def post(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if not is_user_in_group(self.beevote_user, topic.group.get()):
+		if not topic.group.get().contains_user(self.beevote_user):
 			values = {
 				'success': False,
 				'group_id': group_id,
