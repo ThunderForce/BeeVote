@@ -56,12 +56,6 @@ def write_template(response, template_name, template_values={}):
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 	response.out.write(rendered_template)
 
-def is_user_in_group(beevote_user, group):
-	if group.members == [] or beevote_user.key in group.members:
-		return True
-	else:
-		return False
-
 class BaseHandler(webapp2.RequestHandler):
 	def __init__(self, request, response):
 		self.initialize(request, response)
@@ -116,7 +110,7 @@ class GroupHandler(BaseHandler):
 		group = models.Group.get_from_id(long(group_id))
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		group.member_list = ndb.get_multi(group.members)
 		topics = group.get_topics()
@@ -193,7 +187,7 @@ class GroupMembersHandler(BaseHandler):
 		group = models.Group.get_from_id(long(group_id))
 		if (not group):
 			self.abort(404, detail="This group does not exist.")
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		group.member_list = ndb.get_multi(group.members)
 		
@@ -211,7 +205,7 @@ class GroupMembersHandler(BaseHandler):
 class TopicHandler(BaseHandler):
 	def get(self, group_id, topic_id):
 		group = models.Group.get_from_id(long(group_id))
-		if not is_user_in_group(self.beevote_user, group):
+		if not group.contains_user(self.beevote_user):
 			self.abort(401, detail="You are not authorized to see this group.<br>Click <a href='javascript:history.back();'>here</a> to go back, or <a href='/logout'>here</a> to logout.")
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if (not topic):
