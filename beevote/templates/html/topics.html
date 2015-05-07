@@ -6,6 +6,14 @@
 		$('#creation-buttons').html('');
 		$('#creation-buttons').append(buttons.create_group);
 		print_topics_notifications();
+		$('input#show-expired-topics').click(function() {
+			if ($(this).is(":checked"))
+				$('div.topic-expired').show();
+			else
+				$('div.topic-expired').hide();
+		});
+		
+		$.material.init();
 	});
 </script>
 <style type="text/css">
@@ -32,8 +40,13 @@
 		{% if not topics %}
 		<p>{{lang.topics.no_topics}}</p>
 		{% endif %}
+		<div class="checkbox">
+			<label>
+				<input id="show-expired-topics" type="checkbox" checked> Show expired topics
+			</label>
+		</div>
 		{% for topic in topics %}
-		<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}" data-group-id="{{ topic.group.id }}">
+		<div class="list-group-item topic-item{% if topic.deadline and topic.expired %} topic-expired{% endif %}" data-topic-id="{{ topic.key.id }}" data-group-id="{{ topic.group.id }}">
 			<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
 				<div class="row">
 					<div class="row-picture">
