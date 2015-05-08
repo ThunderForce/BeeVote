@@ -75,6 +75,15 @@ $(document).ready(function() {
 	$('#creation-buttons').append(buttons.create_group);
 	
 	print_topics_notifications();
+	
+	$('input#show-expired-topics').click(function() {
+		if ($(this).is(":checked"))
+			$('div.topic-expired').show();
+		else
+			$('div.topic-expired').hide();
+	});
+	
+	$.material.init();
 });
 
 function resetForm(form_id) {
@@ -220,9 +229,15 @@ function resetForm(form_id) {
 		<div class="list-group global-topics">
 			{% if not group.topics %}
 			<p style="margin-left:20px;">{{lang.groups_overview.no_topics}}</p>
+			{% else %}
+			<div class="checkbox">
+				<label>
+					<input id="show-expired-topics" type="checkbox" checked> Show expired topics
+				</label>
+			</div>
 			{% endif %}
 			{% for topic in group.topics %}
-			<div class="list-group-item topic-item" data-topic-id="{{ topic.key.id }}" data-group-id="{{ group.key.id }}">
+			<div class="list-group-item topic-item{% if topic.deadline and topic.expired %} topic-expired{% endif %}" data-topic-id="{{ topic.key.id }}" data-group-id="{{ group.key.id }}">
 				<div class="well well-lg" color="blue" style="padding: 0px; padding-top: 10px; padding-left: 26px; padding-bottom: 6px; cursor: pointer; max-width: 900px;">
 					<div class="row">
 						<div class="row-picture">
