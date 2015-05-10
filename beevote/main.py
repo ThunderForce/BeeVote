@@ -92,12 +92,6 @@ def write_template(response, template_name, template_values={}, navbar_values={}
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 	response.out.write(get_template(template_name, template_values, navbar_values))
 
-def is_user_in_group(beevote_user, group):
-	if group.members == [] or beevote_user.key in group.members:
-		return True
-	else:
-		return False
-
 def resize_image(image_data, width, height):
 	image = Image(image_data=image_data)
 	if (image.width / float(width)) > (image.height / float(height)):
