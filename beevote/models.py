@@ -44,7 +44,7 @@ class BeeVoteUser(ndb.Model):
 		return ndb.get_multi(keys)
 	
 	def get_groups_by_membership(self):
-		return Group.query(Group.members == self.key).fetch(1000)
+		return Group.query(Group.members == self.key).order(Group.name).fetch(1000)
 	
 	def get_topics_by_group_membership(self):
 		groups = self.get_groups_by_membership()
