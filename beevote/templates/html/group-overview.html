@@ -106,12 +106,6 @@ function resetForm(form_id) {
 						{% else %}
 						<img src="/static/images/group-default.jpg" id="group_image" style="width: 200px;height: 100%;">
 						{% endif %}
-						<!-- Old Edit/Delete Button
-						{% if group.is_own %}
-							<div style="position:absolute;top:0px;"><button type="button" class="btn btn-info btn-raised mdi-content-create" data-toggle="modal" data-target="#updateImage" title="{{lang.buttons.edit_group_photo_title}}" style="padding:7px;"></button></div>
-							<button id="delete-group" title="{{lang.buttons.delete_group_title}}" class="btn btn-raised mdi-action-delete" style="padding:8px;position:absolute;top:0px;right:25px;z-index:1;background-color:#F44336;"></button>
-						{% endif %}
-						-->
 						<!-- Edit Button -->
 						<button id="edit-group" type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:8px;position:absolute;top: -10px;right: 15px;z-index:1;"></button>
 						<!-- /Edit Button -->
@@ -196,13 +190,7 @@ function resetForm(form_id) {
 						<div id="group-col-dx-well" class="col-lg-11" style="">
 							<h2 id="group-name-well"style="word-wrap:break-word;padding-bottom:5px;margin:0px;">
 								{{ group.name }}
-								<!-- Old edit title Button
-								{% if group.is_own %}
-								<button type="button" class="btn btn-raised mdi-content-create" data-toggle="modal" data-target="#updateInfo" title="{{lang.buttons.edit_group_title}}" style="padding:7px;display:inline-block;"></button>
-								{% endif %}
-								-->
 							</h2>
-							
 								{% if group.description %}
 								<h5 id="group-description-well"style="word-wrap:break-word;"><span class="mdi-editor-format-align-left"></span> {{ group.description }}
 								</h5>
@@ -262,32 +250,24 @@ function resetForm(form_id) {
 								{% endif %}
 							</h5>
 							{% if topic.deadline %}
-							{% if topic.expired %}
-							<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span> {{lang.topic_overview.deadline_reach}}</span></h5>
-							{% else %}
-							<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy"></span>
-								<span>
-									{% if topic.time_before_deadline.days != 0 %}
-									{{ topic.time_before_deadline.days }} {{lang.days}} 
-									{% endif %}
-									{% if topic.time_before_deadline.hours != 0 %}
-									{{ topic.time_before_deadline.hours }} {{lang.hours}} 
-									{% endif %}
-									{% if topic.time_before_deadline.minutes != 0 %}
-									{{ topic.time_before_deadline.minutes }} {{lang.minutes}} 
-									{% endif %}
-										<!-- {% if topic.time_before_deadline.seconds != 0 %}
-											{{ topic.time_before_deadline.seconds }} seconds 
-											{% endif %} -->
-										</span>
-									</h5>
-									{% endif %}
-									{% endif %}
-						<!-- {% if topic.is_own %}
-							<div style="float:right;">
-								<button id="delete-topic" title="Delete this topic" href="/group/{{ group.key.id }}/topic/{{ topic.key.id }}/remove" class="btn btn-danger mdi-action-delete"></button>
-							</div>
-							{% endif %} -->
+								{% if topic.expired %}
+								<h5 class="list-group-item-text"><span class="mdi-notification-event-busy" style="margin-left:5px;"></span><span> {{lang.topic_overview.deadline_reach}}</span></h5>
+								{% else %}
+								<h5 class="list-group-item-text" style="margin-left:5px;"><span class="mdi-notification-event-busy"></span>
+									<span>
+										{% if topic.time_before_deadline.days != 0 %}
+										{{ topic.time_before_deadline.days }} {{lang.days}} 
+										{% endif %}
+										{% if topic.time_before_deadline.hours != 0 %}
+										{{ topic.time_before_deadline.hours }} {{lang.hours}} 
+										{% endif %}
+										{% if topic.time_before_deadline.minutes != 0 %}
+										{{ topic.time_before_deadline.minutes }} {{lang.minutes}} 
+										{% endif %}
+									</span>
+								</h5>
+								{% endif %}
+							{% endif %}
 						</div>
 					</div>
 				</div>
