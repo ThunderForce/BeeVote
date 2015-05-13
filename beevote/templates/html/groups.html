@@ -16,40 +16,6 @@
 				load_group_topics($(this).data('group_id'));
 			}
 		});
-		/*
-		$.ajax({
-			url: '/api/groups-notifications',
-			method: "GET",
-			dataType: "json",
-			success: function(notifications) {
-				function _get_group_name(group_id) {
-					var h3 = $('div.group-well[data-group_id="'+group_id+'"] h3');
-					if (h3.find('span').length > 0)
-						group_name = h3.find('span').attr('title');
-					else
-						group_name = h3.html();
-					return group_name.trim();
-				}
-				var messages = [];
-				$.each(notifications, function(group_id, group_notifications) {
-					var group_name = null
-					if (group_notifications.topic_creations > 0) {
-						if (group_name == null)
-							group_name = _get_group_name(group_id);
-						messages.push('Group "'+group_name+'" has '+group_notifications.topic_creations+' topics created.');
-					}
-					if (group_notifications.group_invitations > 0) {
-						if (group_name == null)
-							group_name = _get_group_name(group_id);
-						messages.push('Group "'+group_name+'" has '+group_notifications.group_invitations+' group invitations for you.');
-					}
-				});
-				if (messages.length > 0) {
-					alert('You have some notifications!\n\n'+messages.join('\n'));
-				}
-			}
-		});
-		*/
 		print_groups_notifications();
 	});
 </script>
