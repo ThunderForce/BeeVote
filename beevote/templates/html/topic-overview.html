@@ -11,7 +11,6 @@ function initialize_proposal_map(id, place) {
 				var latitude = results[0].geometry.location.lat();
 				var longitude = results[0].geometry.location.lng();
 
-
 				var latlng = new google.maps.LatLng(latitude,longitude);
 
 				var myOptions = {
@@ -50,14 +49,12 @@ function initialize_topic_map(id, place) {
 		var geocoder = new google.maps.Geocoder();
 		var address_topic = '{{ topic.place }}';
 
-
 	    geocoder.geocode( { 'address': address_topic}, 
 	    	function(results, status) {
 
 		      if (status == google.maps.GeocoderStatus.OK) {
 		        var latitude = results[0].geometry.location.lat();
 		        var longitude = results[0].geometry.location.lng();
-
 
 		        initialize_topic_place(latitude,longitude);
 
@@ -68,25 +65,25 @@ function initialize_topic_map(id, place) {
 			}); 
 
 		function initialize_topic_place(latitude,longitude) {
-		        var latlng = new google.maps.LatLng(latitude,longitude);
+	        var latlng = new google.maps.LatLng(latitude,longitude);
 
-		        var myOptions = {
-		          zoom: 14,
-		          center: latlng,
-		          mapTypeId: google.maps.MapTypeId.ROADMAP,
-		          mapTypeControl: false
-		        };
-		        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
+	        var myOptions = {
+	          zoom: 14,
+	          center: latlng,
+	          mapTypeId: google.maps.MapTypeId.ROADMAP,
+	          mapTypeControl: false
+	        };
+	        var map = new google.maps.Map(document.getElementById("map_canvas_topic"),myOptions);
 
-		        var marker = new google.maps.Marker({
-		          position: latlng, 
-		          map: map, 
-		            title:"{{ topic.place }}"
-		        });
-		        window.setTimeout(function() {
-					google.maps.event.trigger(map, 'resize');
-					map.panTo(marker.getPosition());
-				}, 250);
+	        var marker = new google.maps.Marker({
+	          position: latlng, 
+	          map: map, 
+	            title:"{{ topic.place }}"
+	        });
+	        window.setTimeout(function() {
+				google.maps.event.trigger(map, 'resize');
+				map.panTo(marker.getPosition());
+			}, 250);
 		}
 	}
 	else {
@@ -168,7 +165,6 @@ $(document).ready(function() {
 			$("div.proposal-arrow[data-proposal-arrow='" + proposal_id +"']").html('<span class="mdi-hardware-keyboard-arrow-up"></span>');
 		}
 	});
-
 
 	$('input#proposal_popup_group_id').val("{{ topic.group.id }}");
 	$('input#proposal_popup_topic_id').val("{{ topic.key.id }}");
@@ -456,22 +452,19 @@ $(document).ready(function() {
 
 				$("#participantsTopicPopup").html("");
 
-				{% if topic.place != ""%}
+				{% if topic.place != "" %}
 					$("#participantsTopicPopup").append('<span class="mdi-communication-location-on" style="margin-left:5px;"> {{topic.place}} </span>');
 				{%endif %}
 
-
 				{% if topic.date %}
 					$("#participantsTopicPopup").append('<span class="mdi-editor-insert-invitation" style="margin-left:5px;"> {{topic.date}} </span>');
-				
 				{%endif%}
 
 				{% if topic.time %}
 					$("#participantsTopicPopup").append('<span class="mdi-action-query-builder" style="margin-left:5px;"> {{topic.time}} </span>');
-				
 				{%endif%}
+				
 				$("#participantsTopicPopup").append('<span class="mdi-action-account-box" style="margin-left:5px;">{% if topic.creator.get %} {{topic.creator.get.name}} {{topic.creator.get.surname}} {% else %}<i> {{lang.unknown_user}} </i>{% endif %}</span>');
-
 
 				$('#participantsList').modal('show');
 				$('#member-participants-list').html('');
@@ -900,7 +893,3 @@ $(document).ready(function() {
 		</div>
 	</div>
 </div>
-		
-
-
-
