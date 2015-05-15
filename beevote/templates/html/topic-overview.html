@@ -125,7 +125,7 @@ $(document).ready(function() {
 				method: 'POST',
 				dataType: 'json',
 				error: function() {
-					alert("Errore inaspettato!");
+					alert("{{ lang.general_error }}");
 				},
 				success: function(response) {
 					if (response.success) {
@@ -794,7 +794,7 @@ $(document).ready(function() {
 					</button>
 					<button id="vote" data-proposal="{{ proposal.key.id }}" type="checkbox" class="btn btn-default btn-fab btn-raised mdi-action-thumb-up vote-checkbox {% if proposal.already_voted %}proposal-voted{% else %}proposal-not-voted{% endif %} {% if topic.expired or not topic.participation %} disabled {% endif %}" style="width: 35px; height: 35px;  padding: 8px;position:absolute;top:33px;right:31px;font-size:19px;" {% if topic.expired or not topic.participation %} disabled {% endif %}></button>
 					<button class="btn btn-primary" type="button" data-toggle="modal" data-proposal="{{ proposal.key.id }}" id="comments-button" style="padding:3px 1px 2px 5px;position:absolute;top:61px;right:20px;background-color:#2196F3;">
-						<b style="font-size:11px;">Comments: </b>
+						<b style="font-size:11px;">{{ lang.elements.comments_uppercase }}: </b>
 						<span class="badge comment-number" data-proposal="{{ proposal.key.id }}">{{ proposal.comment_number }} </span>&nbsp;
 					</button>
 				</div>	
