@@ -119,7 +119,7 @@ $(document).ready(function() {
 		load_group_topics('{{ topic.group.id }}');
 	});
 	$('button#delete-topic').on('click', function() {
-		if (confirm("Are you sure to delete this topic?")) {
+		if (confirm("{{ lang.topic_overview.confirm_delete_topic }}")) {
 			$.ajax({
 				url: '/api/group/{{ topic.group.id }}/topic/{{ topic.key.id }}/remove',
 				method: 'POST',
@@ -222,7 +222,7 @@ $(document).ready(function() {
 	$('#topic-participation').on('click', function(e) {
 		$(this).toggleClass('btn-success btn-warning mdi-toggle-check-box mdi-toggle-check-box-outline-blank');
 		$(this).addClass('disabled')
-		$('span#participation-text').html('Changing...');
+		$('span#participation-text').html('{{ lang.topic_overview.changing_participation }}');
 		var checked = $(this).hasClass('btn-success');
 		$(this).attr('disabled', true)
 		if (checked) {
@@ -234,7 +234,7 @@ $(document).ready(function() {
 					if (response.success) {
 						load_topic(response.group_id, response.topic_id);
 					} else {
-						alert("Error");
+						alert("{{ lang.general_error }}");
 					}
 				}
 			})
@@ -247,7 +247,7 @@ $(document).ready(function() {
 					if (response.success) {
 						load_topic(response.group_id, response.topic_id);
 					} else {
-						alert("Error");
+						alert("{{ lang.general_error }}");
 					}
 				}
 			})
@@ -331,7 +331,7 @@ $(document).ready(function() {
 				/*"<li>"+response.proposal.place+"</li>"+"<li>"+response.proposal.date+"</li>"+"<li>"+response.proposal.time+"</li>");*/
 
 				$('#voteList').modal('show');
-				$('#member-vote-list').html('Loading...');
+				$('#member-vote-list').html('{{ lang.loading }}');
 				var success_callback = function(response) {
 					$('#member-vote-list').html('');
 					if (response.votes.length == 0){
@@ -436,7 +436,7 @@ $(document).ready(function() {
 
 		var group_id = {{ topic.group.id }};
 		var topic_id = {{ topic.key.id }};
-		$('#member-participants-list').html('Loading...');
+		$('#member-participants-list').html('{{ lang.loading }}');
 
 		$.ajax({
 			url: '/api/group/'+group_id+'/topic/'+topic_id+'/participants',

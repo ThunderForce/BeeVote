@@ -30,6 +30,7 @@ lang = {
 		'deadline_explain':"Fill this field if you want to set an expire time for the topic",
 		'italian':"italian",
 		'english':"english",
+		'loading': "Loading...",
 		'notification_emails_settings': {
 			'topic': {
 				'proposal_creation': "Notification email for proposal creation",
@@ -64,6 +65,8 @@ lang = {
 			'not_partecipating':"I don't partecipate",
 			'partecipating':"I participate",
 			'no_proposal':"This topic has no proposals yet",
+			'confirm_delete_topic': "Are you sure to delete this topic?",
+			'changing_participation': "Changing participation...",
 		},
 		'buttons':{
 			'create_group': "Create group",
@@ -298,6 +301,7 @@ The Beevote team
 		'detail_message':"Aggiungi i dettagli che vuoi far sapere agli altri ",
 		'italian':"italiano",
 		'english':"inglese",
+		'loading': "Caricamento...",
 		'notification_emails_settings': {
 			'topic': {
 				'proposal_creation': "Email di notifica per creazione proposta",
@@ -332,6 +336,8 @@ The Beevote team
 			'not_partecipating':"Non partecipo",
 			'partecipating':"Partecipo",
 			'no_proposal':"Questa discussione non ha ancora proposte ",
+			'confirm_delete_topic': "Sei sicuro di cancellare questa discussione?",
+			'changing_participation': "Modifica della partecipazione...",
 		},
 		'group_members':{
 		 	'warning_delete': "Sei sicuro di voler rimuovere questo utente dal gruppo?",
