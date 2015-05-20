@@ -90,16 +90,6 @@ function load_groups(opened_group) {
 			}
 		}
 	});
-	/*
-	if (opened_group == null)
-		$('#group-list').load('/html/groups');
-	else
-		$('#group-list').load('/html/groups', function() {
-			$('div.group-well').removeClass('group-selected');
-			$('div.group-well[data-group_id="'+opened_group+'"]').addClass('group-selected');
-//			$('div.group-well[data-group_id="'+opened_group+'"]').click();
-		});
-	*/
 }
 
 // Start of left columns loadings
@@ -136,7 +126,7 @@ function load_topic(group_id, topic_id) {
 		return
 	}
 	// better use pushState
-	window.history.replaceState(null, "Group", "/group/"+group_id+"/topic/"+topic_id);
+	window.history.replaceState(null, "Topic", "/group/"+group_id+"/topic/"+topic_id);
 	$('div#right-column').html('<div class="loader"></div>');
 	_load_right_column('/html/group/'+group_id+'/topic/'+topic_id, function() {
 	});
