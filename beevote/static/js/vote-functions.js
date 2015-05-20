@@ -1,6 +1,5 @@
 function load_votes(group, topic, proposal, success_callback) {
 	$.ajax({
-		//url: "/api/load-votes",
 		url: "/api/group/"+group+"/topic/"+topic+"/proposal/"+proposal,
 		method: "GET",
 		data: {
