@@ -82,7 +82,7 @@ def send_registration_notification(beevote_user, lang_code, link):
         html=_get_email_content("registration-notification.html", lang_code, {
             'beevote_user_id': beevote_user.key.id(),
             'beevote_user_name': beevote_user.name,
-            'beevote_user_surname': beevote_user.nsurame,
+            'beevote_user_surname': beevote_user.surname,
             'beevote_user_email': beevote_user.email,
             'link': link
         })

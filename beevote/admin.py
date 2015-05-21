@@ -22,6 +22,7 @@ from google.appengine.ext import ndb
 from google.appengine.ext.webapp import template
 import webapp2
 
+import emailer
 import models
 
 
@@ -162,6 +163,31 @@ class AddFeatureChangeHandler(BasicPageHandler):
 		feature.put()
 		self.redirect('/admin/feature-changes')
 
+class SendMailHandler(BasicPageHandler):
+	def post(self):
+		to = self.request.get('to')
+		from_name = self.request.get('from-name')
+		from_address = self.request.get('from-address')
+		sender = from_name+" <"+from_address+"@beevote.appspotmail.com>"
+		subject = self.request.get('subject')
+		body = self.request.get('body')
+		html = body
+		result = emailer._send_mail_to_user(
+			sender=sender,
+			to=to,
+			subject=subject,
+			html=html,
+			body=body,
+		)
+		if result:
+			self.response.out.write("Email sent successfully.")
+		else:
+			self.response.out.write("Error while sending email.")
+
+class EmailerHandler(BasicPageHandler):
+	def get(self):
+		self.write_template('emailer.html', {})
+
 class AdminMenuHandler(BasicPageHandler):
 	def get(self):
 		self.write_template('admin-menu.html', {})
@@ -175,5 +201,7 @@ app = webapp2.WSGIApplication([
 	('/admin/bug-reports', BugReportsHandler),
 	('/admin/feature-changes', FeatureChangesHandler),
 	('/admin/add-feature-change', AddFeatureChangeHandler),
+	('/admin/send-email', SendMailHandler),
+	('/admin/emailer', EmailerHandler),
 	('/admin/home', AdminMenuHandler)
 ], debug=True)
