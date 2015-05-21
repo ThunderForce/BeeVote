@@ -201,7 +201,7 @@ app = webapp2.WSGIApplication([
 	('/admin/bug-reports', BugReportsHandler),
 	('/admin/feature-changes', FeatureChangesHandler),
 	('/admin/add-feature-change', AddFeatureChangeHandler),
-	('/admin/send-email', SendMailHandler),
+	('/admin/ajax/send-email', SendMailHandler),
 	('/admin/emailer', EmailerHandler),
 	('/admin/home', AdminMenuHandler)
 ], debug=True)
