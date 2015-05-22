@@ -27,6 +27,7 @@ import webapp2
 from webapp2_extras import sessions
 
 import api
+import constants
 import html_strips
 import language
 import models
@@ -53,7 +54,7 @@ def get_template(template_name, template_values={}, navbar_values={}):
 	def_navbar_values = {
 		'user': beevote_user,
 		'breadcumb': None,
-		'feedback_url': 'https://docs.google.com/forms/d/1qFNWDzBg_g1kCyNajcO32ji6vflfdsEc1MUdC4Dowvk/viewform',
+		'feedback_url': constants.feedback_url,
 		'lang': language.lang[lang_package],
 	}
 	def_navbar_values.update(navbar_values)
