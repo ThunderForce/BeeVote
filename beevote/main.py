@@ -195,11 +195,11 @@ class ProfileHandler(BaseHandler):
 class UserImageHandler(webapp2.RequestHandler):
 	def get(self, user_id):
 		user = models.BeeVoteUser.get_from_id(long(user_id))
-		if user == None:
+		if user is None:
 			self.error(404)
 			self.response.out.write("User "+user_id+" does not exist")
 		else:
-			if user.img != None:
+			if user.img is not None:
 				self.response.headers['Content-Type'] = 'image/png'
 				self.response.headers['Content-Disposition'] = 'inline; filename="user-'+user_id+'.png"'
 				width_str = self.request.get('width', None)
@@ -222,11 +222,11 @@ class UserImageHandler(webapp2.RequestHandler):
 class GroupImageHandler(webapp2.RequestHandler):
 	def get(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
-		if group == None:
+		if group is None:
 			self.error(404)
 			self.response.out.write("Group "+group_id+" does not exist")
 		else:
-			if group.img != None:
+			if group.img is not None:
 				self.response.headers['Content-Type'] = 'image/png'
 				self.response.headers['Content-Disposition'] = 'inline; filename="group-'+group_id+'.png"'
 				width_str = self.request.get('width', None)
@@ -249,13 +249,13 @@ class GroupImageHandler(webapp2.RequestHandler):
 class TopicImageHandler(webapp2.RequestHandler):
 	def get(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
-		if topic == None:
+		if topic is None:
 			self.error(404)
 			self.response.out.write("Topic "+topic_id+" does not exist")
 		else:
-			if topic.img != None:
+			if topic.img is not None:
 				self.response.headers['Content-Type'] = 'image/png'
-				self.response.headers['Content-Disposition'] = 'inline; filename="topic-'+topic_id+'.png"'
+				self.response.headers['Content-Disposition'] = 'inline; filename="topic-'+group_id+'-'+topic_id+'.png"'
 				width_str = self.request.get('width', None)
 				height_str = self.request.get('height', None)
 				if width_str is None or height_str is None:
