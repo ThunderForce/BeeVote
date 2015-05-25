@@ -1,8 +1,8 @@
 import logging
 import os
 
-from google.appengine.ext.webapp import template
 from google.appengine.api import mail
+from google.appengine.ext.webapp import template
 from google.appengine.runtime import apiproxy_errors
 
 import language
@@ -36,7 +36,7 @@ def _send_mail_to_admins(sender, subject, body):
         return False
     pass
 
-def _send_mail_to_user(sender, to, subject, html, body=""):
+def _send_mail_to_user(sender, to, subject, html, body):
     try:
         message = mail.EmailMessage(
             sender=sender,
