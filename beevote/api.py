@@ -1100,41 +1100,47 @@ class CreateBugReportHandler(BaseApiHandler):
 
 class RegistrationHandler(BaseApiHandler):
 	def post(self):
-		user = users.get_current_user()
-		user_id = user.user_id()
-		name = self.request.get('name')
-		surname = self.request.get('surname')
-		email = user.email()
-		language = 'en'
-		if name == "":
+		if self.beevote_user:
 			values = {
 				'success': False,
-				'error': self.lang['errors']['name_required']
-			}
-		elif surname == "":
-			values = {
-				'success': False,
-				'error': self.lang['errors']['surname_required']
+				'error': self.lang['errors']['already_registered']
 			}
 		else:
-			beevote_user = models.BeeVoteUser(
-				user_id = user_id,
-				email = email,
-				name = name,
-				surname = surname,
-				language = language,
-				last_access = datetime.datetime.now(),
-			)
-			
-			beevote_user.last_access = datetime.datetime.now()
-			
-			beevote_user.put()
-			
-			emailer.send_registration_notification(beevote_user, language, self.request.host)
-			
-			values = {
-				'success': True
-			}
+			user = users.get_current_user()
+			user_id = user.user_id()
+			name = self.request.get('name')
+			surname = self.request.get('surname')
+			email = user.email()
+			language = 'en'
+			if name == "":
+				values = {
+					'success': False,
+					'error': self.lang['errors']['name_required']
+				}
+			elif surname == "":
+				values = {
+					'success': False,
+					'error': self.lang['errors']['surname_required']
+				}
+			else:
+				beevote_user = models.BeeVoteUser(
+					user_id = user_id,
+					email = email,
+					name = name,
+					surname = surname,
+					language = language,
+					last_access = datetime.datetime.now(),
+				)
+				
+				beevote_user.last_access = datetime.datetime.now()
+				
+				beevote_user.put()
+				
+				emailer.send_registration_notification(beevote_user, language, self.request.host)
+				
+				values = {
+					'success': True
+				}
 		
 		self.response.out.write(json.dumps(values))
 

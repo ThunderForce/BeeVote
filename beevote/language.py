@@ -146,6 +146,7 @@ lang = {
 		},
 		'errors':{
 			'name_required':"Name is required",
+			'already_registered':"This Google account is already registered",
 			'surname_required':"Surname is required",
 			'image_too_big': "You cannot upload an image bigger than 850 kb",
 			'title_required':"Title is required",
@@ -418,6 +419,7 @@ The Beevote team
 		},
 		'errors':{
 			'name_required':"Nome obbligatorio",
+			'already_registered':"Questo account Google è già registrato",
 			'surname_required':"Cognome obbligatorio",
 			'image_too_big': "Non puoi caricare un'immagine pi grande di 850 kb",
 			'title_required':"Titolo obbligatorio",
