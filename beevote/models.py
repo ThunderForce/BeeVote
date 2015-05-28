@@ -256,7 +256,6 @@ class Proposal(ndb.Model):
 	
 	def get_comments(self):
 		return ndb.gql("SELECT * FROM ProposalComment WHERE proposal = :1 ORDER BY creation ASC", self.key).fetch(1000)
-		#return ProposalComment.query(ProposalComment.proposal == self.key).fetch(1000)
 	
 	def remove_user_vote(self, beevote_user):
 		votes = ndb.gql("SELECT * FROM Vote WHERE proposal = :1 AND creator = :2", self.key, beevote_user.key)

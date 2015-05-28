@@ -125,7 +125,6 @@ def fetch_groups(groups, arguments):
 
 def fetch_members_from_group(group, arguments):
 	datastore_members = group.get_members()
-	# TODO
 	members = []
 	for datastore_member in datastore_members:
 		member = fetch_user(datastore_member, arguments)

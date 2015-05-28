@@ -32,7 +32,6 @@ import html_strips
 import language
 import models
 
-
 # Start of handlers
 def get_template(template_name, template_values={}, navbar_values={}):
 	directory = os.path.dirname(__file__)
@@ -130,8 +129,6 @@ class BaseHandler(webapp2.RequestHandler):
 				
 				if not self.beevote_user:
 					self.abort(401, headers={'Location': '/register'})
-					#self.abort(401, detail="You are not yet registered in the application")
-					#self.redirect("/register")
 					return
 
 	def dispatch(self):
@@ -188,7 +185,7 @@ class HomeHandler(BaseHandler):
 
 class ProfileHandler(BaseHandler):
 	def get(self, user_id):
-		# Use user_id to get user and put it in values
+		# TODO Use user_id to get user and put it in values
 		values = {}
 		write_template(self.response, 'user-profile.html', values)
 

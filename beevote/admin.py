@@ -25,8 +25,6 @@ import webapp2
 import emailer
 import models
 
-
-#import json
 # Start of handlers
 class BasicPageHandler(webapp2.RequestHandler):
 	def write_template(self, template_name, template_values={}):
