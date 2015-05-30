@@ -25,13 +25,14 @@ import traceback
 from google.appengine.api import users, memcache
 import webapp2
 
+import base_handlers
 import constants
 import emailer
 import language
 import models
 
-# Start of functions
 
+# Start of functions
 def get_json(json_obj):
 	return json.dumps(json_obj, indent=4, separators=(',', ': '))
 
@@ -181,40 +182,7 @@ def fetch_proposals_from_topic(topic, arguments):
 
 # Start of handlers
 
-class BaseApiHandler(webapp2.RequestHandler):
-	def __init__(self, request, response):
-		self.initialize(request, response)
-		
-		user = users.get_current_user()
-		if user:
-			self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
-		else:
-			self.beevote_user = None
-		
-		if not self.beevote_user or not self.beevote_user.language:
-			lang_package= 'en'
-		else:
-			lang_package = self.beevote_user.language
-		self.lang = language.lang[lang_package]
-		
-		'''
-		if not self.request.path in public_urls:
-			user = users.get_current_user()
-			if not user:
-				url = request.url
-				if request.query_string != "":
-					url += '?' + request.query_string
-				self.redirect(users.create_login_url(url))
-				return
-			self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
-			if not self.beevote_user:
-				self.redirect("/register")
-		'''
-		
-		self.response.headers['Content-Type'] = "application/json"
-		
-
-class LoadGroupsHandler(BaseApiHandler):
+class LoadGroupsHandler(base_handlers.BaseApiHandler):
 	def get(self):
 		datastore_groups = self.beevote_user.get_groups_by_membership()
 		arguments = {
@@ -227,7 +195,7 @@ class LoadGroupsHandler(BaseApiHandler):
 		
 		self.response.out.write(get_json(groups))
 
-class LoadGroupHandler(BaseApiHandler):
+class LoadGroupHandler(base_handlers.BaseApiHandler):
 	def get(self, group_id):
 		group = models.Group.get_from_id(group_id)
 		if (not group):
@@ -247,7 +215,7 @@ class LoadGroupHandler(BaseApiHandler):
 		models.GroupAccess.update_specific_access(group, self.beevote_user)
 		self.response.out.write(get_json(group_json))
 
-class LoadTopicHandler(BaseApiHandler):
+class LoadTopicHandler(base_handlers.BaseApiHandler):
 	def get(self, group_id, topic_id):
 		group = models.Group.get_from_id(group_id)
 		if (not group):
@@ -267,7 +235,7 @@ class LoadTopicHandler(BaseApiHandler):
 		models.TopicAccess.update_specific_access(topic, self.beevote_user)
 		self.response.out.write(get_json(topic_json))
 
-class LoadProposalHandler(BaseApiHandler):
+class LoadProposalHandler(base_handlers.BaseApiHandler):
 	def get(self, group_id, topic_id, proposal_id):
 		group = models.Group.get_from_id(group_id)
 		if (not group):
@@ -287,7 +255,7 @@ class LoadProposalHandler(BaseApiHandler):
 		
 		self.response.out.write(get_json(proposal_json))
 
-class LoadParticipantsHandler(BaseApiHandler):
+class LoadParticipantsHandler(base_handlers.BaseApiHandler):
 	def get(self, group_id, topic_id):
 		group = models.Group.get_from_id(group_id)
 		if (not group):
@@ -312,7 +280,7 @@ class LoadParticipantsHandler(BaseApiHandler):
 		self.response.out.write(get_json(json_users))
 
 
-class LoadUserHandler(BaseApiHandler):
+class LoadUserHandler(base_handlers.BaseApiHandler):
 	def get(self, user_id):
 		target_beevote_user = models.BeeVoteUser.get_from_id(user_id)
 		
@@ -324,7 +292,7 @@ class LoadUserHandler(BaseApiHandler):
 		
 		self.response.out.write(get_json(beevote_user_ret))
 
-class CreateVoteHandler(BaseApiHandler):
+class CreateVoteHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -352,7 +320,7 @@ class CreateVoteHandler(BaseApiHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class RemoveVoteHandler(BaseApiHandler):
+class RemoveVoteHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -375,7 +343,7 @@ class RemoveVoteHandler(BaseApiHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class LoadVotesHandler(BaseApiHandler):
+class LoadVotesHandler(base_handlers.BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -395,7 +363,7 @@ class LoadVotesHandler(BaseApiHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class OldLoadProposalHandler(BaseApiHandler):
+class OldLoadProposalHandler(base_handlers.BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		topic_id = self.request.get('topic_id')
@@ -425,7 +393,7 @@ class OldLoadProposalHandler(BaseApiHandler):
 			values['proposal']['time'] = str(proposal.time)
 		self.response.out.write(json.dumps(values))
 
-class UpdateUser(BaseApiHandler):
+class UpdateUser(base_handlers.BaseApiHandler):
 	def post(self):
 		name = self.request.get('edit_name', None)
 		surname = self.request.get('edit_surname', None)
@@ -464,7 +432,7 @@ class UpdateUser(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class LoadGroupMembersHandler(BaseApiHandler):
+class LoadGroupMembersHandler(base_handlers.BaseApiHandler):
 	def get(self):
 		group_id = self.request.get('group_id')
 		group = models.Group.get_from_id(long(group_id))
@@ -475,7 +443,7 @@ class LoadGroupMembersHandler(BaseApiHandler):
 		time.sleep(1)
 		self.response.out.write(json.dumps(values))
 
-class CreateGroupHandler(BaseApiHandler):
+class CreateGroupHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		name = self.request.get('name')
 		description = self.request.get('description')
@@ -505,7 +473,7 @@ class CreateGroupHandler(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class UpdateGroupHandler(BaseApiHandler):
+class UpdateGroupHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id):
 		name = self.request.get('name', None)
 		description = self.request.get('description', None)
@@ -540,7 +508,7 @@ class UpdateGroupHandler(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class CreateTopicHandler(BaseApiHandler):
+class CreateTopicHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		group_id = self.request.get('group_id')
 		group = models.Group.get_from_id(long(group_id))
@@ -607,7 +575,7 @@ class CreateTopicHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveTopicHandler(BaseApiHandler):
+class RemoveTopicHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id):
 		group = models.Group.get_from_id(long(group_id))
 		if not group.contains_user(self.beevote_user):
@@ -635,7 +603,7 @@ class RemoveTopicHandler(BaseApiHandler):
 		self.response.out.write(json.dumps(values))
 
 
-class UpdateTopicHandler(BaseApiHandler):
+class UpdateTopicHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id):
 		img = self.request.get('img', None)
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
@@ -658,7 +626,7 @@ class UpdateTopicHandler(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class MemberAutocompleteHandler(BaseApiHandler):
+class MemberAutocompleteHandler(base_handlers.BaseApiHandler):
 	def get(self):
 		query = self.request.get('query').lower()
 		users = models.BeeVoteUser.get_all()
@@ -672,7 +640,7 @@ class MemberAutocompleteHandler(BaseApiHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class TopicsNotificationsHandler(BaseApiHandler):
+class TopicsNotificationsHandler(base_handlers.BaseApiHandler):
 	def get(self):
 		all_notifications = memcache.get('topics_notifications_by_beevote_user_%s' % self.beevote_user.key.id()) # @UndefinedVariable
 		if not all_notifications:
@@ -699,7 +667,7 @@ class TopicsNotificationsHandler(BaseApiHandler):
 			memcache.add('topics_notifications_by_beevote_user_%s' % self.beevote_user.key.id(), all_notifications, time=10) # @UndefinedVariable
 		self.response.out.write(json.dumps(all_notifications))
 
-class GroupNotificationsHandler(BaseApiHandler):
+class GroupNotificationsHandler(base_handlers.BaseApiHandler):
 	def get(self, group_id):
 		group = models.Group.get_from_id(group_id)
 		notifications = group.get_notifications_for_user(self.beevote_user)
@@ -741,7 +709,7 @@ class GroupNotificationsHandler(BaseApiHandler):
 		
 		self.response.out.write(json.dumps(notifications))
 
-class TopicNotificationsHandler(BaseApiHandler):
+class TopicNotificationsHandler(base_handlers.BaseApiHandler):
 	def get(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(group_id, topic_id)
 		notifications = topic.get_notifications_for_user(self.beevote_user)
@@ -765,7 +733,7 @@ class TopicNotificationsHandler(BaseApiHandler):
 		
 		self.response.out.write(json.dumps(notifications))
 
-class RemoveGroupHandler(BaseApiHandler):
+class RemoveGroupHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
 		if not group.contains_user(self.beevote_user):
@@ -788,7 +756,7 @@ class RemoveGroupHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class AddGroupMemberHandler(BaseApiHandler):
+class AddGroupMemberHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
 		if not group.contains_user(self.beevote_user):
@@ -824,7 +792,7 @@ class AddGroupMemberHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveGroupMemberHandler(BaseApiHandler):
+class RemoveGroupMemberHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
 		if not group.contains_user(self.beevote_user):
@@ -856,7 +824,7 @@ class RemoveGroupMemberHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class CreateProposalHandler(BaseApiHandler):
+class CreateProposalHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		title = self.request.get('title')
 		where = self.request.get('place')
@@ -925,7 +893,7 @@ class CreateProposalHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class CreateProposalCommentHandler(BaseApiHandler):
+class CreateProposalCommentHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
 		description = self.request.get('comment')
 		if description == "":
@@ -963,7 +931,7 @@ class CreateProposalCommentHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveProposalHandler(BaseApiHandler):
+class RemoveProposalHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id, proposal_id):
 		group = models.Group.get_from_id(group_id)
 		if not group.contains_user(self.beevote_user):
@@ -988,7 +956,7 @@ class RemoveProposalHandler(BaseApiHandler):
 				}
 		self.response.out.write(json.dumps(values))
 
-class RemoveParticipationHandler(BaseApiHandler):
+class RemoveParticipationHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if not topic.group.get().contains_user(self.beevote_user):
@@ -1010,7 +978,7 @@ class RemoveParticipationHandler(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class AddParticipationHandler(BaseApiHandler):
+class AddParticipationHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id):
 		topic = models.Topic.get_from_id(long(group_id), long(topic_id))
 		if not topic.group.get().contains_user(self.beevote_user):
@@ -1031,7 +999,7 @@ class AddParticipationHandler(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class UpdateGroupPersonalSettingsHandler(BaseApiHandler):
+class UpdateGroupPersonalSettingsHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id):
 		topic_creation_email = self.request.get("topic_creation_email", None)
 		group = models.Group.get_from_id(group_id)
@@ -1045,7 +1013,7 @@ class UpdateGroupPersonalSettingsHandler(BaseApiHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class UpdateTopicPersonalSettingsHandler(BaseApiHandler):
+class UpdateTopicPersonalSettingsHandler(base_handlers.BaseApiHandler):
 	def post(self, group_id, topic_id):
 		proposal_creation_email = self.request.get("proposal_creation_email", None)
 		topic = models.Topic.get_from_id(group_id, topic_id)
@@ -1060,7 +1028,7 @@ class UpdateTopicPersonalSettingsHandler(BaseApiHandler):
 		}
 		self.response.out.write(json.dumps(values))
 
-class CreateBugReportHandler(BaseApiHandler):
+class CreateBugReportHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		device = self.request.get('device')
 		browser = self.request.get('browser')
@@ -1097,7 +1065,7 @@ class CreateBugReportHandler(BaseApiHandler):
 			}
 		self.response.out.write(json.dumps(values))
 
-class RegistrationHandler(BaseApiHandler):
+class RegistrationHandler(base_handlers.BaseApiHandler):
 	def post(self):
 		if self.beevote_user:
 			values = {

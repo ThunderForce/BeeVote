@@ -16,20 +16,16 @@
 #
 
 from datetime import timedelta
-
-import constants
-
 import datetime
 import os
 import time
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
-
 from google.appengine.ext.webapp import template
-import webapp2
-from webapp2_extras import sessions
 
+import base_handlers
+import constants
 import language
 import models
 
@@ -56,39 +52,7 @@ def write_template(response, template_name, template_values={}):
 	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
 	response.out.write(rendered_template)
 
-class BaseHandler(webapp2.RequestHandler):
-	def __init__(self, request, response):
-		self.initialize(request, response)
-		user = users.get_current_user()
-		if not user:
-			url = request.url
-			if request.query_string != "":
-				url += '?' + request.query_string
-			self.redirect(users.create_login_url(url))
-			return
-		
-		self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
-		
-		if not self.beevote_user:
-			self.redirect("/register")
-
-	def dispatch(self):
-		# Get a session store for this request.
-		self.session_store = sessions.get_store(request=self.request)
-
-		try:
-			# Dispatch the request.
-			webapp2.RequestHandler.dispatch(self)
-		finally:
-			# Save all sessions.
-			self.session_store.save_sessions(self.response)
-
-	#@webapp2.cached_property
-	def session(self):
-		# Returns a session using the default cookie key.
-		return self.session_store.get_session()
-
-class GroupsHandler(BaseHandler):
+class GroupsHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self):
 		
 		time.sleep(0.5)
@@ -105,7 +69,7 @@ class GroupsHandler(BaseHandler):
 		}
 		write_template(self.response, 'html/groups.html',values)
 
-class GroupHandler(BaseHandler):
+class GroupHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
 		if (not group):
@@ -150,7 +114,7 @@ class GroupHandler(BaseHandler):
 		models.GroupAccess.update_specific_access(group, self.beevote_user)
 		write_template(self.response, 'html/group-overview.html', values)
 
-class TopicsHandler(BaseHandler):
+class TopicsHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self):
 		time.sleep(0.5)
 		
@@ -182,7 +146,7 @@ class TopicsHandler(BaseHandler):
 		}
 		write_template(self.response, 'html/topics.html',values)
 
-class GroupMembersHandler(BaseHandler):
+class GroupMembersHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self, group_id):
 		group = models.Group.get_from_id(long(group_id))
 		if (not group):
@@ -202,7 +166,7 @@ class GroupMembersHandler(BaseHandler):
 		}
 		write_template(self.response, 'html/group-members.html', values)
 
-class TopicHandler(BaseHandler):
+class TopicHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self, group_id, topic_id):
 		group = models.Group.get_from_id(long(group_id))
 		if not group.contains_user(self.beevote_user):

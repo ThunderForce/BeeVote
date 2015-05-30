@@ -24,13 +24,14 @@ from google.appengine.api import users
 from google.appengine.api.images import Image
 from google.appengine.ext.webapp import template
 import webapp2
-from webapp2_extras import sessions
 
 import api
+import base_handlers
 import constants
 import html_strips
 import language
 import models
+
 
 # Start of handlers
 def get_template(template_name, template_values={}, navbar_values={}):
@@ -106,48 +107,8 @@ def resize_image(image_data, width, height):
 		image.crop(0.0, y_crop_ratio, 1.0, 1-y_crop_ratio)
 	return image.execute_transforms()
 
-# List or URLs that you can access without being "registered" in the app
-public_urls = ["/", "/logout"]
-google_user_urls = ["/", "/logout", "/register"]
 
-class BaseHandler(webapp2.RequestHandler):
-	def __init__(self, request, response):
-		self.initialize(request, response)
-		self.beevote_user = None
-		if not self.request.path in public_urls:
-			user = users.get_current_user()
-			if not user:
-				url = request.url
-				if request.query_string != "":
-					url += '?' + request.query_string
-				self.abort(401, headers={'Location': users.create_login_url(url)})
-				#self.redirect(users.create_login_url(url))
-				#return
-			if not self.request.path in google_user_urls:
-				
-				self.beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
-				
-				if not self.beevote_user:
-					self.abort(401, headers={'Location': '/register'})
-					return
-
-	def dispatch(self):
-		# Get a session store for this request.
-		self.session_store = sessions.get_store(request=self.request)
-
-		try:
-			# Dispatch the request.
-			webapp2.RequestHandler.dispatch(self)
-		finally:
-			# Save all sessions.
-			self.session_store.save_sessions(self.response)
-
-	#@webapp2.cached_property
-	def session(self):
-		# Returns a session using the default cookie key.
-		return self.session_store.get_session()
-
-class MainHandler(BaseHandler):
+class MainHandler(base_handlers.BaseMiscHandler):
 	def get(self):
 		user = users.get_current_user()
 		if user:
@@ -162,7 +123,7 @@ class MainHandler(BaseHandler):
 			}
 			write_template(self.response, 'index.html', values)
 
-class HomeHandler(BaseHandler):
+class HomeHandler(base_handlers.BaseMiscHandler):
 	def get(self, group_id, topic_id):
 		
 		if not self.beevote_user:
@@ -183,7 +144,7 @@ class HomeHandler(BaseHandler):
 		}
 		write_template(self.response, 'groups-layout.html',values)
 
-class ProfileHandler(BaseHandler):
+class ProfileHandler(base_handlers.BaseMiscHandler):
 	def get(self, user_id):
 		# TODO Use user_id to get user and put it in values
 		values = {}
@@ -270,7 +231,7 @@ class TopicImageHandler(webapp2.RequestHandler):
 				self.error(404)
 				self.response.out.write("Topic "+topic_id+" does not have an image")
 
-class RegistrationHandler(BaseHandler):
+class RegistrationHandler(base_handlers.BaseMiscHandler):
 	def get(self):
 		user_id = users.get_current_user().user_id()
 		if self.beevote_user or models.BeeVoteUser.get_from_google_id(user_id):
@@ -278,7 +239,7 @@ class RegistrationHandler(BaseHandler):
 			return
 		write_template(self.response, 'registration-form.html', {})
 
-class ReportBugHandler(BaseHandler):
+class ReportBugHandler(base_handlers.BaseMiscHandler):
 	def get(self):
 		values = {}
 		write_template(self.response, 'report-bug.html', values)
