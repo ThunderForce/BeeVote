@@ -1,9 +1,13 @@
+import os
+
+from google.appengine.ext.webapp import template
 from google.appengine.api import users
 import webapp2
 from webapp2_extras import sessions
 
 import language
 import models
+
 
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
@@ -109,3 +113,18 @@ class BaseApiHandler(webapp2.RequestHandler):
         '''
         
         self.response.headers['Content-Type'] = "application/json"
+
+class BasicAdminPageHandler(webapp2.RequestHandler):
+    def write_template(self, template_name, template_values={}):
+        
+        directory = os.path.dirname(__file__)
+        basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
+
+        values = {
+            'basic_head': template.render(basic_head_path, {}),
+        }
+        
+        values.update(template_values)
+
+        path = os.path.join(directory, os.path.join('templates/admin', template_name))
+        self.response.out.write(template.render(path, values))

@@ -16,38 +16,23 @@
 #
 
 import datetime
-import os
 
 from google.appengine.ext import ndb
-from google.appengine.ext.webapp import template
 import webapp2
 
+import base_handlers
 import emailer
 import models
 
+
 # Start of handlers
-class BasicPageHandler(webapp2.RequestHandler):
-	def write_template(self, template_name, template_values={}):
-		
-		directory = os.path.dirname(__file__)
-		basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-
-		values = {
-			'basic_head': template.render(basic_head_path, {}),
-		}
-		
-		values.update(template_values)
-
-		path = os.path.join(directory, os.path.join('templates/admin', template_name))
-		self.response.out.write(template.render(path, values))
-
 class RemoveUserHandler(webapp2.RequestHandler):
 	def get(self, user_id):
 		beevote_user = models.BeeVoteUser.get_by_id(long(user_id))
 		beevote_user.delete()
 		self.redirect('/admin/user-manager')
 
-class StatsHandler(BasicPageHandler):
+class StatsHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		duration_24_hours = 24*60*60
 		duration_1_week = duration_24_hours*7
@@ -126,7 +111,7 @@ class StatsHandler(BasicPageHandler):
 			'number_of_votes': len(votes),
 		}})
 
-class UserManagerHandler(BasicPageHandler):
+class UserManagerHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		sort_param = self.request.get("sort")
 		if sort_param == "creation":
@@ -141,18 +126,18 @@ class UserManagerHandler(BasicPageHandler):
 			users = ndb.gql("SELECT * FROM BeeVoteUser")
 		self.write_template('user-manager.html', {'users': users})
 
-class BugReportsHandler(BasicPageHandler):
+class BugReportsHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		reports = ndb.gql("SELECT * FROM BugReport")
 		self.write_template('bug-reports.html', {'reports': reports})
 
-class FeatureChangesHandler(BasicPageHandler):
+class FeatureChangesHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		feature_changes = ndb.gql("SELECT * FROM FeatureChange").fetch(1000)
 		feature_changes = sorted(feature_changes, key=lambda feature: feature.creation, reverse=True)
 		self.write_template('feature-changes.html', {'feature_changes': feature_changes})
 
-class AddFeatureChangeHandler(BasicPageHandler):
+class AddFeatureChangeHandler(base_handlers.BasicAdminPageHandler):
 	def post(self):
 		description = self.request.get('description')
 		feature = models.FeatureChange(
@@ -161,7 +146,7 @@ class AddFeatureChangeHandler(BasicPageHandler):
 		feature.put()
 		self.redirect('/admin/feature-changes')
 
-class SendMailHandler(BasicPageHandler):
+class SendMailHandler(base_handlers.BasicAdminPageHandler):
 	def post(self):
 		to = self.request.get('to')
 		from_name = self.request.get('from-name')
@@ -182,11 +167,11 @@ class SendMailHandler(BasicPageHandler):
 		else:
 			self.response.out.write("Error while sending email.")
 
-class EmailerHandler(BasicPageHandler):
+class EmailerHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		self.write_template('emailer.html', {})
 
-class AdminMenuHandler(BasicPageHandler):
+class AdminMenuHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		self.write_template('admin-menu.html', {})
 
