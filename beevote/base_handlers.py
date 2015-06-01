@@ -13,7 +13,24 @@ import models
 public_urls = ["/", "/logout"]
 google_user_urls = ["/", "/logout", "/register"]
 
-class BaseMiscHandler(webapp2.RequestHandler):
+class BaseHandler(webapp2.RequestHandler):
+    def dispatch(self):
+        # Get a session store for this request.
+        self.session_store = sessions.get_store(request=self.request)
+
+        try:
+            # Dispatch the request.
+            webapp2.RequestHandler.dispatch(self)
+        finally:
+            # Save all sessions.
+            self.session_store.save_sessions(self.response)
+
+    #@webapp2.cached_property
+    def session(self):
+        # Returns a session using the default cookie key.
+        return self.session_store.get_session()
+
+class BaseMiscHandler(BaseHandler):
     def __init__(self, request, response):
         self.initialize(request, response)
         self.beevote_user = None
@@ -34,23 +51,7 @@ class BaseMiscHandler(webapp2.RequestHandler):
                     self.abort(401, headers={'Location': '/register'})
                     return
 
-    def dispatch(self):
-        # Get a session store for this request.
-        self.session_store = sessions.get_store(request=self.request)
-
-        try:
-            # Dispatch the request.
-            webapp2.RequestHandler.dispatch(self)
-        finally:
-            # Save all sessions.
-            self.session_store.save_sessions(self.response)
-
-    #@webapp2.cached_property
-    def session(self):
-        # Returns a session using the default cookie key.
-        return self.session_store.get_session()
-
-class BaseHtmlStripsHandler(webapp2.RequestHandler):
+class BaseHtmlStripsHandler(BaseHandler):
     def __init__(self, request, response):
         self.initialize(request, response)
         user = users.get_current_user()
@@ -66,23 +67,7 @@ class BaseHtmlStripsHandler(webapp2.RequestHandler):
         if not self.beevote_user:
             self.redirect("/register")
 
-    def dispatch(self):
-        # Get a session store for this request.
-        self.session_store = sessions.get_store(request=self.request)
-
-        try:
-            # Dispatch the request.
-            webapp2.RequestHandler.dispatch(self)
-        finally:
-            # Save all sessions.
-            self.session_store.save_sessions(self.response)
-
-    #@webapp2.cached_property
-    def session(self):
-        # Returns a session using the default cookie key.
-        return self.session_store.get_session()
-
-class BaseApiHandler(webapp2.RequestHandler):
+class BaseApiHandler(BaseHandler):
     def __init__(self, request, response):
         self.initialize(request, response)
         
@@ -114,7 +99,7 @@ class BaseApiHandler(webapp2.RequestHandler):
         
         self.response.headers['Content-Type'] = "application/json"
 
-class BasicAdminPageHandler(webapp2.RequestHandler):
+class BasicAdminPageHandler(BaseHandler):
     def write_template(self, template_name, template_values={}):
         
         directory = os.path.dirname(__file__)
