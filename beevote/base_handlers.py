@@ -1,10 +1,11 @@
 import os
 
-from google.appengine.ext.webapp import template
 from google.appengine.api import users
+from google.appengine.ext.webapp import template
 import webapp2
 from webapp2_extras import sessions
 
+import constants
 import language
 import models
 
@@ -12,6 +13,65 @@ import models
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
 google_user_urls = ["/", "/logout", "/register"]
+
+def get_template(template_name, template_values={}, navbar_values={}):
+    directory = os.path.dirname(__file__)
+    basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
+    navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
+
+    user = users.get_current_user()
+    if user:
+        beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
+    else:
+        beevote_user = None
+
+
+    if not beevote_user or not beevote_user.language:
+        lang_package= 'en'
+    else:
+        lang_package=beevote_user.language
+    
+    def_navbar_values = {
+        'user': beevote_user,
+        'breadcumb': None,
+        'feedback_url': constants.feedback_url,
+        'lang': language.lang[lang_package],
+    }
+    def_navbar_values.update(navbar_values)
+    
+    '''
+    breadcumb: {
+        previous_elements: [
+            {
+                title: "",
+                href: "",
+            },{
+                title: "",
+                href: "",
+            }
+        ],
+        current_element: {
+            title: ""
+        }
+    }
+    '''
+
+    values = {
+        'basic_head': template.render(basic_head_path, {}),
+        'navbar': template.render(navbar_path, def_navbar_values),
+        'lang': language.lang[lang_package],
+    }
+    
+    values.update(template_values)
+
+    path = os.path.join(directory, os.path.join('templates', template_name))
+    return template.render(path, values)
+
+def write_template(response, template_name, template_values={}, navbar_values={}):
+    response.headers["Pragma"]="no-cache"
+    response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, max-age=0, pre-check=0, post-check=0"
+    response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
+    response.out.write(get_template(template_name, template_values, navbar_values))
 
 class BaseHandler(webapp2.RequestHandler):
     def dispatch(self):
@@ -29,6 +89,9 @@ class BaseHandler(webapp2.RequestHandler):
     def session(self):
         # Returns a session using the default cookie key.
         return self.session_store.get_session()
+
+class BaseHtmlHandler(BaseHandler):
+    pass
 
 class BaseMiscHandler(BaseHandler):
     def __init__(self, request, response):
@@ -100,16 +163,4 @@ class BaseApiHandler(BaseHandler):
         self.response.headers['Content-Type'] = "application/json"
 
 class BasicAdminPageHandler(BaseHandler):
-    def write_template(self, template_name, template_values={}):
-        
-        directory = os.path.dirname(__file__)
-        basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-
-        values = {
-            'basic_head': template.render(basic_head_path, {}),
-        }
-        
-        values.update(template_values)
-
-        path = os.path.join(directory, os.path.join('templates/admin', template_name))
-        self.response.out.write(template.render(path, values))
+    pass

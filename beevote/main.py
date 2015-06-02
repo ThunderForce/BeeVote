@@ -22,77 +22,15 @@ import traceback
 
 from google.appengine.api import users
 from google.appengine.api.images import Image
-from google.appengine.ext.webapp import template
 import webapp2
 
 import api
 import base_handlers
-import constants
 import html_strips
-import language
 import models
 
 
 # Start of handlers
-def get_template(template_name, template_values={}, navbar_values={}):
-	directory = os.path.dirname(__file__)
-	basic_head_path = os.path.join(directory, os.path.join('templates', 'basic-head.html'))
-	navbar_path = os.path.join(directory, os.path.join('templates', 'navbar.html'))
-
-	user = users.get_current_user()
-	if user:
-		beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
-	else:
-		beevote_user = None
-
-
-	if not beevote_user or not beevote_user.language:
-		lang_package= 'en'
-	else:
-		lang_package=beevote_user.language
-	
-	def_navbar_values = {
-		'user': beevote_user,
-		'breadcumb': None,
-		'feedback_url': constants.feedback_url,
-		'lang': language.lang[lang_package],
-	}
-	def_navbar_values.update(navbar_values)
-	
-	'''
-	breadcumb: {
-		previous_elements: [
-			{
-				title: "",
-				href: "",
-			},{
-				title: "",
-				href: "",
-			}
-		],
-		current_element: {
-			title: ""
-		}
-	}
-	'''
-
-	values = {
-		'basic_head': template.render(basic_head_path, {}),
-		'navbar': template.render(navbar_path, def_navbar_values),
-		'lang': language.lang[lang_package],
-	}
-	
-	values.update(template_values)
-
-	path = os.path.join(directory, os.path.join('templates', template_name))
-	return template.render(path, values)
-
-def write_template(response, template_name, template_values={}, navbar_values={}):
-	response.headers["Pragma"]="no-cache"
-	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, max-age=0, pre-check=0, post-check=0"
-	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
-	response.out.write(get_template(template_name, template_values, navbar_values))
-
 def resize_image(image_data, width, height):
 	image = Image(image_data=image_data)
 	if (image.width / float(width)) > (image.height / float(height)):
@@ -121,7 +59,7 @@ class MainHandler(base_handlers.BaseMiscHandler):
 			values = {
 				'login_url': users.create_login_url('/home'),
 			}
-			write_template(self.response, 'index.html', values)
+			base_handlers.write_template(self.response, 'index.html', values)
 
 class HomeHandler(base_handlers.BaseMiscHandler):
 	def get(self, group_id, topic_id):
@@ -142,13 +80,13 @@ class HomeHandler(base_handlers.BaseMiscHandler):
 			'group_id': group_id,
 			'topic_id': topic_id,
 		}
-		write_template(self.response, 'groups-layout.html',values)
+		base_handlers.write_template(self.response, 'groups-layout.html',values)
 
 class ProfileHandler(base_handlers.BaseMiscHandler):
 	def get(self, user_id):
 		# TODO Use user_id to get user and put it in values
 		values = {}
-		write_template(self.response, 'user-profile.html', values)
+		base_handlers.write_template(self.response, 'user-profile.html', values)
 
 class UserImageHandler(webapp2.RequestHandler):
 	def get(self, user_id):
@@ -237,12 +175,12 @@ class RegistrationHandler(base_handlers.BaseMiscHandler):
 		if self.beevote_user or models.BeeVoteUser.get_from_google_id(user_id):
 			self.redirect("/")
 			return
-		write_template(self.response, 'registration-form.html', {})
+		base_handlers.write_template(self.response, 'registration-form.html', {})
 
 class ReportBugHandler(base_handlers.BaseMiscHandler):
 	def get(self):
 		values = {}
-		write_template(self.response, 'report-bug.html', values)
+		base_handlers.write_template(self.response, 'report-bug.html', values)
 
 class LogoutHandler(webapp2.RequestHandler):
 	def get(self):
@@ -256,11 +194,11 @@ def handle_401(request, response, exception):
 		response.headers['Location'] = exception.headers['Location']
 		return
 	response.set_status(401)
-	write_template(response, 'errors/401.html', {'detail': exception.detail})
+	base_handlers.write_template(response, 'errors/401.html', {'detail': exception.detail})
 
 def handle_404(request, response, exception):
 	response.set_status(404)
-	write_template(response, 'not_found.html', {'url': request.path})
+	base_handlers.write_template(response, 'not_found.html', {'url': request.path})
 
 config = {}
 config['webapp2_extras.sessions'] = {

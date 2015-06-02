@@ -73,7 +73,7 @@ class StatsHandler(base_handlers.BasicAdminPageHandler):
 		reports_created_in_last_week = [r for r in reports_created_in_last_30_days if (datetime.datetime.now() - r.creation).total_seconds() < (duration_1_week)]
 		reports_created_in_last_24_hours = [r for r in reports_created_in_last_week if (datetime.datetime.now() - r.creation).total_seconds() < (duration_24_hours)]
 		
-		self.write_template('stats.html', {'stats': {
+		base_handlers.write_template(self.response, 'admin/stats.html', {'stats': {
 			'number_of_groups': len(groups),
 			'groups_created_in_last_24_hours': len(groups_created_in_last_24_hours),
 			'groups_created_in_last_week': len(groups_created_in_last_week),
@@ -124,18 +124,18 @@ class UserManagerHandler(base_handlers.BasicAdminPageHandler):
 			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY language ASC")
 		else:
 			users = ndb.gql("SELECT * FROM BeeVoteUser")
-		self.write_template('user-manager.html', {'users': users})
+		base_handlers.write_template(self.response, 'admin/user-manager.html', {'users': users})
 
 class BugReportsHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		reports = ndb.gql("SELECT * FROM BugReport")
-		self.write_template('bug-reports.html', {'reports': reports})
+		base_handlers.write_template(self.response, 'admin/bug-reports.html', {'reports': reports})
 
 class FeatureChangesHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		feature_changes = ndb.gql("SELECT * FROM FeatureChange").fetch(1000)
 		feature_changes = sorted(feature_changes, key=lambda feature: feature.creation, reverse=True)
-		self.write_template('feature-changes.html', {'feature_changes': feature_changes})
+		base_handlers.write_template(self.response, 'admin/feature-changes.html', {'feature_changes': feature_changes})
 
 class AddFeatureChangeHandler(base_handlers.BasicAdminPageHandler):
 	def post(self):
@@ -169,11 +169,11 @@ class SendMailHandler(base_handlers.BasicAdminPageHandler):
 
 class EmailerHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
-		self.write_template('emailer.html', {})
+		base_handlers.write_template(self.response, 'admin/emailer.html', {})
 
 class AdminMenuHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
-		self.write_template('admin-menu.html', {})
+		base_handlers.write_template(self.response, 'admin/admin-menu.html', {})
 
 # End of handlers
 

@@ -17,41 +17,16 @@
 
 from datetime import timedelta
 import datetime
-import os
 import time
 
-from google.appengine.api import users
 from google.appengine.ext import ndb
-from google.appengine.ext.webapp import template
 
 import base_handlers
 import constants
-import language
 import models
 
 
 # Start of handlers
-def write_template(response, template_name, template_values={}):
-	directory = os.path.dirname(__file__)
-	path = os.path.join(directory, os.path.join('templates', template_name))
-	user = users.get_current_user()
-	if user:
-		beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
-	else:
-		beevote_user = None
-
-	if not beevote_user or not beevote_user.language:
-		lang_package= 'en'
-	else:
-		lang_package=beevote_user.language
-
-	template_values.update({'lang': language.lang[lang_package]})
-	rendered_template = template.render(path, template_values)
-	response.headers["Pragma"]="no-cache"
-	response.headers["Cache-Control"]="no-cache, no-store, must-revalidate, pre-check=0, post-check=0"
-	response.headers["Expires"]="Thu, 01 Dec 1994 16:00:00"
-	response.out.write(rendered_template)
-
 class GroupsHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self):
 		
@@ -67,7 +42,7 @@ class GroupsHandler(base_handlers.BaseHtmlStripsHandler):
 		values = {
 			'groups' : groups,
 		}
-		write_template(self.response, 'html/groups.html',values)
+		base_handlers.write_template(self.response, 'html/groups.html',values)
 
 class GroupHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self, group_id):
@@ -112,7 +87,7 @@ class GroupHandler(base_handlers.BaseHtmlStripsHandler):
 			'personal_settings': personal_settings,
 		}
 		models.GroupAccess.update_specific_access(group, self.beevote_user)
-		write_template(self.response, 'html/group-overview.html', values)
+		base_handlers.write_template(self.response, 'html/group-overview.html', values)
 
 class TopicsHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self):
@@ -144,7 +119,7 @@ class TopicsHandler(base_handlers.BaseHtmlStripsHandler):
 		values = {
 			'topics' : topics,
 		}
-		write_template(self.response, 'html/topics.html',values)
+		base_handlers.write_template(self.response, 'html/topics.html',values)
 
 class GroupMembersHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self, group_id):
@@ -164,7 +139,7 @@ class GroupMembersHandler(base_handlers.BaseHtmlStripsHandler):
 			'group': group,
 			'admin': admin,
 		}
-		write_template(self.response, 'html/group-members.html', values)
+		base_handlers.write_template(self.response, 'html/group-members.html', values)
 
 class TopicHandler(base_handlers.BaseHtmlStripsHandler):
 	def get(self, group_id, topic_id):
@@ -221,4 +196,4 @@ class TopicHandler(base_handlers.BaseHtmlStripsHandler):
 			'personal_settings': personal_settings
 		}
 		models.TopicAccess.update_specific_access(topic, self.beevote_user)
-		write_template(self.response, 'html/topic-overview.html', values)
+		base_handlers.write_template(self.response, 'html/topic-overview.html', values)
