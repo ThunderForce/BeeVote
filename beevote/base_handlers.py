@@ -93,6 +93,9 @@ class BaseHandler(webapp2.RequestHandler):
 class BaseHtmlHandler(BaseHandler):
     pass
 
+class BaseImageHandler(BaseHandler):
+    pass
+
 class BaseMiscHandler(BaseHandler):
     def __init__(self, request, response):
         self.initialize(request, response)
