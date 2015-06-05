@@ -17,19 +17,19 @@
 
 import datetime
 import os
-import image_handlers
 
 from google.appengine.api import users
 import webapp2
 
 import api
 import base_handlers
+import constants
 import html_strips
+import image_handlers
 import models
 
 
 # Start of handlers
-
 class MainHandler(base_handlers.BaseMiscHandler):
 	def get(self):
 		user = users.get_current_user()
@@ -102,11 +102,6 @@ def handle_401(request, response, exception):
 def handle_404(request, response, exception):
 	response.set_status(404)
 	base_handlers.write_template(response, 'not_found.html', {'url': request.path})
-
-config = {}
-config['webapp2_extras.sessions'] = {
-    'secret_key': '20beeVote15',
-}
 
 server =  os.environ.get("SERVER_SOFTWARE")
 
@@ -184,7 +179,7 @@ app = webapp2.WSGIApplication([
 	('/report-bug', ReportBugHandler),
 	('/register', RegistrationHandler),
 	('/logout', LogoutHandler),
-], debug=debug, config=config)
+], debug=debug, config=constants.wsgiapplication_config)
 
 app.error_handlers[401] = handle_401
 app.error_handlers[404] = handle_404

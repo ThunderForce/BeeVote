@@ -21,6 +21,7 @@ from google.appengine.ext import ndb
 import webapp2
 
 import base_handlers
+import constants
 import emailer
 import models
 
@@ -177,11 +178,6 @@ class AdminMenuHandler(base_handlers.BasicAdminPageHandler):
 
 # End of handlers
 
-config = {}
-config['webapp2_extras.sessions'] = {
-    'secret_key': '20beeVote15',
-}
-
 app = webapp2.WSGIApplication([
 	('/admin/remove-user/(.*)', RemoveUserHandler),
 	('/admin/stats', StatsHandler),
@@ -192,4 +188,4 @@ app = webapp2.WSGIApplication([
 	('/admin/ajax/send-email', SendMailHandler),
 	('/admin/emailer', EmailerHandler),
 	('/admin/home', AdminMenuHandler)
-], debug=True, config=config)
+], debug=True, config=constants.wsgiapplication_config)
