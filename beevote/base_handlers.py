@@ -1,5 +1,8 @@
+import logging
 import os
+import traceback
 
+from google.appengine.api.images import Image
 from google.appengine.api import users
 from google.appengine.ext.webapp import template
 import webapp2
@@ -8,7 +11,6 @@ from webapp2_extras import sessions
 import constants
 import language
 import models
-
 
 # List or URLs that you can access without being "registered" in the app
 public_urls = ["/", "/logout"]
@@ -24,7 +26,6 @@ def get_template(template_name, template_values={}, navbar_values={}):
         beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
     else:
         beevote_user = None
-
 
     if not beevote_user or not beevote_user.language:
         lang_package= 'en'
@@ -93,8 +94,37 @@ class BaseHandler(webapp2.RequestHandler):
 class BaseHtmlHandler(BaseHandler):
     pass
 
+def resize_image(image_data, width, height):
+    image = Image(image_data=image_data)
+    if (image.width / float(width)) > (image.height / float(height)):
+        image.resize(height=height)
+        image = Image(image_data=image.execute_transforms())
+        x_crop_ratio = (image.width - width) / float(image.width * 2)
+        image.crop(x_crop_ratio, 0.0, 1-x_crop_ratio, 1.0)
+    else:
+        image.resize(width=width)
+        image = Image(image_data=image.execute_transforms())
+        y_crop_ratio = (image.height - height) / float(image.height * 2)
+        image.crop(0.0, y_crop_ratio, 1.0, 1-y_crop_ratio)
+    return image.execute_transforms()
+
 class BaseImageHandler(BaseHandler):
-    pass
+    def write_image(self, image, image_name):
+        self.response.headers['Content-Type'] = 'image/png'
+        self.response.headers['Content-Disposition'] = 'inline; filename="'+image_name+'"'
+        width_str = self.request.get('width', None)
+        height_str = self.request.get('height', None)
+        if width_str is None or height_str is None:
+            self.response.out.write(image)
+        else:
+            try:
+                width = int(width_str)
+                height = int(height_str)
+                self.response.out.write(resize_image(image, width, height))
+            except:
+                stacktrace = traceback.format_exc()
+                logging.error("%s", stacktrace)
+                self.response.out.write(image)
 
 class BaseMiscHandler(BaseHandler):
     def __init__(self, request, response):

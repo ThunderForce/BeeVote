@@ -28,7 +28,6 @@ import html_strips
 import image_handlers
 import models
 
-
 # Start of handlers
 class MainHandler(base_handlers.BaseMiscHandler):
 	def get(self):
@@ -104,7 +103,6 @@ def handle_404(request, response, exception):
 	base_handlers.write_template(response, 'not_found.html', {'url': request.path})
 
 server =  os.environ.get("SERVER_SOFTWARE")
-
 
 if server is None:
 	debug = False  # Unexpected, disable DEBUG.

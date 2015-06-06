@@ -25,7 +25,6 @@ import constants
 import emailer
 import models
 
-
 # Start of handlers
 class RemoveUserHandler(webapp2.RequestHandler):
 	def get(self, user_id):
