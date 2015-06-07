@@ -1,5 +1,7 @@
 import base_handlers
+import constants
 import models
+
 
 class UserImageHandler(base_handlers.BaseImageHandler):
     def get(self, user_id):
@@ -9,7 +11,7 @@ class UserImageHandler(base_handlers.BaseImageHandler):
             self.response.out.write("User "+user_id+" does not exist")
         else:
             if user.img is not None:
-                self.write_image(user.img, 'user-'+user_id+'.png')
+                self.write_image(user.img, constants.user_image_name.format(user_id=user_id))
             else:
                 self.error(404)
                 self.response.out.write("User "+user_id+" does not have an image")
@@ -22,7 +24,7 @@ class GroupImageHandler(base_handlers.BaseImageHandler):
             self.response.out.write("Group "+group_id+" does not exist")
         else:
             if group.img is not None:
-                self.write_image(group.img, 'group-'+group_id+'.png')
+                self.write_image(group.img, constants.user_image_name.format(group_id=group_id))
             else:
                 self.error(404)
                 self.response.out.write("Group "+group_id+" does not have an image")
@@ -35,7 +37,7 @@ class TopicImageHandler(base_handlers.BaseImageHandler):
             self.response.out.write("Topic "+topic_id+" does not exist")
         else:
             if topic.img is not None:
-                self.write_image(topic.img, 'topic-'+group_id+'-'+topic_id+'.png')
+                self.write_image(topic.img, constants.user_image_name.format(group_id=group_id, topic_id=topic_id))
             else:
                 self.error(404)
                 self.response.out.write("Topic "+topic_id+" does not have an image")
