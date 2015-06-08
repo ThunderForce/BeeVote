@@ -15,10 +15,8 @@
 # limitations under the License.
 #
 
-import datetime
 import os
 
-from google.appengine.api import users
 import webapp2
 
 import api
@@ -26,69 +24,8 @@ import base_handlers
 import constants
 import html_strips
 import image_handlers
-import models
+import misc_handlers
 
-# Start of handlers
-class MainHandler(base_handlers.BaseMiscHandler):
-	def get(self):
-		user = users.get_current_user()
-		if user:
-			if not self.beevote_user and not models.BeeVoteUser.get_from_google_id(user.user_id()):
-				self.redirect("/register")
-				return
-			else:
-				self.redirect('/home')
-		else:
-			values = {
-				'login_url': users.create_login_url('/home'),
-			}
-			base_handlers.write_template(self.response, 'index.html', values)
-
-class HomeHandler(base_handlers.BaseMiscHandler):
-	def get(self, group_id, topic_id):
-		
-		if not self.beevote_user:
-			self.redirect("/register")
-			return
-		
-		last_access = self.beevote_user.last_access if hasattr(self.beevote_user, 'last_access') else datetime.datetime.min
-		self.beevote_user.last_access = datetime.datetime.now()
-		self.beevote_user.put()
-		
-		feature_changes = models.FeatureChange.get_from_date(last_access)
-		
-		values = {
-			'user' : self.beevote_user,
-			'feature_changes': feature_changes,
-			'group_id': group_id,
-			'topic_id': topic_id,
-		}
-		base_handlers.write_template(self.response, 'groups-layout.html',values)
-
-class ProfileHandler(base_handlers.BaseMiscHandler):
-	def get(self, user_id):
-		# TODO Use user_id to get user and put it in values
-		values = {}
-		base_handlers.write_template(self.response, 'user-profile.html', values)
-
-class RegistrationHandler(base_handlers.BaseMiscHandler):
-	def get(self):
-		user_id = users.get_current_user().user_id()
-		if self.beevote_user or models.BeeVoteUser.get_from_google_id(user_id):
-			self.redirect("/")
-			return
-		base_handlers.write_template(self.response, 'registration-form.html', {})
-
-class ReportBugHandler(base_handlers.BaseMiscHandler):
-	def get(self):
-		values = {}
-		base_handlers.write_template(self.response, 'report-bug.html', values)
-
-class LogoutHandler(webapp2.RequestHandler):
-	def get(self):
-		self.redirect(users.create_logout_url('/'))
-		
-# End of handlers
 
 def handle_401(request, response, exception):
 	if 'Location' in exception.headers and exception.headers['Location']:
@@ -112,10 +49,10 @@ else:
 
 app = webapp2.WSGIApplication([
 	# Home handlers
-	('/', MainHandler),
-	webapp2.Route('/group/<group_id:\d+>/topic/<topic_id:\d+>', handler=HomeHandler),
-	webapp2.Route('/group/<group_id:\d+>', handler=HomeHandler, defaults={'topic_id': None}),
-	webapp2.Route('/home', handler=HomeHandler, defaults={'group_id': None, 'topic_id': None}),
+	('/', misc_handlers.MainHandler),
+	webapp2.Route('/group/<group_id:\d+>/topic/<topic_id:\d+>', handler=misc_handlers.HomeHandler),
+	webapp2.Route('/group/<group_id:\d+>', handler=misc_handlers.HomeHandler, defaults={'topic_id': None}),
+	webapp2.Route('/home', handler=misc_handlers.HomeHandler, defaults={'group_id': None, 'topic_id': None}),
 	
 	# Images handlers
 	('/user/(\d+)/image', image_handlers.UserImageHandler),
@@ -173,10 +110,10 @@ app = webapp2.WSGIApplication([
 	('/html/group/(\d+)', html_strips.GroupHandler),
 	
 	# Other handlers
-	('/profile/(\d+)', ProfileHandler),
-	('/report-bug', ReportBugHandler),
-	('/register', RegistrationHandler),
-	('/logout', LogoutHandler),
+	('/profile/(\d+)', misc_handlers.ProfileHandler),
+	('/report-bug', misc_handlers.ReportBugHandler),
+	('/register', misc_handlers.RegistrationHandler),
+	('/logout', misc_handlers.LogoutHandler),
 ], debug=debug, config=constants.wsgiapplication_config)
 
 app.error_handlers[401] = handle_401
