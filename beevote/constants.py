@@ -9,6 +9,6 @@ wsgiapplication_config = {}
 wsgiapplication_config['webapp2_extras.sessions'] = {
     'secret_key': '20beeVote15',
 }
-user_image_name = 'user-{{ user_id }}.png'
-group_image_name = 'group-{{ group_id }}.png'
-topic_image_name = 'topic-{{ group_id }}-{{ topic_id }}.png'
+user_image_name = 'user-{user_id}.png'
+group_image_name = 'group-{group_id}.png'
+topic_image_name = 'topic-{group_id}-{topic_id}.png'
