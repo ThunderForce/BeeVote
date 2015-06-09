@@ -160,7 +160,13 @@ lang = {
 			'email_not_in_the_group': "User associated to email '{email}' is not in the group",
 			'email_not_registered': "Email '{email}' is not associated to any Beevote account",
 			'year_before_1900': "Year cannot be before 1900",
-			'comment_empty': "The comment cannot be empty"
+			'comment_empty': "The comment cannot be empty",
+			'user_does_not_exists': "User {user_id} does not exist",
+			'user_does_not_have_an_image': "User {user_id} does not have an image",
+			'group_does_not_exists': "Group {group_id} does not exist",
+			'group_does_not_have_an_image': "Group {group_id} does not have an image",
+			'topic_does_not_exists': "Topic {topic_id} does not exist",
+			'topic_does_not_have_an_image': "Topic {topic_id} does not have an image",
 		},
 		'unknown_user': "Unknown user",
 		'elements': {
@@ -433,7 +439,13 @@ The Beevote team
 			'email_not_in_the_group': "L'utente associato all'email '{email}' non è nel gruppo",
 			'email_not_registered': "L'email '{email}' non è associata a nessun account Beevote",
 			'year_before_1900': "L'anno non può essere precedente al 1900",
-			'comment_empty': "Il commento non può essere vuoto"
+			'comment_empty': "Il commento non può essere vuoto",
+			'user_does_not_exists': "L'utente {user_id} non esiste",
+			'user_does_not_have_an_image': "L'utente {user_id} non ha un'immagine",
+			'group_does_not_exists': "Il gruppo {group_id} non esiste",
+			'group_does_not_have_an_image': "Il gruppo {group_id} non ha un'immagine",
+			'topic_does_not_exists': "La discussione {topic_id} non esiste",
+			'topic_does_not_have_an_image': "La discussione {topic_id} non ha un'immagine",
 		},
 		'unknown_user': "Utente sconosciuto",
 		'elements': {

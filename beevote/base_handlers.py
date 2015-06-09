@@ -109,6 +109,19 @@ def resize_image(image_data, width, height):
     return image.execute_transforms()
 
 class BaseImageHandler(BaseHandler):
+    def __init__(self, request, response):
+        self.initialize(request, response)
+        user = users.get_current_user()
+        if user:
+            beevote_user = models.BeeVoteUser.get_from_google_id(user.user_id())
+        else:
+            beevote_user = None
+    
+        if not beevote_user or not beevote_user.language:
+            self.lang_package = 'en'
+        else:
+            self.lang_package = beevote_user.language
+    
     def write_image(self, image, image_name):
         self.response.headers['Content-Type'] = 'image/png'
         self.response.headers['Content-Disposition'] = 'inline; filename="'+image_name+'"'
