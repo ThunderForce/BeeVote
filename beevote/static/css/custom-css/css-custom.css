@@ -8,15 +8,13 @@ img.image-circle {
 	width: 42px;
 }
 
-.well, .panel {
+.well, .panel, .jumbotron, div.loader {
 	margin-left: auto;
 	margin-right: auto;
 }
 
 .jumbotron {
 	max-width: auto;
-	margin-left: auto;
-	margin-right: auto;
 	border-radius: 0;
 }
 
@@ -25,7 +23,7 @@ img.image-circle {
 }
 
 [color="red_g"].well, [color="red_g"].jumbotron {
-  background-color: #f44336;
+	background-color: #f44336;
 }
 
 [color="yellow_g"].well, [color="yellow_g"].jumbotron {
@@ -45,14 +43,13 @@ img.image-circle {
 }
 
 [color="red"].well {
-  background-color: #D32F2F;
+	background-color: #D32F2F;
 }
 
 /*occhio non so se questo è giusto!!! XD */
 
 [color="black"].list-group-item-text{
 	color: #000000;
-
 }
 
 button.btn.mdi-action-thumb-up.vote-checkbox.proposal-not-voted {
@@ -76,8 +73,6 @@ div.loader
 	z-index: 9999;
 	background: url('/static/images/loading.gif') no-repeat;
 	background-size: contain;
-	margin-left: auto;
-	margin-right: auto;
 }
 
 topic_color {
@@ -89,12 +84,35 @@ proposal_color {
 }
 
 .pac-container {
-      	z-index: 999999;
+	z-index: 999999;
 }
 
-.autocomplete-suggestions { border: 1px solid #999; background: #FFF; overflow: auto; }
-.autocomplete-suggestion { padding: 2px 5px; white-space: nowrap; overflow: hidden; cursor: pointer; }
-.autocomplete-selected { background: #F0F0F0; }
-.autocomplete-suggestions strong { font-weight: normal; color: #3399FF; }
-.autocomplete-group { padding: 2px 5px; }
-.autocomplete-group strong { display: block; border-bottom: 1px solid #000; }
+.autocomplete-suggestions {
+	border: 1px solid #999;
+	background: #FFF;
+	overflow: auto;
+}
+
+.autocomplete-suggestion {
+	padding: 2px 5px;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+}
+
+.autocomplete-selected {
+	background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+	font-weight: normal;
+	color: #3399FF;
+}
+
+.autocomplete-group {
+	padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+	display: block; border-bottom: 1px solid #000;
+}
