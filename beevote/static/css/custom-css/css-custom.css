@@ -20,27 +20,23 @@ img.image-circle {
 	border-radius: 0;
 }
 
-[color="blue"].navbar {
+[color="blue"].navbar, [color="blue"].well {
 	background-color: #2196F3;
 }
 
-[color="blue"].well {
-  background-color: #2196F3;
-}
-
-[color="red_g"].well {
+[color="red_g"].well, [color="red_g"].jumbotron {
   background-color: #f44336;
 }
 
-[color="yellow_g"].well {
+[color="yellow_g"].well, [color="yellow_g"].jumbotron {
 	background-color: #FFA000;
 }
 
-[color="green_g"].well {
+[color="green_g"].well, [color="green_g"].jumbotron {
 	background-color: #00A65E;
 }
 
-[color="orange_g"].well {
+[color="orange_g"].well, [color="orange_g"].jumbotron {
 	background-color: #FF5722;
 }
 
@@ -48,24 +44,8 @@ img.image-circle {
 	background-color: #0F9D58
 }
 
-[color="red"].well{
+[color="red"].well {
   background-color: #D32F2F;
-}
-
-[color="red_g"].jumbotron {
-	background-color: #f44336;
-}
-
-[color="yellow_g"].jumbotron {
-	background-color: #FFA000;
-}
-
-[color="green_g"].jumbotron {
-	background-color: #00A65E;
-}
-
-[color="orange_g"].jumbotron {
-	background-color: #FF5722;
 }
 
 /*occhio non so se questo è giusto!!! XD */
@@ -78,7 +58,7 @@ img.image-circle {
 button.btn.mdi-action-thumb-up.vote-checkbox.proposal-not-voted {
 	background-color: rgb(254, 255, 255);
 }
-button.btn.mdi-action-thumb-up.vote-checkbox.proposal-voted {
+button.btn.mdi-action-thumb-up.vote-checkbox.proposal-voted, div.well.well-lg.group-selected {
 	background-color: rgb(64, 255, 64);
 }
 button.btn.mdi-action-thumb-up.vote-checkbox.proposal-pending-vote {
@@ -87,10 +67,6 @@ button.btn.mdi-action-thumb-up.vote-checkbox.proposal-pending-vote {
 
 button.btn.btn-fab.btn-raised.btn-shadow {
 	box-shadow: 0 10px 5px 1px rgba(0, 0, 0, 0.2)
-}
-
-div.well.well-lg.group-selected {
-	background-color: rgb(64, 255, 64);
 }
 
 div.loader
