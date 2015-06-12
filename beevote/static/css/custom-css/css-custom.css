@@ -46,8 +46,6 @@ img.image-circle {
 	background-color: #D32F2F;
 }
 
-/*occhio non so se questo è giusto!!! XD */
-
 [color="black"].list-group-item-text{
 	color: #000000;
 }
@@ -73,14 +71,6 @@ div.loader
 	z-index: 9999;
 	background: url('/static/images/loading.gif') no-repeat;
 	background-size: contain;
-}
-
-topic_color {
-	background-color: #2196F3;
-}
-
-proposal_color {
-	background-color: #0F9D58;
 }
 
 .pac-container {
@@ -114,5 +104,6 @@ proposal_color {
 }
 
 .autocomplete-group strong {
-	display: block; border-bottom: 1px solid #000;
+	display: block;
+	border-bottom: 1px solid #000;
 }
