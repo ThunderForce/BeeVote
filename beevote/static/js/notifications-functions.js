@@ -54,8 +54,6 @@ function clean_topic_notifications(group_id, topic_id) {
 	}
 }
 function load_topics_notifications() {
-	// jQueryTarget must be like $('span#some_id');
-	// $("span.notifications").html('...');
 	$.ajax({
 		url: "/api/topics-notifications",
 		method: "GET",
@@ -73,7 +71,6 @@ function load_topics_notifications() {
 						...
 					},
 					...
-					
 				}
 			 */
 			_home_notifications.group_notifications = [];
@@ -89,13 +86,17 @@ function load_topics_notifications() {
 					});
 					number_of_group_notifications++;
 				});
-				_home_notifications.group_notifications.push({group_id: group_id, notifications: number_of_group_notifications});
-				
+				_home_notifications.group_notifications.push({
+					group_id: group_id,
+					notifications: number_of_group_notifications
+				});
 			})
 			print_groups_notifications();
 			print_topics_notifications();
 			setTimeout(
-				function() { load_topics_notifications(); },
+				function() {
+					load_topics_notifications();
+				},
 				60*1000 // 1 minute
 			);
 		}
