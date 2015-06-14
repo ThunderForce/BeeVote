@@ -37,39 +37,48 @@ class StatsHandler(base_handlers.BasicAdminPageHandler):
 		duration_24_hours = 24*60*60
 		duration_1_week = duration_24_hours*7
 		duration_30_days = duration_24_hours*30
+		duration_90_days = duration_24_hours*90
 		
 		groups = ndb.gql("SELECT * FROM Group").fetch(1000)
-		groups_created_in_last_30_days = [g for g in groups if (datetime.datetime.now() - g.creation).total_seconds() < (duration_30_days)]
+		groups_created_in_last_90_days = [g for g in groups if (datetime.datetime.now() - g.creation).total_seconds() < (duration_90_days)]
+		groups_created_in_last_30_days = [g for g in groups_created_in_last_90_days if (datetime.datetime.now() - g.creation).total_seconds() < (duration_30_days)]
 		groups_created_in_last_week = [g for g in groups_created_in_last_30_days if (datetime.datetime.now() - g.creation).total_seconds() < (duration_1_week)]
 		groups_created_in_last_24_hours = [g for g in groups_created_in_last_week if (datetime.datetime.now() - g.creation).total_seconds() < (duration_24_hours)]
 		
 		topics = ndb.gql("SELECT * FROM Topic").fetch(1000)
-		topics_created_in_last_30_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (duration_30_days)]
+		topics_created_in_last_90_days = [t for t in topics if (datetime.datetime.now() - t.creation).total_seconds() < (duration_90_days)]
+		topics_created_in_last_30_days = [t for t in topics_created_in_last_90_days if (datetime.datetime.now() - t.creation).total_seconds() < (duration_30_days)]
 		topics_created_in_last_week = [t for t in topics_created_in_last_30_days if (datetime.datetime.now() - t.creation).total_seconds() < (duration_1_week)]
 		topics_created_in_last_24_hours = [t for t in topics_created_in_last_week if (datetime.datetime.now() - t.creation).total_seconds() < (duration_24_hours)]
 		
 		proposals = ndb.gql("SELECT * FROM Proposal").fetch(1000)
-		proposals_created_in_last_30_days = [p for p in proposals if (datetime.datetime.now() - p.creation).total_seconds() < (duration_30_days)]
+		proposals_created_in_last_90_days = [p for p in proposals if (datetime.datetime.now() - p.creation).total_seconds() < (duration_90_days)]
+		proposals_created_in_last_30_days = [p for p in proposals_created_in_last_90_days if (datetime.datetime.now() - p.creation).total_seconds() < (duration_30_days)]
 		proposals_created_in_last_week = [p for p in proposals_created_in_last_30_days if (datetime.datetime.now() - p.creation).total_seconds() < (duration_1_week)]
 		proposals_created_in_last_24_hours = [p for p in proposals_created_in_last_week if (datetime.datetime.now() - p.creation).total_seconds() < (duration_24_hours)]
 		
 		proposal_comments = ndb.gql("SELECT * FROM ProposalComment").fetch(1000)
-		proposal_comments_created_in_last_30_days = [c for c in proposal_comments if (datetime.datetime.now() - c.creation).total_seconds() < (duration_30_days)]
+		proposal_comments_created_in_last_90_days = [c for c in proposal_comments if (datetime.datetime.now() - c.creation).total_seconds() < (duration_90_days)]
+		proposal_comments_created_in_last_30_days = [c for c in proposal_comments_created_in_last_90_days if (datetime.datetime.now() - c.creation).total_seconds() < (duration_30_days)]
 		proposal_comments_created_in_last_week = [c for c in proposal_comments_created_in_last_30_days if (datetime.datetime.now() - c.creation).total_seconds() < (duration_1_week)]
 		proposal_comments_created_in_last_24_hours = [c for c in proposal_comments_created_in_last_week if (datetime.datetime.now() - c.creation).total_seconds() < (duration_24_hours)]
 		
 		votes = ndb.gql("SELECT * FROM Vote").fetch(1000)
 		
 		users = ndb.gql("SELECT * FROM BeeVoteUser").fetch(1000)
-		users_registered_in_last_30_days = [u for u in users if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (duration_30_days)]
+		users_registered_in_last_90_days = [u for u in users if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (duration_90_days)]
+		users_registered_in_last_30_days = [u for u in users_registered_in_last_90_days if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (duration_30_days)]
 		users_registered_in_last_week = [u for u in users_registered_in_last_30_days if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (duration_1_week)]
 		users_registered_in_last_24_hours = [u for u in users_registered_in_last_week if u.creation and (datetime.datetime.now() - u.creation).total_seconds() < (duration_24_hours)]
-		users_active_in_last_30_days = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (duration_30_days)]
+		
+		users_active_in_last_90_days = [u for u in users if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (duration_90_days)]
+		users_active_in_last_30_days = [u for u in users_active_in_last_90_days if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (duration_30_days)]
 		users_active_in_last_week = [u for u in users_active_in_last_30_days if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (duration_1_week)]
 		users_active_in_last_24_hours = [u for u in users_active_in_last_week if u.last_access and (datetime.datetime.now() - u.last_access).total_seconds() < (duration_24_hours)]
 		
 		reports = ndb.gql("SELECT * FROM BugReport").fetch(1000)
-		reports_created_in_last_30_days = [r for r in reports if (datetime.datetime.now() - r.creation).total_seconds() < (duration_30_days)]
+		reports_created_in_last_90_days = [r for r in reports if (datetime.datetime.now() - r.creation).total_seconds() < (duration_90_days)]
+		reports_created_in_last_30_days = [r for r in reports_created_in_last_90_days if (datetime.datetime.now() - r.creation).total_seconds() < (duration_30_days)]
 		reports_created_in_last_week = [r for r in reports_created_in_last_30_days if (datetime.datetime.now() - r.creation).total_seconds() < (duration_1_week)]
 		reports_created_in_last_24_hours = [r for r in reports_created_in_last_week if (datetime.datetime.now() - r.creation).total_seconds() < (duration_24_hours)]
 		
@@ -78,21 +87,25 @@ class StatsHandler(base_handlers.BasicAdminPageHandler):
 			'groups_created_in_last_24_hours': len(groups_created_in_last_24_hours),
 			'groups_created_in_last_week': len(groups_created_in_last_week),
 			'groups_created_in_last_30_days': len(groups_created_in_last_30_days),
+			'groups_created_in_last_90_days': len(groups_created_in_last_90_days),
 			'average_members_per_group': sum(len(g.members) for g in groups) / float(len(groups)),
 			'number_of_topics': len(topics),
 			'topics_created_in_last_24_hours': len(topics_created_in_last_24_hours),
 			'topics_created_in_last_week': len(topics_created_in_last_week),
 			'topics_created_in_last_30_days': len(topics_created_in_last_30_days),
+			'topics_created_in_last_90_days': len(topics_created_in_last_90_days),
 			'average_topics_per_group': len(topics) / float(len(groups)),
 			'number_of_proposals': len(proposals),
 			'proposals_created_in_last_24_hours': len(proposals_created_in_last_24_hours),
 			'proposals_created_in_last_week': len(proposals_created_in_last_week),
 			'proposals_created_in_last_30_days': len(proposals_created_in_last_30_days),
+			'proposals_created_in_last_30_days': len(proposals_created_in_last_90_days),
 			'average_proposals_per_topic': len(proposals) / float(len(topics)),
 			'number_of_proposal_comments': len(proposal_comments),
 			'proposal_comments_created_in_last_24_hours': len(proposal_comments_created_in_last_24_hours),
 			'proposal_comments_created_in_last_week': len(proposal_comments_created_in_last_week),
 			'proposal_comments_created_in_last_30_days': len(proposal_comments_created_in_last_30_days),
+			'proposal_comments_created_in_last_90_days': len(proposal_comments_created_in_last_90_days),
 			'number_of_users': len(users),
 			'users_by_language': {
 				'en': len([u for u in users if (u.language is None) or (u.language == 'en')]),
@@ -101,13 +114,16 @@ class StatsHandler(base_handlers.BasicAdminPageHandler):
 			'users_registered_in_last_24_hours': len(users_registered_in_last_24_hours),
 			'users_registered_in_last_week': len(users_registered_in_last_week),
 			'users_registered_in_last_30_days': len(users_registered_in_last_30_days),
+			'users_registered_in_last_90_days': len(users_registered_in_last_90_days),
 			'users_active_in_last_24_hours': len(users_active_in_last_24_hours),
 			'users_active_in_last_week': len(users_active_in_last_week),
 			'users_active_in_last_30_days': len(users_active_in_last_30_days),
+			'users_active_in_last_90_days': len(users_active_in_last_90_days),
 			'number_of_reports': len(reports),
 			'reports_created_in_last_24_hours': len(reports_created_in_last_24_hours),
 			'reports_created_in_last_week': len(reports_created_in_last_week),
 			'reports_created_in_last_30_days': len(reports_created_in_last_30_days),
+			'reports_created_in_last_90_days': len(reports_created_in_last_90_days),
 			'number_of_votes': len(votes),
 		}})
 
