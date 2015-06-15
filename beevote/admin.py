@@ -130,16 +130,16 @@ class StatsHandler(base_handlers.BasicAdminPageHandler):
 class UserManagerHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		sort_param = self.request.get("sort")
+		query_string = "SELECT * FROM BeeVoteUser"
 		if sort_param == "creation":
-			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY creation DESC")
+			query_string += " ORDER BY creation DESC"
 		elif sort_param == "last_access":
-			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY last_access DESC")
+			query_string += " ORDER BY last_access DESC"
 		elif sort_param == "email":
-			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY email ASC")
+			query_string += " ORDER BY email ASC"
 		elif sort_param == "language":
-			users = ndb.gql("SELECT * FROM BeeVoteUser ORDER BY language ASC")
-		else:
-			users = ndb.gql("SELECT * FROM BeeVoteUser")
+			query_string += " ORDER BY language ASC"
+		users = ndb.gql(query_string)
 		base_handlers.write_template(self.response, 'admin/user-manager.html', {'users': users})
 
 class BugReportsHandler(base_handlers.BasicAdminPageHandler):

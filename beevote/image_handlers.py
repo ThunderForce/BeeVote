@@ -25,7 +25,7 @@ class GroupImageHandler(base_handlers.BaseImageHandler):
             self.response.out.write(language.lang[self.lang_package]['errors']['group_does_not_exists'].format(group_id=group_id))
         else:
             if group.img is not None:
-                self.write_image(group.img, constants.user_image_name.format(group_id=group_id))
+                self.write_image(group.img, constants.group_image_name.format(group_id=group_id))
             else:
                 self.error(404)
                 self.response.out.write(language.lang[self.lang_package]['errors']['group_does_not_have_an_image'].format(group_id=group_id))
@@ -38,7 +38,7 @@ class TopicImageHandler(base_handlers.BaseImageHandler):
             self.response.out.write(language.lang[self.lang_package]['errors']['topic_does_not_exists'].format(topic_id=topic_id))
         else:
             if topic.img is not None:
-                self.write_image(topic.img, constants.user_image_name.format(group_id=group_id, topic_id=topic_id))
+                self.write_image(topic.img, constants.topic_image_name.format(group_id=group_id, topic_id=topic_id))
             else:
                 self.error(404)
                 self.response.out.write(language.lang[self.lang_package]['errors']['topic_does_not_have_an_image'].format(topic_id=topic_id))
