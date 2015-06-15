@@ -131,14 +131,15 @@ class UserManagerHandler(base_handlers.BasicAdminPageHandler):
 	def get(self):
 		sort_param = self.request.get("sort")
 		query_string = "SELECT * FROM BeeVoteUser"
+		order_string = " ORDER BY {field} {order}"
 		if sort_param == "creation":
-			query_string += " ORDER BY creation DESC"
+			query_string += order_string.format(field="creation", order="DESC")
 		elif sort_param == "last_access":
-			query_string += " ORDER BY last_access DESC"
+			query_string += order_string.format(field="last_access", order="DESC")
 		elif sort_param == "email":
-			query_string += " ORDER BY email ASC"
+			query_string += order_string.format(field="email", order="ASC")
 		elif sort_param == "language":
-			query_string += " ORDER BY language ASC"
+			query_string += order_string.format(field="language", order="ASC")
 		users = ndb.gql(query_string)
 		base_handlers.write_template(self.response, 'admin/user-manager.html', {'users': users})
 
